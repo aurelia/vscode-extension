@@ -1,0 +1,20 @@
+{
+  "name": "aurelia-vscode-extension",
+  "version": "0.1.0",
+  "description": "A VS Code extension for Aurelia.",
+  "keywords": [
+    "aurelia",
+    "vscode",
+    "extension"
+  ],
+  "homepage": "http://aurelia.io",
+  "bugs": {
+    "url": "https://github.com/aurelia/vscode-extension/issues"
+  },
+  "license": "MIT",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aurelia/vscode-extension"
+  }
+}
