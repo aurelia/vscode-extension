@@ -13,8 +13,34 @@
   },
   "license": "MIT",
   "author": "",
+  "publisher": "Aurelia",
   "repository": {
     "type": "git",
     "url": "https://github.com/aurelia/vscode-extension"
+  },
+  "engines": {
+    "vscode": "^1.4.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/src/extension",
+  "contributes": {},
+  "scripts": {
+    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "lint": "node ./node_modules/tslint/lib/tslint-cli.js -c tslint.json --project tsconfig.json",
+    "changelog": "node ./node_modules/conventional-changelog-cli/cli.js -p angular -i doc/CHANGELOG.md -s"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.33",
+    "conventional-changelog-cli": "^1.2.0",
+    "tslint": "^3.15.1",
+    "typescript": "^2.0.3",
+    "vscode": "^0.11.18"
+  },
+  "dependencies": {
   }
 }
