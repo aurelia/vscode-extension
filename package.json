@@ -22,9 +22,11 @@
     "vscode": "^1.4.0"
   },
   "categories": [
-    "Other"
+    "Languages",
+    "Themes"
   ],
   "activationEvents": [
+    "onLanguage:html",
     "onCommand:extension.auNew",
     "onCommand:extension.auGenerate",
     "onCommand:extension.auTest",
@@ -32,6 +34,13 @@
   ],
   "main": "./dist/src/extension",
   "contributes": {
+    "grammars": [
+      {
+        "language": "html",
+        "scopeName": "au.html",
+        "path": "./syntaxes/html.json"
+      }
+    ],
     "commands": [
       {
         "command": "extension.auNew",
@@ -49,6 +58,28 @@
         "command": "extension.auTest",
         "title": "au test"
       }
+    ],
+    "themes": [
+      {
+        "label": "Aurelia Dark+",
+        "uiTheme": "vs-dark",
+        "path": "./themes/dark_plus.json"
+      },
+      {
+        "label": "Aurelia Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/dark_vs.json"
+      },
+      {
+        "label": "Aurelia Light+",
+        "uiTheme": "vs",
+        "path": "./themes/light_plus.json"
+      },
+      {
+        "label": "Aurelia Light",
+        "uiTheme": "vs",
+        "path": "./themes/light_vs.json"
+      }
     ]
   },
   "scripts": {
@@ -60,10 +91,12 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.33",
+    "chai": "^3.5.0",
     "conventional-changelog-cli": "^1.2.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.3",
-    "vscode": "^0.11.18"
+    "vscode": "^0.11.18",
+    "vscode-textmate": "^2.2.0"
   },
   "dependencies": {
     "run-in-terminal": "0.0.3"

@@ -50,6 +50,18 @@ suite('The package.json', () => {
     assert.equal(results.length, 1);
   });
 
+  test('must contain an activation events onLanguage html', () => {
+    // arrange
+    let packageConfig = require('./../../package.json');
+
+    // act
+    let results = packageConfig.activationEvents.filter(
+      evt => evt === 'onLanguage:html');
+
+    // assert
+    assert.equal(results.length, 1);
+  });
+
   test('must contain an contribution command for au new', () => {
     // arrange
     let packageConfig = require('./../../package.json');
