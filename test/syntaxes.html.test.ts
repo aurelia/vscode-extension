@@ -600,6 +600,35 @@ suite('The Aurelia HTML syntax', () => {
 
   });
 
+  test('must tokenize containerless attribute with scope "containerless.attribute.html.au"', () => {
+
+    // arrange
+    let scope = 'containerless.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<template containerless foo="boo">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 10, 23);
+    assert.equal(hasScope(token.scopes, scope), true);
+
+  });
+5
+  test('must not tokenize containerless="" attribute ending on =', () => {
+
+    // arrange
+    let scope = 'containerless.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<template containerless="">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 10, 23);
+    assert.notEqual(token, null);
+    assert.equal(hasScope(token.scopes, scope), false);
+
+  });
+
 });
 
 function tokenizeLine(line: string) {

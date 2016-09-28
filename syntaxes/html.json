@@ -179,6 +179,12 @@
           "include" : "#tag-aurelia-show-attribute"
         },
         {
+          "include": "#tag-aurelia-containerless-attribute"
+        },
+        {
+          "include": "#tag-aurelia-bindable-attribute"
+        },
+        {
           "include": "#tag-aurelia-attribute-with-databinding-attribute"
         },
         {
@@ -186,10 +192,7 @@
         },
         {
           "include": "#tag-aurelia-attribute-with-invoke-attribute"
-        },
-        {
-          "include": "#tag-aurelia-bindable-attribute"
-        },
+        },        
         {
           "include": "#tag-aurelia-attribute"
         },
@@ -329,7 +332,15 @@
           "name": "bindable.attribute.html.au"
         }     
       }
-    },    
+    },
+    "tag-aurelia-containerless-attribute" : {
+      "match": "(containerless)( |>)",
+      "captures": {
+        "1": {
+          "name": "containerless.attribute.html.au"
+        }     
+      }
+    },        
     "tag-aurelia-if-attribute" : {
       "match": "[^=-]((naive-if|if)(?!-)(\\.)?(bind|one-way|two-way|one-time)?)",
       "captures": {
@@ -363,7 +374,7 @@
       "name": "entity.other.attribute-name.html"
     },
     "tag-aurelia-attribute": {
-      "match": "[^=]\\b(as-element|replaceable|containerless|replace-part|view|ref)",
+      "match": "[^=]\\b(as-element|replaceable|replace-part|view|ref)",
       "name": "attribute.html.au"
     },
     "string-double-quoted": {
