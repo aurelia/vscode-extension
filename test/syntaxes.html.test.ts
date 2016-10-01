@@ -11,20 +11,6 @@ let grammar = registry.grammarForScopeName("au.html");
 
 suite('The Aurelia HTML syntax', () => {
 
-  test('must tokenize model attribute with scope "model.attribute.html.au"', () => {
-
-    // arrange
-    let scope = 'model.attribute.html.au';
-
-    // act
-    let lineToken = tokenizeLine('<div model.bind="foo">');
-
-    // assert
-    let token = getTokenOnCharRange(lineToken, 5, 10);
-    assert.equal(hasScope(token.scopes, scope), true);
-
-  });
-
   test('must tokenize view attribute with scope "view.attribute.html.au"', () => {
 
     // arrange
