@@ -316,13 +316,13 @@
 
 
 		{
-			"scope": ["punctuation.definition.string.interpolation.start","punctuation.definition.string.interpolation.end"],
+		"scope": ["punctuation.definition.string.interpolation.start","punctuation.definition.string.interpolation.end"],
 			"settings": {
 				"foreground": "#ba68c8"
 			}
 		},
 		{
-			"scope": ["html.au"],
+			"scope": ["element.html.au", "attribute.html.au"],
 			"settings": {
 				"foreground": "#ba68c8"
 			}

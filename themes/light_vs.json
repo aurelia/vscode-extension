@@ -297,19 +297,17 @@
 				"foreground": "#000000"
 			}
 		},
-
 		{
-			"scope": ["punctuation.definition.string.interpolation.start","punctuation.definition.string.interpolation.end"],
-			"settings": {
-				"foreground": "#ba68c8",
-				"fontStyle": "bold"
-			}
-		},
-		{
-			"scope": ["aurelia.attribute.html", "attribute.html.au", "databinding.html.au", "compose.au.html", "router-view.au.html"],
+		"scope": ["punctuation.definition.string.interpolation.start","punctuation.definition.string.interpolation.end"],
 			"settings": {
 				"foreground": "#ba68c8"
 			}
-		}		
+		},
+		{
+			"scope": ["element.html.au", "attribute.html.au"],
+			"settings": {
+				"foreground": "#ba68c8"
+			}
+		}
 	]
 }
