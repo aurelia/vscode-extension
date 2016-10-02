@@ -1,5 +1,6 @@
-import { ExtensionContext, OutputChannel, window } from 'vscode';
+import { ExtensionContext, OutputChannel, window, languages } from 'vscode';
 import AureliaCliCommands from './aureliaCLICommands';
+import AurerliaHtmlCompletionProvider from './aurerliaHtmlCompletionProvider';
 
 let outputChannel: OutputChannel;
 
@@ -11,4 +12,7 @@ export function activate(context: ExtensionContext) {
 
   // Register CLI commands
   context.subscriptions.push(AureliaCliCommands.registerCommands(outputChannel));
+
+  // Register completion
+  context.subscriptions.push(languages.registerCompletionItemProvider('html', new AurerliaHtmlCompletionProvider() , '.'));
 }

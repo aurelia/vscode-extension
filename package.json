@@ -23,7 +23,8 @@
   },
   "categories": [
     "Languages",
-    "Themes"
+    "Themes",
+    "Snippets"
   ],
   "activationEvents": [
     "onLanguage:html",
