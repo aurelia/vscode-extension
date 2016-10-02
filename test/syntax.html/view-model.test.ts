@@ -31,20 +31,6 @@ suite('The Aurelia HTML syntax', () => {
 
   }); 
 
-  test('must tokenize view-model.(ref) attribute with scope "ref.html.au"', () => {
-
-    // arrange
-    let scope = 'ref.html.au';
-
-    // act
-    let lineToken = tokenizeLine('<div view-model.ref="foo">');
-
-    // assert
-    let token = getTokenOnCharRange(lineToken, 16, 19);
-    assert.equal(hasScope(token.scopes, scope), true);
-
-  }); 
-
   test('must tokenize view-model.(bind) attribute with scope "databinding.html.au"', () => {
 
     // arrange
