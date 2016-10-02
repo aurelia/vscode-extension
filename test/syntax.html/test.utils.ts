@@ -4,7 +4,7 @@ import * as path from 'path';
 let Registry = require(path.join(require.main.filename, '../../node_modules/vscode-textmate/release/main.js')).Registry;
 // tslint:enable
 let registry: vscodeTextmate.Registry = new Registry();
-registry.loadGrammarFromPathSync('C:/Repository-Erik/Aurelia/vscode-extension/syntaxes/html.json');
+registry.loadGrammarFromPathSync(path.join(path.dirname(module.parent.filename), './../../../syntaxes/html.json'));
 let grammar = registry.grammarForScopeName('au.html');
 
 export function tokenizeLine(line: string) {
