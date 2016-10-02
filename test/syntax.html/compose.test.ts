@@ -1,12 +1,12 @@
 import * as assert from 'assert';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax', () => {
+suite('The Aurelia HTML syntax compose element', () => {
 
-  test('must tokenize compose start element with scope "compose.html.au"', () => {
+  test('must tokenize compose start element with scope "compose.element.html.au"', () => {
 
     // arrange
-    let scope = 'compose.html.au';
+    let scope = 'compose.element.html.au';
 
     // act
     let lineToken = tokenizeLine('<compose>');
@@ -17,10 +17,10 @@ suite('The Aurelia HTML syntax', () => {
 
   });
 
-  test('must tokenize compose end element with scope "compose.html.au"', () => {
+  test('must tokenize compose end element with scope "compose.element.html.au"', () => {
 
     // arrange
-    let scope = 'compose.html.au';
+    let scope = 'compose.element.html.au';
 
     // act
     let lineToken = tokenizeLine('</compose>');

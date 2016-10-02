@@ -93,7 +93,7 @@
           "name": "punctuation.definition.tag.begin.html"
         },
         "2": {
-          "name": "compose.html.au"
+          "name": "compose.element.html.au"
         }
       },
       "end": "(>)",
