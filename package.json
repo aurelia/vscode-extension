@@ -90,8 +90,6 @@
     "changelog": "node ./node_modules/conventional-changelog-cli/cli.js -p angular -i doc/CHANGELOG.md -s"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.33",
-    "chai": "^3.5.0",
     "conventional-changelog-cli": "^1.2.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.3",

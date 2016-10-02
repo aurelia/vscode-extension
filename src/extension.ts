@@ -1,5 +1,5 @@
 import { ExtensionContext, OutputChannel, window } from 'vscode';
-import AureliaCliCommands from './aureliaCliCommands';
+import AureliaCliCommands from './aureliaCLICommands';
 
 let outputChannel: OutputChannel;
 

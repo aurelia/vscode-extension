@@ -10,7 +10,6 @@
     "moduleResolution" : "node",
     "lib": ["es2015"],
     "types" : [
-      "chai"
     ]
   },
   "exclude": [
