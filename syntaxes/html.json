@@ -116,7 +116,7 @@
           "name": "punctuation.definition.tag.begin.html"
         },
         "2": {
-          "name": "router-view.html.au"
+          "name": "router-view.element.html.au"
         }
       },
       "end": "(>)",
@@ -125,7 +125,7 @@
           "name": "punctuation.definition.tag.end.html"
         }
       },
-      "name": "routing.html.au",
+      "name": "meta.tag.inline.any.html",
       "patterns": [
         {
           "include": "#tag-stuff"

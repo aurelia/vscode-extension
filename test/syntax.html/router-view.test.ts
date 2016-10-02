@@ -1,12 +1,12 @@
 import * as assert from 'assert';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax', () => {
+suite('The Aurelia HTML syntax router-view element', () => {
 
-  test('must tokenize router-view start element with scope "router-view.html.au"', () => {
+  test('must tokenize router-view start element with scope "router-view.element.html.au"', () => {
 
     // arrange
-    let scope = 'router-view.html.au';
+    let scope = 'router-view.element.html.au';
 
     // act
     let lineToken = tokenizeLine('<router-view>');
@@ -17,10 +17,10 @@ suite('The Aurelia HTML syntax', () => {
 
   });
 
-  test('must tokenize router-view end element with scope "router-view.html.au"', () => {
+  test('must tokenize router-view end element with scope "router-view.element.html.au"', () => {
 
     // arrange
-    let scope = 'router-view.html.au';
+    let scope = 'router-view.element.html.au';
 
     // act
     let lineToken = tokenizeLine('</router-view>');
