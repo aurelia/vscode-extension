@@ -217,7 +217,7 @@
           "name": "punctuation.definition.tag.begin.html"
         },
         "4": {
-          "name": "databinding.html.au"
+          "name": "databinding.attribute.html.au"
         }
       }
     },
@@ -273,7 +273,7 @@
           "name": "punctuation.definition.tag.begin.html"
         },
         "5": {
-          "name": "databinding.html.au"
+          "name": "databinding.attribute.html.au"
         },
         "6": {
           "name": "ref.attribute.html.au"
@@ -290,7 +290,7 @@
           "name": "punctuation.definition.tag.begin.html"
         },
         "5": {
-          "name": "databinding.html.au"
+          "name": "databinding.attribute.html.au"
         },
         "6": {
           "name": "ref.attribute.html.au"
@@ -351,7 +351,7 @@
           "name": "punctuation.definition.tag.begin.html"
         },
         "4": {
-          "name": "databinding.html.au"
+          "name": "databinding.attribute.html.au"
         }       
       }
     },
@@ -365,7 +365,7 @@
           "name": "punctuation.definition.tag.begin.html"
         },
         "4": {
-          "name": "databinding.html.au"
+          "name": "databinding.attribute.html.au"
         }       
       }
     },    
