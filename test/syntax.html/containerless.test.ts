@@ -92,4 +92,3 @@ suite('The Aurelia HTML syntax containerles attribute', () => {
 
   });
 });
-

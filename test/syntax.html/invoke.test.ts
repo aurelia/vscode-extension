@@ -12,7 +12,7 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
     let lineToken = tokenizeLine('<div click.call="test()">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 11,15);
+    let token = getTokenOnCharRange(lineToken, 11, 15);
     assert.equal(hasScope(token.scopes, scope), true);
 
   });
@@ -26,7 +26,7 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
     let lineToken = tokenizeLine('<div click.trigger="test()">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 11,18);
+    let token = getTokenOnCharRange(lineToken, 11, 18);
     assert.equal(hasScope(token.scopes, scope), true);
 
   });
@@ -40,7 +40,7 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
     let lineToken = tokenizeLine('<div click.delegate="test()">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 11,19);
+    let token = getTokenOnCharRange(lineToken, 11, 19);
     assert.equal(hasScope(token.scopes, scope), true);
 
   });

@@ -17,7 +17,7 @@ suite('The Aurelia HTML syntax if attribute', () => {
 
   });
 
-test('must tokenize naive-if attribute with scope "if.attribute.html.au"', () => {
+  test('must tokenize naive-if attribute with scope "if.attribute.html.au"', () => {
 
     // arrange
     let scope = 'if.attribute.html.au';
@@ -29,6 +29,6 @@ test('must tokenize naive-if attribute with scope "if.attribute.html.au"', () =>
     let token = getTokenOnCharRange(lineToken, 5, 13);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  });  
+  });
 
 });

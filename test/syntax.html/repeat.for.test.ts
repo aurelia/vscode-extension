@@ -3,7 +3,7 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 suite('The Aurelia HTML syntax repeat.for attribute', () => {
 
-test('must tokenize (repeat).for attribute with scope "repeat.attribute.html.au"', () => {
+  test('must tokenize (repeat).for attribute with scope "repeat.attribute.html.au"', () => {
 
     // arrange
     let scope = 'repeat.attribute.html.au';

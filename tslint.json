@@ -1,7 +1,8 @@
 {
   "extends": "tslint:recommended",
   "rules": {
-     "quotemark": [true, "single", "avoid-escape"]
+     "quotemark": [true, "single", "avoid-escape"],
+     "max-line-length": [true, 150]
   },
   "rulesDirectory": [
   ]

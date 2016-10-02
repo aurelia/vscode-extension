@@ -58,5 +58,5 @@ suite('The Aurelia HTML syntax', () => {
     assert.equal(hasScope(token.scopes, scope), true);
 
   });
-  
+
 });

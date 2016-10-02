@@ -43,7 +43,7 @@ suite('The Aurelia HTML syntax ref attribute', () => {
     let token = getTokenOnCharRange(lineToken, 11, 14);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  });  
+  });
 
   test('must tokenize view.(ref) attribute with scope "ref.attribute.html.au"', () => {
 
@@ -57,7 +57,7 @@ suite('The Aurelia HTML syntax ref attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 13);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  });  
+  });
 
   test('must tokenize controller.(ref) attribute with scope "ref.attribute.html.au"', () => {
 

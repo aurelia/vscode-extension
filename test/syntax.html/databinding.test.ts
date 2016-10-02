@@ -3,7 +3,7 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 suite('The Aurelia HTML syntax databinding attributes', () => {
 
- test('must tokenize show.bind with scope "databinding.attribute.html.au"', () => {
+  test('must tokenize show.bind with scope "databinding.attribute.html.au"', () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
@@ -59,7 +59,7 @@ suite('The Aurelia HTML syntax databinding attributes', () => {
 
   });
 
- test('must tokenize if.bind with scope "databinding.attribute.html.au"', () => {
+  test('must tokenize if.bind with scope "databinding.attribute.html.au"', () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
@@ -113,7 +113,7 @@ suite('The Aurelia HTML syntax databinding attributes', () => {
     let token = getTokenOnCharRange(lineToken, 8, 16);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  });    
+  });
 
   test('must tokenize view-model.(bind) attribute with scope "databinding.attribute.html.au"', () => {
 
@@ -127,7 +127,7 @@ suite('The Aurelia HTML syntax databinding attributes', () => {
     let token = getTokenOnCharRange(lineToken, 16, 20);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  }); 
+  });
 
   test('must tokenize view-model.(one-way) attribute with scope "databinding.attribute.html.au"', () => {
 
@@ -141,7 +141,7 @@ suite('The Aurelia HTML syntax databinding attributes', () => {
     let token = getTokenOnCharRange(lineToken, 16, 23);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  }); 
+  });
 
   test('must tokenize view-model.(two-way) attribute with scope "databinding.attribute.html.au"', () => {
 
@@ -155,7 +155,7 @@ suite('The Aurelia HTML syntax databinding attributes', () => {
     let token = getTokenOnCharRange(lineToken, 16, 23);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  }); 
+  });
 
   test('must tokenize view-model.(one-time) attribute with scope "databinding.attribute.html.au"', () => {
 

@@ -3,7 +3,7 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 suite('The Aurelia HTML syntax string interpolation', () => {
 
- test('must tokenize string interpolation in element with scope "meta.string.interpolation"', () => {
+  test('must tokenize string interpolation in element with scope "meta.string.interpolation"', () => {
 
     // arrange
     let scope = 'meta.string.interpolation';
@@ -32,7 +32,7 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 5, 7);
-    assert.equal(hasScope(token.scopes, 'punctuation.definition.string.interpolation.start'), true);
+    assert.equal(hasScope(token.scopes, scope), true);
 
   });
 
@@ -46,7 +46,7 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 11);
-    assert.equal(hasScope(token.scopes, 'punctuation.definition.string.interpolation.end'), true);
+    assert.equal(hasScope(token.scopes, scope), true);
 
   });
 
@@ -79,7 +79,7 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 12, 14);
-    assert.equal(hasScope(token.scopes, 'punctuation.definition.string.interpolation.start'), true);
+    assert.equal(hasScope(token.scopes, scope), true);
 
   });
 
@@ -93,7 +93,7 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 17, 18);
-    assert.equal(hasScope(token.scopes, 'punctuation.definition.string.interpolation.end'), true);
+    assert.equal(hasScope(token.scopes, scope), true);
 
   });
 
@@ -128,7 +128,7 @@ suite('The Aurelia HTML syntax string interpolation', () => {
     let token = getTokenOnCharRange(lineToken, 0, 2);
     assert.equal(hasScope(token.scopes, scope), true);
 
-  });  
+  });
 
   test('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.end"', () => {
 
