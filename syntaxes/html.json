@@ -3,6 +3,12 @@
   "name": "au.html",
   "patterns": [
     {
+      "include": "#compose.html.au"
+    },
+    {
+      "include": "#router-view.html.au"
+    },    
+    {
       "include": "#meta.tag.block.any.html"
     },
     {
@@ -10,12 +16,6 @@
     },
     {
       "include": "#meta.tag.other.html"
-    },     
-    {
-      "include": "#compose.html.au"
-    },
-    {
-      "include": "#router-view.html.au"
     },   
     {
       "include": "#string.interpolation.html.au"
@@ -133,7 +133,7 @@
       ]
     },
     "meta.tag.other.html": {
-      "begin": "(<\/?)((?!compose|router-view)[a-zA-Z0-9:\\-]+)",
+      "begin": "(<\/?)([a-zA-Z0-9:\\-]+)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.html"
