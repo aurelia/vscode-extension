@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax', () => {
+suite('The Aurelia HTML syntax controller atrribute', () => {
 
   test('must tokenize controller attribute with scope "attribute.html.au"', () => {
 
