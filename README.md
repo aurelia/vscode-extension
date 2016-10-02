@@ -48,6 +48,6 @@ If you want to build a custom theme, [read here](https://github.com/aurelia/vsco
 
 ![Aurelia dark theme](https://raw.githubusercontent.com/aurelia/vscode-extension/master/images/dark-aurelia-syntax.PNG)
 
-##### Light themes
+#### Light themes
 
 ![Aurelia light theme](https://raw.githubusercontent.com/aurelia/vscode-extension/master/images/light-aurelia-syntax.PNG)
