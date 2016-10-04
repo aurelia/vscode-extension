@@ -45,4 +45,19 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
 
   });
 
+  test('must not tokenize invokes in attribute body with scope "invoke.attribute.html.au"', () => {
+
+    // arrange
+    let scope = 'meta.tag.inline.any.html';
+
+    // act
+    let lineToken = tokenizeLine('<a b="draw.call:animate(data)">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 6, 29);
+    assert.equal(hasScope(token.scopes, scope), true);
+
+  });
+
+   
 });
