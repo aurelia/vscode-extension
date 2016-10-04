@@ -281,7 +281,7 @@
       }
     },  
     "tag-aurelia-model-attribute" : {
-      "match": "[^=-]((model)(\\.)?((bind|one-time|one-way|two-way)|(ref))?)",
+      "match": "(?=\\s)[^=-]((model)(\\.)?((bind|one-time|one-way|two-way)|(ref))?)",
       "captures": {
         "2": {
           "name": "model.attribute.html.au"
