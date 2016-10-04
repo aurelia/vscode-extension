@@ -17,4 +17,18 @@ suite('The Aurelia HTML syntax model attribute', () => {
 
   });
 
+  test('must not tokenize attribute body that contains model keyword with scope "model.attribute.html.au"', () => {
+
+    // arrange
+    let scope = 'meta.tag.block.any.html';
+
+    // act
+    let lineToken = tokenizeLine('<div value.bind="model.value">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 17, 28);
+    assert.equal(hasScope(token.scopes, scope), true);
+
+  });
+
 });
