@@ -2,7 +2,6 @@ test:
   pre:
     - node ./node_modules/vscode/bin/compile
   override:
-    - ls /home/ubuntu/vscode-extension
     - mocha dist/test --recursive --reporter mocha-junit-reporter:
         environment:
           MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
