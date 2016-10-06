@@ -1,10 +1,7 @@
-import * as path from 'path';
+import { Registry } from 'vscode-textmate';
 
-// tslint:disable
-let Registry = require(path.join(require.main.filename, '../../node_modules/vscode-textmate/release/main.js')).Registry;
-// tslint:enable
-let registry: vscodeTextmate.Registry = new Registry();
-registry.loadGrammarFromPathSync(path.join(path.dirname(module.parent.filename), './../../../syntaxes/html.json'));
+let registry = new Registry();
+registry.loadGrammarFromPathSync('./syntaxes/html.json');
 let grammar = registry.grammarForScopeName('au.html');
 
 export function tokenizeLine(line: string) {

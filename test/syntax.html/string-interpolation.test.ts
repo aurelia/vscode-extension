@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax string interpolation', () => {
+describe('The Aurelia HTML syntax string interpolation', () => {
 
-  test('must tokenize string interpolation in element with scope "meta.string.interpolation"', () => {
+  it('must tokenize string interpolation in element with scope "meta.string.interpolation"', () => {
 
     // arrange
     let scope = 'meta.string.interpolation';
@@ -16,13 +16,13 @@ suite('The Aurelia HTML syntax string interpolation', () => {
     let middleToken = getTokenOnCharRange(lineToken, 7, 10);
     let endToken = getTokenOnCharRange(lineToken, 10, 11);
 
-    assert.equal(hasScope(startToken.scopes, scope), true);
-    assert.equal(hasScope(middleToken.scopes, scope), true);
-    assert.equal(hasScope(endToken.scopes, scope), true);
+    assert.isOk(hasScope(startToken.scopes, scope));
+    assert.isOk(hasScope(middleToken.scopes, scope));
+    assert.isOk(hasScope(endToken.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.start"', () => {
+  it('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.start"', () => {
 
     // arrange
     let scope = 'punctuation.definition.string.interpolation.start';
@@ -32,11 +32,11 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 5, 7);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.end"', () => {
+  it('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.end"', () => {
 
     // arrange
     let scope = 'punctuation.definition.string.interpolation.end';
@@ -46,11 +46,11 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 11);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation in attribute with scope "meta.string.interpolation"', () => {
+  it('must tokenize string interpolation in attribute with scope "meta.string.interpolation"', () => {
 
     // arrange
     let scope = 'meta.string.interpolation';
@@ -63,13 +63,13 @@ suite('The Aurelia HTML syntax string interpolation', () => {
     let middleToken = getTokenOnCharRange(lineToken, 14, 17);
     let endToken = getTokenOnCharRange(lineToken, 17, 18);
 
-    assert.equal(hasScope(startToken.scopes, scope), true);
-    assert.equal(hasScope(middleToken.scopes, scope), true);
-    assert.equal(hasScope(endToken.scopes, scope), true);
+    assert.isOk(hasScope(startToken.scopes, scope));
+    assert.isOk(hasScope(middleToken.scopes, scope));
+    assert.isOk(hasScope(endToken.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.start"', () => {
+  it('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.start"', () => {
 
     // arrange
     let scope = 'punctuation.definition.string.interpolation.start';
@@ -79,11 +79,11 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 12, 14);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.end"', () => {
+  it('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.end"', () => {
 
     // arrange
     let scope = 'punctuation.definition.string.interpolation.end';
@@ -93,11 +93,11 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 17, 18);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation with condition with scope "meta.string.interpolation"', () => {
+  it('must tokenize string interpolation with condition with scope "meta.string.interpolation"', () => {
 
     // arrange
     let scope = 'meta.string.interpolation';
@@ -110,13 +110,13 @@ suite('The Aurelia HTML syntax string interpolation', () => {
     let middleToken = getTokenOnCharRange(lineToken, 2, 26);
     let endToken = getTokenOnCharRange(lineToken, 26, 27);
 
-    assert.equal(hasScope(startToken.scopes, scope), true);
-    assert.equal(hasScope(middleToken.scopes, scope), true);
-    assert.equal(hasScope(endToken.scopes, scope), true);
+    assert.isOk(hasScope(startToken.scopes, scope));
+    assert.isOk(hasScope(middleToken.scopes, scope));
+    assert.isOk(hasScope(endToken.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.start"', () => {
+  it('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.start"', () => {
 
     // arrange
     let scope = 'punctuation.definition.string.interpolation.start';
@@ -126,11 +126,11 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 0, 2);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.end"', () => {
+  it('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.end"', () => {
 
     // arrange
     let scope = 'meta.string.interpolation';
@@ -140,7 +140,7 @@ suite('The Aurelia HTML syntax string interpolation', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 26, 27);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 

@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax if attribute', () => {
+describe('The Aurelia HTML syntax if attribute', () => {
 
-  test('must tokenize if attribute with scope "if.attribute.html.au"', () => {
+  it('must tokenize if attribute with scope "if.attribute.html.au"', () => {
 
     // arrange
     let scope = 'if.attribute.html.au';
@@ -13,11 +13,11 @@ suite('The Aurelia HTML syntax if attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 5, 7);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize naive-if attribute with scope "if.attribute.html.au"', () => {
+  it('must tokenize naive-if attribute with scope "if.attribute.html.au"', () => {
 
     // arrange
     let scope = 'if.attribute.html.au';
@@ -27,7 +27,7 @@ suite('The Aurelia HTML syntax if attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 5, 13);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 

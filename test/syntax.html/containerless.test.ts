@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax containerles attribute', () => {
+describe('The Aurelia HTML syntax containerles attribute', () => {
 
-  test('must tokenize containerless attribute with scope "containerless.attribute.html.au"', () => {
+  it('must tokenize containerless attribute with scope "containerless.attribute.html.au"', () => {
 
     // arrange
     let scope = 'containerless.attribute.html.au';
@@ -13,11 +13,11 @@ suite('The Aurelia HTML syntax containerles attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 23);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must not tokenize containerless="" attribute', () => {
+  it('must not tokenize containerless="" attribute', () => {
 
     // arrange
     let scope = 'containerless.attribute.html.au';
@@ -27,12 +27,12 @@ suite('The Aurelia HTML syntax containerles attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 23);
-    assert.notEqual(token, null);
-    assert.equal(hasScope(token.scopes, scope), false);
+    assert.isDefined(token);
+    assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must not tokenize containerless-foo="" attribute', () => {
+  it('must not tokenize containerless-foo="" attribute', () => {
 
     // arrange
     let scope = 'containerless.attribute.html.au';
@@ -42,12 +42,12 @@ suite('The Aurelia HTML syntax containerles attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 27);
-    assert.notEqual(token, null);
-    assert.equal(hasScope(token.scopes, scope), false);
+    assert.isDefined(token);
+    assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must not tokenize foo-containerles="" attribute', () => {
+  it('must not tokenize foo-containerles="" attribute', () => {
 
     // arrange
     let scope = 'containerless.attribute.html.au';
@@ -57,12 +57,12 @@ suite('The Aurelia HTML syntax containerles attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 27);
-    assert.notEqual(token, null);
-    assert.equal(hasScope(token.scopes, scope), false);
+    assert.isDefined(token);
+    assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must not tokenize foo-containerless="boo" attribute', () => {
+  it('must not tokenize foo-containerless="boo" attribute', () => {
 
     // arrange
     let scope = 'containerless.attribute.html.au';
@@ -72,12 +72,12 @@ suite('The Aurelia HTML syntax containerles attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 27);
-    assert.notEqual(token, null);
-    assert.equal(hasScope(token.scopes, scope), false);
+    assert.isDefined(token);
+    assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must not tokenize containerlessfoo="boo" attribute', () => {
+  it('must not tokenize containerlessfoo="boo" attribute', () => {
 
     // arrange
     let scope = 'containerless.attribute.html.au';
@@ -87,8 +87,8 @@ suite('The Aurelia HTML syntax containerles attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 26);
-    assert.notEqual(token, null);
-    assert.equal(hasScope(token.scopes, scope), false);
+    assert.isDefined(token);
+    assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 });

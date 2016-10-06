@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax bindable attribute', () => {
+describe('The Aurelia HTML syntax bindable attribute', function() {
 
-  test('must tokenize bindable attribute with scope "bindable.attribute.html.au"', () => {
+  it('must tokenize bindable attribute with scope "bindable.attribute.html.au"', function() {
 
     // arrange
     let scope = 'bindable.attribute.html.au';
@@ -13,8 +13,6 @@ suite('The Aurelia HTML syntax bindable attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 18);
-    assert.equal(hasScope(token.scopes, scope), true);
-
+    assert.isOk(hasScope(token.scopes, scope));
   });
-
 });

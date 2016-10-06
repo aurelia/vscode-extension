@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax compose element', () => {
+describe('The Aurelia HTML syntax compose element', () => {
 
-  test('must tokenize compose start element with scope "compose.element.html.au"', () => {
+  it('must tokenize compose start element with scope "compose.element.html.au"', () => {
 
     // arrange
     let scope = 'compose.element.html.au';
@@ -13,11 +13,11 @@ suite('The Aurelia HTML syntax compose element', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 1, 8);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize compose end element with scope "compose.element.html.au"', () => {
+  it('must tokenize compose end element with scope "compose.element.html.au"', () => {
 
     // arrange
     let scope = 'compose.element.html.au';
@@ -27,7 +27,7 @@ suite('The Aurelia HTML syntax compose element', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 2, 9);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 

@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax ref attribute', () => {
+describe('The Aurelia HTML syntax ref attribute', () => {
 
-  test('must tokenize any.(ref) attribute with scope "ref.attribute.html.au"', () => {
+  it('must tokenize any.(ref) attribute with scope "ref.attribute.html.au"', () => {
 
     // arrange
     let scope = 'ref.attribute.html.au';
@@ -13,11 +13,11 @@ suite('The Aurelia HTML syntax ref attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 9, 12);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize view-model.(ref) attribute with scope "ref.attribute.html.au"', () => {
+  it('must tokenize view-model.(ref) attribute with scope "ref.attribute.html.au"', () => {
 
     // arrange
     let scope = 'ref.attribute.html.au';
@@ -27,11 +27,11 @@ suite('The Aurelia HTML syntax ref attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 16, 19);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize model.(ref) attribute with scope "ref.attribute.html.au"', () => {
+  it('must tokenize model.(ref) attribute with scope "ref.attribute.html.au"', () => {
 
     // arrange
     let scope = 'ref.attribute.html.au';
@@ -41,11 +41,11 @@ suite('The Aurelia HTML syntax ref attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 11, 14);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize view.(ref) attribute with scope "ref.attribute.html.au"', () => {
+  it('must tokenize view.(ref) attribute with scope "ref.attribute.html.au"', () => {
 
     // arrange
     let scope = 'ref.attribute.html.au';
@@ -55,11 +55,11 @@ suite('The Aurelia HTML syntax ref attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 13);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize controller.(ref) attribute with scope "ref.attribute.html.au"', () => {
+  it('must tokenize controller.(ref) attribute with scope "ref.attribute.html.au"', () => {
 
     // arrange
     let scope = 'ref.attribute.html.au';
@@ -69,7 +69,7 @@ suite('The Aurelia HTML syntax ref attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 16, 19);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 

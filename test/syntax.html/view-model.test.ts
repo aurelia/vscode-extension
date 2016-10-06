@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax view-model attribute', () => {
+describe('The Aurelia HTML syntax view-model attribute', () => {
 
-  test('must tokenize (view-model).x attribute with scope "attribute.html.au"', () => {
+  it('must tokenize (view-model).x attribute with scope "attribute.html.au"', () => {
 
     // arrange
     let scope = 'view-model.attribute.html.au';
@@ -13,11 +13,11 @@ suite('The Aurelia HTML syntax view-model attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 5, 15);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize view-model attribute with scope "view-model.attribute.html.au"', () => {
+  it('must tokenize view-model attribute with scope "view-model.attribute.html.au"', () => {
 
     // arrange
     let scope = 'view-model.attribute.html.au';
@@ -27,7 +27,7 @@ suite('The Aurelia HTML syntax view-model attribute', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 27, 37);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 

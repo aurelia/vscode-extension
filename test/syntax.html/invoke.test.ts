@@ -1,9 +1,9 @@
-import * as assert from 'assert';
+import { assert } from 'chai';
 import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
-suite('The Aurelia HTML syntax invoke attributes', () => {
+describe('The Aurelia HTML syntax invoke attributes', () => {
 
-  test('must tokenize call attribute with scope "invoke.attribute.html.au"', () => {
+  it('must tokenize call attribute with scope "invoke.attribute.html.au"', () => {
 
     // arrange
     let scope = 'invoke.attribute.html.au';
@@ -13,11 +13,11 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 11, 15);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize triger attribute with scope "invoke.attribute.html.au"', () => {
+  it('must tokenize triger attribute with scope "invoke.attribute.html.au"', () => {
 
     // arrange
     let scope = 'invoke.attribute.html.au';
@@ -27,11 +27,11 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 11, 18);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must tokenize delegate attribute with scope "invoke.attribute.html.au"', () => {
+  it('must tokenize delegate attribute with scope "invoke.attribute.html.au"', () => {
 
     // arrange
     let scope = 'invoke.attribute.html.au';
@@ -41,11 +41,11 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 11, 19);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  test('must not tokenize invokes in attribute body with scope "invoke.attribute.html.au"', () => {
+  it('must not tokenize invokes in attribute body with scope "invoke.attribute.html.au"', () => {
 
     // arrange
     let scope = 'meta.tag.inline.any.html';
@@ -55,9 +55,8 @@ suite('The Aurelia HTML syntax invoke attributes', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 6, 29);
-    assert.equal(hasScope(token.scopes, scope), true);
+    assert.isOk(hasScope(token.scopes, scope));
 
   });
-
    
 });
