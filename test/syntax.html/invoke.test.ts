@@ -31,6 +31,34 @@ describe('The Aurelia HTML syntax invoke attributes', () => {
 
   });
 
+  it('must not tokenize attribute body that contains click.trigger keyword', () => {
+
+    // arrange-
+    let scope = 'meta.tag.block.any.html';
+
+    // act
+    let lineToken = tokenizeLine('<div value.bind="click.trigger">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 17, 30);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });  
+
+  it('must not tokenize invokes in attribute body with scope "invoke.attribute.html.au"', () => {
+
+    // arrange
+    let scope = 'meta.tag.inline.any.html';
+
+    // act
+    let lineToken = tokenizeLine('<a b="draw.call:animate(data)">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 6, 29);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });  
+
   it('must tokenize delegate attribute with scope "invoke.attribute.html.au"', () => {
 
     // arrange
@@ -45,18 +73,4 @@ describe('The Aurelia HTML syntax invoke attributes', () => {
 
   });
 
-  it('must not tokenize invokes in attribute body with scope "invoke.attribute.html.au"', () => {
-
-    // arrange
-    let scope = 'meta.tag.inline.any.html';
-
-    // act
-    let lineToken = tokenizeLine('<a b="draw.call:animate(data)">');
-
-    // assert
-    let token = getTokenOnCharRange(lineToken, 6, 29);
-    assert.isOk(hasScope(token.scopes, scope));
-
-  });
-   
 });
