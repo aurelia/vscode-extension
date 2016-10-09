@@ -48,7 +48,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize class="replace-part" attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<div class="replace-part">');
@@ -62,7 +62,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize class='replace-part' attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<div class=\'replace-part\'>');
@@ -76,7 +76,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (somereplace-part)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template somereplace-part="item-template">');
@@ -90,7 +90,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (somereplace-part)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template somereplace-part=\'item-template\'>');
@@ -104,7 +104,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (replace-partsome)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template replace-partsome="item-template">');
@@ -118,7 +118,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (replace-partsome)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template replace-partsome=\'item-template\'>');
@@ -132,7 +132,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (replace-part-some)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template replace-part-some="item-template">');
@@ -146,7 +146,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (replace-part-some)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template replace-part-some=\'item-template\'>');
@@ -160,7 +160,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (some-replace-part)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template some-replace-part="item-template">');
@@ -174,7 +174,7 @@ describe('The Aurelia HTML syntax replace-part attribute', () => {
   it(`must not tokenize (some-replace-part)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    let scope = 'replace-part.attribute.html.au';
 
     // act
     let lineToken = tokenizeLine('<template some-replace-part=\'item-template\'>');
