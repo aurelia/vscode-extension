@@ -197,6 +197,9 @@
           "include": "#tag-aurelia-ref-attribute"
         },
         {
+          "include": "#tag-aurelia-replaceable-attribute"
+        },
+        {
           "include": "#tag-aurelia-attribute"
         },
         {
@@ -381,9 +384,17 @@
       "name": "ref.attribute.html.au"
     },
     "tag-aurelia-attribute": {
-      "match": "[^=-]\\b(as-element|replace-part|view|replaceable)",
+      "match": "[^=-]\\b(as-element|replace-part|view)",
       "name": "attribute.html.au"
     },
+    "tag-aurelia-replaceable-attribute": {
+      "match": "(?<!\"')\\b[^=-](replaceable)(?!-)\\b",
+      "captures": {
+        "1": {
+          "name": "replaceable.attribute.html.au"
+        }
+      }
+    },    
     "string-double-quoted": {
       "begin": "\"",
       "beginCaptures": {
