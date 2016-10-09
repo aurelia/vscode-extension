@@ -182,6 +182,9 @@
           "include": "#tag-aurelia-containerless-attribute"
         },
         {
+          "include": "#tag-aurelia-replace-part-attribute"
+        },
+        {
           "include": "#tag-aurelia-bindable-attribute"
         },
         {
@@ -384,8 +387,16 @@
       "name": "ref.attribute.html.au"
     },
     "tag-aurelia-attribute": {
-      "match": "[^=-]\\b(as-element|replace-part)",
+      "match": "[^=-]\\b(as-element)",
       "name": "attribute.html.au"
+    },
+    "tag-aurelia-replace-part-attribute": {
+      "match": "(?<![\"'-])\\b(replace-part)(?=\\=)\\b",
+      "captures": {
+        "1": {
+          "name": "replace-part.attribute.html.au"
+        }
+      }
     },
     "tag-aurelia-replaceable-attribute": {
       "match": "(?<!\"')\\b[^=-](replaceable)(?!-)\\b",
