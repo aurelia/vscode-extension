@@ -73,4 +73,32 @@ describe('The Aurelia HTML syntax ref attribute', () => {
 
   });
 
+  it('must tokenize ref attribute with scope "ref.attribute.html.au"', () => {
+
+    // arrange
+    let scope = 'ref.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div ref="foo">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 5, 8);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
+  it('must not tokenize ref part in body of other attribute', () => {
+
+    // arrange
+    let scope = 'meta.tag.inline.any.html';
+
+    // act
+    let lineToken = tokenizeLine('<meta name="referrer" content="origin-when-crossorigin">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 12, 20);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
 });

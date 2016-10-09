@@ -192,7 +192,10 @@
         },
         {
           "include": "#tag-aurelia-attribute-with-invoke-attribute"
-        },        
+        },
+        {
+          "include": "#tag-aurelia-ref-attribute"
+        },
         {
           "include": "#tag-aurelia-attribute"
         },
@@ -373,8 +376,12 @@
       "match": "(?<=[^=])\\b([a-zA-Z0-9:-]+)",
       "name": "entity.other.attribute-name.html"
     },
+    "tag-aurelia-ref-attribute": {
+      "match": "\\bref\\b",
+      "name": "ref.attribute.html.au"
+    },
     "tag-aurelia-attribute": {
-      "match": "[^=]\\b(as-element|replaceable|replace-part|view|ref)",
+      "match": "[^=-]\\b(as-element|replace-part|view|replaceable)",
       "name": "attribute.html.au"
     },
     "string-double-quoted": {
