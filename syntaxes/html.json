@@ -203,7 +203,7 @@
           "include": "#tag-aurelia-replaceable-attribute"
         },
         {
-          "include": "#tag-aurelia-attribute"
+          "include": "#tag-aurelia-as-element-attribute"
         },
         {
           "include": "#tag-generic-attribute"
@@ -386,10 +386,14 @@
       "match": "\\bref\\b",
       "name": "ref.attribute.html.au"
     },
-    "tag-aurelia-attribute": {
-      "match": "[^=-]\\b(as-element)",
-      "name": "attribute.html.au"
-    },
+    "tag-aurelia-as-element-attribute": {
+      "match": "(?<![\"'-])\\b(as-element)(?=\\=)\\b",
+      "captures": {
+        "1": {
+          "name": "as-element.attribute.html.au"
+        }
+      }
+    },    
     "tag-aurelia-replace-part-attribute": {
       "match": "(?<![\"'-])\\b(replace-part)(?=\\=)\\b",
       "captures": {
