@@ -19,6 +19,7 @@
   "license": "MIT",
   "author": "Aurelia",
   "publisher": "Aurelia",
+  "preview": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/aurelia/vscode-extension"
