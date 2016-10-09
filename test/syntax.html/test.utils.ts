@@ -21,3 +21,12 @@ export function hasScope(scopes: Array<string>, scope: string) {
   let foundScopes = scopes.filter(s => s === scope);
   return foundScopes.length === 1;
 }
+
+export function writeOut(lineToken, text) {
+  for(let lt of lineToken.tokens) {
+    console.log(`${lt.startIndex} - ${lt.endIndex} => ${text.substring(lt.startIndex, lt.endIndex)}`);
+    for(let s of lt.scopes) {
+      console.log(`- ${s}`);
+    }
+  }
+}

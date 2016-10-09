@@ -228,7 +228,7 @@
       }
     },
     "tag-aurelia-attribute-with-ref-attribute": {
-      "match": "[^=](([a-zA-Z0-9:-]+)(\\.)(ref))",
+      "match": "[^=](([a-zA-Z0-9:-]+)(?<!view)(\\.)(ref))",
       "captures": {
         "2": {
           "name": "entity.other.attribute-name.html"
@@ -304,9 +304,9 @@
       }
     },
     "tag-aurelia-view-attribute" : {
-      "match": "[^=-]((view)[^!-](\\.)?(ref)?)",
+      "match": "(?<![\"'-])\\b(view((\\.)(ref))?(?=\\=))\\b",
       "captures": {
-        "2": {
+        "1": {
           "name": "view.attribute.html.au"
         },
         "3": {
@@ -384,7 +384,7 @@
       "name": "ref.attribute.html.au"
     },
     "tag-aurelia-attribute": {
-      "match": "[^=-]\\b(as-element|replace-part|view)",
+      "match": "[^=-]\\b(as-element|replace-part)",
       "name": "attribute.html.au"
     },
     "tag-aurelia-replaceable-attribute": {
@@ -394,7 +394,7 @@
           "name": "replaceable.attribute.html.au"
         }
       }
-    },    
+    },      
     "string-double-quoted": {
       "begin": "\"",
       "beginCaptures": {
