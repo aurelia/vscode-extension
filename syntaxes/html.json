@@ -217,15 +217,15 @@
       ]
     },
     "tag-aurelia-attribute-with-databinding-attribute": {
-      "match": "[^=](([a-zA-Z0-9:-]+)(\\.)(bind|one-way|two-way|one-time))",
+      "match": "([a-zA-Z0-9:-]+)(?<!show)(\\.)(bind|one-way|two-way|one-time)",
       "captures": {
-        "2": {
+        "1": {
           "name": "entity.other.attribute-name.html"
         },
-        "3": {
+        "2": {
           "name": "punctuation.definition.tag.begin.html"
         },
-        "4": {
+        "3": {
           "name": "databinding.attribute.html.au"
         }
       }
@@ -365,15 +365,15 @@
       }
     },
     "tag-aurelia-show-attribute" : {
-      "match": "[^=-]((show)(?!-)(\\.)?(bind|one-way|two-way|one-time)?)",
+      "match": "(?<=[^\"-])(show)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
       "captures": {
-        "2": {
+        "1": {
           "name": "show.attribute.html.au"
         },
-        "3": {
+        "2": {
           "name": "punctuation.definition.tag.begin.html"
         },
-        "4": {
+        "3": {
           "name": "databinding.attribute.html.au"
         }       
       }
