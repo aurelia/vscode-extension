@@ -9,7 +9,7 @@ export function tokenizeLine(line: string) {
 }
 
 export function getTokenOnCharRange(
-  lineToken: vscodeTextmate.ITokenizeLineResult,
+  lineToken,
   startIndex: number,
   endIndex: number) {
 

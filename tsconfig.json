@@ -1,19 +1,16 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2015",
-    "outDir": "dist",
-    "sourceMap": true,
-    "rootDir": ".",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "moduleResolution" : "node",
-    "lib": ["es2015"],
-    "types" : [
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "outDir": "dist",
+        "lib": [
+            "es6"
+        ],
+        "sourceMap": true,
+        "rootDir": "."
+    },
+    "exclude": [
+        "node_modules",
+        ".vscode-test"
     ]
-  },
-  "exclude": [
-    "node_modules",
-    ".vscode-test"
-  ]
 }
