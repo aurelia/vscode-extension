@@ -1,6 +1,6 @@
 test:
   pre:
-    - node ./node_modules/vscode/bin/compile
+    - npm run vscode:prepublish
   override:
     - mocha dist/test --recursive --reporter mocha-junit-reporter:
         environment:
