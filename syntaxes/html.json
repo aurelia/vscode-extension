@@ -217,7 +217,7 @@
       ]
     },
     "tag-aurelia-attribute-with-databinding-attribute": {
-      "match": "([a-zA-Z0-9:-]+)(?<!bindable|view-model|show|if|naive-if)(\\.)(bind|one-way|two-way|one-time)",
+      "match": "([a-zA-Z0-9:-]+)(?<!controller|bindable|view-model|show|if|naive-if)(\\.)(bind|one-way|two-way|one-time)",
       "captures": {
         "1": {
           "name": "entity.other.attribute-name.html"
@@ -231,7 +231,7 @@
       }
     },
     "tag-aurelia-attribute-with-ref-attribute": {
-      "match": "[^=](([a-zA-Z0-9:-]+)(?<!view|view-model)(\\.)(ref))",
+      "match": "[^=](([a-zA-Z0-9:-]+)(?<!controller|view|view-model)(\\.)(ref))",
       "captures": {
         "2": {
           "name": "entity.other.attribute-name.html"
@@ -321,15 +321,18 @@
       }
     },
     "tag-aurelia-controller-attribute" : {
-      "match": "[^=-]((controller)[^!-](\\.)?(ref)?)",
+      "match": "(?<![\"'-])(controller)(?![\\-])(?=(\\.ref|=))((\\.)?(ref))?",
       "captures": {
-        "2": {
+        "1": {
           "name": "controller.attribute.html.au"
         },
-        "3": {
+        "2": {
+          "name": "punctuation.definition.tag.begin.html"
+        },        
+        "4": {
           "name": "punctuation.definition.tag.begin.html"
         },
-        "4": {
+        "5": {
           "name": "ref.attribute.html.au"
         }       
       }
