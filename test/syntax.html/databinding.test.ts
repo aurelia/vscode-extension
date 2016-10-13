@@ -1,15 +1,15 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
 
 describe('The Aurelia HTML syntax databinding attributes', () => {
 
-  it('must tokenize show.bind with scope "databinding.attribute.html.au"', () => {
+  it(`must tokenize (some).bind="foo" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div show.bind="foo">');
+    let lineToken = tokenizeLine('<div some.bind="foo">');
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 14);
@@ -17,13 +17,13 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
 
   });
 
-  it('must tokenize show.one-way with scope "databinding.attribute.html.au"', () => {
+  it(`must tokenize (some).one-way="foo" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div show.one-way="foo">');
+    let lineToken = tokenizeLine('<div some.one-way="foo">');
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 17);
@@ -31,13 +31,13 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
 
   });
 
-  it('must tokenize show.two-way with scope "databinding.attribute.html.au"', () => {
+  it(`must tokenize (some).two-way="foo" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div show.two-way="foo">');
+    let lineToken = tokenizeLine('<div some.two-way="foo">');
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 17);
@@ -45,13 +45,13 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
 
   });
 
-  it('must tokenize show.one-time with scope "databinding.attribute.html.au"', () => {
+  it(`must tokenize (some).one-time="foo" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div show.one-time="foo">');
+    let lineToken = tokenizeLine('<div some.one-time="foo">');
 
     // assert
     let token = getTokenOnCharRange(lineToken, 10, 18);
@@ -59,115 +59,171 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
 
   });
 
-  it('must tokenize if.bind with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x.(bind)" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div if.bind="foo">');
+    let lineToken = tokenizeLine('<div a="x.bind">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 8, 12);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 14);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize if.ony-way with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x; x.(bind)" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div if.one-way="foo">');
+    let lineToken = tokenizeLine('<div a="x; x.bind">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 8, 15);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 17);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });  
+
+  it(`must not tokenize a="x.(bind)='x'; x" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x.bind=\'x\'; x">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 21);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });  
+
+  it(`must not tokenize a="x.(one-way)" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x.one-way">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 17);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize if.two-way with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x; x.(one-way)" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div if.two-way="foo">');
+    let lineToken = tokenizeLine('<div a="x; x.one-way">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 8, 15);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 20);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize if.one-time with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x.(one-way)='x'; x" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div if.one-time="foo">');
+    let lineToken = tokenizeLine('<div a="x.one-way=\'x\'; x">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 8, 16);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 24);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize view-model.(bind) attribute with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x.(two-way)" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div view-model.bind="foo">');
+    let lineToken = tokenizeLine('<div a="x.two-way">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 16, 20);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 17);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize view-model.(one-way) attribute with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x; x.(two-way)" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div view-model.one-way="foo">');
+    let lineToken = tokenizeLine('<div a="x; x.two-way">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 16, 23);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 20);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize view-model.(two-way) attribute with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x.(two-way)='x; x" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div view-model.two-way="foo">');
+    let lineToken = tokenizeLine('<div a="x.two-way=\'x\'; x">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 16, 23);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 24);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize view-model.(one-time) attribute with scope "databinding.attribute.html.au"', () => {
+  it(`must not tokenize a="x.(one-time)" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div view-model.one-time="foo">');
+    let lineToken = tokenizeLine('<div a="x.one-time">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 16, 24);
-    assert.isOk(hasScope(token.scopes, scope));
+    let token = getTokenOnCharRange(lineToken, 8, 18);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x; x.(one-time)" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x; x.one-time">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 21);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x.(one-time)='\'x\; x" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x.one-time=\'x\'; x">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 25);
+    assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
