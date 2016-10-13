@@ -217,7 +217,7 @@
       ]
     },
     "tag-aurelia-attribute-with-databinding-attribute": {
-      "match": "([a-zA-Z0-9:-]+)(?<!controller|bindable|view-model|show|if|naive-if)(\\.)(bind|one-way|two-way|one-time)",
+      "match": "(?<![\"'-])([a-zA-Z0-9:-]+)(?<!controller|bindable|view-model|show|if|naive-if)(\\.)(bind|one-way|two-way|one-time)(?![\"'-;])",
       "captures": {
         "1": {
           "name": "entity.other.attribute-name.html"
