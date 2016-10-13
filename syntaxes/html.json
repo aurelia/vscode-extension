@@ -217,7 +217,7 @@
       ]
     },
     "tag-aurelia-attribute-with-databinding-attribute": {
-      "match": "([a-zA-Z0-9:-]+)(?<!view-model|show|if|naive-if)(\\.)(bind|one-way|two-way|one-time)",
+      "match": "([a-zA-Z0-9:-]+)(?<!bindable|view-model|show|if|naive-if)(\\.)(bind|one-way|two-way|one-time)",
       "captures": {
         "1": {
           "name": "entity.other.attribute-name.html"
@@ -335,9 +335,9 @@
       }
     },
     "tag-aurelia-bindable-attribute" : {
-      "match": "[^=-]((bindable)[^!-])",
+      "match": "(?<![\\-\"])(bindable)(?![\\.\\-\"])",
       "captures": {
-        "2": {
+        "1": {
           "name": "bindable.attribute.html.au"
         }     
       }
