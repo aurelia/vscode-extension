@@ -259,15 +259,15 @@
       }
     },        
     "tag-aurelia-repeat-for-attribute" : {
-      "match": "[^=]((repeat)(\\.)(for))",
+      "match": "(?<=[^\"-])(repeat)(\\.)(for)(?![-])",
       "captures": {
-        "2": {
+        "1": {
           "name": "repeat.attribute.html.au"
         },
-        "3": {
+        "2": {
           "name": "punctuation.definition.tag.begin.html"
         },
-        "4": {
+        "3": {
           "name": "for.attribute.html.au"
         }
       }
