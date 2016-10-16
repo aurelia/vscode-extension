@@ -1,5 +1,6 @@
 import { createConnection, IConnection, TextDocuments, InitializeParams, InitializeResult } from 'vscode-languageserver';
-import { getLanguageService, CompletionConfiguration } from './aurelia-languageservice/aureliaLanguageService';
+import { HTMLDocument, getLanguageService, CompletionConfiguration } from './aurelia-languageservice/aureliaLanguageService';
+import { getLanguageModelCache } from './languageModelCache';
 
 interface Settings {
 	html: LanguageSettings;
@@ -15,6 +16,15 @@ console.error = connection.console.error.bind(connection.console);
 
 let documents: TextDocuments = new TextDocuments();
 documents.listen(connection);
+
+let htmlDocuments = getLanguageModelCache<HTMLDocument>(10, 60, document => getLanguageService().parseHTMLDocument(document));
+documents.onDidClose(e => {
+	htmlDocuments.onDocumentRemoved(e.document);
+});
+
+connection.onShutdown(() => {
+	htmlDocuments.dispose();
+});
 
 let workspacePath: string;
 
@@ -34,15 +44,14 @@ connection.onDidChangeConfiguration((change) => {
 	languageSettings = settings.html;
 });
 
+let languageService = getLanguageService();
+
 connection.onCompletion(textDocumentPosition => {
-  let uri = textDocumentPosition.textDocument.uri;
-  let position = textDocumentPosition.position;
-
-  let document = documents.get(textDocumentPosition.textDocument.uri);
-  let documentContent = document.getText();
   
-
-  return [];
+	let document = documents.get(textDocumentPosition.textDocument.uri);
+	let htmlDocument = htmlDocuments.get(document);
+	let options = languageSettings && languageSettings.suggest;
+	return languageService.doComplete(document, textDocumentPosition.position, htmlDocument);
 });
 
 connection.listen();
