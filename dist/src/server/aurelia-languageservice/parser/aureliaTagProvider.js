@@ -41,7 +41,6 @@ function getAureliaTagProvider() {
             }
         },
         collectValues: (tag, attribute, collector) => {
-            // no values
         }
     };
 }
@@ -81,7 +80,7 @@ exports.HTMLTagSpecification = HTMLTagSpecification;
 exports.AURELIA_TAGS = {
     'require': new HTMLTagSpecification(`"import" or "require" various resources into a view. Equivalent of the ES 2015 "import" syntax`, ['from']),
     'router-view': new HTMLTagSpecification(`Placeholder for the router content`, ['name', 'layout-view', 'layout-view-model', 'layout-model']),
-    'compose': new HTMLTagSpecification(``, ['view']),
-    'slot': new HTMLTagSpecification(``, ['name'])
+    'compose': new HTMLTagSpecification(`Composes the view in the current position`, ['view']),
+    'slot': new HTMLTagSpecification(`Shadow DOM slot element, Aurelia will project the element's content in to the <slot></slot> element.`, ['name', 'slot'])
 };
 //# sourceMappingURL=aureliaTagProvider.js.map
