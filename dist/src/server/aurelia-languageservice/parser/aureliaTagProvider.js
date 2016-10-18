@@ -3,6 +3,7 @@ function getAureliaTagProvider() {
     let customTags = {
         'require': ['from', 'as'],
         'router-view': ['name', 'layout-view', 'layout-view-model', 'layout-model'],
+        'select': ['matcher'],
         'option': ['model.bind'],
         'input': ['value.bind', 'checked.bind', 'model.bind'],
         'compose': ['view.bind', 'view-model.bind', 'model.bind'],

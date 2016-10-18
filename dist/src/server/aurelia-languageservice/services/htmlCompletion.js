@@ -32,61 +32,8 @@ function doComplete(document, position, htmlDocument) {
         });
         return result;
     }
-    function getLineIndent(offset) {
-        let start = offset;
-        while (start > 0) {
-            let ch = text.charAt(start - 1);
-            if ("\n\r".indexOf(ch) >= 0) {
-                return text.substring(start, offset);
-            }
-            if (!isWhiteSpace(ch)) {
-                return null;
-            }
-            start--;
-        }
-        return text.substring(0, offset);
-    }
-    function collectCloseTagSuggestions(afterOpenBracket, matchingOnly, tagNameEnd = offset) {
-        let range = getReplaceRange(afterOpenBracket, tagNameEnd);
-        let closeTag = isFollowedBy(text, tagNameEnd, htmlScanner_1.ScannerState.WithinEndTag, htmlScanner_1.TokenType.EndTagClose) ? '' : '>';
-        let curr = node;
-        while (curr) {
-            let tag = curr.tag;
-            if (tag && !curr.closed) {
-                let item = {
-                    label: '/' + tag,
-                    kind: 10 /* Property */,
-                    filterText: '/' + tag + closeTag,
-                    textEdit: { newText: '/' + tag + closeTag, range: range }
-                };
-                let startIndent = getLineIndent(curr.start);
-                let endIndent = getLineIndent(afterOpenBracket - 1);
-                if (startIndent !== null && endIndent !== null && startIndent !== endIndent) {
-                    item.textEdit = { newText: startIndent + '</' + tag + closeTag, range: getReplaceRange(afterOpenBracket - 1 - endIndent.length) };
-                    item.filterText = endIndent + '</' + tag + closeTag;
-                }
-                result.items.push(item);
-                return result;
-            }
-            curr = curr.parent;
-        }
-        if (matchingOnly) {
-            return result;
-        }
-        tagProvider.collectTags((tag, label) => {
-            result.items.push({
-                label: '/' + tag,
-                kind: 10 /* Property */,
-                documentation: label,
-                filterText: '/' + tag + closeTag,
-                textEdit: { newText: '/' + tag + closeTag, range: range }
-            });
-        });
-        return result;
-    }
     function collectTagSuggestions(tagStart, tagEnd) {
         collectOpenTagSuggestions(tagStart, tagEnd);
-        collectCloseTagSuggestions(tagStart, true, tagEnd);
         return result;
     }
     function collectAttributeNameSuggestions(nameStart, nameEnd = offset) {
@@ -184,36 +131,7 @@ function doComplete(document, position, htmlDocument) {
                             return collectAttributeNameSuggestions(scanner.getTokenEnd());
                         case htmlScanner_1.ScannerState.BeforeAttributeValue:
                             return collectAttributeValueSuggestions(scanner.getTokenEnd());
-                        case htmlScanner_1.ScannerState.AfterOpeningEndTag:
-                            return collectCloseTagSuggestions(scanner.getTokenOffset() - 1, false);
                     }
-                }
-                break;
-            case htmlScanner_1.TokenType.EndTagOpen:
-                if (offset <= scanner.getTokenEnd()) {
-                    let afterOpenBracket = scanner.getTokenOffset() + 1;
-                    let endOffset = scanNextForEndPos(htmlScanner_1.TokenType.EndTag);
-                    return collectCloseTagSuggestions(afterOpenBracket, false, endOffset);
-                }
-                break;
-            case htmlScanner_1.TokenType.EndTag:
-                if (offset <= scanner.getTokenEnd()) {
-                    let start = scanner.getTokenOffset() - 1;
-                    while (start >= 0) {
-                        let ch = text.charAt(start);
-                        if (ch === '/') {
-                            return collectCloseTagSuggestions(start, false, scanner.getTokenEnd());
-                        }
-                        else if (!isWhiteSpace(ch)) {
-                            break;
-                        }
-                        start--;
-                    }
-                }
-                break;
-            default:
-                if (offset <= scanner.getTokenEnd()) {
-                    return result;
                 }
                 break;
         }

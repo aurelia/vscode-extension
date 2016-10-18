@@ -48,64 +48,8 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
 		return result;
 	}
 
-	function getLineIndent(offset: number) {
-		let start = offset;
-		while (start > 0) {
-			let ch = text.charAt(start - 1);
-			if ("\n\r".indexOf(ch) >= 0) {
-				return text.substring(start, offset);
-			}
-			if (!isWhiteSpace(ch)) {
-				return null;
-			}
-			start--;
-		}
-		return text.substring(0, offset);
-	}
-
-	function collectCloseTagSuggestions(afterOpenBracket: number, matchingOnly: boolean, tagNameEnd: number = offset): CompletionList {
-		let range = getReplaceRange(afterOpenBracket, tagNameEnd);
-		let closeTag = isFollowedBy(text, tagNameEnd, ScannerState.WithinEndTag, TokenType.EndTagClose) ? '' : '>';
-		let curr = node;
-		while (curr) {
-			let tag = curr.tag;
-			if (tag && !curr.closed) {			
-				let item = {
-					label: '/' + tag,
-					kind: CompletionItemKind.Property,
-					filterText: '/' + tag + closeTag,
-					textEdit: { newText: '/' + tag + closeTag, range: range }
-				};
-				let startIndent = getLineIndent(curr.start);
-				let endIndent = getLineIndent(afterOpenBracket - 1);
-				if (startIndent !== null && endIndent !== null && startIndent !== endIndent) {
-					item.textEdit = { newText: startIndent + '</' + tag + closeTag, range: getReplaceRange(afterOpenBracket - 1 - endIndent.length) };
-					item.filterText = endIndent + '</' + tag + closeTag;
-				}
-				result.items.push(item);
-				return result;
-			}
-			curr = curr.parent;
-		}
-		if (matchingOnly) {
-			return result;
-		}
-
-    tagProvider.collectTags((tag, label) => {
-      result.items.push({
-        label: '/' + tag,
-        kind: CompletionItemKind.Property,
-        documentation: label,
-        filterText: '/' + tag + closeTag,
-        textEdit: { newText: '/' + tag + closeTag, range: range }
-      });
-    });
-		return result;
-	}
-
 	function collectTagSuggestions(tagStart: number, tagEnd: number): CompletionList {
 		collectOpenTagSuggestions(tagStart, tagEnd);
-		collectCloseTagSuggestions(tagStart, true, tagEnd);
 		return result;
 	}
 
@@ -208,35 +152,7 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
 							return collectAttributeNameSuggestions(scanner.getTokenEnd());
 						case ScannerState.BeforeAttributeValue:
 							return collectAttributeValueSuggestions(scanner.getTokenEnd());
-						case ScannerState.AfterOpeningEndTag:
-							return collectCloseTagSuggestions(scanner.getTokenOffset() - 1, false);
 					}
-				}
-				break;
-			case TokenType.EndTagOpen:
-				if (offset <= scanner.getTokenEnd()) {
-					let afterOpenBracket = scanner.getTokenOffset() + 1;
-					let endOffset = scanNextForEndPos(TokenType.EndTag);
-					return collectCloseTagSuggestions(afterOpenBracket, false, endOffset);
-				}
-				break;
-			case TokenType.EndTag:
-				if (offset <= scanner.getTokenEnd()) {
-					let start = scanner.getTokenOffset() - 1;
-					while (start >= 0) {
-						let ch = text.charAt(start);
-						if (ch === '/') {
-							return collectCloseTagSuggestions(start, false, scanner.getTokenEnd());
-						} else if (!isWhiteSpace(ch)) {
-							break;
-						}
-						start--;
-					}
-				}
-				break;
-			default:
-				if (offset <= scanner.getTokenEnd()) {
-					return result;
 				}
 				break;
 		}
