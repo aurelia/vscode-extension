@@ -1,44 +1,22 @@
 "use strict";
 function getAureliaTagProvider() {
-    let customTags = {
-        'require': ['from', 'as'],
-        'router-view': ['name', 'layout-view', 'layout-view-model', 'layout-model'],
-        'select': ['matcher'],
-        'option': ['model.bind'],
-        'input': ['value.bind', 'checked.bind', 'model.bind'],
-        'compose': ['view.bind', 'view-model.bind', 'model.bind'],
-        'template': [':replaceable', 'replace-part', 'bindable'],
-        'a': ['route-href'],
-        'slot': ['name']
-    };
-    let globalAttributes = [
-        'repeat.for', 'as-element', 'view', 'ref', 'element.ref', 'view-model.ref', 'view.ref', 'controller.ref',
-        'innerhtml.bind', 'textcontent.bind', 'style.bind', 'show.bind', 'if.bind', 'naive-if.bind', 'with.bind', 'slot',
-        ':containerless', ':view-spy', ':compile-spy'
-    ];
-    let eventHandlers = ['abort', 'blur', 'canplay', 'canplaythrough', 'change', 'click', 'contextmenu', 'dblclick', 'drag', 'dragend', 'dragenter', 'dragleave', 'dragover', 'dragstart',
-        'drop', 'durationchange', 'emptied', 'ended', 'error', 'focus', 'formchange', 'forminput', 'input', 'invalid', 'keydown', 'keypress', 'keyup', 'load', 'loadeddata', 'loadedmetadata',
-        'loadstart', 'mousedown', 'mousemove', 'mouseout', 'mouseover', 'mouseup', 'mousewheel', 'pause', 'play', 'playing', 'progress', 'ratechange', 'reset', 'resize', 'readystatechange', 'scroll',
-        'seeked', 'seeking', 'select', 'show', 'stalled', 'submit', 'suspend', 'timeupdate', 'volumechange', 'waiting'];
     return {
         getId: () => 'aurelia',
         isApplicable: (languageId) => languageId === 'html',
         collectTags: (collector) => collectTagsDefault(collector, exports.AURELIA_TAGS),
         collectAttributes: (tag, collector) => {
             if (tag) {
-                let attributes = customTags[tag];
-                if (attributes) {
+                let tagWithAttributes = exports.AURELIA_TAGS[tag];
+                let attributes = exports.AURELIA_ATTRIBUTES[tag];
+                if (tagWithAttributes) {
+                    addAttributes(tagWithAttributes.attributes, collector);
+                }
+                else if (attributes) {
                     addAttributes(attributes, collector);
                 }
             }
-            addAttributes(globalAttributes, collector);
-            if (tag !== 'require' && tag !== 'template' && tag !== 'slot' && tag !== 'compose') {
-                eventHandlers.forEach(handler => {
-                    collector(handler, 'event');
-                    collector(handler + '.trigger', 'event');
-                    collector(handler + '.delegate', 'event');
-                    collector(handler + '.call', 'event');
-                });
+            else {
+                addAttributes(exports.AURELIA_GLOBAL_ATTRIBUTES, collector);
             }
         },
         collectValues: (tag, attribute, collector) => {
@@ -48,21 +26,14 @@ function getAureliaTagProvider() {
 exports.getAureliaTagProvider = getAureliaTagProvider;
 function addAttributes(attributes, collector) {
     attributes.forEach(attribute => {
-        let bindAttributePos = attribute.indexOf('.bind');
-        let emptyAttribute = attribute.substring(0, 1) === ':';
-        if (emptyAttribute) {
-            collector(attribute.substring(1, attribute.length), 'v');
-        }
-        else if (bindAttributePos > -1) {
-            let actualAttribute = attribute.substring(0, bindAttributePos);
-            collector(actualAttribute, null);
-            collector(actualAttribute + '.bind', null);
-            collector(actualAttribute + '.one-way', null);
-            collector(actualAttribute + '.two-way', null);
-            collector(actualAttribute + '.one-time', null);
+        if (!attribute.hasBody) {
+            collector(attribute.name, 'v');
         }
         else {
-            collector(attribute, null);
+            collector(attribute.name, null);
+        }
+        if (attribute.dataBindings && attribute.dataBindings.length) {
+            attribute.dataBindings.forEach(binding => collector(attribute.name + '.' + binding, null));
         }
     });
 }
@@ -71,6 +42,20 @@ function collectTagsDefault(collector, tagSet) {
         collector(tag, tagSet[tag].label);
     }
 }
+class HTMLAttributeSpecification {
+    constructor(name, dataBindings = [], hasBody = true) {
+        this.name = name;
+        this.dataBindings = dataBindings;
+        this.hasBody = hasBody;
+    }
+}
+exports.HTMLAttributeSpecification = HTMLAttributeSpecification;
+class AureliaEventSpecification {
+    constructor(name) {
+        this.name = name;
+    }
+}
+exports.AureliaEventSpecification = AureliaEventSpecification;
 class HTMLTagSpecification {
     constructor(label, attributes = []) {
         this.label = label;
@@ -79,9 +64,58 @@ class HTMLTagSpecification {
 }
 exports.HTMLTagSpecification = HTMLTagSpecification;
 exports.AURELIA_TAGS = {
-    'require': new HTMLTagSpecification(`"import" or "require" various resources into a view. Equivalent of the ES 2015 "import" syntax`, ['from']),
-    'router-view': new HTMLTagSpecification(`Placeholder for the router content`, ['name', 'layout-view', 'layout-view-model', 'layout-model']),
-    'compose': new HTMLTagSpecification(`Composes the view in the current position`, ['view']),
-    'slot': new HTMLTagSpecification(`Shadow DOM slot element, Aurelia will project the element's content in to the <slot></slot> element.`, ['name', 'slot'])
+    'require': new HTMLTagSpecification(`"import" or "require" various resources into a view. Equivalent of the ES 2015 "import" syntax`, [
+        new HTMLAttributeSpecification('from'),
+        new HTMLAttributeSpecification('as')]),
+    'router-view': new HTMLTagSpecification(`Placeholder for the router content`, [
+        new HTMLAttributeSpecification('name'),
+        new HTMLAttributeSpecification('layout-view'),
+        new HTMLAttributeSpecification('layout-view-model'),
+        new HTMLAttributeSpecification('layout-model')]),
+    'compose': new HTMLTagSpecification(`Composes the view in the current position`, [
+        new HTMLAttributeSpecification('view')]),
+    'slot': new HTMLTagSpecification(`Shadow DOM slot element, Aurelia will project the element's content in to the <slot></slot> element.`, [
+        new HTMLAttributeSpecification('name'),
+        new HTMLAttributeSpecification('slot')])
 };
+const defaultBindings = ['bind', 'one-way', 'two-way', 'one-time'];
+exports.AURELIA_ATTRIBUTES = {
+    'select': [new HTMLAttributeSpecification('matcher', defaultBindings)],
+    'option': [new HTMLAttributeSpecification('model', defaultBindings)],
+    'input': [
+        new HTMLAttributeSpecification('value', defaultBindings),
+        new HTMLAttributeSpecification('checked', defaultBindings),
+        new HTMLAttributeSpecification('model', defaultBindings)],
+    'compose': [
+        new HTMLAttributeSpecification('view', defaultBindings),
+        new HTMLAttributeSpecification('view-model', defaultBindings),
+        new HTMLAttributeSpecification('model', defaultBindings)],
+    'template': [
+        new HTMLAttributeSpecification('replaceable', [], false),
+        new HTMLAttributeSpecification('replace-part', defaultBindings),
+        new HTMLAttributeSpecification('bindable', defaultBindings)],
+    'a': [new HTMLAttributeSpecification('route-href', defaultBindings)],
+    'slot': [new HTMLAttributeSpecification('name', defaultBindings)]
+};
+exports.AURELIA_GLOBAL_ATTRIBUTES = [
+    new HTMLAttributeSpecification('repeat.for'),
+    new HTMLAttributeSpecification('as-element', defaultBindings),
+    new HTMLAttributeSpecification('view', defaultBindings),
+    new HTMLAttributeSpecification('ref'),
+    new HTMLAttributeSpecification('element.ref'),
+    new HTMLAttributeSpecification('view-model.ref'),
+    new HTMLAttributeSpecification('view.ref'),
+    new HTMLAttributeSpecification('controller.ref'),
+    new HTMLAttributeSpecification('innerhtml', defaultBindings),
+    new HTMLAttributeSpecification('textcontent', defaultBindings),
+    new HTMLAttributeSpecification('style', defaultBindings),
+    new HTMLAttributeSpecification('show', defaultBindings),
+    new HTMLAttributeSpecification('if', defaultBindings),
+    new HTMLAttributeSpecification('naive-if', defaultBindings),
+    new HTMLAttributeSpecification('with', defaultBindings),
+    new HTMLAttributeSpecification('slot'),
+    new HTMLAttributeSpecification('containerless', [], true),
+    new HTMLAttributeSpecification('view-spy', [], true),
+    new HTMLAttributeSpecification('compile-spy', [], true),
+];
 //# sourceMappingURL=aureliaTagProvider.js.map
