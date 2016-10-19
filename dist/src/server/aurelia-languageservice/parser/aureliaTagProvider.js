@@ -15,9 +15,9 @@ function getAureliaTagProvider() {
                 else if (attributes) {
                     addAttributes(attributes, collector);
                 }
-            }
-            else {
-                addAttributes(aureliaTags_1.AURELIA_GLOBAL_ATTRIBUTES, collector);
+                else {
+                    addAttributes(aureliaTags_1.AURELIA_GLOBAL_ATTRIBUTES, collector);
+                }
             }
         },
         collectValues: (tag, attribute, collector) => {
@@ -30,7 +30,7 @@ function addAttributes(attributes, collector) {
         if (!attribute.hasBody) {
             collector(attribute.name, 'v');
         }
-        else {
+        else if (!attribute.defaultAttribute) {
             collector(attribute.name, null);
         }
         if (attribute.dataBindings && attribute.dataBindings.length) {

@@ -1,9 +1,10 @@
 "use strict";
 class HTMLAttributeSpecification {
-    constructor(name, dataBindings = [], hasBody = true) {
+    constructor(name, dataBindings = [], hasBody = true, defaultAttribute = true) {
         this.name = name;
         this.dataBindings = dataBindings;
         this.hasBody = hasBody;
+        this.defaultAttribute = defaultAttribute;
     }
 }
 exports.HTMLAttributeSpecification = HTMLAttributeSpecification;

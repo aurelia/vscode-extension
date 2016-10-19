@@ -15,10 +15,10 @@ export function getAureliaTagProvider(): IHTMLTagProvider {
           addAttributes(tagWithAttributes.attributes, collector);
 				} else if (attributes) {
           addAttributes(attributes, collector);
+        } else {
+          addAttributes(AURELIA_GLOBAL_ATTRIBUTES, collector);
         }
-			} else {
-        addAttributes(AURELIA_GLOBAL_ATTRIBUTES, collector);
-      }
+			}
 		},
 		collectValues: (tag: string, attribute: string, collector: (value: string) => void) => {
 		}
@@ -29,7 +29,7 @@ function addAttributes(attributes: Array<HTMLAttributeSpecification>, collector)
   attributes.forEach(attribute => {
     if (!attribute.hasBody) {
       collector(attribute.name, 'v');
-    } else {
+    } else if (!attribute.defaultAttribute) {
       collector(attribute.name, null);  
     }
 

@@ -8,7 +8,7 @@ export interface IEventSet {
 	[tag: string]: Array<AureliaEventSpecification>;
 }
 export class HTMLAttributeSpecification {
-  constructor(public name: string, public dataBindings = [], public hasBody = true ) { }
+  constructor(public name: string, public dataBindings = [], public hasBody = true, public defaultAttribute = true) { }
 }
 export class AureliaEventSpecification {
   constructor(public name: string) { }
