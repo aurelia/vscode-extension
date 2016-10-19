@@ -22,15 +22,18 @@ exports.AURELIA_ATTRIBUTES = {
     'input': [
         new models_1.HTMLAttributeSpecification('value', defaultBindings),
         new models_1.HTMLAttributeSpecification('checked', defaultBindings),
-        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)],
+        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)
+    ],
     'compose': [
         new models_1.HTMLAttributeSpecification('view', defaultBindings, true, false),
         new models_1.HTMLAttributeSpecification('view-model', defaultBindings, true, false),
-        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)],
+        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)
+    ],
     'template': [
         new models_1.HTMLAttributeSpecification('replaceable', [], false),
         new models_1.HTMLAttributeSpecification('replace-part', defaultBindings, true, false),
-        new models_1.HTMLAttributeSpecification('bindable', defaultBindings, true, false)],
+        new models_1.HTMLAttributeSpecification('bindable', defaultBindings, true, false)
+    ],
     'a': [new models_1.HTMLAttributeSpecification('route-href', defaultBindings, true, false)],
     'slot': [new models_1.HTMLAttributeSpecification('name', defaultBindings)]
 };
@@ -55,4 +58,29 @@ exports.AURELIA_GLOBAL_ATTRIBUTES = [
     new models_1.HTMLAttributeSpecification('view-spy', [], true),
     new models_1.HTMLAttributeSpecification('compile-spy', [], true),
 ];
+const actionRedirectOptions = ['delegate', 'trigger', 'call'];
+exports.AURELIA_EVENTS = {
+    'form': [
+        new models_1.HTMLAttributeSpecification('submit', actionRedirectOptions),
+        new models_1.HTMLAttributeSpecification('reset', actionRedirectOptions)
+    ],
+    'input': [
+        new models_1.HTMLAttributeSpecification('click', defaultBindings),
+        new models_1.HTMLAttributeSpecification('blur', defaultBindings),
+        new models_1.HTMLAttributeSpecification('focus', defaultBindings),
+        new models_1.HTMLAttributeSpecification('change', defaultBindings),
+        new models_1.HTMLAttributeSpecification('keydown', defaultBindings),
+        new models_1.HTMLAttributeSpecification('keypress', defaultBindings),
+        new models_1.HTMLAttributeSpecification('keyup', defaultBindings),
+        new models_1.HTMLAttributeSpecification('input', defaultBindings),
+        new models_1.HTMLAttributeSpecification('change', defaultBindings),
+    ],
+    'textarea': [
+        new models_1.HTMLAttributeSpecification('input', defaultBindings),
+        new models_1.HTMLAttributeSpecification('change', defaultBindings),
+    ],
+    'select': [
+        new models_1.HTMLAttributeSpecification('change', defaultBindings),
+    ]
+};
 //# sourceMappingURL=aureliaTags.js.map

@@ -1,4 +1,4 @@
-import { ITagSet, HTMLTagSpecification, HTMLAttributeSpecification, IAttributeSet } from './models';
+import { ITagSet, HTMLTagSpecification, HTMLAttributeSpecification, IAttributeSet, IEventSet } from './models';
 
 export const AURELIA_TAGS: ITagSet = {
   'require' : new HTMLTagSpecification(`"import" or "require" various resources into a view. Equivalent of the ES 2015 "import" syntax`, [
@@ -24,15 +24,18 @@ export const AURELIA_ATTRIBUTES: IAttributeSet = {
     'input'   : [
       new HTMLAttributeSpecification('value', defaultBindings), 
       new HTMLAttributeSpecification('checked' ,defaultBindings),
-      new HTMLAttributeSpecification('model', defaultBindings, true, false)],
+      new HTMLAttributeSpecification('model', defaultBindings, true, false)
+    ],
     'compose' : [
       new HTMLAttributeSpecification('view', defaultBindings, true, false),
       new HTMLAttributeSpecification('view-model', defaultBindings, true, false),
-      new HTMLAttributeSpecification('model', defaultBindings, true, false)],
+      new HTMLAttributeSpecification('model', defaultBindings, true, false)
+    ],
     'template': [
       new HTMLAttributeSpecification('replaceable', [], false),
       new HTMLAttributeSpecification('replace-part', defaultBindings, true, false),
-      new HTMLAttributeSpecification('bindable', defaultBindings, true, false)],
+      new HTMLAttributeSpecification('bindable', defaultBindings, true, false)
+    ],
     'a': [ new HTMLAttributeSpecification('route-href', defaultBindings, true, false)],
     'slot': [ new HTMLAttributeSpecification('name', defaultBindings) ]
 }
@@ -58,3 +61,30 @@ export const AURELIA_GLOBAL_ATTRIBUTES: Array<HTMLAttributeSpecification> = [
   new HTMLAttributeSpecification('view-spy', [], true),
   new HTMLAttributeSpecification('compile-spy', [], true),
 ];
+
+const actionRedirectOptions = ['delegate', 'trigger', 'call'];
+
+export const AURELIA_EVENTS: IEventSet = {
+  'form': [
+    new HTMLAttributeSpecification('submit', actionRedirectOptions),
+    new HTMLAttributeSpecification('reset', actionRedirectOptions)
+  ],
+  'input': [
+    new HTMLAttributeSpecification('click', defaultBindings),
+    new HTMLAttributeSpecification('blur', defaultBindings),
+    new HTMLAttributeSpecification('focus', defaultBindings),
+    new HTMLAttributeSpecification('change', defaultBindings),
+    new HTMLAttributeSpecification('keydown', defaultBindings),
+    new HTMLAttributeSpecification('keypress', defaultBindings),
+    new HTMLAttributeSpecification('keyup', defaultBindings),
+    new HTMLAttributeSpecification('input', defaultBindings),
+    new HTMLAttributeSpecification('change', defaultBindings),
+  ],
+  'textarea': [
+    new HTMLAttributeSpecification('input', defaultBindings),
+    new HTMLAttributeSpecification('change', defaultBindings),
+  ],
+  'select': [
+    new HTMLAttributeSpecification('change', defaultBindings),
+  ]
+}

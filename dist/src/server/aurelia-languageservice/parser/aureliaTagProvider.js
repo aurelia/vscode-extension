@@ -18,6 +18,10 @@ function getAureliaTagProvider() {
                 else {
                     addAttributes(aureliaTags_1.AURELIA_GLOBAL_ATTRIBUTES, collector);
                 }
+                let tagWithEvents = aureliaTags_1.AURELIA_EVENTS[tag];
+                if (tagWithEvents) {
+                    addAttributes(tagWithEvents, collector);
+                }
             }
         },
         collectValues: (tag, attribute, collector) => {

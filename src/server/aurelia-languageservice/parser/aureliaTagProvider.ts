@@ -1,5 +1,5 @@
 import { IHTMLTagProvider } from '../services/htmlCompletion';
-import { AURELIA_ATTRIBUTES, AURELIA_TAGS, AURELIA_GLOBAL_ATTRIBUTES } from './aureliaTags';
+import { AURELIA_ATTRIBUTES, AURELIA_TAGS, AURELIA_GLOBAL_ATTRIBUTES, AURELIA_EVENTS } from './aureliaTags';
 import { HTMLAttributeSpecification, ITagSet } from './models';
 
 export function getAureliaTagProvider(): IHTMLTagProvider {
@@ -17,6 +17,11 @@ export function getAureliaTagProvider(): IHTMLTagProvider {
           addAttributes(attributes, collector);
         } else {
           addAttributes(AURELIA_GLOBAL_ATTRIBUTES, collector);
+        }
+
+        let tagWithEvents = AURELIA_EVENTS[tag];
+        if (tagWithEvents) {
+          addAttributes(tagWithEvents, collector);
         }
 			}
 		},

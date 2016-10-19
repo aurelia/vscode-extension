@@ -8,12 +8,6 @@ class HTMLAttributeSpecification {
     }
 }
 exports.HTMLAttributeSpecification = HTMLAttributeSpecification;
-class AureliaEventSpecification {
-    constructor(name) {
-        this.name = name;
-    }
-}
-exports.AureliaEventSpecification = AureliaEventSpecification;
 class HTMLTagSpecification {
     constructor(label, attributes = []) {
         this.label = label;
