@@ -64,27 +64,45 @@ export const AURELIA_GLOBAL_ATTRIBUTES: Array<HTMLAttributeSpecification> = [
 
 const actionRedirectOptions = ['delegate', 'trigger', 'call'];
 
-export const AURELIA_EVENTS: IEventSet = {
-  'form': [
-    new HTMLAttributeSpecification('submit', actionRedirectOptions),
-    new HTMLAttributeSpecification('reset', actionRedirectOptions)
-  ],
-  'input': [
-    new HTMLAttributeSpecification('click', defaultBindings),
+const globalEvents = [
+    new HTMLAttributeSpecification('abort', defaultBindings),
     new HTMLAttributeSpecification('blur', defaultBindings),
-    new HTMLAttributeSpecification('focus', defaultBindings),
     new HTMLAttributeSpecification('change', defaultBindings),
+    new HTMLAttributeSpecification('click', defaultBindings),
+    new HTMLAttributeSpecification('close', defaultBindings),
+    new HTMLAttributeSpecification('contextmenu', defaultBindings),
+    new HTMLAttributeSpecification('dblclick', defaultBindings),
+    new HTMLAttributeSpecification('error', defaultBindings),
+    new HTMLAttributeSpecification('focus', defaultBindings),
+    new HTMLAttributeSpecification('input', defaultBindings),
     new HTMLAttributeSpecification('keydown', defaultBindings),
     new HTMLAttributeSpecification('keypress', defaultBindings),
-    new HTMLAttributeSpecification('keyup', defaultBindings),
-    new HTMLAttributeSpecification('input', defaultBindings),
-    new HTMLAttributeSpecification('change', defaultBindings),
+    new HTMLAttributeSpecification('keyup', defaultBindings),    
+    new HTMLAttributeSpecification('load', defaultBindings),
+    new HTMLAttributeSpecification('mousedown', defaultBindings),
+    new HTMLAttributeSpecification('mousemove', defaultBindings),
+    new HTMLAttributeSpecification('mouseout', defaultBindings),
+    new HTMLAttributeSpecification('mouseover', defaultBindings),
+    new HTMLAttributeSpecification('mouseup', defaultBindings),
+    new HTMLAttributeSpecification('reset', defaultBindings),
+    new HTMLAttributeSpecification('resize', defaultBindings),
+    new HTMLAttributeSpecification('scroll', defaultBindings),
+    new HTMLAttributeSpecification('select', defaultBindings),
+    new HTMLAttributeSpecification('submit', defaultBindings),
+];
+
+export const AURELIA_EVENTS: IEventSet = {
+  'form': [
+    ...globalEvents,
+    new HTMLAttributeSpecification('submit', actionRedirectOptions),
   ],
-  'textarea': [
-    new HTMLAttributeSpecification('input', defaultBindings),
-    new HTMLAttributeSpecification('change', defaultBindings),
-  ],
-  'select': [
-    new HTMLAttributeSpecification('change', defaultBindings),
-  ]
+  'input': [...globalEvents],
+  'textarea': [...globalEvents],
+  'select': [...globalEvents],
+  'div': [...globalEvents],
+  'p': [...globalEvents],
+  'span': [...globalEvents],
+  'ul': [...globalEvents],
+  'ol': [...globalEvents], 
+  'li': [...globalEvents]
 }

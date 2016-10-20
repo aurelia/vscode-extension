@@ -59,28 +59,45 @@ exports.AURELIA_GLOBAL_ATTRIBUTES = [
     new models_1.HTMLAttributeSpecification('compile-spy', [], true),
 ];
 const actionRedirectOptions = ['delegate', 'trigger', 'call'];
+const globalEvents = [
+    new models_1.HTMLAttributeSpecification('abort', defaultBindings),
+    new models_1.HTMLAttributeSpecification('blur', defaultBindings),
+    new models_1.HTMLAttributeSpecification('change', defaultBindings),
+    new models_1.HTMLAttributeSpecification('click', defaultBindings),
+    new models_1.HTMLAttributeSpecification('close', defaultBindings),
+    new models_1.HTMLAttributeSpecification('contextmenu', defaultBindings),
+    new models_1.HTMLAttributeSpecification('dblclick', defaultBindings),
+    new models_1.HTMLAttributeSpecification('error', defaultBindings),
+    new models_1.HTMLAttributeSpecification('focus', defaultBindings),
+    new models_1.HTMLAttributeSpecification('input', defaultBindings),
+    new models_1.HTMLAttributeSpecification('keydown', defaultBindings),
+    new models_1.HTMLAttributeSpecification('keypress', defaultBindings),
+    new models_1.HTMLAttributeSpecification('keyup', defaultBindings),
+    new models_1.HTMLAttributeSpecification('load', defaultBindings),
+    new models_1.HTMLAttributeSpecification('mousedown', defaultBindings),
+    new models_1.HTMLAttributeSpecification('mousemove', defaultBindings),
+    new models_1.HTMLAttributeSpecification('mouseout', defaultBindings),
+    new models_1.HTMLAttributeSpecification('mouseover', defaultBindings),
+    new models_1.HTMLAttributeSpecification('mouseup', defaultBindings),
+    new models_1.HTMLAttributeSpecification('reset', defaultBindings),
+    new models_1.HTMLAttributeSpecification('resize', defaultBindings),
+    new models_1.HTMLAttributeSpecification('scroll', defaultBindings),
+    new models_1.HTMLAttributeSpecification('select', defaultBindings),
+    new models_1.HTMLAttributeSpecification('submit', defaultBindings),
+];
 exports.AURELIA_EVENTS = {
     'form': [
+        ...globalEvents,
         new models_1.HTMLAttributeSpecification('submit', actionRedirectOptions),
-        new models_1.HTMLAttributeSpecification('reset', actionRedirectOptions)
     ],
-    'input': [
-        new models_1.HTMLAttributeSpecification('click', defaultBindings),
-        new models_1.HTMLAttributeSpecification('blur', defaultBindings),
-        new models_1.HTMLAttributeSpecification('focus', defaultBindings),
-        new models_1.HTMLAttributeSpecification('change', defaultBindings),
-        new models_1.HTMLAttributeSpecification('keydown', defaultBindings),
-        new models_1.HTMLAttributeSpecification('keypress', defaultBindings),
-        new models_1.HTMLAttributeSpecification('keyup', defaultBindings),
-        new models_1.HTMLAttributeSpecification('input', defaultBindings),
-        new models_1.HTMLAttributeSpecification('change', defaultBindings),
-    ],
-    'textarea': [
-        new models_1.HTMLAttributeSpecification('input', defaultBindings),
-        new models_1.HTMLAttributeSpecification('change', defaultBindings),
-    ],
-    'select': [
-        new models_1.HTMLAttributeSpecification('change', defaultBindings),
-    ]
+    'input': [...globalEvents],
+    'textarea': [...globalEvents],
+    'select': [...globalEvents],
+    'div': [...globalEvents],
+    'p': [...globalEvents],
+    'span': [...globalEvents],
+    'ul': [...globalEvents],
+    'ol': [...globalEvents],
+    'li': [...globalEvents]
 };
 //# sourceMappingURL=aureliaTags.js.map
