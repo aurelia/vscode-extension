@@ -5,3 +5,10 @@ test:
     - mocha dist/test --recursive --reporter mocha-junit-reporter:
         environment:
           MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
+deployment:
+  release:
+    tag: /[0-9]+(\.[0-9]+)*/
+    owner: aurelia
+    commands:
+      - npm i vsce -g
+      - vsce publish -p $VSTOKEN
