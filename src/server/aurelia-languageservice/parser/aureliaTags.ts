@@ -63,32 +63,82 @@ export const AURELIA_GLOBAL_ATTRIBUTES: Array<HTMLAttributeSpecification> = [
 ];
 
 const actionRedirectOptions = ['delegate', 'trigger', 'call'];
+const actionRedirectOptionsNonBubbling = ['trigger', 'call'];
 
 const globalEvents = [
-    new HTMLAttributeSpecification('abort', defaultBindings),
-    new HTMLAttributeSpecification('blur', defaultBindings),
-    new HTMLAttributeSpecification('change', defaultBindings),
-    new HTMLAttributeSpecification('click', defaultBindings),
-    new HTMLAttributeSpecification('close', defaultBindings),
-    new HTMLAttributeSpecification('contextmenu', defaultBindings),
-    new HTMLAttributeSpecification('dblclick', defaultBindings),
-    new HTMLAttributeSpecification('error', defaultBindings),
-    new HTMLAttributeSpecification('focus', defaultBindings),
-    new HTMLAttributeSpecification('input', defaultBindings),
-    new HTMLAttributeSpecification('keydown', defaultBindings),
-    new HTMLAttributeSpecification('keypress', defaultBindings),
-    new HTMLAttributeSpecification('keyup', defaultBindings),    
-    new HTMLAttributeSpecification('load', defaultBindings),
-    new HTMLAttributeSpecification('mousedown', defaultBindings),
-    new HTMLAttributeSpecification('mousemove', defaultBindings),
-    new HTMLAttributeSpecification('mouseout', defaultBindings),
-    new HTMLAttributeSpecification('mouseover', defaultBindings),
-    new HTMLAttributeSpecification('mouseup', defaultBindings),
-    new HTMLAttributeSpecification('reset', defaultBindings),
-    new HTMLAttributeSpecification('resize', defaultBindings),
-    new HTMLAttributeSpecification('scroll', defaultBindings),
-    new HTMLAttributeSpecification('select', defaultBindings),
-    new HTMLAttributeSpecification('submit', defaultBindings),
+
+    // Resource Events
+    new HTMLAttributeSpecification('error', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('abort', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('load', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('unload', actionRedirectOptionsNonBubbling),
+    
+    // Focus Events
+    new HTMLAttributeSpecification('blur', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('focus', actionRedirectOptionsNonBubbling),
+    
+    // CSS Animation Events
+    new HTMLAttributeSpecification('animationstart', actionRedirectOptions),
+    new HTMLAttributeSpecification('animationend', actionRedirectOptions),
+    new HTMLAttributeSpecification('animationiteration', actionRedirectOptions),
+
+    // Form Events
+    new HTMLAttributeSpecification('reset', actionRedirectOptions),
+    new HTMLAttributeSpecification('submit', actionRedirectOptions),
+    new HTMLAttributeSpecification('change', actionRedirectOptions),
+    new HTMLAttributeSpecification('input', actionRedirectOptions),
+
+    // Text Composition Events
+    new HTMLAttributeSpecification('compositionstart', actionRedirectOptions),
+    new HTMLAttributeSpecification('compositionupdate', actionRedirectOptions),
+    new HTMLAttributeSpecification('compositionend', actionRedirectOptions),
+
+    // View Events
+    new HTMLAttributeSpecification('scroll', actionRedirectOptionsNonBubbling),
+
+    // Clipboard Events
+    new HTMLAttributeSpecification('cut', actionRedirectOptions),
+    new HTMLAttributeSpecification('copy', actionRedirectOptions),
+    new HTMLAttributeSpecification('paste', actionRedirectOptions),
+
+    // Keyboard Events
+    new HTMLAttributeSpecification('keydown', actionRedirectOptions),
+    new HTMLAttributeSpecification('keypress', actionRedirectOptions),
+    new HTMLAttributeSpecification('keyup', actionRedirectOptions),    
+
+    // Mouse Events
+    new HTMLAttributeSpecification('mouseenter', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('mouseover', actionRedirectOptions),
+    new HTMLAttributeSpecification('mousemove', actionRedirectOptions),
+    new HTMLAttributeSpecification('mousedown', actionRedirectOptions),
+    new HTMLAttributeSpecification('mouseup', actionRedirectOptions),
+    new HTMLAttributeSpecification('mouseout', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('click', actionRedirectOptions),
+    new HTMLAttributeSpecification('dblclick', actionRedirectOptions),
+    new HTMLAttributeSpecification('contextmenu', actionRedirectOptions),
+    new HTMLAttributeSpecification('wheel', actionRedirectOptions),
+    new HTMLAttributeSpecification('mouseleave', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('mouseout', actionRedirectOptions),
+    new HTMLAttributeSpecification('select', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('pointerlockchange', actionRedirectOptions),
+    new HTMLAttributeSpecification('pointerlockerror', actionRedirectOptions),
+
+    // Drag & Drop Events
+    new HTMLAttributeSpecification('dragstart', actionRedirectOptions),
+    new HTMLAttributeSpecification('drag', actionRedirectOptions),
+    new HTMLAttributeSpecification('dragend', actionRedirectOptions),
+    new HTMLAttributeSpecification('dragenter', actionRedirectOptions),
+    new HTMLAttributeSpecification('dragover', actionRedirectOptions),
+    new HTMLAttributeSpecification('dragleave', actionRedirectOptions),
+    new HTMLAttributeSpecification('drop', actionRedirectOptions),
+
+    // Touch events
+    new HTMLAttributeSpecification('touchstart', actionRedirectOptions),
+    new HTMLAttributeSpecification('touchmove', actionRedirectOptions),
+    new HTMLAttributeSpecification('touchend', actionRedirectOptions),
+
+    // Other
+    new HTMLAttributeSpecification('close', actionRedirectOptions),
 ];
 
 export const AURELIA_EVENTS: IEventSet = {
