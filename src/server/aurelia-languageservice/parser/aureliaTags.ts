@@ -82,12 +82,6 @@ const globalEvents = [
     new HTMLAttributeSpecification('animationend', actionRedirectOptions),
     new HTMLAttributeSpecification('animationiteration', actionRedirectOptions),
 
-    // Form Events
-    new HTMLAttributeSpecification('reset', actionRedirectOptions),
-    new HTMLAttributeSpecification('submit', actionRedirectOptions),
-    new HTMLAttributeSpecification('change', actionRedirectOptions),
-    new HTMLAttributeSpecification('input', actionRedirectOptions),
-
     // Text Composition Events
     new HTMLAttributeSpecification('compositionstart', actionRedirectOptions),
     new HTMLAttributeSpecification('compositionupdate', actionRedirectOptions),
@@ -144,7 +138,10 @@ const globalEvents = [
 export const AURELIA_EVENTS: IEventSet = {
   'form': [
     ...globalEvents,
+    new HTMLAttributeSpecification('reset', actionRedirectOptions),
     new HTMLAttributeSpecification('submit', actionRedirectOptions),
+    new HTMLAttributeSpecification('change', actionRedirectOptions),
+    new HTMLAttributeSpecification('input', actionRedirectOptions),    
   ],
   'input': [...globalEvents],
   'textarea': [...globalEvents],
