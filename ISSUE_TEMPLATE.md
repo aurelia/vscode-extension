@@ -19,46 +19,21 @@ Choose one of the two headings, delete the other.
 **I'm submitting a bug report**
 **I'm submitting a feature request**
 
-* **Library Version:**
+* **Extension Version:**
 major.minor.patch-pre
-
 
 **Please tell us about your environment:**
 * **Operating System:**
 OSX 10.x|Linux (distro)|Windows [7|8|8.1|10]
 
-* **Node Version:**
-6.2.0
-<!--
-Minimum supported Node version is latest Node 4.x LTS
-run `node -v`
--->
+* **Visual studio code version:**
+major.minor.patch-pre
 
-* **NPM Version:**
-3.8.9
-<!--
-Minimum supported NPM version is 3.x
-run `npm -v`
--->
+**Screenshot of incorrect highlight**
 
-* **JSPM OR Webpack AND Version**
-JSPM 0.16.32 | webpack 2.1.0-beta.17
-<!--
-If using JSPM
-run `jspm -v`
-If using Webpack
-run `webpack --help | grep webpack`
--->
-
-* **Browser:**
-all | Chrome XX | Firefox XX | Edge XX | IE XX | Safari XX | Mobile Chrome XX | Android X.X Web Browser | iOS XX Safari | iOS XX UIWebView | iOS XX WKWebView
-
-* **Language:**
-all | TypeScript X.X | ESNext
-
+**HTML/JS/TS of incorrect highlight**
 
 **Current behavior:**
-
 
 **Expected/desired behavior:**
 <!--
