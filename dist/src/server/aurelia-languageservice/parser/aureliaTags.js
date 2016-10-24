@@ -68,7 +68,7 @@ const globalEvents = [
     new models_1.HTMLAttributeSpecification('unload', actionRedirectOptionsNonBubbling),
     // Focus Events
     new models_1.HTMLAttributeSpecification('blur', actionRedirectOptionsNonBubbling),
-    new models_1.HTMLAttributeSpecification('focus', actionRedirectOptionsNonBubbling),
+    new models_1.HTMLAttributeSpecification('focus', ['call', 'trigger', 'bind', 'one-way', 'two-way', 'one-time']),
     // CSS Animation Events
     new models_1.HTMLAttributeSpecification('animationstart', actionRedirectOptions),
     new models_1.HTMLAttributeSpecification('animationend', actionRedirectOptions),

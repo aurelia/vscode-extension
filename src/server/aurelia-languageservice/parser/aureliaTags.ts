@@ -75,7 +75,7 @@ const globalEvents = [
     
     // Focus Events
     new HTMLAttributeSpecification('blur', actionRedirectOptionsNonBubbling),
-    new HTMLAttributeSpecification('focus', actionRedirectOptionsNonBubbling),
+    new HTMLAttributeSpecification('focus', ['call', 'trigger', 'bind', 'one-way', 'two-way', 'one-time']),
     
     // CSS Animation Events
     new HTMLAttributeSpecification('animationstart', actionRedirectOptions),
