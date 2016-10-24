@@ -24,7 +24,7 @@ export function activate(context: ExtensionContext) {
   let clientOptions: LanguageClientOptions = {
     documentSelector: ['html'],
     synchronize: {
-      configurationSection: ['html'],
+      configurationSection: ['aurelia'],
     },
     initializationOptions: {}
   };

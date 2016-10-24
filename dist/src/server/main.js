@@ -24,17 +24,13 @@ connection.onInitialize((params) => {
         }
     };
 });
-let languageSettings;
-connection.onDidChangeConfiguration((change) => {
-    let settings = change.settings;
-    languageSettings = settings.html;
-});
+let aureliaSettings;
+connection.onDidChangeConfiguration((change) => aureliaSettings = change.settings.aurelia);
 let languageService = aureliaLanguageService_1.getLanguageService();
 connection.onCompletion(textDocumentPosition => {
     let document = documents.get(textDocumentPosition.textDocument.uri);
     let htmlDocument = htmlDocuments.get(document);
-    let options = languageSettings && languageSettings.suggest;
-    return languageService.doComplete(document, textDocumentPosition.position, htmlDocument);
+    return languageService.doComplete(document, textDocumentPosition.position, htmlDocument, aureliaSettings.autocomplete.quotes);
 });
 connection.listen();
 //# sourceMappingURL=main.js.map
