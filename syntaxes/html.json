@@ -179,6 +179,9 @@
           "include" : "#tag-aurelia-show-attribute"
         },
         {
+          "include" : "#tag-aurelia-route-href-attribute"
+        },
+        {
           "include": "#tag-aurelia-containerless-attribute"
         },
         {
@@ -217,7 +220,7 @@
       ]
     },
     "tag-aurelia-attribute-with-databinding-attribute": {
-      "match": "(?<![\"'-])([a-zA-Z0-9:-]+)(?<!controller|bindable|view-model|show|if|naive-if)(\\.)(bind|one-way|two-way|one-time)(?![\"'-;])",
+      "match": "(?<![\"'-])([a-zA-Z0-9:-]+)(?<!controller|bindable|view-model|show|if|naive-if|route-href)(\\.)(bind|one-way|two-way|one-time)(?![\"'-;])",
       "captures": {
         "1": {
           "name": "entity.other.attribute-name.html"
@@ -367,6 +370,20 @@
         }       
       }
     },
+    "tag-aurelia-route-href-attribute" : {
+      "match": "(?<=[^\"-])(route-href)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
+      "captures": {
+        "1": {
+          "name": "route-href.attribute.html.au"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "3": {
+          "name": "databinding.attribute.html.au"
+        }       
+      }
+    },    
     "tag-aurelia-show-attribute" : {
       "match": "(?<=[^\"-])(show)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
       "captures": {
