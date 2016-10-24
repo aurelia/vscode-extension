@@ -185,6 +185,9 @@
           "include": "#tag-aurelia-containerless-attribute"
         },
         {
+          "include": "#tag-aurelia-compile-spy-attribute"
+        },
+        {
           "include": "#tag-aurelia-replace-part-attribute"
         },
         {
@@ -355,7 +358,15 @@
           "name": "containerless.attribute.html.au"
         }     
       }
-    },        
+    }, 
+    "tag-aurelia-compile-spy-attribute" : {
+      "match": "(compile-spy)( |>)",
+      "captures": {
+        "1": {
+          "name": "compile-spy.attribute.html.au"
+        }     
+      }
+    },            
     "tag-aurelia-if-attribute" : {
       "match": "(?<=[^\"-])(if|naive-if)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
       "captures": {
