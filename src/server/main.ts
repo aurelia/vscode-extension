@@ -31,9 +31,15 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
 });
 
 let aureliaSettings;
-connection.onDidChangeConfiguration((change) => aureliaSettings = change.settings.aurelia);
+connection.onDidChangeConfiguration(change => aureliaSettings = change.settings.aurelia);
 
 let languageService = getLanguageService();
+
+documents.onDidChangeContent(async change => {
+	let htmlDocument = htmlDocuments.get(change.document);
+	const diagnostics = await languageService.doValidation(change.document, htmlDocument);
+	connection.sendDiagnostics({ uri: change.document.uri, diagnostics });
+});
 
 connection.onCompletion(textDocumentPosition => {
 	let document = documents.get(textDocumentPosition.textDocument.uri);

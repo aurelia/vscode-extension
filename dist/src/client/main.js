@@ -1,5 +1,5 @@
 "use strict";
-const path = require("path");
+const path = require('path');
 const vscode_1 = require('vscode');
 const vscode_languageclient_1 = require('vscode-languageclient');
 const aureliaCLICommands_1 = require('./aureliaCLICommands');
@@ -11,21 +11,22 @@ function activate(context) {
     // Register CLI commands
     context.subscriptions.push(aureliaCLICommands_1.default.registerCommands(outputChannel));
     // Register Aurelia language server
-    let serverModule = context.asAbsolutePath(path.join('dist', 'src', 'server', 'main.js'));
-    let debugOptions = { execArgv: ['--nolazy', '--debug=6004'] };
-    let serverOptions = {
+    const serverModule = context.asAbsolutePath(path.join('dist', 'src', 'server', 'main.js'));
+    const debugOptions = { execArgv: ['--nolazy', '--debug=6004'] };
+    const serverOptions = {
         run: { module: serverModule, transport: vscode_languageclient_1.TransportKind.ipc },
         debug: { module: serverModule, transport: vscode_languageclient_1.TransportKind.ipc, options: debugOptions }
     };
-    let clientOptions = {
+    const clientOptions = {
+        diagnosticCollectionName: 'Aurelia',
         documentSelector: ['html'],
+        initializationOptions: {},
         synchronize: {
             configurationSection: ['aurelia'],
-        },
-        initializationOptions: {}
+        }
     };
-    let client = new vscode_languageclient_1.LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
-    let disposable = client.start();
+    const client = new vscode_languageclient_1.LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
+    const disposable = client.start();
     context.subscriptions.push(disposable);
 }
 exports.activate = activate;
