@@ -20,7 +20,7 @@ function activate(context) {
     let clientOptions = {
         documentSelector: ['html'],
         synchronize: {
-            configurationSection: ['html'],
+            configurationSection: ['aurelia'],
         },
         initializationOptions: {}
     };

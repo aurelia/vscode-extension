@@ -1,7 +1,11 @@
 "use strict";
 const htmlScanner_1 = require('../parser/htmlScanner');
 const aureliaTagProvider_1 = require('../parser/aureliaTagProvider');
-function doComplete(document, position, htmlDocument) {
+function doComplete(document, position, htmlDocument, quotes) {
+    let quote = '"';
+    if (quotes === 'single') {
+        quote = '\'';
+    }
     let tagProvider = aureliaTagProvider_1.getAureliaTagProvider();
     let result = {
         isIncomplete: false,
@@ -38,7 +42,7 @@ function doComplete(document, position, htmlDocument) {
     }
     function collectAttributeNameSuggestions(nameStart, nameEnd = offset) {
         let range = getReplaceRange(nameStart, nameEnd);
-        let value = isFollowedBy(text, nameEnd, htmlScanner_1.ScannerState.AfterAttributeName, htmlScanner_1.TokenType.DelimiterAssign) ? '' : '="{{}}"';
+        let value = isFollowedBy(text, nameEnd, htmlScanner_1.ScannerState.AfterAttributeName, htmlScanner_1.TokenType.DelimiterAssign) ? '' : '=' + quote + '{{}}' + quote;
         tagProvider.collectAttributes(currentTag, (attribute, type) => {
             let codeSnippet = attribute;
             if (type !== 'v' && value.length) {
@@ -55,9 +59,9 @@ function doComplete(document, position, htmlDocument) {
     function collectAttributeValueSuggestions(valueStart, valueEnd) {
         let range;
         let addQuotes;
-        if (offset > valueStart && offset <= valueEnd && text[valueStart] === '"') {
+        if (offset > valueStart && offset <= valueEnd && text[valueStart] === quote) {
             // inside attribute
-            if (valueEnd > offset && text[valueEnd - 1] === '"') {
+            if (valueEnd > offset && text[valueEnd - 1] === quote) {
                 valueEnd--;
             }
             let wsBefore = getWordStart(text, offset, valueStart + 1);
@@ -70,7 +74,7 @@ function doComplete(document, position, htmlDocument) {
             addQuotes = true;
         }
         tagProvider.collectValues(currentTag, currentAttributeName, (value) => {
-            let codeSnippet = addQuotes ? '"' + value + '"' : value;
+            let codeSnippet = addQuotes ? quote + value + quote : value;
             result.items.push({
                 label: value,
                 filterText: codeSnippet,

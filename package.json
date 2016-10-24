@@ -87,7 +87,24 @@
         "uiTheme": "vs",
         "path": "./themes/light_vs.json"
       }
-    ]
+    ],
+    "configuration": {
+      "id": "aurelia",
+      "order": 20,
+      "type": "object",
+      "title": "Aurelia",
+      "properties": {
+        "aurelia.autocomplete.quotes": {
+          "type": "string",
+          "enum": [
+            "single",
+            "double"
+          ],          
+          "default": "double",
+          "description": "Quotes to use when performing an autocomplete action"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "node ./node_modules/typescript/bin/tsc -p ./",
