@@ -9,7 +9,6 @@ export function getAureliaTagProvider(): IHTMLTagProvider {
 		collectTags: (collector: (tag: string, label: string) => void) => collectTagsDefault(collector, AURELIA_TAGS),
 		collectAttributes: (tag: string, collector: (attribute: string, type: string) => void) => {
       if (tag) {
-        console.log(tag);
         let tagWithAttributes = AURELIA_TAGS[tag];
         let attributes = AURELIA_ATTRIBUTES[tag];
 
