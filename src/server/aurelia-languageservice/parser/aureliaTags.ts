@@ -22,8 +22,8 @@ export const AURELIA_ATTRIBUTES: IAttributeSet = {
     'select'  : [ new HTMLAttributeSpecification('matcher', defaultBindings, true, false) ],
     'option'  : [ new HTMLAttributeSpecification('model', defaultBindings, true, false) ],
     'input'   : [
-      new HTMLAttributeSpecification('value', defaultBindings), 
-      new HTMLAttributeSpecification('checked' ,defaultBindings),
+      new HTMLAttributeSpecification('value', defaultBindings, true, true), 
+      new HTMLAttributeSpecification('checked' ,defaultBindings, true, true),
       new HTMLAttributeSpecification('model', defaultBindings, true, false)
     ],
     'compose' : [
@@ -32,34 +32,34 @@ export const AURELIA_ATTRIBUTES: IAttributeSet = {
       new HTMLAttributeSpecification('model', defaultBindings, true, false)
     ],
     'template': [
-      new HTMLAttributeSpecification('replaceable', [], false),
+      new HTMLAttributeSpecification('replaceable', [], false, false),
       new HTMLAttributeSpecification('replace-part', defaultBindings, true, false),
-      new HTMLAttributeSpecification('bindable', defaultBindings, true, false)
+      new HTMLAttributeSpecification('bindable', defaultBindings, true, false),
+      new HTMLAttributeSpecification('containerless', [], false, false),
     ],
     'a': [ new HTMLAttributeSpecification('route-href', defaultBindings, true, false)],
-    'slot': [ new HTMLAttributeSpecification('name', defaultBindings) ]
+    'slot': [ new HTMLAttributeSpecification('name', defaultBindings, true, true) ]
 }
 
 export const AURELIA_GLOBAL_ATTRIBUTES: Array<HTMLAttributeSpecification> = [
-  new HTMLAttributeSpecification('repeat.for'),
-  new HTMLAttributeSpecification('as-element', defaultBindings),
+  new HTMLAttributeSpecification('repeat.for', [], true, false),
+  new HTMLAttributeSpecification('as-element', [], true, false),
   new HTMLAttributeSpecification('view', defaultBindings, true, false),
-  new HTMLAttributeSpecification('ref'),
-  new HTMLAttributeSpecification('element.ref'),
-  new HTMLAttributeSpecification('view-model.ref'),
-  new HTMLAttributeSpecification('view.ref'),
-  new HTMLAttributeSpecification('controller.ref'),
+  new HTMLAttributeSpecification('ref', [], true, false),
+  new HTMLAttributeSpecification('element.ref', [], true, false),
+  new HTMLAttributeSpecification('view-model.ref', [], true, false),
+  new HTMLAttributeSpecification('view.ref', [], true, false),
+  new HTMLAttributeSpecification('controller.ref', [], true, false),
   new HTMLAttributeSpecification('innerhtml', defaultBindings, true, false),
   new HTMLAttributeSpecification('textcontent', defaultBindings, true, false),
-  new HTMLAttributeSpecification('style', defaultBindings),
+  new HTMLAttributeSpecification('style', defaultBindings, true, true),
   new HTMLAttributeSpecification('show', defaultBindings, true, false),
   new HTMLAttributeSpecification('if', defaultBindings, true, false),
   new HTMLAttributeSpecification('naive-if', defaultBindings, true, false),
-  new HTMLAttributeSpecification('with', defaultBindings),
-  new HTMLAttributeSpecification('slot'),
-  new HTMLAttributeSpecification('containerless', [], true),
-  new HTMLAttributeSpecification('view-spy', [], true),
-  new HTMLAttributeSpecification('compile-spy', [], true),
+  new HTMLAttributeSpecification('with', defaultBindings, true, false),
+  new HTMLAttributeSpecification('slot', [], true, false),
+  new HTMLAttributeSpecification('view-spy', [], true, false),
+  new HTMLAttributeSpecification('compile-spy', [], true, false),
 ];
 
 const actionRedirectOptions = ['delegate', 'trigger', 'call'];

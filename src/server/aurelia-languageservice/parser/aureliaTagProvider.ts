@@ -9,9 +9,11 @@ export function getAureliaTagProvider(): IHTMLTagProvider {
 		collectTags: (collector: (tag: string, label: string) => void) => collectTagsDefault(collector, AURELIA_TAGS),
 		collectAttributes: (tag: string, collector: (attribute: string, type: string) => void) => {
       if (tag) {
+        console.log(tag);
         let tagWithAttributes = AURELIA_TAGS[tag];
         let attributes = AURELIA_ATTRIBUTES[tag];
-				if (tagWithAttributes) {
+
+        if (tagWithAttributes) {
           addAttributes(tagWithAttributes.attributes, collector);
 				} else if (attributes) {
           addAttributes(attributes, collector);
@@ -32,6 +34,7 @@ export function getAureliaTagProvider(): IHTMLTagProvider {
 
 function addAttributes(attributes: Array<HTMLAttributeSpecification>, collector) {
   attributes.forEach(attribute => {
+
     if (!attribute.hasBody) {
       collector(attribute.name, 'v');
     } else if (!attribute.defaultAttribute) {

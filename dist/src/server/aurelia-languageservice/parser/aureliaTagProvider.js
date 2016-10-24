@@ -7,6 +7,7 @@ function getAureliaTagProvider() {
         collectTags: (collector) => collectTagsDefault(collector, aureliaTags_1.AURELIA_TAGS),
         collectAttributes: (tag, collector) => {
             if (tag) {
+                console.log(tag);
                 let tagWithAttributes = aureliaTags_1.AURELIA_TAGS[tag];
                 let attributes = aureliaTags_1.AURELIA_ATTRIBUTES[tag];
                 if (tagWithAttributes) {

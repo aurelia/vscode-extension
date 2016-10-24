@@ -20,8 +20,8 @@ exports.AURELIA_ATTRIBUTES = {
     'select': [new models_1.HTMLAttributeSpecification('matcher', defaultBindings, true, false)],
     'option': [new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)],
     'input': [
-        new models_1.HTMLAttributeSpecification('value', defaultBindings),
-        new models_1.HTMLAttributeSpecification('checked', defaultBindings),
+        new models_1.HTMLAttributeSpecification('value', defaultBindings, true, true),
+        new models_1.HTMLAttributeSpecification('checked', defaultBindings, true, true),
         new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)
     ],
     'compose': [
@@ -30,33 +30,33 @@ exports.AURELIA_ATTRIBUTES = {
         new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)
     ],
     'template': [
-        new models_1.HTMLAttributeSpecification('replaceable', [], false),
+        new models_1.HTMLAttributeSpecification('replaceable', [], false, false),
         new models_1.HTMLAttributeSpecification('replace-part', defaultBindings, true, false),
-        new models_1.HTMLAttributeSpecification('bindable', defaultBindings, true, false)
+        new models_1.HTMLAttributeSpecification('bindable', defaultBindings, true, false),
+        new models_1.HTMLAttributeSpecification('containerless', [], false, false),
     ],
     'a': [new models_1.HTMLAttributeSpecification('route-href', defaultBindings, true, false)],
-    'slot': [new models_1.HTMLAttributeSpecification('name', defaultBindings)]
+    'slot': [new models_1.HTMLAttributeSpecification('name', defaultBindings, true, true)]
 };
 exports.AURELIA_GLOBAL_ATTRIBUTES = [
-    new models_1.HTMLAttributeSpecification('repeat.for'),
-    new models_1.HTMLAttributeSpecification('as-element', defaultBindings),
+    new models_1.HTMLAttributeSpecification('repeat.for', [], true, false),
+    new models_1.HTMLAttributeSpecification('as-element', [], true, false),
     new models_1.HTMLAttributeSpecification('view', defaultBindings, true, false),
-    new models_1.HTMLAttributeSpecification('ref'),
-    new models_1.HTMLAttributeSpecification('element.ref'),
-    new models_1.HTMLAttributeSpecification('view-model.ref'),
-    new models_1.HTMLAttributeSpecification('view.ref'),
-    new models_1.HTMLAttributeSpecification('controller.ref'),
+    new models_1.HTMLAttributeSpecification('ref', [], true, false),
+    new models_1.HTMLAttributeSpecification('element.ref', [], true, false),
+    new models_1.HTMLAttributeSpecification('view-model.ref', [], true, false),
+    new models_1.HTMLAttributeSpecification('view.ref', [], true, false),
+    new models_1.HTMLAttributeSpecification('controller.ref', [], true, false),
     new models_1.HTMLAttributeSpecification('innerhtml', defaultBindings, true, false),
     new models_1.HTMLAttributeSpecification('textcontent', defaultBindings, true, false),
-    new models_1.HTMLAttributeSpecification('style', defaultBindings),
+    new models_1.HTMLAttributeSpecification('style', defaultBindings, true, true),
     new models_1.HTMLAttributeSpecification('show', defaultBindings, true, false),
     new models_1.HTMLAttributeSpecification('if', defaultBindings, true, false),
     new models_1.HTMLAttributeSpecification('naive-if', defaultBindings, true, false),
-    new models_1.HTMLAttributeSpecification('with', defaultBindings),
-    new models_1.HTMLAttributeSpecification('slot'),
-    new models_1.HTMLAttributeSpecification('containerless', [], true),
-    new models_1.HTMLAttributeSpecification('view-spy', [], true),
-    new models_1.HTMLAttributeSpecification('compile-spy', [], true),
+    new models_1.HTMLAttributeSpecification('with', defaultBindings, true, false),
+    new models_1.HTMLAttributeSpecification('slot', [], true, false),
+    new models_1.HTMLAttributeSpecification('view-spy', [], true, false),
+    new models_1.HTMLAttributeSpecification('compile-spy', [], true, false),
 ];
 const actionRedirectOptions = ['delegate', 'trigger', 'call'];
 const actionRedirectOptionsNonBubbling = ['trigger', 'call'];
