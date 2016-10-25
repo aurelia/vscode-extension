@@ -1,3 +1,22 @@
+<a name="0.1.9"></a>
+## [0.1.9](https://github.com/aurelia/vscode-extension/compare/0.1.8...v0.1.9) (2016-10-25)
+
+
+### Bug Fixes
+
+* **autocomplete:** added focus attribute data bindings, resolves [#17](https://github.com/aurelia/vscode-extension/issues/17) ([51bb902](https://github.com/aurelia/vscode-extension/commit/51bb902))
+* **autocomplete:** complete as-element without databindings, resolves [#14](https://github.com/aurelia/vscode-extension/issues/14) ([accbf0c](https://github.com/aurelia/vscode-extension/commit/accbf0c))
+
+
+### Features
+
+* **autocomplete:** config setting aurelia.autocomplete.quotes to specify single or double quotes on auto-complete, resolves [#13](https://github.com/aurelia/vscode-extension/issues/13) ([#15](https://github.com/aurelia/vscode-extension/issues/15)) ([e60b97d](https://github.com/aurelia/vscode-extension/commit/e60b97d))
+* **syntax:** tokenize compile-spy ([b9fa63e](https://github.com/aurelia/vscode-extension/commit/b9fa63e))
+* **syntax:** tokenize route-href ([77b6828](https://github.com/aurelia/vscode-extension/commit/77b6828))
+* **syntax:** tokenize view-spy ([15f9fcd](https://github.com/aurelia/vscode-extension/commit/15f9fcd))
+
+
+
 <a name="0.1.8"></a>
 ## [0.1.8](https://github.com/aurelia/vscode-extension/compare/0.1.7...v0.1.8) (2016-10-22)
 
