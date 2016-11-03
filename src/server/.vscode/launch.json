@@ -1,0 +1,14 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+{
+  "version": "0.1.0",
+  "configurations": [
+    {
+      "name": "Attach to Language Service",
+      "type": "node",
+      "request": "attach",
+      "port": 6004,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}/../../dist"
+    }
+  ]
+}
