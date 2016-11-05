@@ -101,4 +101,18 @@ describe('The Aurelia HTML syntax ref attribute', () => {
 
   });
 
+  it('must not tokenize client.ref* part in body of other attribute', () => {
+
+    // arrange
+    let scope = 'meta.tag.block.any.html';
+
+    // act
+    let lineToken = tokenizeLine('<div data-reference-id="client.referenceId">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 24, 42);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
 });

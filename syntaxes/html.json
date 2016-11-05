@@ -240,15 +240,15 @@
       }
     },
     "tag-aurelia-attribute-with-ref-attribute": {
-      "match": "[^=](([a-zA-Z0-9:-]+)(?<!controller|view|view-model)(\\.)(ref))",
+      "match": "(?<![\"'-])([a-zA-Z0-9:-]+)(?<!controller|view|view-model)(\\.)(ref)(?![\"'-;])",
       "captures": {
-        "2": {
+        "1": {
           "name": "entity.other.attribute-name.html"
         },
-        "3": {
+        "2": {
           "name": "punctuation.definition.tag.begin.html"
         },
-        "4": {
+        "3": {
           "name": "ref.attribute.html.au"
         }
       }
