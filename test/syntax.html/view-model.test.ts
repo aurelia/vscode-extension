@@ -99,7 +99,7 @@ describe(`The Aurelia HTML syntax view-model attribute`, () => {
     let token = getTokenOnCharRange(lineToken, 5, 19);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must tokenize (foo-view-model)="foo" attribute with scope "attribute.html.au"`, () => {
 
@@ -113,7 +113,7 @@ describe(`The Aurelia HTML syntax view-model attribute`, () => {
     let token = getTokenOnCharRange(lineToken, 5, 19);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must tokenize a="(view-model)" attribute with scope "attribute.html.au"`, () => {
 
@@ -127,6 +127,6 @@ describe(`The Aurelia HTML syntax view-model attribute`, () => {
     let token = getTokenOnCharRange(lineToken, 8, 18);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });    
+  });
 
 });

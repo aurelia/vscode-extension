@@ -34,10 +34,13 @@ function getLanguageModelCache(maxEntries, cleanupIntervalTimeInSec, parse) {
                 let oldestTime = Number.MAX_VALUE;
                 let oldestUri = null;
                 for (let uri in languageModels) {
-                    let languageModelInfo = languageModels[uri];
-                    if (languageModelInfo.cTime < oldestTime) {
-                        oldestUri = uri;
-                        oldestTime = languageModelInfo.cTime;
+                    if (languageModels.hasOwnProperty(uri)) {
+                        // tslint:disable-next-line:no-shadowed-variable
+                        let languageModelInfo = languageModels[uri];
+                        if (languageModelInfo.cTime < oldestTime) {
+                            oldestUri = uri;
+                            oldestTime = languageModelInfo.cTime;
+                        }
                     }
                 }
                 if (oldestUri) {
@@ -61,7 +64,7 @@ function getLanguageModelCache(maxEntries, cleanupIntervalTimeInSec, parse) {
                 languageModels = {};
                 nModels = 0;
             }
-        }
+        },
     };
 }
 exports.getLanguageModelCache = getLanguageModelCache;

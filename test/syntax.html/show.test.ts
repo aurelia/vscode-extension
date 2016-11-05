@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax show attribute', () => {
 
@@ -127,7 +127,7 @@ describe('The Aurelia HTML syntax show attribute', () => {
     let token = getTokenOnCharRange(lineToken, 5, 13);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must not tokenize a="show" attribute with scope "show.attribute.html.au"`, () => {
 

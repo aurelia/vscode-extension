@@ -9,7 +9,7 @@ function doComplete(document, position, htmlDocument, quotes) {
     let tagProvider = aureliaTagProvider_1.getAureliaTagProvider();
     let result = {
         isIncomplete: false,
-        items: []
+        items: [],
     };
     let offset = document.offsetAt(position);
     let node = htmlDocument.findNodeBefore(offset);
@@ -22,16 +22,19 @@ function doComplete(document, position, htmlDocument, quotes) {
         if (replaceStart > offset) {
             replaceStart = offset;
         }
-        return { start: document.positionAt(replaceStart), end: document.positionAt(replaceEnd) };
+        return {
+            end: document.positionAt(replaceEnd),
+            start: document.positionAt(replaceStart),
+        };
     }
     function collectOpenTagSuggestions(afterOpenBracket, tagNameEnd) {
         let range = getReplaceRange(afterOpenBracket, tagNameEnd);
         tagProvider.collectTags((tag, label) => {
             result.items.push({
-                label: tag,
-                kind: 10 /* Property */,
                 documentation: label,
-                textEdit: { newText: tag, range: range }
+                kind: 10 /* Property */,
+                label: tag,
+                textEdit: { newText: tag, range: range },
             });
         });
         return result;
@@ -49,9 +52,9 @@ function doComplete(document, position, htmlDocument, quotes) {
                 codeSnippet = codeSnippet + value;
             }
             result.items.push({
-                label: attribute,
                 kind: type === 'handler' ? 3 /* Function */ : 12 /* Value */,
-                textEdit: { newText: codeSnippet, range: range }
+                label: attribute,
+                textEdit: { newText: codeSnippet, range: range },
             });
         });
         return result;
@@ -76,10 +79,10 @@ function doComplete(document, position, htmlDocument, quotes) {
         tagProvider.collectValues(currentTag, currentAttributeName, (value) => {
             let codeSnippet = addQuotes ? quote + value + quote : value;
             result.items.push({
-                label: value,
                 filterText: codeSnippet,
                 kind: 11 /* Unit */,
-                textEdit: { newText: codeSnippet, range: range }
+                label: value,
+                textEdit: { newText: codeSnippet, range: range },
             });
         });
         return result;
@@ -94,6 +97,7 @@ function doComplete(document, position, htmlDocument, quotes) {
         return offset;
     }
     while (token !== htmlScanner_1.TokenType.EOS && scanner.getTokenOffset() <= offset) {
+        // tslint:disable-next-line:switch-default
         switch (token) {
             case htmlScanner_1.TokenType.StartTagOpen:
                 if (scanner.getTokenEnd() === offset) {
@@ -125,6 +129,7 @@ function doComplete(document, position, htmlDocument, quotes) {
                 break;
             case htmlScanner_1.TokenType.Whitespace:
                 if (offset <= scanner.getTokenEnd()) {
+                    // tslint:disable-next-line:switch-default
                     switch (scanner.getScannerState()) {
                         case htmlScanner_1.ScannerState.AfterOpeningStartTag:
                             let startPos = scanner.getTokenOffset();
@@ -147,16 +152,16 @@ exports.doComplete = doComplete;
 function isWhiteSpace(s) {
     return /^\s*$/.test(s);
 }
-function isWhiteSpaceOrQuote(s) {
-    return /^[\s"]*$/.test(s);
-}
+// function isWhiteSpaceOrQuote(s: string): boolean {
+//   return /^[\s"]*$/.test(s);
+// }
 function isFollowedBy(s, offset, intialState, expectedToken) {
     let scanner = htmlScanner_1.createScanner(s, offset, intialState);
     let token = scanner.scan();
     while (token === htmlScanner_1.TokenType.Whitespace) {
         token = scanner.scan();
     }
-    return token == expectedToken;
+    return token === expectedToken;
 }
 function getWordStart(s, offset, limit) {
     while (offset > limit && !isWhiteSpace(s[offset - 1])) {

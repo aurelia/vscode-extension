@@ -1,11 +1,11 @@
-import { ITagSet, HTMLTagSpecification, HTMLAttributeSpecification, IAttributeSet, IEventSet } from './models';
+import { TagSet, HTMLTagSpecification, HTMLAttributeSpecification, AttributeSet, EventSet } from './models';
 
-export const AURELIA_TAGS: ITagSet = {
+export const AURELIA_TAGS: TagSet = {
   'require' : new HTMLTagSpecification(`"import" or "require" various resources into a view. Equivalent of the ES 2015 "import" syntax`, [
-    new HTMLAttributeSpecification('from', [], true, false), 
+    new HTMLAttributeSpecification('from', [], true, false),
     new HTMLAttributeSpecification('as', [], true, false) ]),
   'router-view': new HTMLTagSpecification(`Placeholder for the router content`, [
-    new HTMLAttributeSpecification('name'), 
+    new HTMLAttributeSpecification('name'),
     new HTMLAttributeSpecification('layout-view', [], true, false),
     new HTMLAttributeSpecification( 'layout-view-model', [], true, false),
     new HTMLAttributeSpecification('layout-model', [], true, false)]),
@@ -13,23 +13,23 @@ export const AURELIA_TAGS: ITagSet = {
     new HTMLAttributeSpecification('view', [], true, false)]),
   'slot': new HTMLTagSpecification(`Shadow DOM slot element, Aurelia will project the element's content in to the <slot></slot> element.`, [
     new HTMLAttributeSpecification('name'),
-    new HTMLAttributeSpecification('slot')])
+    new HTMLAttributeSpecification('slot')]),
 };
 
 const defaultBindings = ['bind', 'one-way', 'two-way', 'one-time'];
 
-export const AURELIA_ATTRIBUTES: IAttributeSet = {
+export const AURELIA_ATTRIBUTES: AttributeSet = {
     'select'  : [ new HTMLAttributeSpecification('matcher', defaultBindings, true, false) ],
     'option'  : [ new HTMLAttributeSpecification('model', defaultBindings, true, false) ],
     'input'   : [
-      new HTMLAttributeSpecification('value', defaultBindings, true, true), 
-      new HTMLAttributeSpecification('checked' ,defaultBindings, true, true),
-      new HTMLAttributeSpecification('model', defaultBindings, true, false)
+      new HTMLAttributeSpecification('value', defaultBindings, true, true),
+      new HTMLAttributeSpecification('checked', defaultBindings, true, true),
+      new HTMLAttributeSpecification('model', defaultBindings, true, false),
     ],
     'compose' : [
       new HTMLAttributeSpecification('view', defaultBindings, true, false),
       new HTMLAttributeSpecification('view-model', defaultBindings, true, false),
-      new HTMLAttributeSpecification('model', defaultBindings, true, false)
+      new HTMLAttributeSpecification('model', defaultBindings, true, false),
     ],
     'template': [
       new HTMLAttributeSpecification('replaceable', [], false, false),
@@ -38,8 +38,8 @@ export const AURELIA_ATTRIBUTES: IAttributeSet = {
       new HTMLAttributeSpecification('containerless', [], false, false),
     ],
     'a': [ new HTMLAttributeSpecification('route-href', defaultBindings, true, false)],
-    'slot': [ new HTMLAttributeSpecification('name', defaultBindings, true, true) ]
-}
+    'slot': [ new HTMLAttributeSpecification('name', defaultBindings, true, true) ],
+};
 
 export const AURELIA_GLOBAL_ATTRIBUTES: Array<HTMLAttributeSpecification> = [
   new HTMLAttributeSpecification('repeat.for', [], true, false),
@@ -72,11 +72,11 @@ const globalEvents = [
     new HTMLAttributeSpecification('abort', actionRedirectOptionsNonBubbling),
     new HTMLAttributeSpecification('load', actionRedirectOptionsNonBubbling),
     new HTMLAttributeSpecification('unload', actionRedirectOptionsNonBubbling),
-    
+
     // Focus Events
     new HTMLAttributeSpecification('blur', actionRedirectOptionsNonBubbling),
     new HTMLAttributeSpecification('focus', ['call', 'trigger', 'bind', 'one-way', 'two-way', 'one-time']),
-    
+
     // CSS Animation Events
     new HTMLAttributeSpecification('animationstart', actionRedirectOptions),
     new HTMLAttributeSpecification('animationend', actionRedirectOptions),
@@ -98,7 +98,7 @@ const globalEvents = [
     // Keyboard Events
     new HTMLAttributeSpecification('keydown', actionRedirectOptions),
     new HTMLAttributeSpecification('keypress', actionRedirectOptions),
-    new HTMLAttributeSpecification('keyup', actionRedirectOptions),    
+    new HTMLAttributeSpecification('keyup', actionRedirectOptions),
 
     // Mouse Events
     new HTMLAttributeSpecification('mouseenter', actionRedirectOptionsNonBubbling),
@@ -135,7 +135,7 @@ const globalEvents = [
     new HTMLAttributeSpecification('close', actionRedirectOptions),
 ];
 
-export const AURELIA_EVENTS: IEventSet = {
+export const AURELIA_EVENTS: EventSet = {
   'a': globalEvents,
   'abbr': globalEvents,
   'address': globalEvents,
@@ -177,7 +177,7 @@ export const AURELIA_EVENTS: IEventSet = {
     new HTMLAttributeSpecification('reset', actionRedirectOptions),
     new HTMLAttributeSpecification('submit', actionRedirectOptions),
     new HTMLAttributeSpecification('change', actionRedirectOptions),
-    new HTMLAttributeSpecification('input', actionRedirectOptions),    
+    new HTMLAttributeSpecification('input', actionRedirectOptions),
   ],
   'header': globalEvents,
   'hr': globalEvents,
@@ -239,4 +239,4 @@ export const AURELIA_EVENTS: IEventSet = {
   'var': globalEvents,
   'video': globalEvents,
   'wbr': globalEvents,
-}
+};

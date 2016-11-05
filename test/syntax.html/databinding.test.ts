@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax databinding attributes', () => {
 
@@ -85,7 +85,7 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
     let token = getTokenOnCharRange(lineToken, 8, 17);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must not tokenize a="x.(bind)='x'; x" attribute with scope "databinding.attribute.html.au"`, () => {
 
@@ -99,7 +99,7 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
     let token = getTokenOnCharRange(lineToken, 8, 21);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must not tokenize a="x.(one-way)" attribute with scope "databinding.attribute.html.au"`, () => {
 

@@ -11,16 +11,16 @@ const vscode_languageserver_types_1 = require('vscode-languageserver-types');
 const htmlScanner_1 = require('../parser/htmlScanner');
 exports.DiagnosticCodes = {
     InvalidCasing: 'invalid-casing',
-    InvalidMethod: 'invalid-method'
+    InvalidMethod: 'invalid-method',
 };
 exports.DiagnosticSource = 'Aurelia';
 const kebabCaseValidationRegex = /(.*)\.(bind|one-way|two-way|one-time|call|delegate|trigger)/;
-const methodRegex = /\"(.*)\(/;
-function kebabToCamel(s) {
-    return s.replace(/(\-\w)/g, m => m[1].toUpperCase());
-}
+// const methodRegex = /\"(.*)\(/;
+// function kebabToCamel(s: string) {
+//   return s.replace(/(\-\w)/g, m => m[1].toUpperCase());
+// }
 function camelToKebab(s) {
-    return s.replace(/\.?([A-Z])/g, (x, y) => "-" + y.toLowerCase()).replace(/^-/, "");
+    return s.replace(/\.?([A-Z])/g, (x, y) => '-' + y.toLowerCase()).replace(/^-/, '');
 }
 class HTMLValidation {
     constructor() {
@@ -33,25 +33,27 @@ class HTMLValidation {
     }
     doValidation(document, htmlDocument) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.validationEnabled)
+            if (!this.validationEnabled) {
                 return Promise.resolve([]);
+            }
             const text = document.getText();
             const scanner = htmlScanner_1.createScanner(text, htmlDocument.roots[0].start);
             const diagnostics = [];
             let attr;
             let token = scanner.scan();
             while (token !== htmlScanner_1.TokenType.EOS) {
+                // tslint:disable-next-line:switch-default
                 switch (token) {
                     case htmlScanner_1.TokenType.AttributeName:
                         attr = {
+                            length: scanner.getTokenLength(),
                             name: scanner.getTokenText(),
                             start: scanner.getTokenOffset(),
-                            length: scanner.getTokenLength()
                         };
                         break;
                     case htmlScanner_1.TokenType.AttributeValue:
                         attr.value = scanner.getTokenText();
-                        yield this._validateAttribute(attr, document, diagnostics);
+                        yield this.validateAttribute(attr, document, diagnostics);
                         break;
                 }
                 token = scanner.scan();
@@ -59,7 +61,7 @@ class HTMLValidation {
             return Promise.resolve(diagnostics);
         });
     }
-    _validateAttribute(attr, document, diagnostics) {
+    validateAttribute(attr, document, diagnostics) {
         return __awaiter(this, void 0, void 0, function* () {
             let match = kebabCaseValidationRegex.exec(attr.name);
             if (match && match.length) {
@@ -78,7 +80,7 @@ class HTMLValidation {
             message: message,
             range: range,
             severity: serverity,
-            source: exports.DiagnosticSource
+            source: exports.DiagnosticSource,
         };
         if (code !== undefined) {
             diagnostic.code = code;

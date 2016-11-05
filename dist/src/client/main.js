@@ -14,8 +14,8 @@ function activate(context) {
     const serverModule = context.asAbsolutePath(path.join('dist', 'src', 'server', 'main.js'));
     const debugOptions = { execArgv: ['--nolazy', '--debug=6004'] };
     const serverOptions = {
+        debug: { module: serverModule, options: debugOptions, transport: vscode_languageclient_1.TransportKind.ipc },
         run: { module: serverModule, transport: vscode_languageclient_1.TransportKind.ipc },
-        debug: { module: serverModule, transport: vscode_languageclient_1.TransportKind.ipc, options: debugOptions }
     };
     const clientOptions = {
         diagnosticCollectionName: 'Aurelia',
@@ -23,7 +23,7 @@ function activate(context) {
         initializationOptions: {},
         synchronize: {
             configurationSection: ['aurelia'],
-        }
+        },
     };
     const client = new vscode_languageclient_1.LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
     const disposable = client.start();

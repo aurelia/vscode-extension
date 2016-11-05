@@ -45,6 +45,7 @@ function parse(text) {
     let endTagStart = -1;
     let token = scanner.scan();
     while (token !== htmlScanner_1.TokenType.EOS) {
+        // tslint:disable-next-line:switch-default
         switch (token) {
             case htmlScanner_1.TokenType.StartTagOpen:
                 let child = new Node(scanner.getTokenOffset(), text.length, [], curr);
@@ -98,14 +99,15 @@ function parse(text) {
         curr = curr.parent;
     }
     return {
-        roots: htmlDocument.children,
+        findNodeAt: htmlDocument.findNodeAt.bind(htmlDocument),
         findNodeBefore: htmlDocument.findNodeBefore.bind(htmlDocument),
-        findNodeAt: htmlDocument.findNodeAt.bind(htmlDocument)
+        roots: htmlDocument.children,
     };
 }
 exports.parse = parse;
 function findFirst(array, p) {
-    let low = 0, high = array.length;
+    let low = 0;
+    let high = array.length;
     if (high === 0) {
         return 0; // no children
     }
@@ -121,8 +123,10 @@ function findFirst(array, p) {
     return low;
 }
 function binarySearch(array, key, comparator) {
-    let low = 0, high = array.length - 1;
+    let low = 0;
+    let high = array.length - 1;
     while (low <= high) {
+        // tslint:disable-next-line:no-bitwise
         let mid = ((low + high) / 2) | 0;
         let comp = comparator(array[mid], key);
         if (comp < 0) {
@@ -137,7 +141,23 @@ function binarySearch(array, key, comparator) {
     }
     return -(low + 1);
 }
-exports.EMPTY_ELEMENTS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'menuitem', 'meta', 'param', 'source', 'track', 'wbr'];
+exports.EMPTY_ELEMENTS = [
+    'area',
+    'base',
+    'br',
+    'col',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'keygen',
+    'link',
+    'menuitem',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr'];
 function isEmptyElement(e) {
     return e && binarySearch(exports.EMPTY_ELEMENTS, e.toLowerCase(), (s1, s2) => s1.localeCompare(s2)) >= 0;
 }

@@ -85,7 +85,7 @@ describe('The Aurelia HTML syntax replaceable attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must not tokenize class="replaceable" attribute body with scope "replaceable.attribute.html.au"`, () => {
 
@@ -295,6 +295,6 @@ describe('The Aurelia HTML syntax replaceable attribute', () => {
     let token = getTokenOnCharRange(lineToken, 5, 20);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
 });

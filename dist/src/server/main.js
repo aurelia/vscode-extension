@@ -27,9 +27,9 @@ connection.onInitialize((params) => {
     workspacePath = params.rootPath;
     return {
         capabilities: {
+            completionProvider: { resolveProvider: false, triggerCharacters: ['.', '<'] },
             textDocumentSync: documents.syncKind,
-            completionProvider: { resolveProvider: false, triggerCharacters: ['.', '<'] }
-        }
+        },
     };
 });
 let aureliaSettings;

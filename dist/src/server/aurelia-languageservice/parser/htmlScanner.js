@@ -107,6 +107,7 @@ class MultiLineStream {
     advanceUntilChars(ch) {
         while (this.position + ch.length <= this.source.length) {
             let i = 0;
+            // tslint:disable-next-line:no-empty
             for (; i < ch.length && this.source.charCodeAt(this.position + i) === ch[i]; i++) {
             }
             if (i === ch.length) {
@@ -159,7 +160,7 @@ const _TAB = '\t'.charCodeAt(0);
 })(exports.ScannerState || (exports.ScannerState = {}));
 var ScannerState = exports.ScannerState;
 const htmlScriptContents = {
-    'text/x-handlebars-template': true
+    'text/x-handlebars-template': true,
 };
 function createScanner(input, initialOffset = 0, initialState = ScannerState.WithinContent) {
     let stream = new MultiLineStream(input, initialOffset);
@@ -188,6 +189,7 @@ function createScanner(input, initialOffset = 0, initialState = ScannerState.Wit
         let oldState = state;
         let token = internalScan();
         if (token !== TokenType.EOS && offset === stream.pos()) {
+            // tslint:disable-next-line:no-console
             console.log('Scanner.scan has not advanced at offset ' + offset + ', state before: ' + oldState + ' after: ' + state);
             stream.advance(1);
             return finishToken(offset, TokenType.Unknown);
@@ -200,6 +202,7 @@ function createScanner(input, initialOffset = 0, initialState = ScannerState.Wit
             return finishToken(offset, TokenType.EOS);
         }
         let errorMessage;
+        // tslint:disable-next-line:switch-default
         switch (state) {
             case ScannerState.WithinComment:
                 if (stream.advanceIfChars([_MIN, _MIN, _RAN])) {
@@ -406,14 +409,14 @@ function createScanner(input, initialOffset = 0, initialState = ScannerState.Wit
         return finishToken(offset, TokenType.Unknown, errorMessage);
     }
     return {
-        scan,
-        getTokenType: () => tokenType,
-        getTokenOffset: () => tokenOffset,
-        getTokenLength: () => stream.pos() - tokenOffset,
-        getTokenEnd: () => stream.pos(),
-        getTokenText: () => stream.getSource().substring(tokenOffset, stream.pos()),
         getScannerState: () => state,
-        getTokenError: () => tokenError
+        getTokenEnd: () => stream.pos(),
+        getTokenError: () => tokenError,
+        getTokenLength: () => stream.pos() - tokenOffset,
+        getTokenOffset: () => tokenOffset,
+        getTokenText: () => stream.getSource().substring(tokenOffset, stream.pos()),
+        getTokenType: () => tokenType,
+        scan,
     };
 }
 exports.createScanner = createScanner;

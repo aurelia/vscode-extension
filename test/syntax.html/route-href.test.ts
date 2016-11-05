@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax route-href attribute', () => {
 
@@ -127,7 +127,7 @@ describe('The Aurelia HTML syntax route-href attribute', () => {
     let token = getTokenOnCharRange(lineToken, 3, 17);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must not tokenize a="route-href" attribute with scope "route-href.attribute.html.au"`, () => {
 

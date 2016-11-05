@@ -13,7 +13,7 @@ exports.AURELIA_TAGS = {
         new models_1.HTMLAttributeSpecification('view', [], true, false)]),
     'slot': new models_1.HTMLTagSpecification(`Shadow DOM slot element, Aurelia will project the element's content in to the <slot></slot> element.`, [
         new models_1.HTMLAttributeSpecification('name'),
-        new models_1.HTMLAttributeSpecification('slot')])
+        new models_1.HTMLAttributeSpecification('slot')]),
 };
 const defaultBindings = ['bind', 'one-way', 'two-way', 'one-time'];
 exports.AURELIA_ATTRIBUTES = {
@@ -22,12 +22,12 @@ exports.AURELIA_ATTRIBUTES = {
     'input': [
         new models_1.HTMLAttributeSpecification('value', defaultBindings, true, true),
         new models_1.HTMLAttributeSpecification('checked', defaultBindings, true, true),
-        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)
+        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false),
     ],
     'compose': [
         new models_1.HTMLAttributeSpecification('view', defaultBindings, true, false),
         new models_1.HTMLAttributeSpecification('view-model', defaultBindings, true, false),
-        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false)
+        new models_1.HTMLAttributeSpecification('model', defaultBindings, true, false),
     ],
     'template': [
         new models_1.HTMLAttributeSpecification('replaceable', [], false, false),
@@ -36,7 +36,7 @@ exports.AURELIA_ATTRIBUTES = {
         new models_1.HTMLAttributeSpecification('containerless', [], false, false),
     ],
     'a': [new models_1.HTMLAttributeSpecification('route-href', defaultBindings, true, false)],
-    'slot': [new models_1.HTMLAttributeSpecification('name', defaultBindings, true, true)]
+    'slot': [new models_1.HTMLAttributeSpecification('name', defaultBindings, true, true)],
 };
 exports.AURELIA_GLOBAL_ATTRIBUTES = [
     new models_1.HTMLAttributeSpecification('repeat.for', [], true, false),

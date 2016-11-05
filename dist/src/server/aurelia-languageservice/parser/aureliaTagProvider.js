@@ -2,9 +2,6 @@
 const aureliaTags_1 = require('./aureliaTags');
 function getAureliaTagProvider() {
     return {
-        getId: () => 'aurelia',
-        isApplicable: (languageId) => languageId === 'html',
-        collectTags: (collector) => collectTagsDefault(collector, aureliaTags_1.AURELIA_TAGS),
         collectAttributes: (tag, collector) => {
             if (tag) {
                 let tagWithAttributes = aureliaTags_1.AURELIA_TAGS[tag];
@@ -24,8 +21,12 @@ function getAureliaTagProvider() {
                 }
             }
         },
+        collectTags: (collector) => collectTagsDefault(collector, aureliaTags_1.AURELIA_TAGS),
+        // tslint:disable-next-line:no-empty
         collectValues: (tag, attribute, collector) => {
-        }
+        },
+        getId: () => 'aurelia',
+        isApplicable: (languageId) => languageId === 'html',
     };
 }
 exports.getAureliaTagProvider = getAureliaTagProvider;
@@ -44,7 +45,9 @@ function addAttributes(attributes, collector) {
 }
 function collectTagsDefault(collector, tagSet) {
     for (let tag in tagSet) {
-        collector(tag, tagSet[tag].label);
+        if (tagSet.hasOwnProperty(tag)) {
+            collector(tag, tagSet[tag].label);
+        }
     }
 }
 //# sourceMappingURL=aureliaTagProvider.js.map

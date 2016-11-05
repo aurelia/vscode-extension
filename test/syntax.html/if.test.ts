@@ -253,6 +253,6 @@ describe(`The Aurelia HTML syntax if attribute`, () => {
     let token = getTokenOnCharRange(lineToken, 8, 16);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
 });

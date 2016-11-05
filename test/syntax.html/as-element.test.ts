@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax as-element attribute', () => {
 
@@ -57,7 +57,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 12, 22);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must not tokenize class='as-element' attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -71,7 +71,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 12, 22);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it(`must not tokenize (someas-element)="item-template" attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -85,7 +85,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 24);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must not tokenize (someas-element)='item-template' attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -99,7 +99,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 24);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must not tokenize (as-elementsome)="item-template" attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -113,7 +113,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 24);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must not tokenize (as-elementsome)='item-template' attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -127,7 +127,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 24);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must not tokenize (as-element-some)="item-template" attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -141,7 +141,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 25);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must not tokenize (as-element-some)='item-template' attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -155,7 +155,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 25);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must not tokenize (some-as-element)="item-template" attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -169,7 +169,7 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     let token = getTokenOnCharRange(lineToken, 10, 25);
     assert.isOk(!hasScope(token.scopes, scope));
 
-  }); 
+  });
 
   it(`must not tokenize (some-as-element)='item-template' attribute body with scope "as-element.attribute.html.au"`, () => {
 
@@ -184,5 +184,5 @@ describe('The Aurelia HTML syntax as-element attribute', () => {
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
- 
+
 });

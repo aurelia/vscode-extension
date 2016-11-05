@@ -7,7 +7,7 @@ function getLanguageService() {
     return {
         doComplete: htmlCompletion_1.doComplete,
         doValidation: validation.doValidation.bind(validation),
-        parseHTMLDocument: document => htmlParser_1.parse(document.getText())
+        parseHTMLDocument: document => htmlParser_1.parse(document.getText()),
     };
 }
 exports.getLanguageService = getLanguageService;

@@ -72,7 +72,7 @@ describe('The Aurelia HTML syntax view attribute', () => {
     assert.isOk(hasScope(token.scopes, scope));
 
   });
-  
+
   it(`must not tokenize class='(view)' with scope "view.attribute.html.au"`, () => {
 
     // arrange
@@ -143,7 +143,7 @@ describe('The Aurelia HTML syntax view attribute', () => {
 
   });
 
- it(`must not tokenize some-view="" with scope "view.attribute.html.au"`, () => {
+  it(`must not tokenize some-view="" with scope "view.attribute.html.au"`, () => {
 
     // arrange
     let scope = 'meta.tag.inline.any.html';
@@ -197,7 +197,7 @@ describe('The Aurelia HTML syntax view attribute', () => {
     let token = getTokenOnCharRange(lineToken, 9, 18);
     assert.isOk(hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it('must tokenize (view).ref="foo"> attribute with scope "view.attribute.html.au"', () => {
 
@@ -253,6 +253,6 @@ describe('The Aurelia HTML syntax view attribute', () => {
     let token = getTokenOnCharRange(lineToken, 9, 13);
     assert.isOk(hasScope(token.scopes, scope));
 
-  }); 
+  });
 
 });

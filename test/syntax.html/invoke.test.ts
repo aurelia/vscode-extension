@@ -43,7 +43,7 @@ describe('The Aurelia HTML syntax invoke attributes', () => {
     let token = getTokenOnCharRange(lineToken, 17, 30);
     assert.isOk(hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it('must not tokenize invokes in attribute body with scope "invoke.attribute.html.au"', () => {
 
@@ -57,7 +57,7 @@ describe('The Aurelia HTML syntax invoke attributes', () => {
     let token = getTokenOnCharRange(lineToken, 6, 29);
     assert.isOk(hasScope(token.scopes, scope));
 
-  });  
+  });
 
   it('must tokenize delegate attribute with scope "invoke.attribute.html.au"', () => {
 
