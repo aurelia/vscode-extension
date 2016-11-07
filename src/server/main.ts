@@ -24,7 +24,6 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
   workspacePath = params.rootPath;
   return {
     capabilities: {
-      codeActionProvider: true,
       completionProvider: { resolveProvider: false, triggerCharacters: ['.', '<'] },
       textDocumentSync: documents.syncKind,
     },
