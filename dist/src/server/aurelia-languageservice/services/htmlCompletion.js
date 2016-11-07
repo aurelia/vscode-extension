@@ -152,9 +152,6 @@ exports.doComplete = doComplete;
 function isWhiteSpace(s) {
     return /^\s*$/.test(s);
 }
-// function isWhiteSpaceOrQuote(s: string): boolean {
-//   return /^[\s"]*$/.test(s);
-// }
 function isFollowedBy(s, offset, intialState, expectedToken) {
     let scanner = htmlScanner_1.createScanner(s, offset, intialState);
     let token = scanner.scan();
