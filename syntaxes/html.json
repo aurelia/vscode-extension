@@ -173,6 +173,9 @@
           "include" : "#tag-aurelia-controller-attribute"
         },
         {
+          "include" : "#tag-aurelia-matcher-attribute"
+        },
+        {
           "include" : "#tag-aurelia-if-attribute"
         },
         {
@@ -240,15 +243,15 @@
       }
     },
     "tag-aurelia-attribute-with-ref-attribute": {
-      "match": "[^=](([a-zA-Z0-9:-]+)(?<!controller|view|view-model)(\\.)(ref))",
+      "match": "(?<![\"'-])([a-zA-Z0-9:-]+)(?<!controller|view|view-model)(\\.)(ref)(?![\"'-;])",
       "captures": {
-        "2": {
+        "1": {
           "name": "entity.other.attribute-name.html"
         },
-        "3": {
+        "2": {
           "name": "punctuation.definition.tag.begin.html"
         },
-        "4": {
+        "3": {
           "name": "ref.attribute.html.au"
         }
       }
@@ -297,7 +300,22 @@
           "name": "ref.attribute.html.au"
         }       
       }
-    },  
+    },
+    "tag-aurelia-matcher-attribute" : {
+      "match": "(?<=[^\"-])(matcher)(?![-])(\\.)(bind|one-way|two-way|one-time)",
+      "captures": {
+        "1": {
+          "name": "matcher.attribute.html.au"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "3": {
+          "name": "databinding.attribute.html.au"
+        }  
+      }
+    },
+
     "tag-aurelia-model-attribute" : {
       "match": "(?=\\s)[^=-]((model)(\\.)?((bind|one-time|one-way|two-way)|(ref))?)",
       "captures": {
