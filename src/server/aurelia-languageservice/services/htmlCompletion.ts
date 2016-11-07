@@ -173,10 +173,6 @@ function isWhiteSpace(s: string): boolean {
   return /^\s*$/.test(s);
 }
 
-// function isWhiteSpaceOrQuote(s: string): boolean {
-//   return /^[\s"]*$/.test(s);
-// }
-
 function isFollowedBy(s: string, offset: number, intialState: ScannerState, expectedToken: TokenType) {
   let scanner = createScanner(s, offset, intialState);
   let token = scanner.scan();

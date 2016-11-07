@@ -15,10 +15,6 @@ exports.DiagnosticCodes = {
 };
 exports.DiagnosticSource = 'Aurelia';
 const kebabCaseValidationRegex = /(.*)\.(bind|one-way|two-way|one-time|call|delegate|trigger)/;
-// const methodRegex = /\"(.*)\(/;
-// function kebabToCamel(s: string) {
-//   return s.replace(/(\-\w)/g, m => m[1].toUpperCase());
-// }
 function camelToKebab(s) {
     return s.replace(/\.?([A-Z])/g, (x, y) => '-' + y.toLowerCase()).replace(/^-/, '');
 }
