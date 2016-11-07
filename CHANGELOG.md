@@ -1,3 +1,21 @@
+<a name="0.1.10"></a>
+## [0.1.10](https://github.com/aurelia/vscode-extension/compare/0.1.9...v0.1.10) (2016-11-07)
+
+
+### Bug Fixes
+
+* **syntax:** don't tokenize attribute body something.ref with aurelia ref, resolves: [#19](https://github.com/aurelia/vscode-extension/issues/19) ([43528bb](https://github.com/aurelia/vscode-extension/commit/43528bb))
+* **theme:** update custom themes to match latest vscode 1.7.1 themes, resolves: [#20](https://github.com/aurelia/vscode-extension/issues/20) ([e5741f7](https://github.com/aurelia/vscode-extension/commit/e5741f7))
+
+
+### Features
+
+* **codefix:** codefix for diagnostics invalid casing ([#21](https://github.com/aurelia/vscode-extension/issues/21)) ([8d23232](https://github.com/aurelia/vscode-extension/commit/8d23232))
+* **diagnostics:** adds invalid casing diagnostic ([#16](https://github.com/aurelia/vscode-extension/issues/16)) ([eee039c](https://github.com/aurelia/vscode-extension/commit/eee039c))
+* **syntax:** tokenize/ syntax highlight matcher.bind ([9f9f1c4](https://github.com/aurelia/vscode-extension/commit/9f9f1c4))
+
+
+
 <a name="0.1.9"></a>
 ## [0.1.9](https://github.com/aurelia/vscode-extension/compare/0.1.8...v0.1.9) (2016-10-25)
 

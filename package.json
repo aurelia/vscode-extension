@@ -1,6 +1,6 @@
 {
   "name": "aurelia",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "A VS Code extension for Aurelia.",
   "icon": "images/logo.png",
   "keywords": [
