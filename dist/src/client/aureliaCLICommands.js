@@ -14,7 +14,7 @@ const fs = require('fs');
 const run_in_terminal_1 = require('run-in-terminal');
 class AureliaCliCommands {
     static registerCommands(outputChannel) {
-        return vscode.Disposable.from(vscode.commands.registerCommand('extension.auNew', () => this.auNew(outputChannel)), vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)), vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel, false)), vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)));
+        return vscode.Disposable.from(vscode.commands.registerCommand('extension.auNew', () => this.auNew(outputChannel)), vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)), vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel, false)), vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)), vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, true)));
     }
     static auNew(outputChannel) {
         return __awaiter(this, void 0, void 0, function* () {

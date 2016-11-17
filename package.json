@@ -64,6 +64,10 @@
       {
         "command": "extension.auTest",
         "title": "au test"
+      },
+      {
+        "command": "extension.auRun",
+        "title": "au run"
       }
     ],
     "themes": [
