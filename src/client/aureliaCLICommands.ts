@@ -85,7 +85,14 @@ export default class AureliaCliCommands {
     this.showOutput(outputChannel);
   }
 
-  private static runCommandInTerminal(args: string[]): void {
+  private static async runCommandInTerminal(args: string[]): Promise<void> {
+
+    try {
+      fs.accessSync(path.join(vscode.workspace.rootPath, 'aurelia_project/aurelia.json'));
+    } catch (e) {
+      vscode.window.showErrorMessage(`Unable to find 'aurelia_project/aurelia.json'. Are you sure you are in the correct directory?`);
+      return;
+    }
 
     let terminal = vscode.window.createTerminal('aurelia-cli');
     terminal.show(true);

@@ -77,9 +77,18 @@ class AureliaCliCommands {
         this.showOutput(outputChannel);
     }
     static runCommandInTerminal(args) {
-        let terminal = vscode.window.createTerminal('aurelia-cli');
-        terminal.show(true);
-        terminal.sendText('au ' + args.join(' '), true);
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                fs.accessSync(path.join(vscode.workspace.rootPath, 'aurelia_project/aurelia.json'));
+            }
+            catch (e) {
+                vscode.window.showErrorMessage(`Unable to find 'aurelia_project/aurelia.json'. Are you sure you are in the correct directory?`);
+                return;
+            }
+            let terminal = vscode.window.createTerminal('aurelia-cli');
+            terminal.show(true);
+            terminal.sendText('au ' + args.join(' '), true);
+        });
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
