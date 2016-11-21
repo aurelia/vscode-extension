@@ -11,15 +11,14 @@ const vscode = require('vscode');
 const cp = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const run_in_terminal_1 = require('run-in-terminal');
 class AureliaCliCommands {
     static registerCommands(outputChannel) {
-        return vscode.Disposable.from(vscode.commands.registerCommand('extension.auNew', () => this.auNew(outputChannel)), vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)), vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel, false)), vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)), vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, true)));
+        return vscode.Disposable.from(vscode.commands.registerCommand('extension.auNew', () => this.auNew(outputChannel)), vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)), vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)), vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel)), vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, 'aurelia-cli')));
     }
     static auNew(outputChannel) {
         return __awaiter(this, void 0, void 0, function* () {
             let projectName = yield vscode.window.showInputBox({ placeHolder: 'Please enter a name for your new project' });
-            this.runCommand(['new', projectName], outputChannel, true);
+            this.runCommand(['new', projectName], outputChannel, 'aurelia-cli');
         });
     }
     static auGenerate(outputChannel) {
@@ -29,7 +28,7 @@ class AureliaCliCommands {
             param.push(type);
             let name = yield vscode.window.showInputBox({ placeHolder: `What would you like to call the ${type}?` });
             param.push(name);
-            this.runCommand(param, outputChannel, false);
+            this.runCommand(param, outputChannel);
         });
     }
     static auBuild(outputChannel) {
@@ -45,7 +44,7 @@ class AureliaCliCommands {
             let options = { matchOnDescription: false, placeHolder: 'Select environment to build' };
             vscode.window.showQuickPick(items, options).then((data) => {
                 param.push('--env ' + data);
-                this.runCommand(param, outputChannel, false);
+                this.runCommand(param, outputChannel);
             });
         });
     }
@@ -61,10 +60,10 @@ class AureliaCliCommands {
     static showOutput(outputChannel) {
         outputChannel.show(vscode.ViewColumn.One);
     }
-    static runCommand(args, outputChannel, useTerminal) {
+    static runCommand(args, outputChannel, terminalName) {
         let cwd = vscode.workspace.rootPath;
-        if (useTerminal) {
-            this.runCommandInTerminal(args, cwd);
+        if (terminalName && terminalName.length) {
+            this.runCommandInTerminal(args);
         }
         else {
             this.runCommandInOutputWindow(args, cwd, outputChannel);
@@ -77,8 +76,10 @@ class AureliaCliCommands {
         childProcess.stdout.on('data', data => outputChannel.append(data));
         this.showOutput(outputChannel);
     }
-    static runCommandInTerminal(args, cwd) {
-        run_in_terminal_1.runInTerminal('au', args, { cwd: cwd, env: process.env });
+    static runCommandInTerminal(args) {
+        let terminal = vscode.window.createTerminal('aurelia-cli');
+        terminal.show(true);
+        terminal.sendText('au ' + args.join(' '), true);
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

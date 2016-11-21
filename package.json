@@ -135,7 +135,6 @@
   },
   "dependencies": {
     "aurelia-cli": "^0.21.0",
-    "run-in-terminal": "0.0.3",
     "vscode-languageclient": "^2.6.3",
     "vscode-languageserver": "^2.6.2",
     "vscode-languageserver-types": "^1.0.4",
