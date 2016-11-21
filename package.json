@@ -38,7 +38,8 @@
     "onCommand:extension.auGenerate",
     "onCommand:extension.auTest",
     "onCommand:extension.auBuild",
-    "onCommand:extension.auRun"
+    "onCommand:extension.auRun",
+    "onCommand:extension.auRunWatch"
   ],
   "main": "./dist/src/client/main",
   "contributes": {
@@ -69,7 +70,11 @@
       {
         "command": "extension.auRun",
         "title": "au run"
-      }
+      },
+      {
+        "command": "extension.auRunWatch",
+        "title": "au run --watch"
+      }      
     ],
     "themes": [
       {

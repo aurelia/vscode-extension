@@ -11,7 +11,8 @@ export default class AureliaCliCommands {
       vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)),
       vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)),
       vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel)),
-      vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, 'aurelia-cli')));
+      vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, 'aurelia-cli-run')),
+      vscode.commands.registerCommand('extension.auRunWatch', () => this.runCommand(['run', '--watch'], outputChannel, 'aurelia-cli-run-watch')));
   }
 
   private static async auNew(outputChannel) {

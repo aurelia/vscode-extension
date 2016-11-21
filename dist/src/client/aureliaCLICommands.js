@@ -13,7 +13,7 @@ const path = require('path');
 const fs = require('fs');
 class AureliaCliCommands {
     static registerCommands(outputChannel) {
-        return vscode.Disposable.from(vscode.commands.registerCommand('extension.auNew', () => this.auNew(outputChannel)), vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)), vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)), vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel)), vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, 'aurelia-cli')));
+        return vscode.Disposable.from(vscode.commands.registerCommand('extension.auNew', () => this.auNew(outputChannel)), vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)), vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)), vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel)), vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, 'aurelia-cli-run')), vscode.commands.registerCommand('extension.auRunWatch', () => this.runCommand(['run', '--watch'], outputChannel, 'aurelia-cli-run-watch')));
     }
     static auNew(outputChannel) {
         return __awaiter(this, void 0, void 0, function* () {
