@@ -1,3 +1,21 @@
+<a name="0.1.11"></a>
+## [0.1.11](https://github.com/aurelia/vscode-extension/compare/0.1.10...v0.1.11) (2016-11-28)
+
+
+### Bug Fixes
+
+* **commands:** show warning when you run a Aurelia-CLI command in a non Aurelia-CLI project ([2eec465](https://github.com/aurelia/vscode-extension/commit/2eec465))
+
+
+### Features
+
+* **commands:** add au run --watch to command pallet ([672c5bd](https://github.com/aurelia/vscode-extension/commit/672c5bd))
+* **commands:** add au run to command pallet ([#24](https://github.com/aurelia/vscode-extension/issues/24)) ([4d2efd8](https://github.com/aurelia/vscode-extension/commit/4d2efd8))
+* **commands:** run commands in vscode terminal instead of seperate window ([6468338](https://github.com/aurelia/vscode-extension/commit/6468338))
+* **vscode:** update minimal version to 1.7.1 to make use of new functionality ([c5ef0e1](https://github.com/aurelia/vscode-extension/commit/c5ef0e1))
+
+
+
 <a name="0.1.10"></a>
 ## [0.1.10](https://github.com/aurelia/vscode-extension/compare/0.1.9...v0.1.10) (2016-11-07)
 
