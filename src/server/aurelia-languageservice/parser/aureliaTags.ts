@@ -62,8 +62,8 @@ export const AURELIA_GLOBAL_ATTRIBUTES: Array<HTMLAttributeSpecification> = [
   new HTMLAttributeSpecification('compile-spy', [], true, false),
 ];
 
-const actionRedirectOptions = ['delegate', 'trigger', 'call'];
-const actionRedirectOptionsNonBubbling = ['trigger', 'call'];
+const actionRedirectOptions = ['capture', 'delegate', 'trigger', 'call'];
+const actionRedirectOptionsNonBubbling = ['capture', 'trigger', 'call'];
 
 const globalEvents = [
 
@@ -75,7 +75,7 @@ const globalEvents = [
 
     // Focus Events
     new HTMLAttributeSpecification('blur', actionRedirectOptionsNonBubbling),
-    new HTMLAttributeSpecification('focus', ['call', 'trigger', 'bind', 'one-way', 'two-way', 'one-time']),
+    new HTMLAttributeSpecification('focus', ['call', 'capture', 'trigger', 'bind', 'one-way', 'two-way', 'one-time']),
 
     // CSS Animation Events
     new HTMLAttributeSpecification('animationstart', actionRedirectOptions),
