@@ -1,3 +1,13 @@
+<a name="0.1.12"></a>
+## [0.1.12](https://github.com/aurelia/vscode-extension/compare/0.1.11...v0.1.12) (2016-12-15)
+
+
+### Features
+
+* **autocomplete:** Add capture to syntax highlighting for events ([#26](https://github.com/aurelia/vscode-extension/issues/26)) ([1ea4e13](https://github.com/aurelia/vscode-extension/commit/1ea4e13))
+
+
+
 <a name="0.1.11"></a>
 ## [0.1.11](https://github.com/aurelia/vscode-extension/compare/0.1.10...v0.1.11) (2016-11-28)
 
