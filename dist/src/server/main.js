@@ -2,14 +2,14 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments)).next());
     });
 };
-const vscode_languageserver_1 = require('vscode-languageserver');
-const aureliaLanguageService_1 = require('./aurelia-languageservice/aureliaLanguageService');
-const languageModelCache_1 = require('./languageModelCache');
+const vscode_languageserver_1 = require("vscode-languageserver");
+const aureliaLanguageService_1 = require("./aurelia-languageservice/aureliaLanguageService");
+const languageModelCache_1 = require("./languageModelCache");
 let connection = vscode_languageserver_1.createConnection();
 console.log = connection.console.log.bind(connection.console);
 console.error = connection.console.error.bind(connection.console);

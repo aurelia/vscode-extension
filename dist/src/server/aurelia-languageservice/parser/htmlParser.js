@@ -1,5 +1,5 @@
 "use strict";
-const htmlScanner_1 = require('./htmlScanner');
+const htmlScanner_1 = require("./htmlScanner");
 class Node {
     constructor(start, end, children, parent) {
         this.start = start;
@@ -157,7 +157,8 @@ exports.EMPTY_ELEMENTS = [
     'param',
     'source',
     'track',
-    'wbr'];
+    'wbr'
+];
 function isEmptyElement(e) {
     return e && binarySearch(exports.EMPTY_ELEMENTS, e.toLowerCase(), (s1, s2) => s1.localeCompare(s2)) >= 0;
 }

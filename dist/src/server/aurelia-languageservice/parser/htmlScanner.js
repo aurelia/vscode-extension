@@ -1,4 +1,5 @@
 "use strict";
+var TokenType;
 (function (TokenType) {
     TokenType[TokenType["StartCommentTag"] = 0] = "StartCommentTag";
     TokenType[TokenType["Comment"] = 1] = "Comment";
@@ -22,8 +23,7 @@
     TokenType[TokenType["Script"] = 19] = "Script";
     TokenType[TokenType["Styles"] = 20] = "Styles";
     TokenType[TokenType["EOS"] = 21] = "EOS";
-})(exports.TokenType || (exports.TokenType = {}));
-var TokenType = exports.TokenType;
+})(TokenType = exports.TokenType || (exports.TokenType = {}));
 class MultiLineStream {
     constructor(source, position) {
         this.source = source;
@@ -145,6 +145,7 @@ const _CAR = '\r'.charCodeAt(0);
 const _LFD = '\f'.charCodeAt(0);
 const _WSP = ' '.charCodeAt(0);
 const _TAB = '\t'.charCodeAt(0);
+var ScannerState;
 (function (ScannerState) {
     ScannerState[ScannerState["WithinContent"] = 0] = "WithinContent";
     ScannerState[ScannerState["AfterOpeningStartTag"] = 1] = "AfterOpeningStartTag";
@@ -157,8 +158,7 @@ const _TAB = '\t'.charCodeAt(0);
     ScannerState[ScannerState["WithinStyleContent"] = 8] = "WithinStyleContent";
     ScannerState[ScannerState["AfterAttributeName"] = 9] = "AfterAttributeName";
     ScannerState[ScannerState["BeforeAttributeValue"] = 10] = "BeforeAttributeValue";
-})(exports.ScannerState || (exports.ScannerState = {}));
-var ScannerState = exports.ScannerState;
+})(ScannerState = exports.ScannerState || (exports.ScannerState = {}));
 const htmlScriptContents = {
     'text/x-handlebars-template': true,
 };

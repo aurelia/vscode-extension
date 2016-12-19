@@ -1,9 +1,9 @@
 "use strict";
-const path = require('path');
-const vscode_1 = require('vscode');
-const vscode_languageclient_1 = require('vscode-languageclient');
-const aureliaCLICommands_1 = require('./aureliaCLICommands');
-const htmlInvalidCasingCodeActionProvider_1 = require('./htmlInvalidCasingCodeActionProvider');
+const path = require("path");
+const vscode_1 = require("vscode");
+const vscode_languageclient_1 = require("vscode-languageclient");
+const aureliaCLICommands_1 = require("./aureliaCLICommands");
+const htmlInvalidCasingCodeActionProvider_1 = require("./htmlInvalidCasingCodeActionProvider");
 let outputChannel;
 function activate(context) {
     // Create default output channel

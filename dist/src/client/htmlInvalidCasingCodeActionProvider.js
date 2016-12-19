@@ -1,5 +1,5 @@
 'use strict';
-const vscode = require('vscode');
+const vscode = require("vscode");
 class HtmlInvalidCasingActionProvider {
     activate(subscriptions) {
         this.command = vscode.commands.registerCommand(HtmlInvalidCasingActionProvider.commandId, this.fixInvalidCasing, this);

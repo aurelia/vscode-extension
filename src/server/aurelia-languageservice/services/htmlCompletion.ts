@@ -1,4 +1,4 @@
-import { TextDocument, Position, CompletionList, CompletionItemKind, Range } from 'vscode-languageserver-types';
+import { TextDocument, Position, CompletionList, CompletionItemKind, Range, SnippetString } from 'vscode-languageserver-types';
 import { HTMLDocument } from '../parser/htmlParser';
 import { TokenType, createScanner, ScannerState } from '../parser/htmlScanner';
 import { getAureliaTagProvider } from '../parser/aureliaTagProvider';
@@ -48,7 +48,7 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
         documentation: label,
         kind: CompletionItemKind.Property,
         label: tag,
-        textEdit: { newText: tag, range: range },
+        range,
       });
     });
     return result;
@@ -61,16 +61,17 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
 
   function collectAttributeNameSuggestions(nameStart: number, nameEnd: number = offset): CompletionList {
     let range = getReplaceRange(nameStart, nameEnd);
-    let value = isFollowedBy(text, nameEnd, ScannerState.AfterAttributeName, TokenType.DelimiterAssign) ? '' : '=' + quote + '{{}}' + quote;
+    let value = isFollowedBy(text, nameEnd, ScannerState.AfterAttributeName, TokenType.DelimiterAssign) ? '' : '=' + quote + '$1' + quote;
     tagProvider.collectAttributes(currentTag, (attribute, type) => {
       let codeSnippet = attribute;
       if (type !== 'v' && value.length) {
         codeSnippet = codeSnippet + value;
       }
       result.items.push({
+        insertText: SnippetString.create(codeSnippet),
         kind: type === 'handler' ? CompletionItemKind.Function : CompletionItemKind.Value,
         label: attribute,
-        textEdit: { newText: codeSnippet, range: range },
+        range,
       });
     });
     return result;
@@ -94,12 +95,13 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
     }
 
     tagProvider.collectValues(currentTag, currentAttributeName, (value) => {
-      let codeSnippet = addQuotes ? quote + value + quote : value;
+      let insertText = addQuotes ? quote + value + quote : value;
       result.items.push({
-        filterText: codeSnippet,
+        filterText: insertText,
         kind: CompletionItemKind.Unit,
         label: value,
-        textEdit: { newText: codeSnippet, range: range },
+        insertText,
+        range,
       });
     });
     return result;
