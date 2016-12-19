@@ -1,3 +1,13 @@
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/aurelia/vscode-extension/compare/0.1.12...v0.2.0) (2016-12-19)
+
+
+### Features
+
+* **vscode:** adopt SnippetString for auto complete (new feature in vscode 1.8.0) ([#28](https://github.com/aurelia/vscode-extension/issues/28)), resolves [#25](https://github.com/aurelia/vscode-extension/issues/25) ([a438cb5](https://github.com/aurelia/vscode-extension/commit/a438cb5))
+
+
+
 <a name="0.1.12"></a>
 ## [0.1.12](https://github.com/aurelia/vscode-extension/compare/0.1.11...v0.1.12) (2016-12-15)
 
