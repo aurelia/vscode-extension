@@ -2,15 +2,15 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments)).next());
     });
 };
-const vscode = require('vscode');
-const cp = require('child_process');
-const path = require('path');
-const fs = require('fs');
+const vscode = require("vscode");
+const cp = require("child_process");
+const path = require("path");
+const fs = require("fs");
 class AureliaCliCommands {
     static registerCommands(outputChannel) {
         return vscode.Disposable.from(vscode.commands.registerCommand('extension.auNew', () => this.auNew(outputChannel)), vscode.commands.registerCommand('extension.auGenerate', () => this.auGenerate(outputChannel)), vscode.commands.registerCommand('extension.auBuild', () => this.auBuild(outputChannel)), vscode.commands.registerCommand('extension.auTest', () => this.runCommand(['test'], outputChannel)), vscode.commands.registerCommand('extension.auRun', () => this.runCommand(['run'], outputChannel, 'aurelia-cli-run')), vscode.commands.registerCommand('extension.auRunWatch', () => this.runCommand(['run', '--watch'], outputChannel, 'aurelia-cli-run-watch')));

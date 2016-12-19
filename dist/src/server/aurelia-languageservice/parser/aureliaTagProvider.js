@@ -1,5 +1,5 @@
 "use strict";
-const aureliaTags_1 = require('./aureliaTags');
+const aureliaTags_1 = require("./aureliaTags");
 function getAureliaTagProvider() {
     return {
         collectAttributes: (tag, collector) => {

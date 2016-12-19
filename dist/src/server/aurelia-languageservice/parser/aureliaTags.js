@@ -1,19 +1,23 @@
 "use strict";
-const models_1 = require('./models');
+const models_1 = require("./models");
 exports.AURELIA_TAGS = {
     'require': new models_1.HTMLTagSpecification(`"import" or "require" various resources into a view. Equivalent of the ES 2015 "import" syntax`, [
         new models_1.HTMLAttributeSpecification('from', [], true, false),
-        new models_1.HTMLAttributeSpecification('as', [], true, false)]),
+        new models_1.HTMLAttributeSpecification('as', [], true, false)
+    ]),
     'router-view': new models_1.HTMLTagSpecification(`Placeholder for the router content`, [
         new models_1.HTMLAttributeSpecification('name'),
         new models_1.HTMLAttributeSpecification('layout-view', [], true, false),
         new models_1.HTMLAttributeSpecification('layout-view-model', [], true, false),
-        new models_1.HTMLAttributeSpecification('layout-model', [], true, false)]),
+        new models_1.HTMLAttributeSpecification('layout-model', [], true, false)
+    ]),
     'compose': new models_1.HTMLTagSpecification(`Composes the view in the current position`, [
-        new models_1.HTMLAttributeSpecification('view', [], true, false)]),
+        new models_1.HTMLAttributeSpecification('view', [], true, false)
+    ]),
     'slot': new models_1.HTMLTagSpecification(`Shadow DOM slot element, Aurelia will project the element's content in to the <slot></slot> element.`, [
         new models_1.HTMLAttributeSpecification('name'),
-        new models_1.HTMLAttributeSpecification('slot')]),
+        new models_1.HTMLAttributeSpecification('slot')
+    ]),
 };
 const defaultBindings = ['bind', 'one-way', 'two-way', 'one-time'];
 exports.AURELIA_ATTRIBUTES = {
@@ -58,8 +62,8 @@ exports.AURELIA_GLOBAL_ATTRIBUTES = [
     new models_1.HTMLAttributeSpecification('view-spy', [], true, false),
     new models_1.HTMLAttributeSpecification('compile-spy', [], true, false),
 ];
-const actionRedirectOptions = ['delegate', 'trigger', 'call'];
-const actionRedirectOptionsNonBubbling = ['trigger', 'call'];
+const actionRedirectOptions = ['capture', 'delegate', 'trigger', 'call'];
+const actionRedirectOptionsNonBubbling = ['capture', 'trigger', 'call'];
 const globalEvents = [
     // Resource Events
     new models_1.HTMLAttributeSpecification('error', actionRedirectOptionsNonBubbling),
@@ -68,7 +72,7 @@ const globalEvents = [
     new models_1.HTMLAttributeSpecification('unload', actionRedirectOptionsNonBubbling),
     // Focus Events
     new models_1.HTMLAttributeSpecification('blur', actionRedirectOptionsNonBubbling),
-    new models_1.HTMLAttributeSpecification('focus', ['call', 'trigger', 'bind', 'one-way', 'two-way', 'one-time']),
+    new models_1.HTMLAttributeSpecification('focus', ['call', 'capture', 'trigger', 'bind', 'one-way', 'two-way', 'one-time']),
     // CSS Animation Events
     new models_1.HTMLAttributeSpecification('animationstart', actionRedirectOptions),
     new models_1.HTMLAttributeSpecification('animationend', actionRedirectOptions),

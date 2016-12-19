@@ -1,6 +1,7 @@
 "use strict";
-const htmlScanner_1 = require('../parser/htmlScanner');
-const aureliaTagProvider_1 = require('../parser/aureliaTagProvider');
+const vscode_languageserver_types_1 = require("vscode-languageserver-types");
+const htmlScanner_1 = require("../parser/htmlScanner");
+const aureliaTagProvider_1 = require("../parser/aureliaTagProvider");
 function doComplete(document, position, htmlDocument, quotes) {
     let quote = '"';
     if (quotes === 'single') {
@@ -34,7 +35,7 @@ function doComplete(document, position, htmlDocument, quotes) {
                 documentation: label,
                 kind: 10 /* Property */,
                 label: tag,
-                textEdit: { newText: tag, range: range },
+                range,
             });
         });
         return result;
@@ -45,16 +46,17 @@ function doComplete(document, position, htmlDocument, quotes) {
     }
     function collectAttributeNameSuggestions(nameStart, nameEnd = offset) {
         let range = getReplaceRange(nameStart, nameEnd);
-        let value = isFollowedBy(text, nameEnd, htmlScanner_1.ScannerState.AfterAttributeName, htmlScanner_1.TokenType.DelimiterAssign) ? '' : '=' + quote + '{{}}' + quote;
+        let value = isFollowedBy(text, nameEnd, htmlScanner_1.ScannerState.AfterAttributeName, htmlScanner_1.TokenType.DelimiterAssign) ? '' : '=' + quote + '$1' + quote;
         tagProvider.collectAttributes(currentTag, (attribute, type) => {
             let codeSnippet = attribute;
             if (type !== 'v' && value.length) {
                 codeSnippet = codeSnippet + value;
             }
             result.items.push({
+                insertText: vscode_languageserver_types_1.SnippetString.create(codeSnippet),
                 kind: type === 'handler' ? 3 /* Function */ : 12 /* Value */,
                 label: attribute,
-                textEdit: { newText: codeSnippet, range: range },
+                range,
             });
         });
         return result;
@@ -77,12 +79,13 @@ function doComplete(document, position, htmlDocument, quotes) {
             addQuotes = true;
         }
         tagProvider.collectValues(currentTag, currentAttributeName, (value) => {
-            let codeSnippet = addQuotes ? quote + value + quote : value;
+            let insertText = addQuotes ? quote + value + quote : value;
             result.items.push({
-                filterText: codeSnippet,
+                filterText: insertText,
                 kind: 11 /* Unit */,
                 label: value,
-                textEdit: { newText: codeSnippet, range: range },
+                insertText,
+                range,
             });
         });
         return result;
