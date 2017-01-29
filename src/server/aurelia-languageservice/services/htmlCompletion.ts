@@ -1,11 +1,11 @@
-import { TextDocument, Position, CompletionList, CompletionItemKind, Range, SnippetString } from 'vscode-languageserver-types';
+import { TextDocument, Position, CompletionList, CompletionItemKind, Range, TextEdit, InsertTextFormat, CompletionItem } from 'vscode-languageserver-types';
 import { HTMLDocument } from '../parser/htmlParser';
 import { TokenType, createScanner, ScannerState } from '../parser/htmlScanner';
 import { getAureliaTagProvider } from '../parser/aureliaTagProvider';
 
 export interface HTMLTagProvider {
   getId(): string;
-  isApplicable(languageId: string);
+  isApplicable(languageId: string); 
   collectTags(collector: (tag: string, label: string) => void): void;
   collectAttributes(tag: string, collector: (attribute: string, type: string) => void): void;
   collectValues(tag: string, attribute: string, collector: (value: string) => void): void;
@@ -45,10 +45,11 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
     let range = getReplaceRange(afterOpenBracket, tagNameEnd);
     tagProvider.collectTags((tag, label) => {
       result.items.push({
-        documentation: label,
-        kind: CompletionItemKind.Property,
         label: tag,
-        range,
+        kind: CompletionItemKind.Property,
+        documentation: label,
+        textEdit: TextEdit.replace(range, tag),
+        insertTextFormat: InsertTextFormat.PlainText
       });
     });
     return result;
@@ -68,10 +69,10 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
         codeSnippet = codeSnippet + value;
       }
       result.items.push({
-        insertText: SnippetString.create(codeSnippet),
-        kind: type === 'handler' ? CompletionItemKind.Function : CompletionItemKind.Value,
         label: attribute,
-        range,
+        kind: type === 'handler' ? CompletionItemKind.Function : CompletionItemKind.Value,
+        textEdit: TextEdit.replace(range, codeSnippet),
+        insertTextFormat: InsertTextFormat.Snippet
       });
     });
     return result;
@@ -97,11 +98,11 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
     tagProvider.collectValues(currentTag, currentAttributeName, (value) => {
       let insertText = addQuotes ? quote + value + quote : value;
       result.items.push({
+        label: value,
         filterText: insertText,
         kind: CompletionItemKind.Unit,
-        label: value,
-        insertText,
-        range,
+        textEdit: TextEdit.replace(range, insertText),
+        insertTextFormat: InsertTextFormat.PlainText
       });
     });
     return result;
