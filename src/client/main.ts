@@ -1,8 +1,10 @@
+import 'reflect-metadata';
 import * as path from 'path';
 import { ExtensionContext, OutputChannel, window, languages } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
 import htmlInvalidCasingActionProvider from './htmlInvalidCasingCodeActionProvider';
+import { Container } from 'aurelia-dependency-injection';
 
 let outputChannel: OutputChannel;
 
@@ -11,6 +13,10 @@ export function activate(context: ExtensionContext) {
   // Create default output channel
   outputChannel = window.createOutputChannel('aurelia');
   context.subscriptions.push(outputChannel);
+
+  // Setup Aurelia dependency injection
+  let globalContainer = new Container();
+  let commands = globalContainer.get(AureliaCliCommands);
 
   // Register CLI commands
   context.subscriptions.push(AureliaCliCommands.registerCommands(outputChannel));
