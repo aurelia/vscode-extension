@@ -1,6 +1,6 @@
 import { Attribute, Value } from './elementStructure';
 
-export default class InputElement {
+export default class AElement {
 
   public name = 'a';
 
