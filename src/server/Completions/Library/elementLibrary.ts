@@ -1,13 +1,16 @@
-import { autoinject } from 'aurelia-dependency-injection';
-
+import AElement from './aElement';
 import InputElement from './inputElement';
 
-@autoinject()
 export default class ElementLibrary {
   
   public elements = {};
 
-  constructor(inputElement: InputElement) {
+  constructor() {
+
+    let aElement = new AElement();
+    let inputElement = new InputElement();
+
+    this.elements[aElement.name] = aElement;
     this.elements[inputElement.name] = inputElement;
   }
 }
