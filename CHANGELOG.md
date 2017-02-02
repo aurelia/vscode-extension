@@ -1,3 +1,14 @@
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/aurelia/vscode-extension/compare/0.2.1...v0.2.2) (2017-02-02)
+
+
+### Bug Fixes
+
+* **readme:** remove outdated screenshot ([1267382](https://github.com/aurelia/vscode-extension/commit/1267382))
+* **themes:** scopes won't auto inherit anymore in 1.9.0, defined all au scopes seperatly ([22d308a](https://github.com/aurelia/vscode-extension/commit/22d308a))
+
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.com/aurelia/vscode-extension/compare/0.2.0...v0.2.1) (2017-02-02)
 
