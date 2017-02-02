@@ -1,3 +1,20 @@
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/aurelia/vscode-extension/compare/0.2.0...v0.2.1) (2017-02-02)
+
+
+### Bug Fixes
+
+* **dependencies:** updated vscode-languageclient, vscode-languageserver. vscode-languageserver-types ([3794414](https://github.com/aurelia/vscode-extension/commit/3794414))
+* **theme:** adjust dark theme to new settings in vscode 1.9 ([691610f](https://github.com/aurelia/vscode-extension/commit/691610f))
+* **theme:** adjust light theme to new settings in vscode 1.9 ([f4cd0f4](https://github.com/aurelia/vscode-extension/commit/f4cd0f4))
+
+
+### Features
+
+* **vscode:** SnippetString was removed and API changed to InsertTextFormat.Snippet ([4ee1599](https://github.com/aurelia/vscode-extension/commit/4ee1599))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/aurelia/vscode-extension/compare/0.1.12...v0.2.0) (2016-12-19)
 
