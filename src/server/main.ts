@@ -4,11 +4,13 @@ import { createConnection,
   TextDocuments, 
   InitializeParams, 
   InitializeResult, 
-  CompletionList } from 'vscode-languageserver';
+  CompletionList, Hover } from 'vscode-languageserver';
+import { MarkedString } from 'vscode-languageserver-types';
 import { HTMLDocument, getLanguageService } from './aurelia-languageservice/aureliaLanguageService';
 import { getLanguageModelCache } from './languageModelCache';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
+import HoverProviderFactory from './HoverProviderFactory';
 
 // Bind console.log & error to the Aurelia output
 let connection: IConnection = createConnection();
@@ -30,6 +32,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
   return {
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },
+      hoverProvider: true,
       textDocumentSync: documents.syncKind,
     },
   };
@@ -49,7 +52,8 @@ documents.onDidChangeContent(async change => {
 
 // Setup Aurelia dependency injection
 let globalContainer = new Container();
-let factory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
+let completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
+let hoverProviderFactory = <HoverProviderFactory> globalContainer.get(HoverProviderFactory);
 
 // Lisen for completion requests
 connection.onCompletion(textDocumentPosition => {
@@ -61,8 +65,16 @@ connection.onCompletion(textDocumentPosition => {
 
   return { 
     isIncomplete: false, 
-    items: factory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri) 
+    items: completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri) 
   };
+});
+
+connection.onHover(textDocumentPosition => {
+	let document = documents.get(textDocumentPosition.textDocument.uri);
+  let text = document.getText();
+  let offset = document.offsetAt(textDocumentPosition.position);	
+
+  return hoverProviderFactory.create(text, offset);
 });
 
 connection.listen();

@@ -1,7 +1,7 @@
 import { 
   CompletionItem, 
   CompletionItemKind, 
-  InsertTextFormat } from 'vscode-languageserver-types';
+  InsertTextFormat, MarkedString } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/elementLibrary';
 
@@ -12,33 +12,47 @@ export default class AureliaAttributeCompletionFactory {
 
   public create(elementName: string, existingAttributes: Array<string>): Array<CompletionItem> {
 
-console.dir(existingAttributes);
-
     let result:Array<CompletionItem> = [];
 
     let element = this.library.elements[elementName];
     if (element && element.attributes) {
       for (let [key, value] of element.attributes.entries()) {
-        console.log('key: ' + key);
         if (existingAttributes.filter(i => i === key).length) {
           continue;
         }
 
-        result.push({
-            documentation: value.documentation,
-            insertText: `${key}="$0"`,
+        console.log(value.customSnippet, typeof(value.customSnippet));
+
+        if (value.customSnippet !== 'no-snippet') {
+          result.push({
+            documentation: MarkedString.fromPlainText(value.documentation).toString(),
+            insertText: value.customSnippet === null ? `${key}="$0"`: value.customSnippet,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Property,
             label: key,
           });
+        }
+        if (typeof(value.customBindingSnippet) !== 'no-snippet') {
+          result.push({
+            detail: value.documentation,
+            insertText: value.customBindingSnippet === null ? `${key}.bind="$0"`: value.customBindingSnippet,
+            insertTextFormat: InsertTextFormat.Snippet,
+            kind: CompletionItemKind.Value,
+            label: value.customLabel === null ? (key + '.bind') : value.customLabel,
+          });
+        }
+      }
 
-        result.push({
-          documentation: value.documentation,
-          insertText: `${key}.bind="$0"`,
-          insertTextFormat: InsertTextFormat.Snippet,
-          kind: CompletionItemKind.Value,
-          label: key + '.bind',
-        });       
+      if (element && element.events) {
+        for (let [key, value] of element.events.entries()) { 
+          result.push({
+            detail: value.documentation,
+            insertText: value.bubbles ? `${key}.delegate="$0"` : `${key}.trigger="$0"`,
+            insertTextFormat: InsertTextFormat.Snippet,
+            kind: CompletionItemKind.Function,
+            label: key + (value.bubbles ? `.delegate` : `.trigger`),
+          }); 
+        }
       }
     }
 

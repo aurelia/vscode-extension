@@ -4,9 +4,16 @@ export default class InputElement {
 
   public name = 'input';
 
+  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input';
+
+  public documentation = `The HTML <input> element is used to create interactive controls for web-based forms in order to accept data from the user. How an <input> works varies considerably depending on the value of its type attribute.`;
+
   public attributes: Map<string, Attribute> = new Map([
       ['type', 
         new Attribute('The type of control to display. The default type is text, if this attribute is not specified.', 
+          null,
+          null,
+          null,
           new Map([ 
             ['button', new Value(`A push button with no default behavior.`)],
             ['checkbox', new Value(`A check box. You must use the value attribute to define the value submitted by this item. Use the checked attribute to indicate whether this item is selected. You can also use the indeterminate attribute (which can only be set programmatically) to indicate that the checkbox is in an indeterminate state (on most platforms, this draws a horizontal line across the checkbox).`)],
@@ -34,11 +41,14 @@ export default class InputElement {
       ],
       [
         'accept',
-        new Attribute(`If the value of the type attribute is file, then this attribute will indicate the types of files that the server accepts, otherwise it will be ignored.`, new Map())
+        new Attribute(`If the value of the type attribute is file, then this attribute will indicate the types of files that the server accepts, otherwise it will be ignored.`)
       ],
       [
         'autocomplete',
         new Attribute(`This attribute indicates whether the value of the control can be automatically completed by the browser.`, 
+          null,
+          null,
+          null,
           new Map([
             ['off', new Value(`The user must explicitly enter a value into this field for every use, or the document provides its own auto-completion method. The browser does not automatically complete the entry.`)],
             ['on', new Value(`The browser is allowed to automatically complete the value based on values that the user has entered during previous uses, however on does not provide any further information about what kind of data the user might be expected to enter.`)],
@@ -110,6 +120,9 @@ export default class InputElement {
       [
         'formenctype',
         new Attribute(``, 
+          null,
+          null,
+          null,
           new Map([
             ['application/x-www-form-urlencoded', new Value(`The default value if the attribute is not specified.`)],
             ['multipart/form-data', new Value(`Use this value if you are using an <input> element with the type attribute set to file.`)],
@@ -119,6 +132,9 @@ export default class InputElement {
       [
         'formmethod',
         new Attribute(``, 
+          null,
+          null,
+          null,
           new Map([
             ['post', new Value(`The data from the form is included in the body of the form and is sent to the server.`)],
             ['get', new Value(`The data from the form are appended to the form attribute URI, with a '?' as a separator, and the resulting URI is sent to the server. Use this method when the form has no side-effects and contains only ASCII characters.`)]
@@ -131,6 +147,9 @@ export default class InputElement {
       [
         'formtarget',
         new Attribute(``, 
+          null,
+          null,
+          null,
           new Map([
             ['self', new Value(`Load the response into the same browsing context as the current one. This value is the default if the attribute is not specified.`)],
             ['_blank', new Value(`Load the response into a new unnamed browsing context.`)],
@@ -145,6 +164,9 @@ export default class InputElement {
       [
         'inputmode',
         new Attribute(``, 
+          null,
+          null,
+          null,
           new Map([
             ['verbatim', new Value(`Alphanumeric, non-prose content such as usernames and passwords.`)],
             ['latin', new Value(`Latin-script input in the user's preferred language with typing aids such as text prediction enabled. For human-to-computer communication such as search boxes.`)],

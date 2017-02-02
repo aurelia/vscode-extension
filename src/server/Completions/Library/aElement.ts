@@ -4,6 +4,8 @@ export default class AElement {
 
   public name = 'a';
 
+  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a';
+
   public documentation = `The HTML <a> element (or anchor element) creates a hyperlink to other web pages, files, locations within the same page, email addresses, or any other URL.`;
 
   public attributes: Map<string, Attribute> = new Map([
@@ -24,6 +26,9 @@ This attribute may be omitted (as of HTML5) to create a placeholder link. A plac
       [
         'referrerpolicy',
         new Attribute(`Indicates which referrer to send when fetching the URL.`, 
+          null,
+          null,
+          null,
           new Map([
             ['no-referrer', new Value(`means the Referer: header will not be sent.`)],
             ['no-referrer-when-downgrade', new Value(`means no Referer: header will be sent when navigating to an origin without HTTPS. This is the default behavior.`)],
@@ -39,6 +44,9 @@ This attribute may be omitted (as of HTML5) to create a placeholder link. A plac
       [
         'target',
         new Attribute(`Specifies where to display the linked URL. It is a name of, or keyword for, a browsing context: a tab, window, or <iframe>.`, 
+          null,
+          null,
+          null,
           new Map([
             ['_self', new Value(`Load the URL into the same browsing context as the current one. This is the default behavior.`)],
             ['_blank', new Value(`Load the URL into a new browsing context. This is usually a tab, but users can configure browsers to use new windows instead.`)],
