@@ -1,5 +1,5 @@
 {
-	"name": "Dark Visual Studio",
+	"name": "Aurelia Dark",
 	"settings": [
 		{
 			"settings": {
@@ -314,7 +314,31 @@
 			}
 		},
 		{
-			"scope": ["element.html.au", "attribute.html.au"],
+			"scope": [
+        "compose.element.html.au", 
+        "router-view.element.html.au",
+        "databinding.attribute.html.au",
+        "invoke.attribute.html.au",
+        "ref.attribute.html.au",
+        "repeat.attribute.html.au",
+        "for.attribute.html.au",
+        "view-model.attribute.html.au",
+        "matcher.attribute.html.au",
+        "model.attribute.html.au",
+        "view.attribute.html.au",
+        "controller.attribute.html.au",
+        "bindable.attribute.html.au",
+        "containerless.attribute.html.au",
+        "compile-spy.attribute.html.au",
+        "view-spy.attribute.html.au",
+        "if.attribute.html.au",
+        "route-href.attribute.html.au",
+        "show.attribute.html.au",
+        "ref.attribute.html.au",
+        "replace-part.attribute.html.au",
+        "replaceable.attribute.html.au",     
+        "element.html.au", 
+        "attribute.html.au"],
 			"settings": {
 				"foreground": "#ba68c8"
 			}
