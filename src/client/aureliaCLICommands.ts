@@ -86,7 +86,6 @@ export default class AureliaCliCommands {
   }
 
   private static async runCommandInTerminal(args: string[]): Promise<void> {
-
     try {
       fs.accessSync(path.join(vscode.workspace.rootPath, 'aurelia_project/aurelia.json'));
     } catch (e) {
@@ -96,6 +95,7 @@ export default class AureliaCliCommands {
 
     let terminal = vscode.window.createTerminal('aurelia-cli');
     terminal.show(true);
+    terminal.sendText(`cd ${vscode.workspace.rootPath}`, true);
     terminal.sendText('au ' + args.join(' '), true);
   }
 }
