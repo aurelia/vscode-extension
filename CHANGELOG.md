@@ -1,3 +1,19 @@
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/aurelia/vscode-extension/compare/0.2.2...v0.2.3) (2017-02-03)
+
+
+### Bug Fixes
+
+* **commands:** change to current directory before executing new command ([0c566e7](https://github.com/aurelia/vscode-extension/commit/0c566e7))
+* **themes:** update dark plus theme to color css scopes, resolves [#34](https://github.com/aurelia/vscode-extension/issues/34) ([a10ac53](https://github.com/aurelia/vscode-extension/commit/a10ac53))
+
+
+### Features
+
+* **themes:** add solarized dark & light themes with Aurelia syntax, resolves [#33](https://github.com/aurelia/vscode-extension/issues/33) ([0f1c7b2](https://github.com/aurelia/vscode-extension/commit/0f1c7b2))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/aurelia/vscode-extension/compare/0.2.1...v0.2.2) (2017-02-02)
 
