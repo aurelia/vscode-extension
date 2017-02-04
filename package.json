@@ -1,6 +1,6 @@
 {
   "name": "aurelia",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "A VS Code extension for Aurelia.",
   "icon": "images/logo.png",
   "keywords": [
@@ -112,7 +112,17 @@
         "label": "Aurelia Light",
         "uiTheme": "vs",
         "path": "./themes/light_vs.json"
-      }
+      },
+      {
+        "label": "Aurelia Solarized (dark)",
+        "uiTheme": "vs-dark",
+        "path": "./themes/solarized_dark.json"
+      },
+      {
+        "label": "Aurelia Solarized (light)",
+        "uiTheme": "vs",
+        "path": "./themes/solarized_light.json"
+      }          
     ],
     "configuration": {
       "id": "aurelia",

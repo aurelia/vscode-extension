@@ -34,7 +34,7 @@ If you want to build a custom theme, [read here](https://github.com/aurelia/vsco
 
 ### Autocomplete
 
-![Aurelia auto complete](https://raw.githubusercontent.com/aurelia/vscode-extension/master/images/aurelia-autocomplete.gif)
+screenshot outdated
 
 ### Aurelia themes
 

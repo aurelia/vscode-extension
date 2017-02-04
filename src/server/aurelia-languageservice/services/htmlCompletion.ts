@@ -1,11 +1,11 @@
-import { TextDocument, Position, CompletionList, CompletionItemKind, Range, TextEdit, InsertTextFormat, CompletionItem } from 'vscode-languageserver-types';
+import { TextDocument, Position, CompletionList, CompletionItemKind, Range, InsertTextFormat } from 'vscode-languageserver-types';
 import { HTMLDocument } from '../parser/htmlParser';
 import { TokenType, createScanner, ScannerState } from '../parser/htmlScanner';
 import { getAureliaTagProvider } from '../parser/aureliaTagProvider';
 
 export interface HTMLTagProvider {
   getId(): string;
-  isApplicable(languageId: string); 
+  isApplicable(languageId: string);
   collectTags(collector: (tag: string, label: string) => void): void;
   collectAttributes(tag: string, collector: (attribute: string, type: string) => void): void;
   collectValues(tag: string, attribute: string, collector: (value: string) => void): void;

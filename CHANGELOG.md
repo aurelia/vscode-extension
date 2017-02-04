@@ -1,3 +1,47 @@
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/aurelia/vscode-extension/compare/0.2.2...v0.2.3) (2017-02-03)
+
+
+### Bug Fixes
+
+* **commands:** change to current directory before executing new command ([0c566e7](https://github.com/aurelia/vscode-extension/commit/0c566e7))
+* **themes:** update dark plus theme to color css scopes, resolves [#34](https://github.com/aurelia/vscode-extension/issues/34) ([a10ac53](https://github.com/aurelia/vscode-extension/commit/a10ac53))
+
+
+### Features
+
+* **themes:** add solarized dark & light themes with Aurelia syntax, resolves [#33](https://github.com/aurelia/vscode-extension/issues/33) ([0f1c7b2](https://github.com/aurelia/vscode-extension/commit/0f1c7b2))
+
+
+
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/aurelia/vscode-extension/compare/0.2.1...v0.2.2) (2017-02-02)
+
+
+### Bug Fixes
+
+* **readme:** remove outdated screenshot ([1267382](https://github.com/aurelia/vscode-extension/commit/1267382))
+* **themes:** scopes won't auto inherit anymore in 1.9.0, defined all au scopes seperatly ([22d308a](https://github.com/aurelia/vscode-extension/commit/22d308a))
+
+
+
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/aurelia/vscode-extension/compare/0.2.0...v0.2.1) (2017-02-02)
+
+
+### Bug Fixes
+
+* **dependencies:** updated vscode-languageclient, vscode-languageserver. vscode-languageserver-types ([3794414](https://github.com/aurelia/vscode-extension/commit/3794414))
+* **theme:** adjust dark theme to new settings in vscode 1.9 ([691610f](https://github.com/aurelia/vscode-extension/commit/691610f))
+* **theme:** adjust light theme to new settings in vscode 1.9 ([f4cd0f4](https://github.com/aurelia/vscode-extension/commit/f4cd0f4))
+
+
+### Features
+
+* **vscode:** SnippetString was removed and API changed to InsertTextFormat.Snippet ([4ee1599](https://github.com/aurelia/vscode-extension/commit/4ee1599))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/aurelia/vscode-extension/compare/0.1.12...v0.2.0) (2016-12-19)
 
