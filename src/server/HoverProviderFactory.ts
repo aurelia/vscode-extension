@@ -1,6 +1,6 @@
 import { Hover } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
-import ElementLibrary from './Completions/Library/ElementLibrary';
+import ElementLibrary from './Completions/Library/elementLibrary';
 
 
 @autoinject()
