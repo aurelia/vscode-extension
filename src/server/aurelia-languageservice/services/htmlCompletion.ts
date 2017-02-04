@@ -1,4 +1,4 @@
-import { TextDocument, Position, CompletionList, CompletionItemKind, Range, InsertTextFormat } from 'vscode-languageserver-types';
+import { TextDocument, Position, CompletionList, CompletionItemKind, Range, InsertTextFormat, TextEdit } from 'vscode-languageserver-types';
 import { HTMLDocument } from '../parser/htmlParser';
 import { TokenType, createScanner, ScannerState } from '../parser/htmlScanner';
 import { getAureliaTagProvider } from '../parser/aureliaTagProvider';
