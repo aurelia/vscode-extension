@@ -37,29 +37,26 @@ export default class BindingCompletionFactory {
       let event = element.events.get(attributeDef.name);
       if (event) {
         if (event.bubbles) {
-          result.push({
-            documentation: 'delegate',
-            insertText: `delegate${snippetPrefix}`,
-            insertTextFormat: InsertTextFormat.Snippet,
-            kind: CompletionItemKind.Property,
-            label: `.delegate=""`
-          });                            
+          for(let binding of ['delegate', 'capture']) {
+            result.push({
+              documentation: binding,
+              insertText: binding + snippetPrefix,
+              insertTextFormat: InsertTextFormat.Snippet,
+              kind: CompletionItemKind.Property,
+              label: `.${binding}=""`
+            });
+          }                      
         }
 
-        result.push({
-          documentation: 'trigger',
-          insertText: `trigger${snippetPrefix}`,
-          insertTextFormat: InsertTextFormat.Snippet,
-          kind: CompletionItemKind.Property,
-          label: `.trigger=""`
-        }); 
-        result.push({
-          documentation: 'call',
-          insertText: `call${snippetPrefix}`,
-          insertTextFormat: InsertTextFormat.Snippet,
-          kind: CompletionItemKind.Property,
-          label: `.call=""`
-        });         
+        for (let binding of ['trigger', 'call']) {
+          result.push({
+            documentation: binding,
+            insertText: binding + snippetPrefix,
+            insertTextFormat: InsertTextFormat.Snippet,
+            kind: CompletionItemKind.Property,
+            label: `.${binding}=""`
+          });
+        }        
       }
 
     }
