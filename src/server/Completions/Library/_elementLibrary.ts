@@ -15,6 +15,12 @@ import BlockquoteElement from './blockquoteElement';
 import BodyElement from './bodyElement';
 import BrElement from './brElement';
 import ButtonElement from './buttonElement';
+import CanvasElement from './canvasElement';
+import CaptionElement from './captionElement';
+import CiteElement from './citeElement';
+import CodeElement from './codeElement';
+import ColElement from './colElement';
+import ColgroupElement from './colgroupElement';
 
 export default class ElementLibrary {
   
@@ -37,6 +43,13 @@ export default class ElementLibrary {
     this.elements['bodyElement'] = new BodyElement();
     this.elements['br'] = new BrElement();
     this.elements['button'] = new ButtonElement();
+    this.elements['canvas'] = new CanvasElement();
+    this.elements['caption'] = new CaptionElement();
+    this.elements['cite'] = new CiteElement();
+    this.elements['code'] = new CodeElement();
+    this.elements['col'] = new ColElement();
+    this.elements['colgroup'] = new ColgroupElement();
+    
 
     this.elements['input'] = new InputElement();
     this.elements['compose'] = new ComposeElement();
