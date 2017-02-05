@@ -39,6 +39,12 @@ import FigcaptonElement from './figcaptionElement';
 import FigureElement from './figureElement';
 import FooterElement from './footerElement';
 import FormElement from './formElement';
+import HElement from './hElement';
+import HeadElement from './headElement';
+import HeaderElement from './headerElement';
+import HrElement from './hrElement';
+import HtmlElement from './htmlElement';
+
 
 @singleton()
 export default class ElementLibrary {
@@ -84,9 +90,22 @@ export default class ElementLibrary {
     this.elements['figure'] = new FigureElement();
     this.elements['footer'] = new FooterElement();
     this.elements['form'] = new FormElement();
+    let header = new HElement();
+    this.elements['h1'] = header;
+    this.elements['h2'] = header;
+    this.elements['h3'] = header;
+    this.elements['h4'] = header;
+    this.elements['h5'] = header;
+    this.elements['h6'] = header;
+    this.elements['head'] = new HeadElement();
+    this.elements['header'] = new HeaderElement();
+    this.elements['hr'] = new HrElement();
+    this.elements['html'] = new HtmlElement();
+
 
     this.elements['input'] = new InputElement();
     this.elements['compose'] = new ComposeElement();
+
   }
 }
 
