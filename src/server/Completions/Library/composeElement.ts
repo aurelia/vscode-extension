@@ -2,8 +2,6 @@ import { Attribute, Value, Event } from './_elementStructure';
 
 export default class ComposeElement {
 
-  public name = 'compose';
-
   public url = 'http://aurelia.io/hub.html#/doc/article/aurelia/templating/latest/templating-basics/4';
   public licenceText = '';
 

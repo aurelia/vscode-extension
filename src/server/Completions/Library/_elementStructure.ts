@@ -17,7 +17,7 @@ export class Attribute {
 export class Event {
   constructor(
     public documentation: string,
-    public url: string,
+    public url: string = null,
     public bubbles: boolean = false,
     public cancelable: boolean = false
   ) { }
@@ -169,25 +169,25 @@ export class GlobalAttributes {
       [
         'textcontent',
         new Attribute(``,
-        '',
+        null,
         'no-snippet')
       ],
       [
         'show',
         new Attribute(``,
-        '',
+        null,
         'no-snippet')
       ],
       [
         'if',
         new Attribute(``,
-        '',
+        null,
         'no-snippet')
       ],
       [
         'naive-if',
         new Attribute(``,
-        '',
+        null,
         'no-snippet')
       ],                  
       [
@@ -197,7 +197,7 @@ export class GlobalAttributes {
       [
         'view-spy',
         new Attribute(``,
-        '',
+        null,
         'no-snippet',
         'view-spy',
         'view-spy')
@@ -205,7 +205,7 @@ export class GlobalAttributes {
       [
         'compile-spy',
         new Attribute(``,
-        '',
+        null,
         'no-snippet',
         'compile-spy',
         'compile-spy')
@@ -620,4 +620,146 @@ export class GlobalAttributes {
         `https://developer.mozilla.org/en-US/docs/Web/Events/lostpointercapture`)
     ],
   ]);
+
+  public static mediaEvents: Map<string, Event> = new Map<string, Event>([
+    [
+      'abort',
+      new Event(
+        `Sent when playback is aborted; for example, if the media is playing and is restarted from the beginning, this event is sent.`)
+    ],
+    [
+      'canplay',
+      new Event(
+        `Sent when enough data is available that the media can be played, at least for a couple of frames.  This corresponds to the HAVE_ENOUGH_DATA readyState.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/canplay`)
+    ],
+    [
+      'canplaythrough',
+      new Event(
+        `Sent when the ready state changes to CAN_PLAY_THROUGH, indicating that the entire media can be played without interruption, assuming the download rate remains at least at the current level. It will also be fired when playback is toggled between paused and playing. Note: Manually setting the currentTime will eventually fire a canplaythrough event in firefox. Other browsers might not fire this event.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/canplaythrough`)
+    ],
+    [
+      'durationchange',
+      new Event(
+        `The metadata has loaded or changed, indicating a change in duration of the media.  This is sent, for example, when the media has loaded enough that the duration is known.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/durationchange`)
+    ],
+    [
+      'emptied',
+      new Event(
+        `The media has become empty; for example, this event is sent if the media has already been loaded (or partially loaded), and the load() method is called to reload it.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/emptied`)
+    ],
+    [
+      'ended',
+      new Event(
+        `Sent when playback completes.`)
+    ],
+    [
+      'error',
+      new Event(
+        `Sent when an error occurs.  The element's error attribute contains more information. See Error handling for details.`)
+    ],
+    [
+      'interruptbegin',
+      new Event(
+        `Sent when audio playing on a Firefox OS device is interrupted, either because the app playing the audio is sent to the background, or audio in a higher priority audio channel begins to play. See Using the AudioChannels API (https://developer.mozilla.org/en-US/docs/Web/API/AudioChannels_API/Using_the_AudioChannels_API) for more details.`,)
+    ],
+    [
+      'interruptend',
+      new Event(
+        `Sent when previously interrupted audio on a Firefox OS device commences playing again — when the interruption ends. This is when the associated app comes back to the foreground, or when the higher priority audio finished playing. See Using the AudioChannels API (https://developer.mozilla.org/en-US/docs/Web/API/AudioChannels_API/Using_the_AudioChannels_API) for more details.`)
+    ],
+    [
+      'loadeddata',
+      new Event(
+        `The first frame of the media has finished loading.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/loadeddata`)
+    ], 
+    [
+      'loadedmetadata',
+      new Event(
+        `The media's metadata has finished loading; all attributes now contain as much useful information as they're going to.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/loadedmetadata`)
+    ], 
+    [
+      'loadstart',
+      new Event(
+        `Sent when loading of the media begins.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/loadstart`)
+    ], 
+    [
+      'pauze',
+      new Event(
+        `Sent when playback is paused.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/pause`)
+    ], 
+    [
+      'play',
+      new Event(
+        `Sent when playback of the media starts after having been paused; that is, when playback is resumed after a prior pause event.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/play`)
+    ], 
+    [
+      'playing',
+      new Event(
+        `Sent when the media begins to play (either for the first time, after having been paused, or after ending and then restarting).`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/playing`)
+    ], 
+    [
+      'progress',
+      new Event(
+        `Sent periodically to inform interested parties of progress downloading the media. Information about the current amount of the media that has been downloaded is available in the media element's buffered attribute.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/progress`)
+    ],
+    [
+      'ratechange',
+      new Event(
+        `Sent when the playback speed changes.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/ratechange`)
+    ],
+    [
+      'seeked',
+      new Event(
+        `Sent when a seek operation completes.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/seeked`)
+    ],
+    [
+      'seeking',
+      new Event(
+        `Sent when a seek operation begins.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/seeking`)
+    ],
+    [
+      'stalled',
+      new Event(
+        `Sent when the user agent is trying to fetch media data, but data is unexpectedly not forthcoming.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/stalled`)
+    ],
+    [
+      'suspend',
+      new Event(
+        `Sent when loading of the media is suspended; this may happen either because the download has completed or because it has been paused for any other reason.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/suspend`)
+    ],
+    [
+      'timeupdate',
+      new Event(
+        `The time indicated by the element's currentTime attribute has changed.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/timeupdate`)
+    ],
+    [
+      'volumechange',
+      new Event(
+        `Sent when the audio volume changes (both when the volume is set and when the muted attribute is changed).`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/volumechange`)
+    ],    
+    [
+      'waiting',
+      new Event(
+        `Sent when the requested operation (such as playback) is delayed pending the completion of another operation (such as a seek).`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/waiting`)
+    ],                                                                                            
+  ]);  
 }

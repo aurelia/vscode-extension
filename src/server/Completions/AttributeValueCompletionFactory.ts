@@ -3,7 +3,7 @@ import {
   CompletionItemKind, 
   InsertTextFormat } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
-import ElementLibrary from './Library/elementLibrary';
+import ElementLibrary from './Library/_elementLibrary';
 
 @autoinject()
 export default class AureliaAttributeCompletionFactory {

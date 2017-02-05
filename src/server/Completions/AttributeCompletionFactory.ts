@@ -3,7 +3,7 @@ import {
   CompletionItemKind, 
   InsertTextFormat, MarkedString } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
-import ElementLibrary from './Library/elementLibrary';
+import ElementLibrary from './Library/_elementLibrary';
 
 @autoinject()
 export default class AureliaAttributeCompletionFactory {
@@ -17,11 +17,9 @@ export default class AureliaAttributeCompletionFactory {
     let element = this.library.elements[elementName];
     if (element && element.attributes) {
       for (let [key, value] of element.attributes.entries()) {
-        if (existingAttributes.filter(i => i === key).length) {
+        if (existingAttributes.filter(i => i === key).length || value === null) {
           continue;
         }
-
-        console.log(value.customSnippet, typeof(value.customSnippet));
 
         if (value.customSnippet !== 'no-snippet') {
           result.push({
@@ -33,8 +31,9 @@ export default class AureliaAttributeCompletionFactory {
           });
         }
         if (typeof(value.customBindingSnippet) !== 'no-snippet') {
+          console.log(key, value.customLabel === true);
           result.push({
-            detail: value.documentation,
+            //detail: value.documentation,
             insertText: value.customBindingSnippet === null ? `${key}.bind="$0"`: value.customBindingSnippet,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Value,

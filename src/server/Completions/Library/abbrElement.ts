@@ -2,8 +2,6 @@ import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
 
 export default class AbbrElement {
 
-  public name = 'abbr';
-
   public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/abbr';
   public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
 

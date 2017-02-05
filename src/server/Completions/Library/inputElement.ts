@@ -2,8 +2,6 @@ import { Attribute, Value } from './_elementStructure';
 
 export default class InputElement {
 
-  public name = 'input';
-
   public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input';
   public licenseText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
 
