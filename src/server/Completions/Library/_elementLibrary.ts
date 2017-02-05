@@ -34,6 +34,11 @@ import DlElement from './dlElement';
 import DtElement from './dtElement';
 import EmElement from './emElement';
 import EmbedElement from './embedElement';
+import FieldsetElement from './fieldsetElement';
+import FigcaptonElement from './figcaptionElement';
+import FigureElement from './figureElement';
+import FooterElement from './footerElement';
+import FormElement from './formElement';
 
 @singleton()
 export default class ElementLibrary {
@@ -74,6 +79,11 @@ export default class ElementLibrary {
     this.elements['dt'] = new DtElement();
     this.elements['em'] = new EmElement();
     this.elements['embed'] = new EmbedElement();
+    this.elements['fieldset'] = new FieldsetElement();
+    this.elements['figcaption'] = new FigcaptonElement();
+    this.elements['figure'] = new FigureElement();
+    this.elements['footer'] = new FooterElement();
+    this.elements['form'] = new FormElement();
 
     this.elements['input'] = new InputElement();
     this.elements['compose'] = new ComposeElement();
