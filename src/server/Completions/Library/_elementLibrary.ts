@@ -1,3 +1,5 @@
+import { singleton } from 'aurelia-dependency-injection';
+
 import AElement from './aElement';
 import AbbrElement from './abbrElement';
 import InputElement from './inputElement';
@@ -30,7 +32,10 @@ import DfnElement from './dfnElement';
 import DivElement from './divElement';
 import DlElement from './dlElement';
 import DtElement from './dtElement';
+import EmElement from './emElement';
+import EmbedElement from './embedElement';
 
+@singleton()
 export default class ElementLibrary {
   
   public elements = {};
@@ -67,6 +72,8 @@ export default class ElementLibrary {
     this.elements['div'] = new DivElement();
     this.elements['dl'] = new DlElement();
     this.elements['dt'] = new DtElement();
+    this.elements['em'] = new EmElement();
+    this.elements['embed'] = new EmbedElement();
 
     this.elements['input'] = new InputElement();
     this.elements['compose'] = new ComposeElement();
