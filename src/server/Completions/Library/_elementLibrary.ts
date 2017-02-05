@@ -21,6 +21,15 @@ import CiteElement from './citeElement';
 import CodeElement from './codeElement';
 import ColElement from './colElement';
 import ColgroupElement from './colgroupElement';
+import DataElement from './dataElement';
+import DatalistElement from './datalistElement';
+import DdElement from './ddElement';
+import DelElement from './delElement';
+import DetailsElement from './detailsElement';
+import DfnElement from './dfnElement';
+import DivElement from './divElement';
+import DlElement from './dlElement';
+import DtElement from './dtElement';
 
 export default class ElementLibrary {
   
@@ -49,7 +58,15 @@ export default class ElementLibrary {
     this.elements['code'] = new CodeElement();
     this.elements['col'] = new ColElement();
     this.elements['colgroup'] = new ColgroupElement();
-    
+    this.elements['data'] = new DataElement();
+    this.elements['datalist'] = new DatalistElement();
+    this.elements['dd'] = new DdElement();
+    this.elements['del'] = new DelElement();
+    this.elements['details'] = new DetailsElement();
+    this.elements['dfn'] = new DfnElement();
+    this.elements['div'] = new DivElement();
+    this.elements['dl'] = new DlElement();
+    this.elements['dt'] = new DtElement();
 
     this.elements['input'] = new InputElement();
     this.elements['compose'] = new ComposeElement();
