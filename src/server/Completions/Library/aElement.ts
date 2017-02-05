@@ -1,10 +1,11 @@
-import { Attribute, Value } from './elementStructure';
+import { Attribute, Value } from './_elementStructure';
 
 export default class AElement {
 
   public name = 'a';
 
   public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a';
+  public licenseText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
 
   public documentation = `The HTML <a> element (or anchor element) creates a hyperlink to other web pages, files, locations within the same page, email addresses, or any other URL.`;
 
@@ -29,6 +30,7 @@ This attribute may be omitted (as of HTML5) to create a placeholder link. A plac
           null,
           null,
           null,
+          null,
           new Map([
             ['no-referrer', new Value(`means the Referer: header will not be sent.`)],
             ['no-referrer-when-downgrade', new Value(`means no Referer: header will be sent when navigating to an origin without HTTPS. This is the default behavior.`)],
@@ -44,6 +46,7 @@ This attribute may be omitted (as of HTML5) to create a placeholder link. A plac
       [
         'target',
         new Attribute(`Specifies where to display the linked URL. It is a name of, or keyword for, a browsing context: a tab, window, or <iframe>.`, 
+          null,
           null,
           null,
           null,

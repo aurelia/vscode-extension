@@ -1,16 +1,18 @@
-import { Attribute, Value } from './elementStructure';
+import { Attribute, Value } from './_elementStructure';
 
 export default class InputElement {
 
   public name = 'input';
 
   public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input';
+  public licenseText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
 
   public documentation = `The HTML <input> element is used to create interactive controls for web-based forms in order to accept data from the user. How an <input> works varies considerably depending on the value of its type attribute.`;
 
   public attributes: Map<string, Attribute> = new Map([
       ['type', 
         new Attribute('The type of control to display. The default type is text, if this attribute is not specified.', 
+          null,
           null,
           null,
           null,
@@ -46,6 +48,7 @@ export default class InputElement {
       [
         'autocomplete',
         new Attribute(`This attribute indicates whether the value of the control can be automatically completed by the browser.`, 
+          null,
           null,
           null,
           null,
@@ -123,6 +126,7 @@ export default class InputElement {
           null,
           null,
           null,
+          null,
           new Map([
             ['application/x-www-form-urlencoded', new Value(`The default value if the attribute is not specified.`)],
             ['multipart/form-data', new Value(`Use this value if you are using an <input> element with the type attribute set to file.`)],
@@ -132,6 +136,7 @@ export default class InputElement {
       [
         'formmethod',
         new Attribute(``, 
+          null,
           null,
           null,
           null,
@@ -150,6 +155,7 @@ export default class InputElement {
           null,
           null,
           null,
+          null,
           new Map([
             ['self', new Value(`Load the response into the same browsing context as the current one. This value is the default if the attribute is not specified.`)],
             ['_blank', new Value(`Load the response into a new unnamed browsing context.`)],
@@ -164,6 +170,7 @@ export default class InputElement {
       [
         'inputmode',
         new Attribute(``, 
+          null,
           null,
           null,
           null,

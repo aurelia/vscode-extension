@@ -6,7 +6,8 @@ export class Value {
 
 export class Attribute {
   constructor(
-    public documentation: string, 
+    public documentation: string,
+    public url: string = null,
     public customSnippet: string = null,
     public customBindingSnippet: string = null,
     public customLabel: string = null,
@@ -26,15 +27,18 @@ export class GlobalAttributes {
   public static attributes: Map<string, Attribute> = new Map<string, Attribute>([
       [
         'accesskey',
-        new Attribute(`Provides a hint for generating a keyboard shortcut for the current element. This attribute consists of a space-separated list of characters. The browser should use the first one that exists on the computer keyboard layout.`)
+        new Attribute(`Provides a hint for generating a keyboard shortcut for the current element. This attribute consists of a space-separated list of characters. The browser should use the first one that exists on the computer keyboard layout.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/accesskey')
       ],
       [
         'class',
-        new Attribute(`Is a space-separated list of the classes of the element. Classes allows CSS and JavaScript to select and access specific elements via the class selectors or functions like the method Document.getElementsByClassName().`)
+        new Attribute(`Is a space-separated list of the classes of the element. Classes allows CSS and JavaScript to select and access specific elements via the class selectors or functions like the method Document.getElementsByClassName().`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/class')
       ],
       [
         'contenteditable',
         new Attribute(`Is an enumerated attribute indicating if the element should be editable by the user. If so, the browser modifies its widget to allow editing.`,
+          'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable',
           null,
           null,
           null,
@@ -46,14 +50,19 @@ export class GlobalAttributes {
       ],   
       [
         'contextmenu',
-        new Attribute(`Is the id of an <menu> (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu) to use as the contextual menu for this element.`)
+        new Attribute(`Is the id of an <menu> (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu) to use as the contextual menu for this element.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contextmenu')
       ],  
       [
         'data-*',
-        new Attribute(`Forms a class of attributes, called custom data attributes, that allow proprietary information to be exchanged between the HTML and its DOM representation that may be used by scripts. All such custom data are available via the HTMLElement interface of the element the attribute is set on. The HTMLElement.dataset property gives access to them.`, 'data-$1="$0"', 'data-$1.bind="$0"')
+        new Attribute(`Forms a class of attributes, called custom data attributes, that allow proprietary information to be exchanged between the HTML and its DOM representation that may be used by scripts. All such custom data are available via the HTMLElement interface of the element the attribute is set on. The HTMLElement.dataset property gives access to them.`, 
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/data-*',
+        'data-$1="$0"', 
+        'data-$1.bind="$0"')
       ],
       ['dir', 
         new Attribute(`Is an enumerated attribute indicating the directionality of the element's text.`, 
+          'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir',
           null,
           null,
           null,
@@ -65,36 +74,44 @@ export class GlobalAttributes {
       )],      
       [
         'hidden',
-        new Attribute(`Is a Boolean attribute indicates that the element is not yet, or is no longer, relevant. For example, it can be used to hide elements of the page that can't be used until the login process has been completed. The browser won't render such elements. This attribute must not be used to hide content that could legitimately be shown.`)
+        new Attribute(`Is a Boolean attribute indicates that the element is not yet, or is no longer, relevant. For example, it can be used to hide elements of the page that can't be used until the login process has been completed. The browser won't render such elements. This attribute must not be used to hide content that could legitimately be shown.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/hidden')
       ],              
       [
         'id',
-        new Attribute(`Defines a unique identifier (ID) which must be unique in the whole document. Its purpose is to identify the element when linking (using a fragment identifier), scripting, or styling (with CSS).`)
+        new Attribute(`Defines a unique identifier (ID) which must be unique in the whole document. Its purpose is to identify the element when linking (using a fragment identifier), scripting, or styling (with CSS).`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id')
       ],  
       [
         'lang',
-        new Attribute(`Participates in defining the language of the element, the language that non-editable elements are written in or the language that editable elements should be written in. The tag contains one single entry value in the format defines in the Tags for Identifying Languages (BCP47) IETF document. xml:lang has priority over it.`)
+        new Attribute(`Participates in defining the language of the element, the language that non-editable elements are written in or the language that editable elements should be written in. The tag contains one single entry value in the format defines in the Tags for Identifying Languages (BCP47) IETF document. xml:lang has priority over it.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang')
       ],        
 
       [
         'slot',
-        new Attribute(`Assigns a slot in a shadow DOM shadow tree to an element: An element with a slot attribute is assigned to the slot created by the <slot> element whose name attribute's value matches that slot attribute's value.`)
+        new Attribute(`Assigns a slot in a shadow DOM shadow tree to an element: An element with a slot attribute is assigned to the slot created by the <slot> element whose name attribute's value matches that slot attribute's value.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot')
       ],        
       [
         'style',
-        new Attribute(`Contains CSS styling declarations to be applied to the element. Note that it is recommended for styles to be defined in a separate file or files. This attribute and the <style> element have mainly the purpose of allowing for quick styling, for example for testing purposes.`)
+        new Attribute(`Contains CSS styling declarations to be applied to the element. Note that it is recommended for styles to be defined in a separate file or files. This attribute and the <style> element have mainly the purpose of allowing for quick styling, for example for testing purposes.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/style')
       ],        
       [
         'tabindex',
-        new Attribute(`Is an integer attribute indicates if the element can take input focus (is focusable), if it should participate to sequential keyboard navigation, and if so, at what position.`)
+        new Attribute(`Is an integer attribute indicates if the element can take input focus (is focusable), if it should participate to sequential keyboard navigation, and if so, at what position.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex')
       ], 
       [
         'title',
-        new Attribute(`Contains a text representing advisory information related to the element it belongs to. Such information can typically, but not necessarily, be presented to the user as a tooltip.`)
+        new Attribute(`Contains a text representing advisory information related to the element it belongs to. Such information can typically, but not necessarily, be presented to the user as a tooltip.`,
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/title')
       ], 
       [
         'translate',
         new Attribute(`Is an enumerated attribute that is used to specify whether an element's attribute values and the values of its Text node children are to be translated when the page is localized, or whether to leave them unchanged`,
+         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/translate',
          null,
          null,
          null,
@@ -108,16 +125,16 @@ export class GlobalAttributes {
         'repeat.for',
         new Attribute(
           `repeat over a set, map, or array`,
+          'http://aurelia.io/hub.html#/doc/article/aurelia/templating/latest/templating-basics/9',
           'no-snippet',
           `repeat.for="$1 of $0"`,
           `repeat.for`)
-          //http://aurelia.io/hub.html#/doc/article/aurelia/templating/latest/templating-basics/9
       ],
       [
         'as-element',
         new Attribute(
-          `In some cases, especially when creating table rows out of Aurelia custom elements, you may need to have a custom element masquerade as a standard HTML element. For example, if you're trying to fill table rows with data, you may need your custom element to appear as a <tr> row or <td> cell. This is where the as-element attribute comes in handy`)
-          //http://aurelia.io/hub.html#/doc/article/aurelia/templating/latest/templating-basics/5
+          `In some cases, especially when creating table rows out of Aurelia custom elements, you may need to have a custom element masquerade as a standard HTML element. For example, if you're trying to fill table rows with data, you may need your custom element to appear as a <tr> row or <td> cell. This is where the as-element attribute comes in handy`,
+          'http://aurelia.io/hub.html#/doc/article/aurelia/templating/latest/templating-basics/5')
       ],
       [
         'view',
@@ -146,26 +163,31 @@ export class GlobalAttributes {
       [
         'innerhtml',
         new Attribute(``,
+        '',
         'no-snippet')
       ], 
       [
         'textcontent',
         new Attribute(``,
+        '',
         'no-snippet')
       ],
       [
         'show',
         new Attribute(``,
+        '',
         'no-snippet')
       ],
       [
         'if',
         new Attribute(``,
+        '',
         'no-snippet')
       ],
       [
         'naive-if',
         new Attribute(``,
+        '',
         'no-snippet')
       ],                  
       [
@@ -175,6 +197,7 @@ export class GlobalAttributes {
       [
         'view-spy',
         new Attribute(``,
+        '',
         'no-snippet',
         'view-spy',
         'view-spy')
@@ -182,6 +205,7 @@ export class GlobalAttributes {
       [
         'compile-spy',
         new Attribute(``,
+        '',
         'no-snippet',
         'compile-spy',
         'compile-spy')

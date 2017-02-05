@@ -1,6 +1,6 @@
 import { Hover } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
-import ElementLibrary from './Completions/Library/elementLibrary';
+import ElementLibrary from './Completions/Library/_elementLibrary';
 
 
 @autoinject()
@@ -43,20 +43,20 @@ export default class HoverProviderFactory {
     case '<':
       element = this.elementLibrary.elements[tag];
       documentation = element.documentation;
-      source =  `MDN by Mozilla Contributors (${element.url}$history) is licensed under CC-BY-SA 2.5.`;
-      moreInfo = `see for more information: ${element.url}`;
+      source = element.licenceText;
+      moreInfo = `more information: ${element.url}`;
       displayValue = `<${tag}>`;
     break;
     case '/':
       element = this.elementLibrary.elements[tag];
       documentation = element.documentation;
-      source =  `MDN by Mozilla Contributors (${element.url}$history) is licensed under CC-BY-SA 2.5.`;
-      moreInfo = `see for more information: ${element.url}`;    
+      source =  element.licenceText;
+      moreInfo = `more information: ${element.url}`;    
       displayValue = `</${tag}>`;
     break;
     case ' ':
       let elementName = /<(\w*)\b.*$/g.exec(text.substring(0, offset))[1];
-      displayValue = `<${elementName} ${tag}>`;
+      displayValue = `<${elementName} ${tag}="">`;
       
       // fixes
       if (tag.startsWith('data-')) {
@@ -70,13 +70,13 @@ export default class HoverProviderFactory {
       let event = this.elementLibrary.elements[elementName].events.get(tag);
       if (attribute) {
         documentation = attribute.documentation;
-        moreInfo = `see for more information: ${this.elementLibrary.elements[elementName].url}`;
-        source =  `MDN by Mozilla Contributors (${this.elementLibrary.elements[elementName].url}$history) is licensed under CC-BY-SA 2.5.`
+        moreInfo = attribute.url || this.elementLibrary.elements[elementName].url;
+        source = this.elementLibrary.elements[elementName].licenceText
       }
       if (event) {
         documentation = event.documentation;
+        moreInfo = event.url;
         source =  `MDN by Mozilla Contributors (${event.url}$history) is licensed under CC-BY-SA 2.5.`;
-        moreInfo = `see for more information: ${event.url}`;
       }      
   }
 
