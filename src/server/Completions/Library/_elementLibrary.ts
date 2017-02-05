@@ -44,7 +44,10 @@ import HeadElement from './headElement';
 import HeaderElement from './headerElement';
 import HrElement from './hrElement';
 import HtmlElement from './htmlElement';
-
+import IElement from './iElement';
+import IframeElement from './iframeElement';
+import ImgElement from './imgElement';
+import InsElement from './insElement';
 
 @singleton()
 export default class ElementLibrary {
@@ -101,9 +104,15 @@ export default class ElementLibrary {
     this.elements['header'] = new HeaderElement();
     this.elements['hr'] = new HrElement();
     this.elements['html'] = new HtmlElement();
-
-
+    this.elements['i'] = new IElement();
+    this.elements['iframe'] = new IframeElement();
+    this.elements['img'] = new ImgElement();
     this.elements['input'] = new InputElement();
+    this.elements['ins'] = new InsElement();
+
+
+
+
     this.elements['compose'] = new ComposeElement();
 
   }
