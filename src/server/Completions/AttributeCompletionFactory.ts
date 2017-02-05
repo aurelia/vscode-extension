@@ -31,7 +31,6 @@ export default class AureliaAttributeCompletionFactory {
           });
         }
         if (typeof(value.customBindingSnippet) !== 'no-snippet') {
-          console.log(key, value.customLabel === true);
           result.push({
             //detail: value.documentation,
             insertText: value.customBindingSnippet === null ? `${key}.bind="$0"`: value.customBindingSnippet,

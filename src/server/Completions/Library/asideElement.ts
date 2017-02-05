@@ -12,9 +12,6 @@ export default class AsideElement {
 
   constructor() {
     this.attributes = GlobalAttributes.attributes;
-    this.attributes.set('',
-      new Attribute(``));
-
     this.events = GlobalAttributes.events;
   }
 }

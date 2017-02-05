@@ -11,6 +11,7 @@ import { getLanguageModelCache } from './languageModelCache';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import HoverProviderFactory from './HoverProviderFactory';
+import ElementLibrary from './Completions/Library/_elementLibrary';
 
 // Bind console.log & error to the Aurelia output
 let connection: IConnection = createConnection();
@@ -24,11 +25,19 @@ let htmlDocuments = getLanguageModelCache<HTMLDocument>(10, 60, document => getL
 documents.onDidClose(e => htmlDocuments.onDocumentRemoved(e.document));
 connection.onShutdown(() => htmlDocuments.dispose());
 
+// Setup Aurelia dependency injection
+let globalContainer = new Container();
+let completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
+let hoverProviderFactory = <HoverProviderFactory> globalContainer.get(HoverProviderFactory);
+
 let workspacePath: string;
 
 // Register character to lisen for
 connection.onInitialize((params: InitializeParams): InitializeResult => {
   workspacePath = params.rootPath;
+  
+  // TODO: find other way to preload element library
+  let dummy = globalContainer.get(ElementLibrary);
   return {
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },
@@ -50,11 +59,6 @@ documents.onDidChangeContent(async change => {
   connection.sendDiagnostics({ uri: change.document.uri, diagnostics });
 });
 
-// Setup Aurelia dependency injection
-let globalContainer = new Container();
-let completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
-let hoverProviderFactory = <HoverProviderFactory> globalContainer.get(HoverProviderFactory);
-
 // Lisen for completion requests
 connection.onCompletion(textDocumentPosition => {
   let document = documents.get(textDocumentPosition.textDocument.uri);
@@ -63,10 +67,7 @@ connection.onCompletion(textDocumentPosition => {
   let triggerCharacter = text.substring(offset - 1, offset);
   let position = textDocumentPosition.position;
 
-  return { 
-    isIncomplete: false, 
-    items: completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri) 
-  };
+  return completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri);
 });
 
 connection.onHover(textDocumentPosition => {
