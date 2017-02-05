@@ -48,6 +48,7 @@ import IElement from './iElement';
 import IframeElement from './iframeElement';
 import ImgElement from './imgElement';
 import InsElement from './insElement';
+import KdbElement from './kdbElement';
 
 @singleton()
 export default class ElementLibrary {
@@ -109,6 +110,7 @@ export default class ElementLibrary {
     this.elements['img'] = new ImgElement();
     this.elements['input'] = new InputElement();
     this.elements['ins'] = new InsElement();
+    this.elements['kdb'] = new KdbElement();
 
 
 
