@@ -49,6 +49,10 @@ import IframeElement from './iframeElement';
 import ImgElement from './imgElement';
 import InsElement from './insElement';
 import KdbElement from './kdbElement';
+import LabelElement from './labelElement'; 
+import LegendElement from './legendElement';
+import LiElement from './liElement';
+import LinkElement from './linkElement';
 
 @singleton()
 export default class ElementLibrary {
@@ -111,7 +115,10 @@ export default class ElementLibrary {
     this.elements['input'] = new InputElement();
     this.elements['ins'] = new InsElement();
     this.elements['kdb'] = new KdbElement();
-
+    this.elements['label'] = new LabelElement();
+    this.elements['legend'] = new LegendElement();
+    this.elements['li'] = new LiElement();
+    this.elements['link'] = new LinkElement();
 
 
 
