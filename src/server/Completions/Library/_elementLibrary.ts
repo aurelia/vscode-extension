@@ -53,6 +53,12 @@ import LabelElement from './labelElement';
 import LegendElement from './legendElement';
 import LiElement from './liElement';
 import LinkElement from './linkElement';
+import MainElement from './mainElement';
+import MapElement from './mapElement';
+import MarkElement from './markElement';
+import MetaElement from './metaElement';
+import MeterElement from './meterElement';
+
 
 @singleton()
 export default class ElementLibrary {
@@ -119,8 +125,11 @@ export default class ElementLibrary {
     this.elements['legend'] = new LegendElement();
     this.elements['li'] = new LiElement();
     this.elements['link'] = new LinkElement();
-
-
+    this.elements['main'] = new MainElement();
+    this.elements['map'] = new MapElement();
+    this.elements['mark'] = new MarkElement();
+    this.elements['meta'] = new MetaElement();
+    this.elements['meter'] = new MeterElement();
 
     this.elements['compose'] = new ComposeElement();
 
