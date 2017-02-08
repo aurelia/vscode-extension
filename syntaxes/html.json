@@ -373,7 +373,7 @@
       }
     },
     "tag-aurelia-containerless-attribute" : {
-      "match": "(containerless)( |>)",
+      "match": "(containerless)(?= |>)",
       "captures": {
         "1": {
           "name": "containerless.attribute.html.au"
@@ -381,7 +381,7 @@
       }
     }, 
     "tag-aurelia-compile-spy-attribute" : {
-      "match": "(compile-spy)( |>)",
+      "match": "(compile-spy)(?= |>)",
       "captures": {
         "1": {
           "name": "compile-spy.attribute.html.au"
@@ -389,7 +389,7 @@
       }
     },
     "tag-aurelia-view-spy-attribute" : {
-      "match": "(view-spy)( |>)",
+      "match": "(view-spy)(?= |>)",
       "captures": {
         "1": {
           "name": "view-spy.attribute.html.au"

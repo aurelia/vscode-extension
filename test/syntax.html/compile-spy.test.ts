@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
 
 describe('The Aurelia HTML syntax compile-spy attribute', () => {
 
@@ -47,7 +47,7 @@ describe('The Aurelia HTML syntax compile-spy attribute', () => {
 
   });
 
-  it('must not tokenize foo-containerles="" attribute', () => {
+  it('must not tokenize foo-compile-spy="" attribute', () => {
 
     // arrange
     let scope = 'compile-spy.attribute.html.au';
@@ -91,4 +91,20 @@ describe('The Aurelia HTML syntax compile-spy attribute', () => {
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
+
+  it('must tokenize compile-spy attribute', () => {
+
+    // arrange
+    let scope = 'compile-spy.attribute.html.au';
+
+    // act
+    let template = '<template compile-spy></template>';
+    let lineToken = tokenizeLine(template);
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 10, 21);
+    assert.isDefined(token);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });  
 });
