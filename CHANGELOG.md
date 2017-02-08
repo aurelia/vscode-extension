@@ -1,3 +1,13 @@
+<a name="0.2.4"></a>
+## [0.2.4](https://github.com/aurelia/vscode-extension/compare/0.2.3...v0.2.4) (2017-02-08)
+
+
+### Bug Fixes
+
+* **highlight:** containerless, compile-spy, and view-spy regex add foward lookahead for ' ' or '>', resolves [#35](https://github.com/aurelia/vscode-extension/issues/35) ([8735a7a](https://github.com/aurelia/vscode-extension/commit/8735a7a))
+
+
+
 <a name="0.2.3"></a>
 ## [0.2.3](https://github.com/aurelia/vscode-extension/compare/0.2.2...v0.2.3) (2017-02-03)
 
