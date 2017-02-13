@@ -74,7 +74,6 @@
 		{
 			"name": "Variable and parameter name",
 			"scope": [
-				"variable.parameter",
 				"variable",
 				"meta.definition.variable.name",
 				"support.variable"
