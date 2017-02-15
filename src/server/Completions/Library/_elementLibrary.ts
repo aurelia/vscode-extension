@@ -1,5 +1,4 @@
 import { singleton } from 'aurelia-dependency-injection';
-
 import AElement from './aElement';
 import AbbrElement from './abbrElement';
 import InputElement from './inputElement';
@@ -61,6 +60,11 @@ import MeterElement from './meterElement';
 import NavElement from './navElement';
 import NoFramesElement from './noframesElement';
 import NoScriptElement from './noScriptElement';
+import ObjectElement from './ObjectElement';
+import OlElement from './olElement';
+import OptGroupElement from './optgroupElement';
+import OptionElement from './optionElement';
+import OutputElement from './outputElement';
 
 @singleton()
 export default class ElementLibrary {
@@ -68,7 +72,6 @@ export default class ElementLibrary {
   public elements = {};
 
   constructor() {
-
     this.elements['a'] = new AElement();
     this.elements['abbr'] = new AbbrElement();
     this.elements['address'] = new AddressElement();
@@ -135,8 +138,14 @@ export default class ElementLibrary {
     this.elements['nav'] = new NavElement();
     this.elements['noframes'] = new NoFramesElement();
     this.elements['noscript'] = new NoScriptElement();
+    this.elements['object'] = new ObjectElement();
+    this.elements['ol'] = new OlElement();
+    this.elements['optgroup'] = new OptGroupElement();
+    this.elements['option'] = new OptionElement();
+    this.elements['output'] = new OutputElement();
 
     this.elements['compose'] = new ComposeElement();
+
 
   }
 }
