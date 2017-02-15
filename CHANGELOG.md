@@ -1,3 +1,13 @@
+<a name="0.2.5"></a>
+## [0.2.5](https://github.com/aurelia/vscode-extension/compare/0.2.4...v0.2.5) (2017-02-15)
+
+
+### Bug Fixes
+
+* **themes:** update to latest styles of vscode, resolves [#34](https://github.com/aurelia/vscode-extension/issues/34) ([994c411](https://github.com/aurelia/vscode-extension/commit/994c411))
+
+
+
 <a name="0.2.4"></a>
 ## [0.2.4](https://github.com/aurelia/vscode-extension/compare/0.2.3...v0.2.4) (2017-02-08)
 
