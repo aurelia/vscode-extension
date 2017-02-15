@@ -58,7 +58,9 @@ import MapElement from './mapElement';
 import MarkElement from './markElement';
 import MetaElement from './metaElement';
 import MeterElement from './meterElement';
-
+import NavElement from './navElement';
+import NoFramesElement from './noframesElement';
+import NoScriptElement from './noScriptElement';
 
 @singleton()
 export default class ElementLibrary {
@@ -130,6 +132,9 @@ export default class ElementLibrary {
     this.elements['mark'] = new MarkElement();
     this.elements['meta'] = new MetaElement();
     this.elements['meter'] = new MeterElement();
+    this.elements['nav'] = new NavElement();
+    this.elements['noframes'] = new NoFramesElement();
+    this.elements['noscript'] = new NoScriptElement();
 
     this.elements['compose'] = new ComposeElement();
 
