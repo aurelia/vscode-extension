@@ -1,3 +1,13 @@
+<a name="0.2.6"></a>
+## [0.2.6](https://github.com/aurelia/vscode-extension/compare/0.2.5...v0.2.6) (2017-02-15)
+
+
+### Bug Fixes
+
+* **auto-complete:** replace text instead of inserting snippet only, resolves [#37](https://github.com/aurelia/vscode-extension/issues/37) ([e81e515](https://github.com/aurelia/vscode-extension/commit/e81e515))
+
+
+
 <a name="0.2.5"></a>
 ## [0.2.5](https://github.com/aurelia/vscode-extension/compare/0.2.4...v0.2.5) (2017-02-15)
 
