@@ -1,4 +1,4 @@
-import { TextDocument, Position, CompletionList, CompletionItemKind, Range, InsertTextFormat } from 'vscode-languageserver-types';
+import { TextDocument, Position, CompletionList, CompletionItemKind, Range, InsertTextFormat, TextEdit } from 'vscode-languageserver-types';
 import { HTMLDocument } from '../parser/htmlParser';
 import { TokenType, createScanner, ScannerState } from '../parser/htmlScanner';
 import { getAureliaTagProvider } from '../parser/aureliaTagProvider';
@@ -48,7 +48,6 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
         documentation: label,
         kind: CompletionItemKind.Property,
         label: tag,
-        //range,
       });
     });
     return result;
@@ -67,12 +66,12 @@ export function doComplete(document: TextDocument, position: Position, htmlDocum
       if (type !== 'v' && value.length) {
         codeSnippet = codeSnippet + value;
       }
+
       result.items.push({
-        insertText: codeSnippet,
+        textEdit: TextEdit.replace(range, codeSnippet),
         kind: type === 'handler' ? CompletionItemKind.Function : CompletionItemKind.Value,
         label: attribute,
         insertTextFormat : InsertTextFormat.Snippet
-        //range,
       });
     });
     return result;
