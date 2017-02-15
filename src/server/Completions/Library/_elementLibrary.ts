@@ -60,7 +60,7 @@ import MeterElement from './meterElement';
 import NavElement from './navElement';
 import NoFramesElement from './noframesElement';
 import NoScriptElement from './noScriptElement';
-import ObjectElement from './ObjectElement';
+import ObjectElement from './objectElement';
 import OlElement from './olElement';
 import OptGroupElement from './optgroupElement';
 import OptionElement from './optionElement';
