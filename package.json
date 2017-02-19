@@ -39,7 +39,8 @@
     "onCommand:extension.auTest",
     "onCommand:extension.auBuild",
     "onCommand:extension.auRun",
-    "onCommand:extension.auRunWatch"
+    "onCommand:extension.auRunWatch",
+    "onCommand:extension.auOpenRelated"
   ],
   "main": "./dist/src/client/main",
   "contributes": {
@@ -74,6 +75,10 @@
       {
         "command": "extension.auRunWatch",
         "title": "au run --watch"
+      },
+      {
+        "command": "extension.auOpenRelated",
+        "title": "Open Related Aurelia File"
       }
     ],
     "themes": [
@@ -106,7 +111,7 @@
         "label": "Aurelia Solarized (light)",
         "uiTheme": "vs",
         "path": "./themes/solarized_light.json"
-      }          
+      }
     ],
     "configuration": {
       "id": "aurelia",

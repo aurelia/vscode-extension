@@ -4,6 +4,7 @@ const vscode_1 = require("vscode");
 const vscode_languageclient_1 = require("vscode-languageclient");
 const aureliaCLICommands_1 = require("./aureliaCLICommands");
 const htmlInvalidCasingCodeActionProvider_1 = require("./htmlInvalidCasingCodeActionProvider");
+const relatedFiles_1 = require("./relatedFiles");
 let outputChannel;
 function activate(context) {
     // Create default output channel
@@ -11,6 +12,7 @@ function activate(context) {
     context.subscriptions.push(outputChannel);
     // Register CLI commands
     context.subscriptions.push(aureliaCLICommands_1.default.registerCommands(outputChannel));
+    context.subscriptions.push(new relatedFiles_1.RelatedFiles());
     // Register code fix
     const invalidCasingAction = new htmlInvalidCasingCodeActionProvider_1.default();
     invalidCasingAction.activate(context.subscriptions);
