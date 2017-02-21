@@ -4,7 +4,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 const vscode_languageserver_types_1 = require("vscode-languageserver-types");
@@ -70,7 +70,7 @@ class HTMLValidation {
             return Promise.resolve();
         });
     }
-    toDiagnostic(attr, document, message, code = undefined, serverity = 1 /* Error */) {
+    toDiagnostic(attr, document, message, code = undefined, serverity = vscode_languageserver_types_1.DiagnosticSeverity.Error) {
         const range = vscode_languageserver_types_1.Range.create(document.positionAt(attr.start), document.positionAt(attr.start + attr.length));
         const diagnostic = {
             message: message,

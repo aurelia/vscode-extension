@@ -33,9 +33,8 @@ function doComplete(document, position, htmlDocument, quotes) {
         tagProvider.collectTags((tag, label) => {
             result.items.push({
                 documentation: label,
-                kind: 10 /* Property */,
+                kind: vscode_languageserver_types_1.CompletionItemKind.Property,
                 label: tag,
-                range,
             });
         });
         return result;
@@ -53,10 +52,10 @@ function doComplete(document, position, htmlDocument, quotes) {
                 codeSnippet = codeSnippet + value;
             }
             result.items.push({
-                insertText: vscode_languageserver_types_1.SnippetString.create(codeSnippet),
-                kind: type === 'handler' ? 3 /* Function */ : 12 /* Value */,
+                textEdit: vscode_languageserver_types_1.TextEdit.replace(range, codeSnippet),
+                kind: type === 'handler' ? vscode_languageserver_types_1.CompletionItemKind.Function : vscode_languageserver_types_1.CompletionItemKind.Value,
                 label: attribute,
-                range,
+                insertTextFormat: vscode_languageserver_types_1.InsertTextFormat.Snippet
             });
         });
         return result;
@@ -82,10 +81,9 @@ function doComplete(document, position, htmlDocument, quotes) {
             let insertText = addQuotes ? quote + value + quote : value;
             result.items.push({
                 filterText: insertText,
-                kind: 11 /* Unit */,
+                kind: vscode_languageserver_types_1.CompletionItemKind.Unit,
                 label: value,
                 insertText,
-                range,
             });
         });
         return result;

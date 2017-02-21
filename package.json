@@ -39,7 +39,8 @@
     "onCommand:extension.auTest",
     "onCommand:extension.auBuild",
     "onCommand:extension.auRun",
-    "onCommand:extension.auRunWatch"
+    "onCommand:extension.auRunWatch",
+    "onCommand:extension.auOpenRelated"
   ],
   "main": "./dist/src/client/main",
   "contributes": {
@@ -74,6 +75,10 @@
       {
         "command": "extension.auRunWatch",
         "title": "au run --watch"
+      },
+      {
+        "command": "extension.auOpenRelated",
+        "title": "Open Related Aurelia File"
       }
     ],
     "themes": [
@@ -106,7 +111,7 @@
         "label": "Aurelia Solarized (light)",
         "uiTheme": "vs",
         "path": "./themes/solarized_light.json"
-      }          
+      }
     ],
     "configuration": {
       "id": "aurelia",
@@ -136,22 +141,22 @@
     "test": "mocha ./dist/test --recursive"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.34",
-    "@types/mocha": "^2.2.32",
-    "@types/node": "^6.0.45",
+    "@types/chai": "^3.4.35",
+    "@types/mocha": "^2.2.39",
+    "@types/node": "^7.0.5",
     "chai": "^3.5.0",
     "conventional-changelog-cli": "^1.2.0",
-    "mocha": "^3.1.0",
-    "mocha-junit-reporter": "^1.12.0",
-    "tslint": "^3.15.1",
-    "typescript": "^2.0.3",
+    "mocha": "^3.2.0",
+    "mocha-junit-reporter": "^1.13.0",
+    "tslint": "^4.4.2",
+    "typescript": "^2.1.6",
     "vscode": "^1.0.3",
-    "vscode-textmate": "^2.2.0"
+    "vscode-textmate": "^3.1.0"
   },
   "dependencies": {
-    "aurelia-cli": "^0.21.0",
-    "vscode-languageclient": "^3.0.3",
-    "vscode-languageserver": "^3.0.4",
+    "aurelia-cli": "^0.24.0",
+    "vscode-languageclient": "^3.0.4",
+    "vscode-languageserver": "^3.0.5",
     "vscode-languageserver-types": "^3.0.3",
     "vscode-uri": "^1.0.0"
   }
