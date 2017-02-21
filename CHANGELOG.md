@@ -1,3 +1,13 @@
+<a name="0.2.7"></a>
+## [0.2.7](https://github.com/aurelia/vscode-extension/compare/0.2.6...v0.2.7) (2017-02-21)
+
+
+### Features
+
+* **command:** adds open related file command ([#38](https://github.com/aurelia/vscode-extension/issues/38)) ([7290e2e](https://github.com/aurelia/vscode-extension/commit/7290e2e)), closes [#29](https://github.com/aurelia/vscode-extension/issues/29)
+
+
+
 <a name="0.2.6"></a>
 ## [0.2.6](https://github.com/aurelia/vscode-extension/compare/0.2.5...v0.2.6) (2017-02-15)
 
