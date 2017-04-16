@@ -1,4 +1,4 @@
-import { Attribute, Value } from './_elementStructure';
+import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
 
 export default class InputElement {
 
@@ -7,9 +7,16 @@ export default class InputElement {
 
   public documentation = `The HTML <input> element is used to create interactive controls for web-based forms in order to accept data from the user. How an <input> works varies considerably depending on the value of its type attribute.`;
 
-  public attributes: Map<string, Attribute> = new Map([
-      ['type', 
-        new Attribute('The type of control to display. The default type is text, if this attribute is not specified.', 
+
+  public attributes: Map<string, Attribute>;
+  public events: Map<string, Event>;
+
+  constructor() {
+    this.attributes = GlobalAttributes.attributes;
+    this.events = GlobalAttributes.events;
+
+    this.attributes.set('type', 
+      new Attribute('The type of control to display. The default type is text, if this attribute is not specified.', 
           null,
           null,
           null,
@@ -37,15 +44,11 @@ export default class InputElement {
             ['time', new Value(`A control for entering a time value with no time zone.`)],
             ['url', new Value(`A field for editing a URL. The input value is validated to contain either the empty string or a valid absolute URL before submitting. Line-breaks and leading or trailing whitespace are automatically removed from the input value. You can use attributes such as pattern and maxlength to restrict values entered in the control. The :valid and :invalid CSS pseudo-classes are applied as appropriate.`)],
             ['week', new Value(`A control for entering a date consisting of a week-year number and a week number with no time zone.`)]                                  
-        ]))
-      ],
-      [
-        'accept',
-        new Attribute(`If the value of the type attribute is file, then this attribute will indicate the types of files that the server accepts, otherwise it will be ignored.`)
-      ],
-      [
-        'autocomplete',
-        new Attribute(`This attribute indicates whether the value of the control can be automatically completed by the browser.`, 
+        ])));
+    this.attributes.set('accept', 
+      new Attribute(`If the value of the type attribute is file, then this attribute will indicate the types of files that the server accepts, otherwise it will be ignored.`));
+    this.attributes.set('autocomplete',
+      new Attribute(`This attribute indicates whether the value of the control can be automatically completed by the browser.`, 
           null,
           null,
           null,
@@ -92,7 +95,24 @@ export default class InputElement {
             ['tel', new Value(`tel`)],
             ['url', new Value(`Home page or other Web page corresponding to the company, person, address, or contact information in the other fields associated with this field.`)],
             ['photo', new Value(`Photograph, icon, or other image corresponding to the company, person, address, or contact information in the other fields associated with this field.`)],                                                                                                                     
-          ]))
+          ])));
+    
+  }
+}
+
+
+/*
+
+['type', 
+
+      ],
+      [
+        'accept',
+        
+      ],
+      [
+        'autocomplete',
+        
       ],
       [
         'autofocus',
@@ -270,5 +290,5 @@ export default class InputElement {
         'width',
         new Attribute(``)
       ],  
-  ]);
-}
+
+*/

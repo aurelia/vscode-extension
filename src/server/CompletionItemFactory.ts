@@ -4,6 +4,7 @@ import AttributeCompletionFactory from './Completions/AttributeCompletionFactory
 import ElementCompletionFactory from './Completions/ElementCompletionFactory';
 import AttributeValueCompletionFactory from './Completions/AttributeValueCompletionFactory';
 import BindingCompletionFactory from './Completions/BindingCompletionFactory';
+import EmmetCompletionFactory from './Completions/EmmetCompletionFactory';
 import { DocumentParser, TagDefinition } from './DocumentParser';
 
 @autoinject()
@@ -14,6 +15,7 @@ export default class CompletionItemFactory {
     private elementCompletionFactory: ElementCompletionFactory,
     private attributeValueCompletionFactory: AttributeValueCompletionFactory,
     private bindingCompletionFactory: BindingCompletionFactory,
+    private emmetCompletionFactory: EmmetCompletionFactory,
     private parser: DocumentParser) { }
 
   public async create(
@@ -94,7 +96,10 @@ export default class CompletionItemFactory {
   }
 
   private createEmmetCompletion(text: string, position: number) {
-    return null;
+    const emmetRegex = /([\w|-]*)\[$/g
+    let matches = emmetRegex.exec(text);
+    let elementName = matches[1];
+    return this.emmetCompletionFactory.create(elementName);
   }
 
   private createBindingCompletion(tag: TagDefinition, text: string, position: number) {

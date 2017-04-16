@@ -66,10 +66,15 @@ import OptGroupElement from './optgroupElement';
 import OptionElement from './optionElement';
 import OutputElement from './outputElement';
 
+
+import UnknownElement from './unknownElement';
+
 @singleton()
 export default class ElementLibrary {
   
   public elements = {};
+
+  public unknownElement = new UnknownElement();
 
   constructor() {
     this.elements['a'] = new AElement();
