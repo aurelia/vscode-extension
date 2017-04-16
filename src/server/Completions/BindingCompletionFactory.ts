@@ -19,17 +19,36 @@ export default class BindingCompletionFactory {
 
     if (element) {
       
+      let bindings = [
+        { 
+          name: 'bind',
+          documentation: 'automatically chooses the binding mode. Uses two-way binding for form controls and one-way binding for almost everything else'
+        },
+        { 
+          name: 'one-way',
+          documentation: 'flows data one direction: from the view-model to the view'
+        },
+        { 
+          name: 'two-way',
+          documentation: 'flows data both ways: from view-model to view and from view to view-model'
+        },
+        { 
+          name: 'one-time',
+          documentation: 'flows data one direction: from the view-model to the view, only one'
+        },                        
+      ]
+
       // check attributes
       if (element.attributes) {
         let attribute = element.attributes.get(attributeDef.name);
         if (attribute) {
-          for(let binding of ['bind', 'one-way', 'two-way', 'one-time']) {
+          for(let binding of bindings) {
             result.push({
-              documentation: binding,
-              insertText: `${binding}${snippetPrefix}`,
+              documentation: binding.documentation,
+              insertText: `${binding.name}${snippetPrefix}`,
               insertTextFormat: InsertTextFormat.Snippet,
               kind: CompletionItemKind.Property,
-              label: `.${binding}=""`
+              label: `.${binding.name}=""`
             });
           }
         }
