@@ -41,18 +41,22 @@ export default class HoverProviderFactory {
   let element;
   switch(leadingCharacter) {
     case '<':
-      element = this.elementLibrary.elements[tag];
-      documentation = element.documentation;
-      source = element.licenceText;
-      moreInfo = `more information: ${element.url}`;
-      displayValue = `<${tag}>`;
+      element = this.elementLibrary.elements[tag] || this.elementLibrary.unknownElement;
+      if (element) {
+        documentation = element.documentation;
+        source = element.licenceText;
+        moreInfo = `more information: ${element.url}`;
+        displayValue = `<${tag}>`;
+      }
     break;
     case '/':
       element = this.elementLibrary.elements[tag];
-      documentation = element.documentation;
-      source =  element.licenceText;
-      moreInfo = `more information: ${element.url}`;    
-      displayValue = `</${tag}>`;
+      if (element) {
+        documentation = element.documentation;
+        source =  element.licenceText;
+        moreInfo = `more information: ${element.url}`;    
+        displayValue = `</${tag}>`;
+      }
     break;
     case ' ':
       let elementName = /<(\w*)\b.*$/g.exec(text.substring(0, offset))[1];
@@ -66,12 +70,13 @@ export default class HoverProviderFactory {
         tag = tag.split('.')[0];
       }
       
-      let attribute = this.elementLibrary.elements[elementName].attributes.get(tag);
-      let event = this.elementLibrary.elements[elementName].events.get(tag);
+      element = this.elementLibrary.elements[elementName] || this.elementLibrary.unknownElement;
+      let attribute = element.attributes.get(tag);
+      let event = element.events.get(tag);
       if (attribute) {
         documentation = attribute.documentation;
-        moreInfo = attribute.url || this.elementLibrary.elements[elementName].url;
-        source = this.elementLibrary.elements[elementName].licenceText
+        moreInfo = attribute.url || element.url;
+        source = element.licenceText
       }
       if (event) {
         documentation = event.documentation;
@@ -80,6 +85,9 @@ export default class HoverProviderFactory {
       }      
   }
 
+  if (documentation == '') {
+    return undefined;
+  }
 
 	return {
     contents: [ 
