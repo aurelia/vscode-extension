@@ -65,7 +65,10 @@ import OlElement from './olElement';
 import OptGroupElement from './optgroupElement';
 import OptionElement from './optionElement';
 import OutputElement from './outputElement';
-
+import PElement from './pElement';
+import ParamElement from './paramElement';
+import PreElement from './preElement';
+import ProgressElement from './progressElement';
 
 import UnknownElement from './unknownElement';
 
@@ -148,6 +151,10 @@ export default class ElementLibrary {
     this.elements['optgroup'] = new OptGroupElement();
     this.elements['option'] = new OptionElement();
     this.elements['output'] = new OutputElement();
+    this.elements['p'] = new PElement();
+    this.elements['param'] = new ParamElement();
+    this.elements['pre'] = new PreElement();
+    this.elements['progress'] = new ProgressElement();
 
     this.elements['compose'] = new ComposeElement();
 
