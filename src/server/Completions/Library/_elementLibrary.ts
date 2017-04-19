@@ -69,6 +69,7 @@ import PElement from './pElement';
 import ParamElement from './paramElement';
 import PreElement from './preElement';
 import ProgressElement from './progressElement';
+import QElement from './qElement';
 
 import UnknownElement from './unknownElement';
 
@@ -155,6 +156,7 @@ export default class ElementLibrary {
     this.elements['param'] = new ParamElement();
     this.elements['pre'] = new PreElement();
     this.elements['progress'] = new ProgressElement();
+    this.elements['q'] = new QElement();
 
     this.elements['compose'] = new ComposeElement();
 
