@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
 
 describe('The Aurelia HTML syntax', () => {
 
@@ -55,6 +55,34 @@ describe('The Aurelia HTML syntax', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 2, 12);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
+  it('must tokenize inline element with dash as scope "entity.name.tag.other.html"', () => {
+
+    // arrange
+    let scope = 'entity.name.tag.other.html';
+
+    // act
+    let lineToken = tokenizeLine('<input-type>');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 1, 11);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
+  it('must tokenize block element with dash as scope "entity.name.tag.other.html"', () => {
+
+    // arrange
+    let scope = 'entity.name.tag.other.html';
+
+    // act
+    let lineToken = tokenizeLine('<aside-type>');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 1, 11);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
