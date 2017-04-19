@@ -1,6 +1,6 @@
 {
   "name": "aurelia",
-  "version": "0.2.3",
+  "version": "0.2.7",
   "description": "A VS Code extension for Aurelia.",
   "icon": "images/logo.png",
   "keywords": [
@@ -39,7 +39,8 @@
     "onCommand:extension.auTest",
     "onCommand:extension.auBuild",
     "onCommand:extension.auRun",
-    "onCommand:extension.auRunWatch"
+    "onCommand:extension.auRunWatch",
+    "onCommand:extension.auOpenRelated"
   ],
   "main": "./dist/src/client/main",
   "contributes": {
@@ -90,6 +91,10 @@
       {
         "command": "extension.auRunWatch",
         "title": "au run --watch"
+      },
+      {
+        "command": "extension.auOpenRelated",
+        "title": "Open Related Aurelia File"
       }
     ],
     "themes": [
@@ -153,15 +158,15 @@
     "vscode-typings": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.34",
-    "@types/mocha": "^2.2.32",
-    "@types/node": "^6.0.45",
+    "@types/chai": "^3.4.35",
+    "@types/mocha": "^2.2.39",
+    "@types/node": "^7.0.5",
     "chai": "^3.5.0",
     "conventional-changelog-cli": "^1.2.0",
-    "mocha": "^3.1.0",
-    "mocha-junit-reporter": "^1.12.0",
-    "tslint": "^3.15.1",
-    "typescript": "^2.0.3",
+    "mocha": "^3.2.0",
+    "mocha-junit-reporter": "^1.13.0",
+    "tslint": "^4.4.2",
+    "typescript": "^2.1.6",
     "vscode": "^1.0.3",
     "vscode-textmate": "^3.1.0"
   },

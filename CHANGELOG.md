@@ -1,3 +1,43 @@
+<a name="0.2.7"></a>
+## [0.2.7](https://github.com/aurelia/vscode-extension/compare/0.2.6...v0.2.7) (2017-02-21)
+
+
+### Features
+
+* **command:** adds open related file command ([#38](https://github.com/aurelia/vscode-extension/issues/38)) ([7290e2e](https://github.com/aurelia/vscode-extension/commit/7290e2e)), closes [#29](https://github.com/aurelia/vscode-extension/issues/29)
+
+
+
+<a name="0.2.6"></a>
+## [0.2.6](https://github.com/aurelia/vscode-extension/compare/0.2.5...v0.2.6) (2017-02-15)
+
+
+### Bug Fixes
+
+* **auto-complete:** replace text instead of inserting snippet only, resolves [#37](https://github.com/aurelia/vscode-extension/issues/37) ([e81e515](https://github.com/aurelia/vscode-extension/commit/e81e515))
+
+
+
+<a name="0.2.5"></a>
+## [0.2.5](https://github.com/aurelia/vscode-extension/compare/0.2.4...v0.2.5) (2017-02-15)
+
+
+### Bug Fixes
+
+* **themes:** update to latest styles of vscode, resolves [#34](https://github.com/aurelia/vscode-extension/issues/34) ([994c411](https://github.com/aurelia/vscode-extension/commit/994c411))
+
+
+
+<a name="0.2.4"></a>
+## [0.2.4](https://github.com/aurelia/vscode-extension/compare/0.2.3...v0.2.4) (2017-02-08)
+
+
+### Bug Fixes
+
+* **highlight:** containerless, compile-spy, and view-spy regex add foward lookahead for ' ' or '>', resolves [#35](https://github.com/aurelia/vscode-extension/issues/35) ([8735a7a](https://github.com/aurelia/vscode-extension/commit/8735a7a))
+
+
+
 <a name="0.2.3"></a>
 ## [0.2.3](https://github.com/aurelia/vscode-extension/compare/0.2.2...v0.2.3) (2017-02-03)
 

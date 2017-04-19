@@ -91,4 +91,21 @@ describe('The Aurelia HTML syntax containerles attribute', () => {
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
+
+  it('must tokenize containerless attribute', () => {
+
+    // arrange
+    let scope = 'containerless.attribute.html.au';
+
+    // act
+    let template = '<template containerless></template>';
+    let lineToken = tokenizeLine(template);
+    
+    // assert
+    let token = getTokenOnCharRange(lineToken, 10, 23);
+    assert.isDefined(token);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
 });

@@ -41,7 +41,7 @@
       "name": "meta.string.interpolation"
     },
     "meta.tag.block.any.html": {
-      "begin": "(<\/?)((?i:address|blockquote|dd|div|section|article|aside|header|footer|nav|menu|dl|dt|fieldset|form|frame|frameset|h1|h2|h3|h4|h5|h6|iframe|noframes|object|ol|p|ul|applet|center|dir|hr|pre)\\b)",
+      "begin": "(<\/?)((?i:address|blockquote|dd|div|section|article|aside|header|footer|nav|menu|dl|dt|fieldset|form|frame|frameset|h1|h2|h3|h4|h5|h6|iframe|noframes|object|ol|p|ul|applet|center|dir|hr|pre)(?!-)\\b)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.html"
@@ -64,7 +64,7 @@
       ]
     },
     "meta.tag.inline.any.html": {
-      "begin": "(<\/?)((?i:a|abbr|acronym|area|b|base|basefont|bdo|big|br|button|caption|cite|code|col|colgroup|del|dfn|em|font|head|html|i|img|input|ins|isindex|kbd|label|legend|li|link|map|meta|noscript|optgroup|option|param|q|s|samp|script|select|small|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|title|tr|tt|u|var)\\b)",
+      "begin": "(<\/?)((?i:a|abbr|acronym|area|b|base|basefont|bdo|big|br|button|caption|cite|code|col|colgroup|del|dfn|em|font|head|html|i|img|input|ins|isindex|kbd|label|legend|li|link|map|meta|noscript|optgroup|option|param|q|s|samp|script|select|small|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|title|tr|tt|u|var)(?!-)\\b)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.html"
@@ -373,7 +373,7 @@
       }
     },
     "tag-aurelia-containerless-attribute" : {
-      "match": "(containerless)( |>)",
+      "match": "(containerless)(?= |>)",
       "captures": {
         "1": {
           "name": "containerless.attribute.html.au"
@@ -381,7 +381,7 @@
       }
     }, 
     "tag-aurelia-compile-spy-attribute" : {
-      "match": "(compile-spy)( |>)",
+      "match": "(compile-spy)(?= |>)",
       "captures": {
         "1": {
           "name": "compile-spy.attribute.html.au"
@@ -389,7 +389,7 @@
       }
     },
     "tag-aurelia-view-spy-attribute" : {
-      "match": "(view-spy)( |>)",
+      "match": "(view-spy)(?= |>)",
       "captures": {
         "1": {
           "name": "view-spy.attribute.html.au"
