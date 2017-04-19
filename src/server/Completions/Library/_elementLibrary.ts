@@ -74,6 +74,21 @@ import RpElement from './rpElement';
 import RtElement from './rtElement';
 import RtcElement from './rtcElement';
 import RubyElement from './rubyElement';
+import SElement from './sElement';
+import SampElement from './sampElement';
+import ScriptElement from './scriptElement';
+import SectionElement from './sectionElement';
+import SelectElement from './selectElement';
+import SlotElement from './slotElement';
+import SmallElement from './smallElement';
+import SourceElement from './sourceElement';
+import SpanElement from './spanElement';
+import StrongElement from './strongElement';
+import StyleElement from './styleElement';
+import SubElement from './subElement';
+import SummaryElement from './summaryElement';
+import SupElement from './supElement';
+
 
 import UnknownElement from './unknownElement';
 
@@ -165,7 +180,21 @@ export default class ElementLibrary {
     this.elements['rt'] = new RtElement();
     this.elements['rtc'] = new RtcElement();
     this.elements['ruby'] = new RubyElement();
-
+    this.elements['s'] = new SElement();
+    this.elements['samp'] = new SampElement();
+    this.elements['script'] = new ScriptElement();
+    this.elements['section'] = new SectionElement();
+    this.elements['select'] = new SelectElement();
+    this.elements['slot'] = new SlotElement();
+    this.elements['small'] = new SmallElement();
+    this.elements['source'] = new SourceElement();
+    this.elements['span'] = new SpanElement();
+    this.elements['strong'] = new StrongElement();
+    this.elements['style'] = new StyleElement();
+    this.elements['sub'] = new SubElement();
+    this.elements['summary'] = new SummaryElement();
+    this.elements['sup'] = new SupElement();
+        
     this.elements['compose'] = new ComposeElement();
 
 
