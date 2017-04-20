@@ -5,55 +5,27 @@ import {
   MarkedString } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
+import { GlobalAttributes } from './Library/_elementStructure';
+import BaseCompetionFactory from './BaseCompletionFactory';
 
 @autoinject()
-export default class AureliaEmmetCompletionFactory {
+export default class EmmetCompletionFactory extends BaseCompetionFactory {
 
-  constructor(private library: ElementLibrary) { }
+  constructor(library: ElementLibrary) { super(library); }
 
   public create(elementName: string): Array<CompletionItem> {
 
     let result:Array<CompletionItem> = [];   
-    let element = this.library.elements[elementName];
-    if (!element) {
-      element = this.library.unknownElement;
+    let element = this.getElement(elementName);
+
+    this.addAttributes(GlobalAttributes.attributes, result, []);
+    if (element.attributes) {
+      this.addAttributes(element.attributes, result, []);
     }
 
-    if (element && element.attributes) {
-      for (let [key, value] of element.attributes.entries()) {
-
-        if (value.customSnippet !== 'no-snippet') {
-          result.push({
-            documentation: MarkedString.fromPlainText(value.documentation).toString(),
-            insertText: value.customSnippet === null ? `${key}="$0"]`: value.customSnippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            kind: CompletionItemKind.Property,
-            label: key,
-          });
-        }
-
-        if (value.customBindingSnippet !== 'no-snippet') {
-          result.push({
-            //detail: value.documentation,
-            insertText: value.customBindingSnippet === null ? `${key}.bind="$0"]`: value.customBindingSnippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            kind: CompletionItemKind.Value,
-            label: value.customLabel === null ? (key + '.bind') : value.customLabel,
-          });
-        }
-      }
-    }
-
-    if (element && element.events) {
-      for (let [key, value] of element.events.entries()) { 
-        result.push({
-          detail: value.documentation,
-          insertText: value.bubbles ? `${key}.delegate="$0"]` : `${key}.trigger="$0"]`,
-          insertTextFormat: InsertTextFormat.Snippet,
-          kind: CompletionItemKind.Function,
-          label: key + (value.bubbles ? `.delegate` : `.trigger`),
-        }); 
-      }
+    this.addEvents(GlobalAttributes.events, result, []);
+    if (element.events) {
+      this.addEvents(element.events, result, []);
     }
 
     return result;
