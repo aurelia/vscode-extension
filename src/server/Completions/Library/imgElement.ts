@@ -1,17 +1,13 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, BaseElement } from './_elementStructure';
 
-export default class ImgElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class ImgElement extends BaseElement {
 
   public documentation = `The HTML <img> element represents an image in the document.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img';
+
     this.attributes.set('alt',
       new Attribute(`This attribute defines the alternative text describing the image. Users will see this text displayed if the image URL is wrong, the image is not in one of the supported formats, or if the image is not yet downloaded.`));
     this.attributes.set('crossorigin',
@@ -40,7 +36,5 @@ export default class ImgElement {
       new Attribute(`The intrinsic width of the image in pixels. In HTML 4, either a percentage or pixels were acceptable values. In HTML5, however, only pixels are acceptable.`));                                          
     this.attributes.set('usemap',
       new Attribute(`The partial URL (starting with '#') of an image map associated with the element.`)); 
-
-    this.events = GlobalAttributes.events;
   }
 }

@@ -763,3 +763,15 @@ export class GlobalAttributes {
     ],                                                                                            
   ]);  
 }
+
+export class BaseElement {
+
+  protected url: string;
+  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+
+  public attributes: Map<string, Attribute> = new Map<string, Attribute>();
+  public events: Map<string, Event> = new Map<string, Event>();
+
+  constructor() {
+  }
+}

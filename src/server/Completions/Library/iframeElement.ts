@@ -1,17 +1,18 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, BaseElement } from './_elementStructure';
 
-export default class IframeElement {
+export default class IframeElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML Inline Frame Element <iframe> represents a nested browsing context, effectively embedding another HTML page into the current page. In HTML 4.01, a document may contain a head and a body or a head and a frameset, but not both a body and a frameset. However, an <iframe> can be used within a normal document body. Each browsing context has its own session history and active document. The browsing context that contains the embedded content is called the parent browsing context. The top-level browsing context (which has no parent) is typically the browser window.`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML Inline Frame Element <iframe> represents a nested browsing context, effectively
+   embedding another HTML page into the current page. In HTML 4.01, a document may contain a head and a body or a 
+   head and a frameset, but not both a body and a frameset. However, an <iframe> can be used within a normal 
+   document body. Each browsing context has its own session history and active document. The browsing context 
+   that contains the embedded content is called the parent browsing context. The top-level browsing context 
+   (which has no parent) is typically the browser window.`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe';
+
     this.attributes.set('allowfullscreen',
       new Attribute(`This attribute can be set to true if the frame is allowed to be placed into full screen mode by calling its Element.requestFullscreen() method. If this isn't set, the element can't be placed into full screen mode.`));
     this.attributes.set('frameborder',
@@ -61,7 +62,5 @@ export default class IframeElement {
       new Attribute(`The content of the page that the embedded context is to contain. This attribute is expected to generally be used together with the sandbox attribute. If a browser supports the srcdoc attribute, it will override the content specified in the src attribute (if present). If a browser does NOT support the srcdoc attribute, it will show the file specified in the src attribute instead (if present). Note that if the content of the attribute contains a script tag then a closing script tag is required for the script to run, even if nothing else comes after the script.`));
     this.attributes.set('width',
       new Attribute(`Indicates the width of the frame HTML5 in CSS pixels, or HTML 4.01 in pixels or as a percentage.`));
-
-    this.events = GlobalAttributes.events;
   }
 }

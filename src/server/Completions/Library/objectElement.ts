@@ -1,17 +1,14 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, Event, BaseElement } from './_elementStructure';
 
-export default class ObjectElement {
+export default class ObjectElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/object';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML <object> element represents an external resource, which can be treated as an image, a nested browsing context, or a resource to be handled by a plugin`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML <object> element represents an external resource, which can be treated as an image, 
+  a nested browsing context, or a resource to be handled by a plugin`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/object';
+
     this.attributes.set('data',
       new Attribute(`The address of the resource as a valid URL. At least one of data and type must be defined.`));
     this.attributes.set('form',
@@ -29,6 +26,5 @@ export default class ObjectElement {
     this.attributes.set('width',
       new Attribute(`The width of the display resource, in CSS pixels.`));
 
-    this.events = GlobalAttributes.events;
   }
 }

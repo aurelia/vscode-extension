@@ -1,20 +1,14 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, BaseElement } from './_elementStructure';
 
-export default class DataElement {
+export default class DataElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/data';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML <data> element links a given content with a machine-readable translation. If the content is time- or date-related, the <time> must be used.`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML <data> element links a given content with a machine-readable translation. 
+  If the content is time- or date-related, the <time> must be used.`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this. url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/data';
     this.attributes.set('value',
       new Attribute(`This attribute specifies the machine-readable translation of the content of the element.`));
-
-    this.events = GlobalAttributes.events;
   }
 }

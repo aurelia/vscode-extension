@@ -1,18 +1,12 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, BaseElement } from './_elementStructure';
 
-export default class ScriptElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class ScriptElement extends BaseElement {
 
   public documentation = `The HTML <script> element is used to embed or reference an executable script.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
-    this.events = GlobalAttributes.events;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script';
 
     this.attributes.set('async',
       new Attribute(`Set this Boolean attribute to indicate that the browser should, if possible, execute the 

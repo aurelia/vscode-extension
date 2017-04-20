@@ -1,17 +1,13 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, BaseElement } from './_elementStructure';
 
-export default class FormElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class FormElement extends BaseElement {
 
   public documentation = `The HTML <form> element represents a document section that contains interactive controls to submit information to a web server.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form';
+
     this.attributes.set('accept-charset',
       new Attribute(`A space- or comma-delimited list of character encodings that the server accepts. The browser uses them in the order in which they are listed. The default value, the reserved string "UNKNOWN", indicates the same encoding as that of the document containing the form element.
 In previous versions of HTML, the different character encodings could be delimited by spaces or commas. In HTML5, only spaces are allowed as delimiters.`));
@@ -63,8 +59,6 @@ In previous versions of HTML, the different character encodings could be delimit
         ['_blank', new Value(`Load the response into a new unnamed HTML 4 window or HTML5 browsing context.`)],
         ['_parent', new Value(`Load the response into the HTML 4 frameset parent of the current frame, or HTML5 parent browsing context of the current one. If there is no parent, this option behaves the same way as _self.`)],
         ['_top', new Value(`Load the response into the top-level browsing context (i.e., the browsing context that is an ancestor of the current one, and has no parent). If there is no parent, this option behaves the same way as _self.`)]
-      ])));                   
-
-    this.events = GlobalAttributes.events;
+      ])));
   }
 }

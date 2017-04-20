@@ -1,17 +1,12 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { BaseElement } from './_elementStructure';
 
-export default class HeadElement {
+export default class HeadElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML <head> element provides general information (metadata) about the document, including its title and links to its scripts and style sheets.`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML <head> element provides general information (metadata) about the document, 
+  including its title and links to its scripts and style sheets.`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
-    this.events = GlobalAttributes.events;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head';
   }
 }

@@ -1,17 +1,13 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, BaseElement } from './_elementStructure';
 
-export default class textareaElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class textareaElement extends BaseElement {
 
   public documentation = `The HTML <textarea> element represents a multi-line plain-text editing control.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea';
+
     this.attributes.set('autocomplete',
       new Attribute(`This attribute indicates whether the value of the control can be automatically completed by the browser.`));
     this.attributes.set('autofocus',
@@ -64,7 +60,6 @@ export default class textareaElement {
       value. The value false indicates that the element should not be checked.`));
     this.attributes.set('wrap',
       new Attribute(`Indicates how the control wraps text.`));
-      
-    this.events = GlobalAttributes.events;
+
   }
 }

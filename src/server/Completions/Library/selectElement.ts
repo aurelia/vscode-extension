@@ -1,17 +1,13 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, BaseElement } from './_elementStructure';
 
-export default class SelectElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class SelectElement extends BaseElement {
 
   public documentation = `The HTML <select> element represents a control that provides a menu of options`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select';
+
     this.attributes.set('autofocus',
       new Attribute(`This attribute lets you specify that a form control should have input focus when the page 
       loads, unless the user overrides it, for example by typing in a different control. Only one form element 
@@ -36,7 +32,5 @@ export default class SelectElement {
       new Attribute(`If the control is presented as a scrolled list box, this attribute represents the number of 
       rows in the list that should be visible at one time. Browsers are not required to present a select element
        as a scrolled list box. The default value is 0.`));
-
-    this.events = GlobalAttributes.events;
   }
 }

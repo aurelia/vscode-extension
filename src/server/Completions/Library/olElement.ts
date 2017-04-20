@@ -1,17 +1,13 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, BaseElement } from './_elementStructure';
 
-export default class OlElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class OlElement extends BaseElement {
 
   public documentation = `The HTML <ol> element represents an ordered list of items, typically rendered as a numbered list.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol';
+
     this.attributes.set('reversed',
       new Attribute(`This Boolean attribute specifies that the items of the list are specified in reversed order.`));
     this.attributes.set('start',
@@ -29,7 +25,5 @@ export default class OlElement {
           ['I', new Value(`indicates uppercase Roman numerals`)],
           ['1', new Value(`indicates numbers (default)`)],
       ])));                 
-
-    this.events = GlobalAttributes.events;
   }
 }

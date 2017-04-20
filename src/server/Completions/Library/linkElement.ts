@@ -1,17 +1,14 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, BaseElement } from './_elementStructure';
 
-export default class LinkElement {
+export default class LinkElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML <link> element specifies relationships between the current document and an external resource. Possible uses for this element include defining a relational framework for navigation. This Element is most used to link to style sheets.`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML <link> element specifies relationships between the current document and an external 
+  resource. Possible uses for this element include defining a relational framework for navigation. This Element is
+   most used to link to style sheets.`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link';
     this.attributes.set('crossorigin',
       new Attribute(`This enumerated attribute indicates if the fetching of the related image must be done using CORS or not. CORS-enabled images can be reused in the <canvas> element without being "tainted.`,
       null,
@@ -36,7 +33,5 @@ export default class LinkElement {
       new Attribute(`The title attribute has special semantics on the <link> element. When used on a <link rel="stylesheet"> it defines a preferred or an alternate stylesheet (https://developer.mozilla.org/en-US/docs/Web/CSS/Alternative_style_sheets). Incorrectly using it may cause the stylesheet to be ignored (https://developer.mozilla.org/en-US/docs/Correctly_Using_Titles_With_External_Stylesheets).`));
     this.attributes.set('type',
       new Attribute(`This attribute is used to define the type of the content linked to. The value of the attribute should be a MIME type such as text/html, text/css, and so on. The common use of this attribute is to define the type of style sheet linked and the most common current value is text/css, which indicates a Cascading Style Sheet format.`));
-
-    this.events = GlobalAttributes.events;
   }
 }

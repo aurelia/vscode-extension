@@ -1,18 +1,12 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Event, BaseElement } from './_elementStructure';
 
-export default class BodyElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class BodyElement extends BaseElement {
 
   public documentation = `The HTML <body> Element represents the content of an HTML document. There can be only one <body> element in a document.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
-    this.events = GlobalAttributes.events;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body';
     this.events.set('afterprint', new Event(
       'The afterprint event is fired after the associated document has started printing or the print preview has been closed.', 
       'https://developer.mozilla.org/en-US/docs/Web/Events/afterprint'));

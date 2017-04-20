@@ -1,17 +1,13 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, BaseElement } from './_elementStructure';
 
-export default class VideoElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+export default class VideoElement extends BaseElement {
 
   public documentation = `Use the HTML <video> element to embed video content in a document.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video';
+
     this.attributes.set('autoplay',
       new Attribute(`A Boolean attribute; if specified, the video automatically begins to play 
       back as soon as it can do so without stopping to finish loading the data.`));
@@ -47,7 +43,5 @@ export default class VideoElement {
       within the video block to specify the video to embed.`));
     this.attributes.set('width',
       new Attribute(`The width of the video's display area, in CSS pixels. `));
-
-    this.events = GlobalAttributes.events;
   }
 }

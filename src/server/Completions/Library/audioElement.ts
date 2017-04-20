@@ -1,17 +1,15 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, GlobalAttributes, BaseElement } from './_elementStructure';
 
-export default class AudioElement {
+export default class AudioElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML <audio> element is used to embed sound content in documents. It may contain one or more audio sources, represented using the src attribute or the <source> element; the browser will choose the most suitable one.`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML <audio> element is used to embed sound content in documents. It may contain 
+  one or more audio sources, represented using the src attribute or the <source> element; the browser will choose 
+  the most suitable one.`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio';
+
     this.attributes.set('autoplay',
       new Attribute(`A Boolean attribute; if specified (even if the value is "false"!), the audio will automatically begin playback as soon as it can do so, without waiting for the entire audio file to finish downloading.`));
     this.attributes.set('buffered',

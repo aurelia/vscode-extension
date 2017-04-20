@@ -1,17 +1,14 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import {  Attribute, Value, BaseElement } from './_elementStructure';
 
-export default class MetaElement {
+export default class MetaElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML <meta> element represents any metadata information that cannot be represented by one of the other HTML meta-related elements (<base>, <link>, <script>, <style> or <title>).`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML <meta> element represents any metadata information that cannot be 
+  represented by one of the other HTML meta-related elements (<base>, <link>, <script>, <style> or <title>).`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta';
+
     this.attributes.set('charset',
       new Attribute(`This attribute declares the character encoding used of the page. It can be locally overridden using the lang attribute on any element. This attribute is a literal string and must be one of the preferred MIME names for a character encoding as defined by the IANA. (https://www.iana.org/assignments/character-sets)`));
     this.attributes.set('content',
@@ -48,7 +45,5 @@ the number of seconds until the page should be redirected to another, if the con
           ['slurp', new Value(`which is a synonym of robots, but is only followed by Slurp, the indexing crawler for Yahoo Search;`)],
           ['viewport', new Value(`which gives hints about the size of the initial size of the viewport. This pragma is used by several mobile devices only.`)]
       ])));
-
-    this.events = GlobalAttributes.events;
   }
 }

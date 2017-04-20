@@ -1,17 +1,12 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { BaseElement } from './_elementStructure';
 
-export default class NavElement {
+export default class NavElement extends BaseElement {
 
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
-  public documentation = `The HTML <nav> element represents a section of a page that links to other pages or to parts within the page: a section with navigation links.`;
-
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
+  public documentation = `The HTML <nav> element represents a section of a page that links to other pages or to 
+  parts within the page: a section with navigation links.`;
 
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
-    this.events = GlobalAttributes.events;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav';
   }
 }

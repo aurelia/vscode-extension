@@ -1,17 +1,11 @@
-import { Attribute, Value, Event, GlobalAttributes } from './_elementStructure';
+import { Attribute, Value, BaseElement } from './_elementStructure';
 
-export default class ButtonElement {
-
-  public url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button';
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
-
+export default class ButtonElement extends BaseElement {
   public documentation = `The HTML <button> element represents a clickable button.`;
 
-  public attributes: Map<string, Attribute>;
-  public events: Map<string, Event>;
-
   constructor() {
-    this.attributes = GlobalAttributes.attributes;
+    super();
+    this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button';
     this.attributes.set('autofocus',
       new Attribute(`This Boolean attribute lets you specify that the button should have input focus when the page loads, unless the user overrides it, for example by typing in a different control. Only one form-associated element in a document can have this attribute specified.`));
     this.attributes.set('disabled',
@@ -71,7 +65,5 @@ export default class ButtonElement {
       ]))); 
     this.attributes.set('value',
       new Attribute(`The initial value of the button. It defines the value associated with the button which is submitted with the form data.  This value is passed to the server in params when the form is submitted.`));          
-
-    this.events = GlobalAttributes.events;
   }
 }
