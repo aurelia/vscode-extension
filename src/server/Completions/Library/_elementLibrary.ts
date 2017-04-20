@@ -102,6 +102,9 @@ import TrElement from './trElement';
 import TrackElement from './trackElement';
 import UElement from './uElement';
 import UlElement from './ulElement';
+import VarElement from './varElement';
+import VideoElement from './videoElement';
+import WbrElement from './wbrElement';
 
 import UnknownElement from './unknownElement';
 
@@ -221,6 +224,9 @@ export default class ElementLibrary {
     this.elements['track'] = new TrackElement();
     this.elements['u'] = new UElement();
     this.elements['ul'] = new UlElement();
+    this.elements['var'] = new VarElement();
+    this.elements['video'] = new VideoElement();
+    this.elements['wbr'] = new WbrElement();
 
         
     this.elements['compose'] = new ComposeElement();
