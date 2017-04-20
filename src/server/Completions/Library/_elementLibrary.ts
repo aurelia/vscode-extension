@@ -100,6 +100,8 @@ import TimeElement from './timeElement';
 import TitleElement from './titleElement';
 import TrElement from './trElement';
 import TrackElement from './trackElement';
+import UElement from './uElement';
+import UlElement from './ulElement';
 
 import UnknownElement from './unknownElement';
 
@@ -217,6 +219,8 @@ export default class ElementLibrary {
     this.elements['title'] = new TitleElement();
     this.elements['tr'] = new TrElement();
     this.elements['track'] = new TrackElement();
+    this.elements['u'] = new UElement();
+    this.elements['ul'] = new UlElement();
 
         
     this.elements['compose'] = new ComposeElement();
