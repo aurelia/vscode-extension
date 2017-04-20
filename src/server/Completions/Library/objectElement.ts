@@ -1,4 +1,4 @@
-import { Attribute, Value, Event, BaseElement } from './_elementStructure';
+import { Attribute, BaseElement } from './_elementStructure';
 
 export default class ObjectElement extends BaseElement {
 
