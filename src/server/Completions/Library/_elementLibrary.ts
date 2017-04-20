@@ -88,7 +88,18 @@ import StyleElement from './styleElement';
 import SubElement from './subElement';
 import SummaryElement from './summaryElement';
 import SupElement from './supElement';
-
+import TableElement from './tableElement';
+import TBodyElement from './tbodyElement';
+import TdElement from './tdElement';
+import TemplateElement from './templateElement';
+import TextareaElement from './textareaElement';
+import TfootElement from './tfootElement';
+import ThElement from './thElement';
+import TheadElement from './theadElement';
+import TimeElement from './timeElement';
+import TitleElement from './titleElement';
+import TrElement from './trElement';
+import TrackElement from './trackElement';
 
 import UnknownElement from './unknownElement';
 
@@ -194,6 +205,19 @@ export default class ElementLibrary {
     this.elements['sub'] = new SubElement();
     this.elements['summary'] = new SummaryElement();
     this.elements['sup'] = new SupElement();
+    this.elements['table'] = new TableElement();
+    this.elements['tbody'] = new TBodyElement();
+    this.elements['td'] = new TdElement();
+    this.elements['template'] = new TemplateElement();
+    this.elements['textarea'] = new TextareaElement();
+    this.elements['tfoot'] = new TfootElement();
+    this.elements['th'] = new ThElement();
+    this.elements['thead'] = new TheadElement();
+    this.elements['time'] = new TimeElement();
+    this.elements['title'] = new TitleElement();
+    this.elements['tr'] = new TrElement();
+    this.elements['track'] = new TrackElement();
+
         
     this.elements['compose'] = new ComposeElement();
 
