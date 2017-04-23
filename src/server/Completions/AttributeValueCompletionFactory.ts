@@ -5,10 +5,10 @@ import {
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';
-import BaseCompetionFactory from './BaseCompletionFactory';
+import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 
 @autoinject()
-export default class AttributeCompletionFactory extends BaseCompetionFactory {
+export default class AttributeCompletionFactory extends BaseAttributeCompletionFactory {
 
   constructor(library: ElementLibrary) { super(library); }
 

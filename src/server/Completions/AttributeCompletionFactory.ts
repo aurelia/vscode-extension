@@ -6,10 +6,10 @@ import {
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';
-import BaseCompetionFactory from './BaseCompletionFactory';
+import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 
 @autoinject()
-export default class AureliaAttributeCompletionFactory extends BaseCompetionFactory {
+export default class AureliaAttributeCompletionFactory extends BaseAttributeCompletionFactory {
 
   constructor(library: ElementLibrary) { super(library); }
 
@@ -18,12 +18,18 @@ export default class AureliaAttributeCompletionFactory extends BaseCompetionFact
     let result:Array<CompletionItem> = [];   
     let element = this.getElement(elementName);
 
-    this.addAttributes(GlobalAttributes.attributes, result, existingAttributes);
+    if (element.hasGlobalAttributes) {
+      this.addAttributes(GlobalAttributes.attributes, result, existingAttributes);
+    }
+
     if (element.attributes) {
       this.addAttributes(element.attributes, result, existingAttributes);
     }
 
-    this.addEvents(GlobalAttributes.events, result, existingAttributes);
+    if (element.hasGlobalEvents) {
+      this.addEvents(GlobalAttributes.events, result, existingAttributes);
+    }
+    
     if (element.events) {
       this.addEvents(element.events, result, existingAttributes);
     }

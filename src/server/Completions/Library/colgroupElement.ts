@@ -1,6 +1,6 @@
-import { Attribute, BaseElement } from './_elementStructure';
+import { BindableAttribute, MozDocElement } from './_elementStructure';
 
-export default class ColgroupElement extends BaseElement {
+export default class ColgroupElement extends MozDocElement {
 
   public documentation = `The HTML <colgroup> element defines a group of columns within a table.`;
 
@@ -8,6 +8,6 @@ export default class ColgroupElement extends BaseElement {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup';
     this.attributes.set('span',
-      new Attribute(`This attribute contains a positive integer indicating the number of consecutive columns the <colgroup> element spans. If not present, its default value is 1.`));
+      new BindableAttribute(`This attribute contains a positive integer indicating the number of consecutive columns the <colgroup> element spans. If not present, its default value is 1.`));
   }
 }

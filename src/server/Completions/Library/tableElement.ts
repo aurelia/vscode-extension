@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class TableElement extends BaseElement {
+export default class TableElement extends MozDocElement {
 
   public documentation = `The HTML <table> element represents tabular data —that is, information expressed via a two-dimensional data table.`;
 

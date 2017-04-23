@@ -5,11 +5,11 @@ import {
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { TagDefinition, AttributeDefinition } from './../DocumentParser';
-import BaseCompetionFactory from './BaseCompletionFactory';
+import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 import { GlobalAttributes } from './Library/_elementStructure';
 
 @autoinject()
-export default class BindingCompletionFactory extends BaseCompetionFactory {
+export default class BindingCompletionFactory extends BaseAttributeCompletionFactory {
   
   constructor(library: ElementLibrary) { super(library); }
 

@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class SpanElement extends BaseElement {
+export default class SpanElement extends MozDocElement {
 
   public documentation = `The HTML <span> element is a generic inline container for phrasing content, which does 
   not inherently represent anything. It can be used to group elements for styling purposes (using the class or 

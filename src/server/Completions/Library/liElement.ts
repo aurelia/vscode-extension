@@ -1,6 +1,6 @@
-import { Attribute, BaseElement } from './_elementStructure';
+import { BindableAttribute, MozDocElement } from './_elementStructure';
 
-export default class LiElement extends BaseElement {
+export default class LiElement extends MozDocElement {
 
   public documentation = `The HTML <li> element is used to represent an item in a list. It must be contained in
   a parent element: an ordered list (<ol>), an unordered list (<ul>), or a menu (<menu>). In menus and unordered 
@@ -12,7 +12,7 @@ export default class LiElement extends BaseElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li';
 
     this.attributes.set('value',
-      new Attribute(`This integer attribute indicates the current ordinal value of the list item as 
+      new BindableAttribute(`This integer attribute indicates the current ordinal value of the list item as 
       defined by the <ol> element. The only allowed value for this attribute is a number, even if the 
       list is displayed with Roman numerals or letters. List items that follow this one continue numbering 
       from the value set. The value attribute has no meaning for unordered lists (<ul>) or for menus (<menu>).`));

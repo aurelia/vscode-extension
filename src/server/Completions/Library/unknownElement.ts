@@ -7,6 +7,5 @@ export default class UnknownElement extends BaseElement {
   constructor() {
     super();
     this.url = '';
-    this.licenceText = '';
   }
 }

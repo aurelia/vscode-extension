@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class DivElement extends BaseElement {
+export default class DivElement extends MozDocElement {
 
   public documentation = `The HTML <div> element is the generic container for flow content and does not inherently 
   represent anything. Use it to group elements for purposes such as styling (using the class or id attributes), 

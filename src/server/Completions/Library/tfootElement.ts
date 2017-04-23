@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class TfootElement extends BaseElement {
+export default class TfootElement extends MozDocElement {
 
   public documentation = `The HTML <tfoot> element defines a set of rows summarizing the columns of the table.`;
 

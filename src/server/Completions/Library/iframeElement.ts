@@ -1,6 +1,6 @@
-import { Attribute, Value, BaseElement } from './_elementStructure';
+import { BindableAttribute, Value, MozDocElement } from './_elementStructure';
 
-export default class IframeElement extends BaseElement {
+export default class IframeElement extends MozDocElement {
 
   public documentation = `The HTML Inline Frame Element <iframe> represents a nested browsing context, effectively
    embedding another HTML page into the current page. In HTML 4.01, a document may contain a head and a body or a 
@@ -14,21 +14,21 @@ export default class IframeElement extends BaseElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe';
 
     this.attributes.set('allowfullscreen',
-      new Attribute(`This attribute can be set to true if the frame is allowed to be placed into full screen mode by calling its Element.requestFullscreen() method. If this isn't set, the element can't be placed into full screen mode.`));
+      new BindableAttribute(`This attribute can be set to true if the frame is allowed to be placed into full screen mode by calling its Element.requestFullscreen() method. If this isn't set, the element can't be placed into full screen mode.`));
     this.attributes.set('frameborder',
-      new Attribute(`The value 1 (the default) tells the browser to draw a border between this frame and every other frame. The value 0 tells the browser not to draw a border between this frame and other frames.`));
+      new BindableAttribute(`The value 1 (the default) tells the browser to draw a border between this frame and every other frame. The value 0 tells the browser not to draw a border between this frame and other frames.`));
     this.attributes.set('height',
-      new Attribute(`Indicates the height of the frame HTML5 in CSS pixels, or HTML 4.01 in pixels or as a percentage.`));
+      new BindableAttribute(`Indicates the height of the frame HTML5 in CSS pixels, or HTML 4.01 in pixels or as a percentage.`));
     this.attributes.set('longdesc',
-      new Attribute(`A URI of a long description of the frame. Due to widespread misuse, this is not helpful for non-visual browsers.`));
+      new BindableAttribute(`A URI of a long description of the frame. Due to widespread misuse, this is not helpful for non-visual browsers.`));
     this.attributes.set('marginheight',
-      new Attribute(`The amount of space in pixels between the frame's content and its top and bottom margins.`));
+      new BindableAttribute(`The amount of space in pixels between the frame's content and its top and bottom margins.`));
     this.attributes.set('marginwidth',
-      new Attribute(`The amount of space in pixels between the frame's content and its left and right margins.`));
+      new BindableAttribute(`The amount of space in pixels between the frame's content and its left and right margins.`));
     this.attributes.set('name',
-      new Attribute(`A name for the embedded browsing context (or frame). This can be used as the value of the target attribute of an <a> or <form> element, or the formtarget attribute of an <input> or <button> element.`));
+      new BindableAttribute(`A name for the embedded browsing context (or frame). This can be used as the value of the target attribute of an <a> or <form> element, or the formtarget attribute of an <input> or <button> element.`));
     this.attributes.set('scrolling',
-      new Attribute(`Enumerated attribute indicating when the browser should provide a scroll bar (or other scrolling device) for the frame`,
+      new BindableAttribute(`Enumerated attribute indicating when the browser should provide a scroll bar (or other scrolling device) for the frame`,
       null,
       null,
       null,
@@ -39,7 +39,7 @@ export default class IframeElement extends BaseElement {
           ['no', new Value(`Never provide a scroll bar`)]
       ])));
     this.attributes.set('sandbox',
-      new Attribute(`If specified as an empty string, this attribute enables extra restrictions on the content that can appear in the inline frame. The value of the attribute can either be an empty string (all the restrictions are applied), or a space-separated list of tokens that lift particular restrictions.`,
+      new BindableAttribute(`If specified as an empty string, this attribute enables extra restrictions on the content that can appear in the inline frame. The value of the attribute can either be an empty string (all the restrictions are applied), or a space-separated list of tokens that lift particular restrictions.`,
       null,
       null,
       null,
@@ -57,10 +57,10 @@ export default class IframeElement extends BaseElement {
           ['allow-top-navigation', new Value(`Allows the embedded browsing context to navigate (load) content to the top-level browsing context. If this keyword is not used, this operation is not allowed.`)],
        ])));      
     this.attributes.set('src',
-      new Attribute(`The URL of the page to embed.`));
+      new BindableAttribute(`The URL of the page to embed.`));
     this.attributes.set('srcdoc',
-      new Attribute(`The content of the page that the embedded context is to contain. This attribute is expected to generally be used together with the sandbox attribute. If a browser supports the srcdoc attribute, it will override the content specified in the src attribute (if present). If a browser does NOT support the srcdoc attribute, it will show the file specified in the src attribute instead (if present). Note that if the content of the attribute contains a script tag then a closing script tag is required for the script to run, even if nothing else comes after the script.`));
+      new BindableAttribute(`The content of the page that the embedded context is to contain. This attribute is expected to generally be used together with the sandbox attribute. If a browser supports the srcdoc attribute, it will override the content specified in the src attribute (if present). If a browser does NOT support the srcdoc attribute, it will show the file specified in the src attribute instead (if present). Note that if the content of the attribute contains a script tag then a closing script tag is required for the script to run, even if nothing else comes after the script.`));
     this.attributes.set('width',
-      new Attribute(`Indicates the width of the frame HTML5 in CSS pixels, or HTML 4.01 in pixels or as a percentage.`));
+      new BindableAttribute(`Indicates the width of the frame HTML5 in CSS pixels, or HTML 4.01 in pixels or as a percentage.`));
   }
 }

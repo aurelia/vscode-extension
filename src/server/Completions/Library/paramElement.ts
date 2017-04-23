@@ -1,6 +1,6 @@
-import { Attribute, BaseElement } from './_elementStructure';
+import { BindableAttribute, MozDocElement } from './_elementStructure';
 
-export default class ParamElement extends BaseElement {
+export default class ParamElement extends MozDocElement {
 
   public documentation = `The HTML <param> element defines parameters for an <object> element.`;
 
@@ -8,8 +8,8 @@ export default class ParamElement extends BaseElement {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/param';
     this.attributes.set('name',
-      new Attribute(`Name of the parameter.`));
+      new BindableAttribute(`Name of the parameter.`));
     this.attributes.set('value',
-      new Attribute(`Specifies the value of the parameter.`));
+      new BindableAttribute(`Specifies the value of the parameter.`));
   }
 }

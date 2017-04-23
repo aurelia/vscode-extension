@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class VarElement extends BaseElement {
+export default class VarElement extends MozDocElement {
 
   public documentation = `The HTML <var> element represents a variable in a mathematical expression or a programming context.`;
 

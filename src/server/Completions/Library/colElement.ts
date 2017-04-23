@@ -1,6 +1,6 @@
-import { Attribute, BaseElement } from './_elementStructure';
+import { BindableAttribute, MozDocElement } from './_elementStructure';
 
-export default class ColElement extends BaseElement {
+export default class ColElement extends MozDocElement {
 
   public documentation = `The HTML <col> element defines a column within a table and is used for defining 
   common semantics on all common cells. It is generally found within a <colgroup> element.`;
@@ -9,6 +9,6 @@ export default class ColElement extends BaseElement {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/col';
     this.attributes.set('span',
-      new Attribute(`This attribute contains a positive integer indicating the number of consecutive columns the <col> element spans. If not present, its default value is 1.`));
+      new BindableAttribute(`This attribute contains a positive integer indicating the number of consecutive columns the <col> element spans. If not present, its default value is 1.`));
   }
 }

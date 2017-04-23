@@ -4,14 +4,43 @@ export class Value {
   }
 }
 
-export class Attribute {
+class BaseAttribute {
   constructor(
     public documentation: string,
-    public url: string = null,
-    public customSnippet: string = null,
-    public customBindingSnippet: string = null,
+    public url: string,
     public customLabel: string = null,
     public values: Map<string, Value> = new Map()) { }
+}
+
+export class SimpleAttribute extends BaseAttribute {
+  constructor(
+      documentation: string, 
+      url: string = null, 
+      customLabel: string = null, 
+      values: Map<string, Value> = new Map()) {
+    super(documentation, url, customLabel, values);
+  }
+}
+
+export class EmptyAttribute extends BaseAttribute {
+  constructor(
+      documentation: string, 
+      url: string = null, 
+      customLabel: string = null) {
+    super(documentation, url, customLabel);
+  }
+}
+
+export class BindableAttribute extends BaseAttribute {
+  constructor(
+    documentation: string,
+    url: string = null,
+    public customSnippet: string = null,
+    public customBindingSnippet: string = null,
+    customLabel: string = null,
+    values: Map<string, Value> = new Map()) { 
+      super(documentation, url, customLabel, values);
+    }
 }
 
 export class Event {
@@ -24,20 +53,20 @@ export class Event {
 }
 
 export class GlobalAttributes {
-  public static attributes: Map<string, Attribute> = new Map<string, Attribute>([
+  public static attributes: Map<string, BaseAttribute> = new Map<string, BaseAttribute>([
       [
         'accesskey',
-        new Attribute(`Provides a hint for generating a keyboard shortcut for the current element. This attribute consists of a space-separated list of characters. The browser should use the first one that exists on the computer keyboard layout.`,
+        new BindableAttribute(`Provides a hint for generating a keyboard shortcut for the current element. This attribute consists of a space-separated list of characters. The browser should use the first one that exists on the computer keyboard layout.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/accesskey')
       ],
       [
         'class',
-        new Attribute(`Is a space-separated list of the classes of the element. Classes allows CSS and JavaScript to select and access specific elements via the class selectors or functions like the method Document.getElementsByClassName().`,
+        new BindableAttribute(`Is a space-separated list of the classes of the element. Classes allows CSS and JavaScript to select and access specific elements via the class selectors or functions like the method Document.getElementsByClassName().`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/class')
       ],
       [
         'contenteditable',
-        new Attribute(`Is an enumerated attribute indicating if the element should be editable by the user. If so, the browser modifies its widget to allow editing.`,
+        new BindableAttribute(`Is an enumerated attribute indicating if the element should be editable by the user. If so, the browser modifies its widget to allow editing.`,
           'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable',
           null,
           null,
@@ -50,18 +79,18 @@ export class GlobalAttributes {
       ],   
       [
         'contextmenu',
-        new Attribute(`Is the id of an <menu> (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu) to use as the contextual menu for this element.`,
+        new BindableAttribute(`Is the id of an <menu> (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menu) to use as the contextual menu for this element.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contextmenu')
       ],  
       [
         'data-*',
-        new Attribute(`Forms a class of attributes, called custom data attributes, that allow proprietary information to be exchanged between the HTML and its DOM representation that may be used by scripts. All such custom data are available via the HTMLElement interface of the element the attribute is set on. The HTMLElement.dataset property gives access to them.`, 
+        new BindableAttribute(`Forms a class of attributes, called custom data attributes, that allow proprietary information to be exchanged between the HTML and its DOM representation that may be used by scripts. All such custom data are available via the HTMLElement interface of the element the attribute is set on. The HTMLElement.dataset property gives access to them.`, 
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/data-*',
         'data-$1="$0"', 
         'data-$1.bind="$0"')
       ],
       ['dir', 
-        new Attribute(`Is an enumerated attribute indicating the directionality of the element's text.`, 
+        new BindableAttribute(`Is an enumerated attribute indicating the directionality of the element's text.`, 
           'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir',
           null,
           null,
@@ -74,43 +103,43 @@ export class GlobalAttributes {
       )],      
       [
         'hidden',
-        new Attribute(`Is a Boolean attribute indicates that the element is not yet, or is no longer, relevant. For example, it can be used to hide elements of the page that can't be used until the login process has been completed. The browser won't render such elements. This attribute must not be used to hide content that could legitimately be shown.`,
+        new BindableAttribute(`Is a Boolean attribute indicates that the element is not yet, or is no longer, relevant. For example, it can be used to hide elements of the page that can't be used until the login process has been completed. The browser won't render such elements. This attribute must not be used to hide content that could legitimately be shown.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/hidden')
       ],              
       [
         'id',
-        new Attribute(`Defines a unique identifier (ID) which must be unique in the whole document. Its purpose is to identify the element when linking (using a fragment identifier), scripting, or styling (with CSS).`,
+        new BindableAttribute(`Defines a unique identifier (ID) which must be unique in the whole document. Its purpose is to identify the element when linking (using a fragment identifier), scripting, or styling (with CSS).`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id')
       ],  
       [
         'lang',
-        new Attribute(`Participates in defining the language of the element, the language that non-editable elements are written in or the language that editable elements should be written in. The tag contains one single entry value in the format defines in the Tags for Identifying Languages (BCP47) IETF document. xml:lang has priority over it.`,
+        new BindableAttribute(`Participates in defining the language of the element, the language that non-editable elements are written in or the language that editable elements should be written in. The tag contains one single entry value in the format defines in the Tags for Identifying Languages (BCP47) IETF document. xml:lang has priority over it.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang')
       ],        
 
       [
         'slot',
-        new Attribute(`Assigns a slot in a shadow DOM shadow tree to an element: An element with a slot attribute is assigned to the slot created by the <slot> element whose name attribute's value matches that slot attribute's value.`,
+        new BindableAttribute(`Assigns a slot in a shadow DOM shadow tree to an element: An element with a slot attribute is assigned to the slot created by the <slot> element whose name attribute's value matches that slot attribute's value.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot')
       ],        
       [
         'style',
-        new Attribute(`Contains CSS styling declarations to be applied to the element. Note that it is recommended for styles to be defined in a separate file or files. This attribute and the <style> element have mainly the purpose of allowing for quick styling, for example for testing purposes.`,
+        new BindableAttribute(`Contains CSS styling declarations to be applied to the element. Note that it is recommended for styles to be defined in a separate file or files. This attribute and the <style> element have mainly the purpose of allowing for quick styling, for example for testing purposes.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/style')
       ],        
       [
         'tabindex',
-        new Attribute(`Is an integer attribute indicates if the element can take input focus (is focusable), if it should participate to sequential keyboard navigation, and if so, at what position.`,
+        new BindableAttribute(`Is an integer attribute indicates if the element can take input focus (is focusable), if it should participate to sequential keyboard navigation, and if so, at what position.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex')
       ], 
       [
         'title',
-        new Attribute(`Contains a text representing advisory information related to the element it belongs to. Such information can typically, but not necessarily, be presented to the user as a tooltip.`,
+        new BindableAttribute(`Contains a text representing advisory information related to the element it belongs to. Such information can typically, but not necessarily, be presented to the user as a tooltip.`,
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/title')
       ], 
       [
         'translate',
-        new Attribute(`Is an enumerated attribute that is used to specify whether an element's attribute values and the values of its Text node children are to be translated when the page is localized, or whether to leave them unchanged`,
+        new BindableAttribute(`Is an enumerated attribute that is used to specify whether an element's attribute values and the values of its Text node children are to be translated when the page is localized, or whether to leave them unchanged`,
          'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/translate',
          null,
          null,
@@ -123,7 +152,7 @@ export class GlobalAttributes {
       ],
       [
         'repeat.for',
-        new Attribute(
+        new BindableAttribute(
           `repeat over a set, map, or array`,
           'http://aurelia.io/hub.html#/doc/article/aurelia/templating/latest/templating-basics/9',
           'no-snippet',
@@ -132,83 +161,73 @@ export class GlobalAttributes {
       ],
       [
         'as-element',
-        new Attribute(
+        new BindableAttribute(
           `In some cases, especially when creating table rows out of Aurelia custom elements, you may need to have a custom element masquerade as a standard HTML element. For example, if you're trying to fill table rows with data, you may need your custom element to appear as a <tr> row or <td> cell. This is where the as-element attribute comes in handy`,
           'http://aurelia.io/hub.html#/doc/article/aurelia/templating/latest/templating-basics/5')
       ],
       [
-        'view',
-        new Attribute(``)
-      ],
-      [
         'ref',
-        new Attribute(``)
+        new SimpleAttribute(`Use the ref binding command to create a reference to a DOM element. 
+        The ref command's most basic syntax is ref="expression". 
+        When the view is data-bound the specified expression will be assigned the DOM element.`, 
+        'http://aurelia.io/hub.html#/doc/article/aurelia/binding/latest/binding-basics/5')
       ],
       [
         'element.ref',
-        new Attribute(``)
+        new SimpleAttribute(`create a reference to the DOM element (same as ref="expression").`, 
+        'http://aurelia.io/hub.html#/doc/article/aurelia/binding/latest/binding-basics/5')
       ],
       [
         'view-model.ref',
-        new Attribute(``)
+        new SimpleAttribute(`create a reference to a custom element's view-model.`, 
+        'http://aurelia.io/hub.html#/doc/article/aurelia/binding/latest/binding-basics/5')
       ],
       [
         'view.ref',
-        new Attribute(``)
+        new SimpleAttribute(`create a reference to a custom element's view instance (not an HTML Element).`, 
+        'http://aurelia.io/hub.html#/doc/article/aurelia/binding/latest/binding-basics/5')
       ],            
       [
         'controller.ref',
-        new Attribute(``)
+        new SimpleAttribute(`create a reference to a custom element's controller instance.`, 
+        'http://aurelia.io/hub.html#/doc/article/aurelia/binding/latest/binding-basics/5')
       ], 
       [
         'innerhtml',
-        new Attribute(``,
-        '',
-        'no-snippet')
+        new SimpleAttribute(``)
       ], 
       [
         'textcontent',
-        new Attribute(``,
-        null,
-        'no-snippet')
+        new BindableAttribute(``)
       ],
       [
         'show',
-        new Attribute(``,
-        null,
-        'no-snippet')
+        new BindableAttribute(`Binding to conditionally show markup in the DOM based on the value. 
+        different from "if" in that the markup is still added to the DOM, simply not shown.`,
+        'http://aurelia.io/hub.html#/doc/api/aurelia/templating-resources/latest/class/Show')
       ],
       [
         'if',
-        new Attribute(``,
-        null,
-        'no-snippet')
-      ],
-      [
-        'naive-if',
-        new Attribute(``,
-        null,
-        'no-snippet')
-      ],                  
+        new BindableAttribute(`Binding to conditionally include or not include template logic depending on returned result 
+        - value should be Boolean or will be treated as such (truthy / falsey)`,
+        'http://aurelia.io/hub.html#/doc/api/aurelia/templating-resources/latest/class/If')
+      ],                
       [
         'with',
-        new Attribute(``)
+        new SimpleAttribute(`Binds the With with provided binding context and override context.`,
+        'http://aurelia.io/hub.html#/doc/api/aurelia/templating-resources/1.4.0/class/With')
       ],        
       [
         'view-spy',
-        new Attribute(``,
-        null,
-        'no-snippet',
-        'view-spy',
-        'view-spy')
+        new EmptyAttribute(`Attribute to be placed on any HTML element in a view to emit the View instance to 
+        the debug console, giving you insight into the live View instance, including all child views, live bindings, behaviors and more.`,
+        'http://aurelia.io/hub.html#/doc/api/aurelia/testing/1.0.0-beta.3.0.1/class/ViewSpy')
       ], 
       [
         'compile-spy',
-        new Attribute(``,
-        null,
-        'no-snippet',
-        'compile-spy',
-        'compile-spy')
+        new EmptyAttribute(`Attribute to be placed on any element to have it emit the View Compiler's TargetInstruction into the debug console, 
+        giving you insight into all the parsed bindings, behaviors and event handers for the targeted element.`,
+        'http://aurelia.io/hub.html#/doc/api/aurelia/testing/1.0.0-beta.3.0.1/class/CompileSpy')
       ]    
   ]);
 
@@ -767,11 +786,15 @@ export class GlobalAttributes {
 export class BaseElement {
 
   protected url: string;
-  public licenceText = `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
+  public hasGlobalAttributes = true;
+  public hasGlobalEvents = true;
 
-  public attributes: Map<string, Attribute> = new Map<string, Attribute>();
+  public attributes: Map<string, BaseAttribute> = new Map<string, BaseAttribute>();
   public events: Map<string, Event> = new Map<string, Event>();
+}
 
-  constructor() {
+export class MozDocElement extends BaseElement {
+  public get licenceText() {
+    return `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
   }
 }

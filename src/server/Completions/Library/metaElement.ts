@@ -1,6 +1,6 @@
-import {  Attribute, Value, BaseElement } from './_elementStructure';
+import {  BindableAttribute, Value, MozDocElement } from './_elementStructure';
 
-export default class MetaElement extends BaseElement {
+export default class MetaElement extends MozDocElement {
 
   public documentation = `The HTML <meta> element represents any metadata information that cannot be 
   represented by one of the other HTML meta-related elements (<base>, <link>, <script>, <style> or <title>).`;
@@ -10,11 +10,11 @@ export default class MetaElement extends BaseElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta';
 
     this.attributes.set('charset',
-      new Attribute(`This attribute declares the character encoding used of the page. It can be locally overridden using the lang attribute on any element. This attribute is a literal string and must be one of the preferred MIME names for a character encoding as defined by the IANA. (https://www.iana.org/assignments/character-sets)`));
+      new BindableAttribute(`This attribute declares the character encoding used of the page. It can be locally overridden using the lang attribute on any element. This attribute is a literal string and must be one of the preferred MIME names for a character encoding as defined by the IANA. (https://www.iana.org/assignments/character-sets)`));
     this.attributes.set('content',
-      new Attribute(`This attribute gives the value associated with the http-equiv or name attribute, depending on the context.`));
+      new BindableAttribute(`This attribute gives the value associated with the http-equiv or name attribute, depending on the context.`));
     this.attributes.set('http-equiv',
-      new Attribute(`This enumerated attribute defines the pragma that can alter servers and user-agents behavior.`,
+      new BindableAttribute(`This enumerated attribute defines the pragma that can alter servers and user-agents behavior.`,
       null,
       null,
       null,
@@ -27,7 +27,7 @@ the number of seconds until the page should be reloaded, if the content attribut
 the number of seconds until the page should be redirected to another, if the content attribute contains a positive integer number followed by the string ';url=' and a valid URL.`)],
       ])));
     this.attributes.set('name',
-      new Attribute(`This attribute defines the name of document-level metadata. It should not be set if one of the attributes itemprop, http-equiv or charset is also set.`,
+      new BindableAttribute(`This attribute defines the name of document-level metadata. It should not be set if one of the attributes itemprop, http-equiv or charset is also set.`,
       null,
       null,
       null,

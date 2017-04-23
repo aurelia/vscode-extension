@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class PreElement extends BaseElement {
+export default class PreElement extends MozDocElement {
 
   public documentation = `The HTML <pre> element represents preformatted text. Text within this element is typically displayed in a 
   non-proportional ("monospace") font exactly as it is laid out in the file. Whitespace inside this element is displayed as typed.`;

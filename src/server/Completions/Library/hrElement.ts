@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class HrElement extends BaseElement {
+export default class HrElement extends MozDocElement {
 
   public documentation = `The HTML <hr> element represents a thematic break between paragraph-level
   elements (for example, a change of scene in a story, or a shift of topic with a section). In previous 

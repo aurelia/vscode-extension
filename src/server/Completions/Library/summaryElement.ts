@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class SummaryElement extends BaseElement {
+export default class SummaryElement extends MozDocElement {
 
   public documentation = `The HTML <summary> element is used as a summary, caption, or legend for the content of a <details> element.`;
 

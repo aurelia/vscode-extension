@@ -1,6 +1,6 @@
-import { Attribute, Value, Event, GlobalAttributes, BaseElement } from './_elementStructure';
+import { BindableAttribute, MozDocElement } from './_elementStructure';
 
-export default class BlockquoteElement extends BaseElement {
+export default class BlockquoteElement extends MozDocElement {
 
   public documentation = `The HTML <blockquote> Element (or HTML Block Quotation Element) indicates that the enclosed 
   text is an extended quotation. Usually, this is rendered visually by indentation (see Notes for how to change it). 
@@ -12,7 +12,7 @@ export default class BlockquoteElement extends BaseElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote';
 
     this.attributes.set('cite',
-      new Attribute(`A URL that designates a source document or message for the information quoted. This attribute 
+      new BindableAttribute(`A URL that designates a source document or message for the information quoted. This attribute 
       is intended to point to information explaining the context or the reference for the quote.`));
   }
 }

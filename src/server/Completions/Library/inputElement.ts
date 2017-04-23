@@ -1,6 +1,6 @@
-import { Attribute, Value, BaseElement } from './_elementStructure';
+import { BindableAttribute, Value, MozDocElement } from './_elementStructure';
 
-export default class InputElement extends BaseElement {
+export default class InputElement extends MozDocElement {
 
   public documentation = `The HTML <input> element is used to create interactive controls for web-based forms in 
   order to accept data from the user. How an <input> works varies considerably depending on the value of its 
@@ -11,7 +11,7 @@ export default class InputElement extends BaseElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input';
 
     this.attributes.set('type', 
-      new Attribute('The type of control to display. The default type is text, if this attribute is not specified.', 
+      new BindableAttribute('The type of control to display. The default type is text, if this attribute is not specified.', 
           null,
           null,
           null,
@@ -41,9 +41,9 @@ export default class InputElement extends BaseElement {
             ['week', new Value(`A control for entering a date consisting of a week-year number and a week number with no time zone.`)]                                  
         ])));
     this.attributes.set('accept', 
-      new Attribute(`If the value of the type attribute is file, then this attribute will indicate the types of files that the server accepts, otherwise it will be ignored.`));
+      new BindableAttribute(`If the value of the type attribute is file, then this attribute will indicate the types of files that the server accepts, otherwise it will be ignored.`));
     this.attributes.set('autocomplete',
-      new Attribute(`This attribute indicates whether the value of the control can be automatically completed by the browser.`, 
+      new BindableAttribute(`This attribute indicates whether the value of the control can be automatically completed by the browser.`, 
           null,
           null,
           null,

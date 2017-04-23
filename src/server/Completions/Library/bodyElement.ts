@@ -1,6 +1,6 @@
-import { Event, BaseElement } from './_elementStructure';
+import { Event, MozDocElement } from './_elementStructure';
 
-export default class BodyElement extends BaseElement {
+export default class BodyElement extends MozDocElement {
 
   public documentation = `The HTML <body> Element represents the content of an HTML document. There can be only one <body> element in a document.`;
 

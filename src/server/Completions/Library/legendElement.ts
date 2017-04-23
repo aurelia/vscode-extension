@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class LegendElement extends BaseElement{
+export default class LegendElement extends MozDocElement {
 
   public documentation = `The HTML <legend> element represents a caption for the content of its parent <fieldset>.`;
 

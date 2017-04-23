@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class ArticleElement extends BaseElement {
+export default class ArticleElement extends MozDocElement {
 
   public documentation = `The HTML <article> element represents a self-contained composition in a document, page, 
   application, or site, which is intended to be independently distributable or reusable (e.g., in syndication). 

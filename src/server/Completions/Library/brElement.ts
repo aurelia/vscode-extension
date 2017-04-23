@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class BrElement extends BaseElement {
+export default class BrElement extends MozDocElement {
 
   public documentation = `The HTML <br> element produces a line break in text (carriage-return). It is useful for writing
   a poem or an address, where the division of lines is significant.`;

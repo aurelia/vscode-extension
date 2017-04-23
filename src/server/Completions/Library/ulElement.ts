@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class UlElement extends BaseElement {
+export default class UlElement extends MozDocElement {
 
   public documentation = `The HTML <ul> element represents an unordered list of items, typically rendered as a bulleted list.`;
 

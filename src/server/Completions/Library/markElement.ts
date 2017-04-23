@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class MarkElement extends BaseElement {
+export default class MarkElement extends MozDocElement {
 
   public documentation = `The HTML <mark> element represents highlighted text, i.e., a run of text marked for 
   reference purpose, due to its relevance in a particular context. For example it can be used in a page showing 

@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class AsideElement extends BaseElement {
+export default class AsideElement extends MozDocElement {
 
   public documentation = `The HTML <aside> element represents a section of a document with content connected 
   tangentially to the main content of the document (often presented as a sidebar).`;

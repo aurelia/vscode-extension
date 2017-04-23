@@ -32,12 +32,10 @@ let hoverProviderFactory = <HoverProviderFactory> globalContainer.get(HoverProvi
 
 let workspacePath: string;
 
-// Register character to lisen for
+// Register characters to lisen for
 connection.onInitialize((params: InitializeParams): InitializeResult => {
   workspacePath = params.rootPath;
   
-  // TODO: find other way to preload element library
-  let dummy = globalContainer.get(ElementLibrary);
   return {
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },

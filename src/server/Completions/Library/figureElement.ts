@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class FigureElement extends BaseElement {
+export default class FigureElement extends MozDocElement {
 
   public documentation = `The HTML <figure> element represents self-contained content, frequently with a 
   caption (<figcaption>), and is typically referenced as a single unit.`;

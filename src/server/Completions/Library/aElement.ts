@@ -1,6 +1,6 @@
-import { Attribute, Value, BaseElement } from './_elementStructure';
+import { BindableAttribute, Value, MozDocElement } from './_elementStructure';
 
-export default class AElement extends BaseElement {
+export default class AElement extends MozDocElement {
 
   public documentation = `The HTML <a> element (or anchor element) creates a hyperlink to other 
   web pages, files, locations within the same page, email addresses, or any other URL.`;
@@ -9,24 +9,24 @@ export default class AElement extends BaseElement {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a';
     this.attributes.set('download',
-      new Attribute(`This attribute instructs browsers to download a URL instead of navigating 
+      new BindableAttribute(`This attribute instructs browsers to download a URL instead of navigating 
       to it, so the user will be prompted to save it as a local file. If the attribute has a 
       value, it is used as the pre-filled file name in the Save prompt (the user can still change 
       the file name if they want). There are no restrictions on allowed values, though / and \ 
       are converted to underscores. Most file systems limit some punctuation in file names, 
       and browsers will adjust the suggested name accordingly.`));
     this.attributes.set('href',
-      new Attribute(`ontains a URL or a URL fragment that the hyperlink points to.
+      new BindableAttribute(`ontains a URL or a URL fragment that the hyperlink points to.
       A URL fragment is a name preceded by a hash mark (#), which specifies an internal target location 
       (an ID of an HTML element) within the current document. URLs are not restricted to Web (HTTP)-based 
       documents, but can use any protocol supported by the browser. For example, file:, ftp:, and mailto: 
       work in most browsers. This attribute may be omitted (as of HTML5) to create a placeholder link. 
       A placeholder link resembles a traditional hyperlink, but does not lead anywhere.`));
     this.attributes.set('hreflang',
-      new Attribute(`This attribute indicates the human language of the linked resource. It is purely 
+      new BindableAttribute(`This attribute indicates the human language of the linked resource. It is purely 
       advisory, with no built-in functionality. Allowed values are determined by BCP47.`));
     this.attributes.set('referrerpolicy',
-      new Attribute(`Indicates which referrer to send when fetching the URL.`, 
+      new BindableAttribute(`Indicates which referrer to send when fetching the URL.`, 
         null,
         null,
         null,
@@ -39,10 +39,10 @@ export default class AElement extends BaseElement {
           ['unsafe-url', new Value(`means the referrer will include the origin and path, but not the fragment, password, or username. This is unsafe because it can leak data from secure URLs to insecure ones.`)]
         ])));
     this.attributes.set('rel',
-        new Attribute(`Specifies the relationship of the target object to the link object. The value is a space-separated 
+        new BindableAttribute(`Specifies the relationship of the target object to the link object. The value is a space-separated 
         list of [link types](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types).`));
     this.attributes.set('target', 
-        new Attribute(`Specifies where to display the linked URL. It is a name of, or keyword for, a browsing context: a tab, window, or <iframe>.`, 
+        new BindableAttribute(`Specifies where to display the linked URL. It is a name of, or keyword for, a browsing context: a tab, window, or <iframe>.`, 
           null,
           null,
           null,
@@ -54,7 +54,7 @@ export default class AElement extends BaseElement {
             ['_top', new Value(`Load the URL into the top-level browsing context (that is, the "highest" browsing context that is an ancestor of the current one, and has no parent). If there is no parent browsing context, this behaves the same way as _self.`)]
           ])));
       this.attributes.set('type',
-        new Attribute(`Specifies the media type in the form of a MIME type for the linked URL. This is provided strictly as 
+        new BindableAttribute(`Specifies the media type in the form of a MIME type for the linked URL. This is provided strictly as 
         advisory information; there is no built-in behavior for it.`));
   }
 

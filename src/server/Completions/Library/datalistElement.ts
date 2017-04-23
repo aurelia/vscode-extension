@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class DataListElement extends BaseElement {
+export default class DataListElement extends MozDocElement {
 
   public documentation = `The HTML <datalist> element contains a set of <option> elements that represent 
   the values available for other controls.`;

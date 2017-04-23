@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class SupElement extends BaseElement {
+export default class SupElement extends MozDocElement {
 
   public documentation = `The HTML <sup> element defines a span of text that should be displayed, for typographic 
   reasons, higher, and often smaller, than the main span of text.`;

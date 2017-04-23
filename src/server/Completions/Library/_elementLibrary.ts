@@ -105,8 +105,9 @@ import UlElement from './ulElement';
 import VarElement from './varElement';
 import VideoElement from './videoElement';
 import WbrElement from './wbrElement';
-
 import UnknownElement from './unknownElement';
+
+import RequireElement from './requireElement';
 
 @singleton()
 export default class ElementLibrary {
@@ -230,6 +231,7 @@ export default class ElementLibrary {
 
         
     this.elements['compose'] = new ComposeElement();
+    this.elements['require'] = new RequireElement();
 
 
   }

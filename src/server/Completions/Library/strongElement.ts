@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class StrongElement extends BaseElement {
+export default class StrongElement extends MozDocElement {
 
   public documentation = `The HTML <strong> element gives text strong importance, and is typically displayed in bold.`;
 

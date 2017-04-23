@@ -1,6 +1,6 @@
-import { Attribute, Value, BaseElement } from './_elementStructure';
+import { BindableAttribute, Value, MozDocElement } from './_elementStructure';
 
-export default class OlElement extends BaseElement {
+export default class OlElement extends MozDocElement {
 
   public documentation = `The HTML <ol> element represents an ordered list of items, typically rendered as a numbered list.`;
 
@@ -9,11 +9,11 @@ export default class OlElement extends BaseElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol';
 
     this.attributes.set('reversed',
-      new Attribute(`This Boolean attribute specifies that the items of the list are specified in reversed order.`));
+      new BindableAttribute(`This Boolean attribute specifies that the items of the list are specified in reversed order.`));
     this.attributes.set('start',
-      new Attribute(`This integer attribute specifies the start value for numbering the individual list items. Although the ordering type of list elements might be Roman numerals, such as XXXI, or letters, the value of start is always represented as a number. To start numbering elements from the letter "C", use <ol start="3">.`));
+      new BindableAttribute(`This integer attribute specifies the start value for numbering the individual list items. Although the ordering type of list elements might be Roman numerals, such as XXXI, or letters, the value of start is always represented as a number. To start numbering elements from the letter "C", use <ol start="3">.`));
     this.attributes.set('type',
-      new Attribute(`Indicates the numbering type`,
+      new BindableAttribute(`Indicates the numbering type`,
       null,
       null,
       null,

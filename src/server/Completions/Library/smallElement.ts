@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class SmallElement extends BaseElement {
+export default class SmallElement extends MozDocElement {
 
   public documentation = `The HTML <small> element makes the text font size one size smaller (for example, from 
   large to medium, or from small to x-small) down to the browser's minimum font size.  In HTML5, this element 

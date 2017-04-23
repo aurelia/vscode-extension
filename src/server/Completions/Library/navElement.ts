@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class NavElement extends BaseElement {
+export default class NavElement extends MozDocElement {
 
   public documentation = `The HTML <nav> element represents a section of a page that links to other pages or to 
   parts within the page: a section with navigation links.`;

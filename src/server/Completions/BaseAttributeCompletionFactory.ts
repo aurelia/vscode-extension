@@ -5,14 +5,14 @@ import {
   MarkedString } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
-import { GlobalAttributes } from './Library/_elementStructure';
+import { BaseElement, SimpleAttribute, BindableAttribute, EmptyAttribute } from './Library/_elementStructure';
 
 @autoinject()
-export default class BaseCompletionFactory {
+export default class BaseAttributeCompletionFactory {
 
   constructor(protected library: ElementLibrary) { }
 
-  protected getElement(elementName: string){
+  protected getElement(elementName: string) : BaseElement {
     let element = this.library.elements[elementName];
     if (!element) {
       element = this.library.unknownElement;
@@ -27,7 +27,7 @@ export default class BaseCompletionFactory {
         continue;
       }
 
-      // remove exiting items that are doubles
+      // remove duplicates (only leave latest addition)
       for(let item of result.filter(i => 
         i.label === key || 
         i.label === (value.customLabel === null ? (key + '.bind') : value.customLabel))) {
@@ -37,24 +37,34 @@ export default class BaseCompletionFactory {
         }        
       }
 
-      if (value.customSnippet !== 'no-snippet') {
+      if (value instanceof BindableAttribute) {
         result.push({
           documentation: MarkedString.fromPlainText(value.documentation).toString(),
-          insertText: value.customSnippet === null ? `${key}="$0"`: value.customSnippet,
-          insertTextFormat: InsertTextFormat.Snippet,
-          kind: CompletionItemKind.Property,
-          label: key,
-        });
-      }
-
-      if (value.customBindingSnippet !== 'no-snippet') {
-        result.push({
-          //detail: value.documentation,
           insertText: value.customBindingSnippet === null ? `${key}.bind="$0"`: value.customBindingSnippet,
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Value,
           label: value.customLabel === null ? (key + '.bind') : value.customLabel,
         });
+      }
+
+      if (value instanceof EmptyAttribute) {
+        result.push({
+          documentation: MarkedString.fromPlainText(value.documentation).toString(),
+          insertText: `${key}`,
+          insertTextFormat: InsertTextFormat.PlainText,
+          kind: CompletionItemKind.Property,
+          label: key,
+        });        
+      }
+
+      if (value instanceof SimpleAttribute || value instanceof BindableAttribute) {
+        result.push({
+          documentation: MarkedString.fromPlainText(value.documentation).toString(),
+          insertText: `${key}="$0"`,
+          insertTextFormat: InsertTextFormat.Snippet,
+          kind: CompletionItemKind.Property,
+          label: key,
+        });        
       }
     }  
     return result;  

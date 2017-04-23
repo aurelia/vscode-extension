@@ -1,6 +1,6 @@
-import { BaseElement } from './_elementStructure';
+import { MozDocElement } from './_elementStructure';
 
-export default class TBodyElement extends BaseElement {
+export default class TBodyElement extends MozDocElement {
 
   public documentation = `The HTML <tbody> element groups one or more <tr> elements as the body of a <table> element.`;
 
