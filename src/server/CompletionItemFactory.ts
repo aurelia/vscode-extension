@@ -48,8 +48,6 @@ export default class CompletionItemFactory {
 
       // auto complete inside a tag
       if (insideTag) {
-        console.log('inside tag');
-
         switch (triggerCharacter) {
           case ' ':
                return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));

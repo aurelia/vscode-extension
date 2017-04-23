@@ -57,7 +57,8 @@
         ],
         "mimetypes": [
           "text/html"
-        ]
+        ],
+        "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
