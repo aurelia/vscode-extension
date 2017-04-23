@@ -94,7 +94,7 @@ export default class CompletionItemFactory {
 
   private createEmmetCompletion(text: string, position: number) {
     const emmetRegex = /([\w|-]*)\[$/g
-    let matches = emmetRegex.exec(text);
+    let matches = emmetRegex.exec(text.substring(0, position));
     let elementName = matches[1];
     return this.emmetCompletionFactory.create(elementName);
   }
