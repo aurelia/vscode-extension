@@ -8,6 +8,9 @@ export default class AElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a';
+
+    this.ariaRoles.push(...['button', 'checkbox', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'tab', 'treeitem']);
+
     this.attributes.set('download',
       new BindableAttribute(`This attribute instructs browsers to download a URL instead of navigating 
       to it, so the user will be prompted to save it as a local file. If the attribute has a 

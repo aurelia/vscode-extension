@@ -9,5 +9,6 @@ export default class ArticleElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/article';
+    this.ariaRoles.push(...['application', 'document', 'feed', 'main', 'presentation', 'region']);
   }
 }

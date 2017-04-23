@@ -40,6 +40,7 @@ export default class BaseAttributeCompletionFactory {
       if (value instanceof BindableAttribute) {
         result.push({
           documentation: MarkedString.fromPlainText(value.documentation).toString(),
+          detail: 'Bindable Attribute',
           insertText: value.customBindingSnippet === null ? `${key}.bind="$0"`: value.customBindingSnippet,
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Value,
@@ -49,6 +50,7 @@ export default class BaseAttributeCompletionFactory {
 
       if (value instanceof EmptyAttribute) {
         result.push({
+          detail: 'Empty Custom Attribute',
           documentation: MarkedString.fromPlainText(value.documentation).toString(),
           insertText: `${key}`,
           insertTextFormat: InsertTextFormat.PlainText,
@@ -60,6 +62,7 @@ export default class BaseAttributeCompletionFactory {
       if (value instanceof SimpleAttribute || value instanceof BindableAttribute) {
         result.push({
           documentation: MarkedString.fromPlainText(value.documentation).toString(),
+          detail: 'Attribute',
           insertText: `${key}="$0"`,
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Property,
@@ -89,7 +92,8 @@ export default class BaseAttributeCompletionFactory {
       }
 
       result.push({
-        detail: value.documentation,
+        documentation: value.documentation,
+        detail: 'Event',
         insertText: value.bubbles ? `${key}.delegate="$0"` : `${key}.trigger="$0"`,
         insertTextFormat: InsertTextFormat.Snippet,
         kind: CompletionItemKind.Function,

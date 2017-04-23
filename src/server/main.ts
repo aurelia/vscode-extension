@@ -64,7 +64,6 @@ connection.onCompletion(textDocumentPosition => {
   let offset = document.offsetAt(textDocumentPosition.position);
   let triggerCharacter = text.substring(offset - 1, offset);
   let position = textDocumentPosition.position;
-
   return completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri);
 });
 

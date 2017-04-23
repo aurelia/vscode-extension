@@ -48,6 +48,7 @@ export default class CompletionItemFactory {
 
       // auto complete inside a tag
       if (insideTag) {
+        console.log('inside tag');
 
         switch (triggerCharacter) {
           case ' ':
@@ -64,12 +65,10 @@ export default class CompletionItemFactory {
 
       // auto complete others
       switch (triggerCharacter) {
-        case '<':
-          return this.elementCompletionFactory.create((beforeTag && beforeTag.startTag) ? beforeTag.name : null);
         case '[':
           return this.createEmmetCompletion(text, positionNumber);
-        default:
-          return [];
+        case '<':
+          return this.elementCompletionFactory.create((beforeTag && beforeTag.startTag) ? beforeTag.name : null);
       }
   }
 

@@ -8,5 +8,7 @@ export default class AddressElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/address';
+    this.areaRolesAllowed = false;
+    this.notPermittedChildren.push(...['hgroup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'article', 'aside', 'section', 'nav', 'header', 'footer']);
   }
 }

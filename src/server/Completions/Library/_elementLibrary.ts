@@ -129,7 +129,7 @@ export default class ElementLibrary {
     this.elements['bdi'] = new BdiElement();
     this.elements['bdo'] = new BdoElement();
     this.elements['blockquote'] = new BlockquoteElement();
-    this.elements['bodyElement'] = new BodyElement();
+    this.elements['body'] = new BodyElement();
     this.elements['br'] = new BrElement();
     this.elements['button'] = new ButtonElement();
     this.elements['canvas'] = new CanvasElement();

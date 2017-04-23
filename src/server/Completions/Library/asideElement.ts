@@ -8,5 +8,6 @@ export default class AsideElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/aside';
+    this.ariaRoles.push(...['feed', 'note', 'presentation', 'region', 'search']);
   }
 }

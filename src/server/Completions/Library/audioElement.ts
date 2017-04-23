@@ -9,6 +9,8 @@ export default class AudioElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio';
+    this.ariaRoles.push('application');
+    this.permittedChildren.push(...['track', 'source']);
 
     this.attributes.set('autoplay',
       new BindableAttribute(`A Boolean attribute; if specified (even if the value is "false"!), the audio will automatically begin playback as soon as it can do so, without waiting for the entire audio file to finish downloading.`));

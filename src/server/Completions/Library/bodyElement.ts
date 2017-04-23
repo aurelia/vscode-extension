@@ -7,6 +7,7 @@ export default class BodyElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body';
+    this.areaRolesAllowed = false;
     this.events.set('afterprint', new Event(
       'The afterprint event is fired after the associated document has started printing or the print preview has been closed.', 
       'https://developer.mozilla.org/en-US/docs/Web/Events/afterprint'));

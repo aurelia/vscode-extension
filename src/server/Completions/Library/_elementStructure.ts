@@ -797,4 +797,11 @@ export class MozDocElement extends BaseElement {
   public get licenceText() {
     return `MDN by Mozilla Contributors (${this.url}$history) is licensed under CC-BY-SA 2.5.`;
   }
+
+  public permittedChildren: Array<string> = [];
+  public notPermittedChildren: Array<string> = [];
+  public emptyElement: boolean = false;
+
+  public ariaRoles: Array<string> = [];
+  public areaRolesAllowed: boolean = true;
 }

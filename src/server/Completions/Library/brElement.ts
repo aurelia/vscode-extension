@@ -8,5 +8,6 @@ export default class BrElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/br';
+    this.emptyElement = true;
   }
 }

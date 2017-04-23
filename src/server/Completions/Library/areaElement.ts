@@ -7,7 +7,8 @@ export default class AreaElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/area';
-
+    this.areaRolesAllowed = false;
+    this.emptyElement = true;
     this.attributes.set('alt',
       new BindableAttribute(
         `A text string alternative to display on browsers that do not display images. The text should be phrased so that it presents the user with the same kind of choice as the image would offer when displayed without the alternative text. In HTML4, this attribute is required, but may be the empty string (""). In HTML5, this attribute is required only if the href attribute is used.`));
