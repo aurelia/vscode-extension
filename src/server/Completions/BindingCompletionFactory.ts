@@ -7,26 +7,24 @@ import ElementLibrary from './Library/_elementLibrary';
 import { TagDefinition, AttributeDefinition } from './../DocumentParser';
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 import { GlobalAttributes } from './Library/_elementStructure';
+import AureliaSettings from './../AureliaSettings';
 
 @autoinject()
 export default class BindingCompletionFactory extends BaseAttributeCompletionFactory {
   
-  constructor(library: ElementLibrary) { super(library); }
+  constructor(library: ElementLibrary, private settings: AureliaSettings) { super(library); }
 
   public create(tagDef: TagDefinition, attributeDef: AttributeDefinition, nextChar: string): Array<CompletionItem> {
     
-    let snippetPrefix = nextChar === '=' ? '' : `="$0"`;
+    let snippetPrefix = nextChar === '=' ? '' : `=${this.settings.quote}$0${this.settings.quote}`;
     let result: Array<CompletionItem> = [];
     
     let element = this.getElement(tagDef.name);
-    
-    if (element.attributes) {
+    if (!element.events.get(attributeDef.name) && !GlobalAttributes.events.get(attributeDef.name)) {
       this.setAttributes(element.attributes, attributeDef.name, snippetPrefix, result);
     }
 
-    if (element.events) {
-      this.setEvents(element.events, attributeDef.name, snippetPrefix, result);
-    }
+    this.setEvents(element.events, attributeDef.name, snippetPrefix, result);
 
     return result;
   }
@@ -45,7 +43,7 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
               insertText: binding + snippetPrefix,
               insertTextFormat: InsertTextFormat.Snippet,
               kind: CompletionItemKind.Property,
-              label: `.${binding}=""`
+              label: `.${binding}=${this.settings.quote}${this.settings.quote}`
             });
           }                      
         }
@@ -56,7 +54,7 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
             insertText: binding + snippetPrefix,
             insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Property,
-            label: `.${binding}=""`
+            label: `.${binding}=${this.settings.quote}${this.settings.quote}`
           });
         }        
       }    
@@ -67,19 +65,17 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
       if (!attribute) {
         attribute = GlobalAttributes.attributes.get(name);
       }
-
-      if (attribute) {
-        let bindings = this.getDefaultDataBindings();
-        for(let binding of bindings) {
-          result.push({
-            documentation: binding.documentation,
-            insertText: `${binding.name}${snippetPrefix}`,
-            insertTextFormat: InsertTextFormat.Snippet,
-            kind: CompletionItemKind.Property,
-            label: `.${binding.name}=""`
-          });
-        }
-      }    
+      
+      let bindings = this.getDefaultDataBindings();
+      for(let binding of bindings) {
+        result.push({
+          documentation: binding.documentation,
+          insertText: `${binding.name}${snippetPrefix}`,
+          insertTextFormat: InsertTextFormat.Snippet,
+          kind: CompletionItemKind.Property,
+          label: `.${binding.name}=${this.settings.quote}${this.settings.quote}`
+        });
+      }   
   }
 
   private getDefaultDataBindings() {

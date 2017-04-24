@@ -5,7 +5,7 @@ import ElementCompletionFactory from './Completions/ElementCompletionFactory';
 import AttributeValueCompletionFactory from './Completions/AttributeValueCompletionFactory';
 import BindingCompletionFactory from './Completions/BindingCompletionFactory';
 import EmmetCompletionFactory from './Completions/EmmetCompletionFactory';
-import { DocumentParser, TagDefinition } from './DocumentParser';
+import { DocumentParser, TagDefinition, AttributeDefinition } from './DocumentParser';
 
 @autoinject()
 export default class CompletionItemFactory {
@@ -49,7 +49,7 @@ export default class CompletionItemFactory {
       if (insideTag) {
         switch (triggerCharacter) {
           case ' ':
-               return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));
+            return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));
           case '.':
             return this.createBindingCompletion(insideTag, text, positionNumber);
           case '"':
@@ -95,12 +95,15 @@ export default class CompletionItemFactory {
       while (matches = attributeRegex.exec(elementText)) {
         if (tagPosition >= matches.index && (tagPosition <= matches.index + matches[0].length)) {
           let foundText = matches[1];
-          let attributes = tag.attributes.filter(a => a.name == foundText);
+          let attributes = tag.attributes.filter(a => a && a.name == foundText);
           if (attributes.length) {
             attribute = attributes[0];
             break;
           }
         }  
+      }
+      if (!attribute) {
+        return [];
       }
       return this.attributeValueCompletionFactory.create(tag.name, attribute.name, attribute.binding);
     }
@@ -119,15 +122,19 @@ export default class CompletionItemFactory {
     let tagPosition = position - tag.startOffset;
     const attributeRegex = /([\w\.-]+)(\=['"](.*?)["'])?/g;
     let matches;
+    let foundText = '';
     while (matches = attributeRegex.exec(elementText)) {
       if (tagPosition >= matches.index && (tagPosition <= matches.index + matches[1].length)) {
-        let foundText = matches[1];
+        foundText = matches[1];
         let attributes = tag.attributes.filter(a => a.name + (a.binding !== undefined ? '.' : '') == foundText);
         if (attributes.length) {
           attribute = attributes[0];
           break;
         }
       }  
+    }
+    if (!attribute) {
+      attribute = new AttributeDefinition(foundText.substring(0, foundText.length-1), '');
     }
     return this.bindingCompletionFactory.create(tag, attribute, text.substring(position, position + 1));
   }
