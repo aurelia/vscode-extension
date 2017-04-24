@@ -9,5 +9,6 @@ export default class FooterElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer';
+    this.ariaRoles.push(...['group','presentation']);
   }
 }

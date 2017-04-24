@@ -7,6 +7,7 @@ export default class FormElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form';
+    this.ariaRoles.push(...['group','presentation']);
 
     this.attributes.set('accept-charset',
       new BindableAttribute(`A space- or comma-delimited list of character encodings that the server accepts. The browser uses them in the order in which they are listed. The default value, the reserved string "UNKNOWN", indicates the same encoding as that of the document containing the form element.

@@ -9,6 +9,8 @@ export default class HtmlBaseElement extends MozDocElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base';
     this.areaRolesAllowed = false;
     this.emptyElement = true;
+    this.permittedParents.push("head");
+
     this.attributes.set('href',
       new BindableAttribute(`The base URL to be used throughout the document for relative URL addresses. If this attribute is specified, this element must come before any other elements with attributes whose values are URLs. Absolute and relative URLs are allowed.`));
     this.attributes.set('target',

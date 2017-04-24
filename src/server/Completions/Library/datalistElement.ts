@@ -8,5 +8,6 @@ export default class DataListElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist';
+    this.areaRolesAllowed = false;
   }
 }

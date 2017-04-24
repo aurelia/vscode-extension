@@ -10,6 +10,7 @@ export default class LiElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li';
+    this.permittedParents.push(...['ul', 'ol']);
 
     this.attributes.set('value',
       new BindableAttribute(`This integer attribute indicates the current ordinal value of the list item as 

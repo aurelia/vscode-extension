@@ -8,5 +8,8 @@ export default class HeadElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head';
+    this.areaRolesAllowed = false;
+    this.permittedParents.push('html');
+    this.permittedChildren.push(...['title','base', 'link']);
   }
 }

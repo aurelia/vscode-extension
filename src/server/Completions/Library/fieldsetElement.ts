@@ -8,7 +8,7 @@ export default class FieldsetElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset';
-
+    this.ariaRoles.push(...['group', 'presentation']);
     this.attributes.set('disabled',
       new BindableAttribute(`If this Boolean attribute is set, the form controls that are its descendants, except descendants of its first optional <legend> element, are disabled, i.e., not editable. They won't receive any browsing events, like mouse clicks or focus-related ones. Often browsers display such controls as gray.`));
     this.attributes.set('form',

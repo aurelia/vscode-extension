@@ -4,52 +4,62 @@ import {
   InsertTextFormat, MarkedString } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
+import { MozDocElement } from './Library/_elementStructure';
 
 @autoinject()
 export default class ElementCompletionFactory {
 
   constructor(private library: ElementLibrary) { }
 
-  public create(previous:string): Array<CompletionItem> {
+  public create(parent: string): Array<CompletionItem> {
 
     let result: Array<CompletionItem> = [];
-    if (previous) {
-
-      let previousElement = this.library.elements[previous];
+    if (parent) {
+      let previousElement = this.library.elements[parent];
       if (previousElement) {
         result.push({
           documentation: MarkedString.fromPlainText(previousElement.documentation).toString(),
           detail: 'HTMLElement',
-          insertText: '/' + previous + '>',
+          insertText: '/' + parent + '>',
           insertTextFormat: InsertTextFormat.PlainText,
           kind: CompletionItemKind.Property,
-          label: `/${previous}>`
+          label: `</${parent}>`,
+          filterText: `/${parent}>`
         });
+      }
+    }
 
-        if (previousElement.permittedChildren && previousElement.permittedChildren.length) {
-          for(let name of previousElement.permittedChildren) {
-                result.push({
-                  documentation: this.library.elements[name].documentation,
-                  detail: 'HTMLElement',
-                  insertText: name + '>',
-                  insertTextFormat: InsertTextFormat.PlainText,
-                  kind: CompletionItemKind.Property,
-                  label: `${name}>`
-                });
-          }
-          return result;
+    if (parent) {
+      let parentElementDef = <MozDocElement> this.library.elements[parent];
+      if (parentElementDef.permittedChildren && parentElementDef.permittedChildren.length) {
+        for(let childName of parentElementDef.permittedChildren) {
+          result.push({
+            documentation: MarkedString.fromPlainText(this.library.elements[childName].documentation).toString(),
+            detail: 'HTMLElement',
+            insertText: childName + '>',
+            insertTextFormat: InsertTextFormat.PlainText,
+            kind: CompletionItemKind.Property,
+            label: `<${childName}>`,
+            filterText: `${childName}>`
+          });
         }
+        return result;
       }
     }
 
     for(let name in this.library.elements) {
+      let item = this.library.elements[name];
+      // if (item instanceof MozDocElement && item.permittedParents.length) {
+      //   continue;
+      // }
       result.push({
-        documentation: MarkedString.fromPlainText(this.library.elements[name].documentation).toString(),
+        documentation: MarkedString.fromPlainText(item.documentation).toString(),
         detail: 'HTMLElement',
         insertText: name + '>',
         insertTextFormat: InsertTextFormat.PlainText,
         kind: CompletionItemKind.Property,
-        label: `${name}>`            
+        label: `<${name}>`,
+        filterText: `${name}>`
       });
     }
 

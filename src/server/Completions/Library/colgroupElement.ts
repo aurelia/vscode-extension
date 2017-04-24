@@ -8,6 +8,8 @@ export default class ColgroupElement extends MozDocElement {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup';
     this.areaRolesAllowed = false;
+    this.permittedParents.push('table');
+
     this.attributes.set('span',
       new BindableAttribute(`This attribute contains a positive integer indicating the number of consecutive columns the <colgroup> element spans. If not present, its default value is 1.`));
   }

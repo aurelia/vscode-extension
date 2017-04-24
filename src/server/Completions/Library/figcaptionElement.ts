@@ -8,5 +8,7 @@ export default class FigcaptionElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figcaption';
+    this.permittedParents.push('figure');
+    this.ariaRoles.push(...['group','presentation']);
   }
 }

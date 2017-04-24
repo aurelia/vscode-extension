@@ -7,5 +7,7 @@ export default class ddElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dd';
+    this.areaRolesAllowed = false;
+    this.permittedParents.push('dl');
   }
 }

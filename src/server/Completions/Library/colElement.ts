@@ -9,6 +9,8 @@ export default class ColElement extends MozDocElement {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/col';
     this.areaRolesAllowed = false;
+    this.permittedParents.push('colgroup');
+    this.emptyElement = true;
     this.attributes.set('span',
       new BindableAttribute(`This attribute contains a positive integer indicating the number of consecutive columns the <col> element spans. If not present, its default value is 1.`));
   }

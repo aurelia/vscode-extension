@@ -27,24 +27,23 @@ export default class CompletionItemFactory {
 
       let nodes = await this.parser.parse(text);     
       let insideTag: TagDefinition = null;
-      let beforeTag: TagDefinition = null;
-      let afterTag: TagDefinition = null;
+      let lastIdx = 0;
 
+      // get insidetag and last index of tag
       for(let i = 0; i < nodes.length; i++) {
         let node = nodes[i];
-
-        // check if inside element
         if (!insideTag && positionNumber >= node.startOffset && positionNumber <= node.endOffset) {
           insideTag = node;
         }
-        if (!insideTag && node.startOffset < positionNumber) {
-            beforeTag = node;
-        }
-        if (!afterTag && node !== insideTag && node.endOffset > positionNumber) {
-          afterTag = node;
+        if (node !== insideTag && node.endOffset > positionNumber) {
+          lastIdx = i;
           break;
         }
       }
+
+      // get open parent tag
+      let tags = this.getOpenHtmlTags(nodes, lastIdx);
+      let parentTag = tags[tags.length - 1];
 
       // auto complete inside a tag
       if (insideTag) {
@@ -66,8 +65,23 @@ export default class CompletionItemFactory {
         case '[':
           return this.createEmmetCompletion(text, positionNumber);
         case '<':
-          return this.elementCompletionFactory.create((beforeTag && beforeTag.startTag) ? beforeTag.name : null);
+          return this.elementCompletionFactory.create(parentTag);
       }
+  }
+
+  private getOpenHtmlTags(nodes: Array<TagDefinition>, lastIdx: number) {
+    let tags: Array<string> = [];
+    for(let i = 0; i < lastIdx; i++) {
+      if (nodes[i].startTag) {
+        tags.push(nodes[i].name);
+      } else {
+        var index = tags.indexOf(nodes[i].name);
+        if (index >= 0) {
+          tags.splice( index, 1 );
+        }          
+      }
+    }
+    return tags;
   }
 
   private createValueCompletion(tag: TagDefinition, text: string, position: number) {

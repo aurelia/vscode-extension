@@ -8,5 +8,7 @@ export default class DlElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl';
+    this.ariaRoles.push(...['group','presentation']);
+    this.permittedChildren.push(...['dt','dd', 'script', 'template']);
   }
 }

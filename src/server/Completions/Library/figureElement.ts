@@ -8,5 +8,6 @@ export default class FigureElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figure';
+    this.ariaRoles.push(...['group','presentation']);
   }
 }

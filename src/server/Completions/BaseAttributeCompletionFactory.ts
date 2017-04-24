@@ -20,7 +20,7 @@ export default class BaseAttributeCompletionFactory {
     return element;    
   }
 
-  protected addAttributes(attributes, result: CompletionItem[], existingAttributes) {
+  protected addAttributes(attributes, result: CompletionItem[], existingAttributes, quote: string) {
 
     for (let [key, value] of attributes.entries()) {
       if (existingAttributes.filter(i => i === key).length || value === null) {
@@ -41,7 +41,7 @@ export default class BaseAttributeCompletionFactory {
         result.push({
           documentation: MarkedString.fromPlainText(value.documentation).toString(),
           detail: 'Bindable Attribute',
-          insertText: value.customBindingSnippet === null ? `${key}.bind="$0"`: value.customBindingSnippet,
+          insertText: value.customBindingSnippet === null ? `${key}.bind=${quote}$0${quote}`: value.customBindingSnippet.replace('"', quote),
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Value,
           label: value.customLabel === null ? (key + '.bind') : value.customLabel,
@@ -63,7 +63,7 @@ export default class BaseAttributeCompletionFactory {
         result.push({
           documentation: MarkedString.fromPlainText(value.documentation).toString(),
           detail: 'Attribute',
-          insertText: `${key}="$0"`,
+          insertText: `${key}=${quote}$0${quote}`,
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Property,
           label: key,
@@ -73,7 +73,7 @@ export default class BaseAttributeCompletionFactory {
     return result;  
   }
 
-  protected addEvents(events, result, existingAttributes) {
+  protected addEvents(events, result, existingAttributes, quote: string) {
 
     for (let [key, value] of events.entries()) { 
 
@@ -94,7 +94,7 @@ export default class BaseAttributeCompletionFactory {
       result.push({
         documentation: value.documentation,
         detail: 'Event',
-        insertText: value.bubbles ? `${key}.delegate="$0"` : `${key}.trigger="$0"`,
+        insertText: value.bubbles ? `${key}.delegate=${quote}$0${quote}` : `${key}.trigger=${quote}$0${quote}`,
         insertTextFormat: InsertTextFormat.Snippet,
         kind: CompletionItemKind.Function,
         label: key + (value.bubbles ? `.delegate` : `.trigger`),

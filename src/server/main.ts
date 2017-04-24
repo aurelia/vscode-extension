@@ -12,6 +12,7 @@ import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import HoverProviderFactory from './HoverProviderFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
+import AureliaSettings from './AureliaSettings';
 
 // Bind console.log & error to the Aurelia output
 let connection: IConnection = createConnection();
@@ -30,11 +31,11 @@ let globalContainer = new Container();
 let completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
 let hoverProviderFactory = <HoverProviderFactory> globalContainer.get(HoverProviderFactory);
 
-let workspacePath: string;
-
 // Register characters to lisen for
 connection.onInitialize((params: InitializeParams): InitializeResult => {
-  workspacePath = params.rootPath;
+  
+  // TODO: find better way to init this
+  let dummy = globalContainer.get(ElementLibrary);
   
   return {
     capabilities: {
@@ -46,8 +47,10 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
 });
 
 // Register and get changes to Aurelia settings
-let aureliaSettings;
-connection.onDidChangeConfiguration(change => aureliaSettings = change.settings.aurelia);
+connection.onDidChangeConfiguration(change => { 
+  let settings = <AureliaSettings> globalContainer.get(AureliaSettings);
+  settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
+});
 
 // Setup Validation
 let languageService = getLanguageService();

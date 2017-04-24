@@ -8,6 +8,7 @@ export default class DetailsElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details';
+    this.areaRolesAllowed = false;
     this.attributes.set('open',
       new BindableAttribute(`This Boolean attribute indicates whether the details will be shown to the user on page load. Default is false and so details will be hidden.`));
   }

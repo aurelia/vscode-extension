@@ -8,5 +8,8 @@ export default class BElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/b';
+    this.permittedParents.push("html");
+    this.areaRolesAllowed = false;
+    this.emptyElement = true;
   }
 }

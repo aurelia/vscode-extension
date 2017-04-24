@@ -8,6 +8,10 @@ export default class EmbedElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/embed';
+    this.emptyElement = true;
+    this.ariaRoles.push(...['application', 'document', 'img', 'presentation']);
+
+
     this.attributes.set('height',
       new BindableAttribute(`The displayed height of the resource, in CSS pixels.`));
     this.attributes.set('src',

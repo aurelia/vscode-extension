@@ -800,6 +800,7 @@ export class MozDocElement extends BaseElement {
 
   public permittedChildren: Array<string> = [];
   public notPermittedChildren: Array<string> = [];
+  public permittedParents: Array<string> = [];
   public emptyElement: boolean = false;
 
   public ariaRoles: Array<string> = [];

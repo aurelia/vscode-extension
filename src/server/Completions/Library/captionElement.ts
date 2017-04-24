@@ -9,5 +9,6 @@ export default class CaptionElement extends MozDocElement {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/caption';
     this.areaRolesAllowed = false;
+    this.permittedParents.push('table');
   }
 }

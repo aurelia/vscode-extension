@@ -9,5 +9,6 @@ export default class DtElement extends MozDocElement {
   constructor() {
     super();
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dt';
+    this.areaRolesAllowed = false;
   }
 }
