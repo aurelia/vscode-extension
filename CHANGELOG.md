@@ -1,3 +1,18 @@
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/aurelia/vscode-extension/compare/0.2.7...v0.3.0) (2017-04-24)
+
+
+### Bug Fixes
+
+* **syntax:** correctly tokenize any elements with dash, resolves [#41](https://github.com/aurelia/vscode-extension/issues/41) ([db6fc47](https://github.com/aurelia/vscode-extension/commit/db6fc47))
+
+
+### Features
+
+* **language-server:** rebuild language server to enable better auto complete and prepare it for future improvements ([87caa9b](https://github.com/aurelia/vscode-extension/commit/87caa9b))
+
+
+
 <a name="0.2.7"></a>
 ## [0.2.7](https://github.com/aurelia/vscode-extension/compare/0.2.6...v0.2.7) (2017-02-21)
 
