@@ -33,7 +33,7 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onLanguage:html",
+    "onLanguage:aurelia-html",
     "onCommand:extension.auNew",
     "onCommand:extension.auGenerate",
     "onCommand:extension.auTest",
@@ -44,9 +44,26 @@
   ],
   "main": "./dist/src/client/main",
   "contributes": {
+    "languages": [
+      {
+        "id": "aurelia-html",
+        "order": 1,
+        "extensions": [
+          ".html"
+        ],
+        "aliases": [
+          "Aurelia HTML",
+          "html"
+        ],
+        "mimetypes": [
+          "text/html"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
     "grammars": [
       {
-        "language": "html",
+        "language": "aurelia-html",
         "scopeName": "au.html",
         "path": "./syntaxes/html.json"
       }
@@ -138,7 +155,8 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "lint": "node ./node_modules/tslint/lib/tslint-cli.js -c tslint.json --project tsconfig.json",
     "changelog": "node ./node_modules/conventional-changelog-cli/cli.js -p angular -i CHANGELOG.md -s",
-    "test": "mocha ./dist/test --recursive"
+    "test": "mocha ./dist/test --recursive",
+    "vscode-typings": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
     "@types/chai": "^3.4.35",
@@ -154,9 +172,12 @@
     "vscode-textmate": "^3.1.0"
   },
   "dependencies": {
-    "aurelia-cli": "^0.24.0",
-    "vscode-languageclient": "^3.0.4",
-    "vscode-languageserver": "^3.0.5",
+    "aurelia-cli": "^0.21.0",
+    "aurelia-dependency-injection": "^1.3.0",
+    "parse5": "^3.0.1",
+    "reflect-metadata": "^0.1.9",
+    "vscode-languageclient": "^3.0.3",
+    "vscode-languageserver": "^3.0.4",
     "vscode-languageserver-types": "^3.0.3",
     "vscode-uri": "^1.0.0"
   }

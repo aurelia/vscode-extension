@@ -352,7 +352,7 @@
 				"foreground": "#0000ff"
 			}
 		},
-   {
+    {
 		  "scope": ["punctuation.definition.string.interpolation.start","punctuation.definition.string.interpolation.end"],
 			"settings": {
 				"foreground": "#ba68c8"
