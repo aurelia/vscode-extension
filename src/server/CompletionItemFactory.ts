@@ -110,9 +110,13 @@ export default class CompletionItemFactory {
   }
 
   private createEmmetCompletion(text: string, position: number) {
-    const emmetRegex = /([\w|-]*)\[$/g
+    const emmetRegex = /^([^<]*?>)*?([\w|-]*)\[$/gm;
     let matches = emmetRegex.exec(text.substring(0, position));
-    let elementName = matches[1];
+    if (!matches) {
+      return [];
+    }
+    let elementName = matches[2];
+    console.log(elementName);
     return this.emmetCompletionFactory.create(elementName);
   }
 
