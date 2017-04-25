@@ -315,7 +315,6 @@
         }  
       }
     },
-
     "tag-aurelia-model-attribute" : {
       "match": "(?=\\s)[^=-]((model)(\\.)?((bind|one-time|one-way|two-way)|(ref))?)",
       "captures": {
