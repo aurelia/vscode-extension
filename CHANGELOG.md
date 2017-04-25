@@ -1,3 +1,13 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/aurelia/vscode-extension/compare/0.3.0...v0.3.1) (2017-04-25)
+
+
+### Features
+
+* **deps:** update to aurelia-cli 0.28.0 ([aaa61c4](https://github.com/aurelia/vscode-extension/commit/aaa61c4))
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/aurelia/vscode-extension/compare/0.2.7...v0.3.0) (2017-04-24)
 
