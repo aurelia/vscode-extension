@@ -116,7 +116,6 @@ export default class CompletionItemFactory {
       return [];
     }
     let elementName = matches[2];
-    console.log(elementName);
     return this.emmetCompletionFactory.create(elementName);
   }
 
