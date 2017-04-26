@@ -1,3 +1,14 @@
+<a name="0.3.2"></a>
+## [0.3.2](https://github.com/aurelia/vscode-extension/compare/0.3.1...v0.3.2) (2017-04-26)
+
+
+### Bug Fixes
+
+* **emmet-autocomplete:** remove unneeded logging to aurelia output ([1635b29](https://github.com/aurelia/vscode-extension/commit/1635b29))
+* **hover:** don't try to show hover information on unknown items ([c547f5f](https://github.com/aurelia/vscode-extension/commit/c547f5f))
+
+
+
 <a name="0.3.1"></a>
 ## [0.3.1](https://github.com/aurelia/vscode-extension/compare/0.3.0...v0.3.1) (2017-04-25)
 
