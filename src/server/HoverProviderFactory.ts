@@ -57,7 +57,11 @@ export default class HoverProviderFactory {
         }
       break;
       case ' ':
-        let elementName = /<(\w*)\b.*$/g.exec(text.substring(0, offset))[1];
+        let matches = /<(\w*)\b.*$/g.exec(text.substring(0, offset));
+        if (!matches || matches.length === 0) {
+          return;
+        }
+        let elementName = matches[1];
         displayValue = `<${elementName} ${tag}="">`;
         
         // fixes
@@ -67,7 +71,7 @@ export default class HoverProviderFactory {
         if (tag.indexOf('.')) {
           tag = tag.split('.')[0];
         }
-        
+       
         element = this.elementLibrary.elements[elementName] || this.elementLibrary.unknownElement;
         let attribute = element.attributes.get(tag);
         let event = element.events.get(tag);
