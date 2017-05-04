@@ -98,7 +98,7 @@ export default class HoverProviderFactory {
 
     return {
       contents: [ 
-        { language: 'aurelia-html', value: displayValue }, 
+        { language: 'html', value: displayValue }, 
         { language: 'markdown', value: documentation }, 
         moreInfo,
         source

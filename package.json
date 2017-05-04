@@ -33,7 +33,7 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onLanguage:aurelia-html",
+    "onLanguage:html",
     "onCommand:extension.auNew",
     "onCommand:extension.auGenerate",
     "onCommand:extension.auTest",
@@ -46,24 +46,40 @@
   "contributes": {
     "languages": [
       {
-        "id": "aurelia-html",
+        "id": "html",
         "order": 1,
         "extensions": [
-          ".html"
+          ".html",
+          ".htm",
+          ".shtml",
+          ".xhtml",
+          ".mdoc",
+          ".jsp",
+          ".asp",
+          ".aspx",
+          ".jshtm",
+          ".volt",
+          ".ejs"
         ],
         "aliases": [
-          "Aurelia HTML",
-          "html"
+          "HTML",
+          "htm",
+          "html",
+          "xhtml"
         ],
         "mimetypes": [
-          "text/html"
+          "text/html",
+          "text/x-jshtm",
+          "text/template",
+          "text/ng-template",
+          "application/xhtml+xml"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "aurelia-html",
+        "language": "html",
         "scopeName": "au.html",
         "path": "./syntaxes/html.json"
       }

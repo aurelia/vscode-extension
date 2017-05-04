@@ -10,7 +10,6 @@ import { HTMLDocument, getLanguageService } from './aurelia-languageservice/aure
 import { getLanguageModelCache } from './languageModelCache';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
-import HoverProviderFactory from './HoverProviderFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
 import AureliaSettings from './AureliaSettings';
 
@@ -29,7 +28,6 @@ connection.onShutdown(() => htmlDocuments.dispose());
 // Setup Aurelia dependency injection
 let globalContainer = new Container();
 let completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
-let hoverProviderFactory = <HoverProviderFactory> globalContainer.get(HoverProviderFactory);
 
 // Register characters to lisen for
 connection.onInitialize((params: InitializeParams): InitializeResult => {
@@ -40,7 +38,6 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
   return {
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },
-      hoverProvider: true,
       textDocumentSync: documents.syncKind,
     },
   };
@@ -68,14 +65,6 @@ connection.onCompletion(textDocumentPosition => {
   let triggerCharacter = text.substring(offset - 1, offset);
   let position = textDocumentPosition.position;
   return completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri);
-});
-
-connection.onHover(textDocumentPosition => {
-	let document = documents.get(textDocumentPosition.textDocument.uri);
-  let text = document.getText();
-  let offset = document.offsetAt(textDocumentPosition.position);	
-
-  return hoverProviderFactory.create(text, offset);
 });
 
 connection.listen();

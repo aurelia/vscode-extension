@@ -20,7 +20,7 @@ export function activate(context: ExtensionContext) {
   // Register code fix
   const invalidCasingAction = new htmlInvalidCasingActionProvider();
   invalidCasingAction.activate(context.subscriptions);
-  languages.registerCodeActionsProvider('aurelia-html', invalidCasingAction);
+  languages.registerCodeActionsProvider('html', invalidCasingAction);
 
   // Register Aurelia language server
   const serverModule = context.asAbsolutePath(path.join('dist', 'src', 'server', 'main.js'));
@@ -32,14 +32,14 @@ export function activate(context: ExtensionContext) {
 
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: 'Aurelia',
-    documentSelector: ['aurelia-html'],
+    documentSelector: ['html'],
     initializationOptions: {},
     synchronize: {
       configurationSection: ['aurelia'],
     },
   };
 
-  const client = new LanguageClient('aurelia-html', 'Aurelia', serverOptions, clientOptions);
+  const client = new LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
   const disposable = client.start();
   context.subscriptions.push(disposable);
 }
