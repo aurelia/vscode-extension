@@ -1,3 +1,13 @@
+<a name="0.3.3"></a>
+## [0.3.3](https://github.com/aurelia/vscode-extension/compare/0.3.2...v0.3.3) (2017-05-04)
+
+
+### Bug Fixes
+
+* **language:** set custom language back to override html and disable custom hover, resolves [#45](https://github.com/aurelia/vscode-extension/issues/45) ([4048c8d](https://github.com/aurelia/vscode-extension/commit/4048c8d))
+
+
+
 <a name="0.3.2"></a>
 ## [0.3.2](https://github.com/aurelia/vscode-extension/compare/0.3.1...v0.3.2) (2017-04-26)
 
