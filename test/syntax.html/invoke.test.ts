@@ -31,6 +31,34 @@ describe('The Aurelia HTML syntax invoke attributes', () => {
 
   });
 
+  it('must tokenize delegate attribute with scope "invoke.attribute.html.au"', () => {
+
+    // arrange
+    let scope = 'invoke.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div click.delegate="test()">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 11, 19);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
+  it('must tokenize capture attribute with scope "invoke.attribute.html.au"', () => {
+
+    // arrange
+    let scope = 'invoke.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div click.capture="test()">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 11, 18);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });  
+
   it('must not tokenize attribute body that contains click.trigger keyword', () => {
 
     // arrange-
@@ -59,18 +87,5 @@ describe('The Aurelia HTML syntax invoke attributes', () => {
 
   });
 
-  it('must tokenize delegate attribute with scope "invoke.attribute.html.au"', () => {
-
-    // arrange
-    let scope = 'invoke.attribute.html.au';
-
-    // act
-    let lineToken = tokenizeLine('<div click.delegate="test()">');
-
-    // assert
-    let token = getTokenOnCharRange(lineToken, 11, 19);
-    assert.isOk(hasScope(token.scopes, scope));
-
-  });
 
 });

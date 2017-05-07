@@ -257,7 +257,7 @@
       }
     },
     "tag-aurelia-attribute-with-invoke-attribute": {
-      "match": "(?=\\s)[^=](([a-zA-Z0-9:-]+)(\\.)(trigger|delegate|call))",
+      "match": "(?=\\s)[^=](([a-zA-Z0-9:-]+)(\\.)(trigger|delegate|call|capture))",
       "captures": {
         "2": {
           "name": "entity.other.attribute-name.html"
