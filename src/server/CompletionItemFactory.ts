@@ -48,18 +48,22 @@ export default class CompletionItemFactory {
       // auto complete inside a tag
       if (insideTag) {
 
-        if (this.notInAttributeValue(text.substring(insideTag.startOffset, positionNumber))) {
-          switch (triggerCharacter) {
-            case ' ':
-              return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));
-            case '.':
-              return this.createBindingCompletion(insideTag, text, positionNumber);
-            case '"':
-            case '\'':
+        let elementString = text.substring(insideTag.startOffset, positionNumber);
+        if (this.notInAttributeValue(elementString)) {
+
+          if (triggerCharacter === ' ') {
+            return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));
+          } else if (triggerCharacter === '.' && this.canExpandDot(elementString)) {
+            return this.createBindingCompletion(insideTag, text, positionNumber);
+          } else {
+            return [];
+          } 
+        
+        // inside attribute, perform attribute completion
+        } else if (triggerCharacter === '"' || triggerCharacter === '\'') {
                 return this.createValueCompletion(insideTag, text, positionNumber);
-            default:
-              return [];
-          }
+        } else {
+          return [];
         }
       }
 
@@ -79,6 +83,10 @@ export default class CompletionItemFactory {
       if (char === '\'') single += 1;
     }    
     return single % 2 == 0 && double % 2 == 0;
+  }
+
+  private canExpandDot(elementString) {
+    return !/([^a-zA-Z]|\.(bind|one-way|two-way|one-time|delegate|trigger|call|capture|ref))\.$/g.test(elementString);    
   }
 
   private getOpenHtmlTags(nodes: Array<TagDefinition>, lastIdx: number) {
