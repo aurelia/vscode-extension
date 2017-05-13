@@ -14,20 +14,6 @@ export default class ElementCompletionFactory {
   public create(parent: string): Array<CompletionItem> {
 
     let result: Array<CompletionItem> = [];
-    if (parent) {
-      let previousElement = this.library.elements[parent];
-      if (previousElement) {
-        result.push({
-          documentation: MarkedString.fromPlainText(previousElement.documentation).toString(),
-          detail: 'HTMLElement',
-          insertText: '/' + parent + '>',
-          insertTextFormat: InsertTextFormat.PlainText,
-          kind: CompletionItemKind.Property,
-          label: `</${parent}>`,
-          filterText: `/${parent}>`
-        });
-      }
-    }
 
     if (parent) {
       let parentElementDef = <MozDocElement> this.library.elements[parent];
