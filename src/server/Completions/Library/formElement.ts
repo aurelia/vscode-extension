@@ -1,4 +1,4 @@
-import { BindableAttribute, Value, MozDocElement } from './_elementStructure';
+import { BindableAttribute, Value, MozDocElement, Event } from './_elementStructure';
 
 export default class FormElement extends MozDocElement {
 
@@ -61,5 +61,9 @@ In previous versions of HTML, the different character encodings could be delimit
         ['_parent', new Value(`Load the response into the HTML 4 frameset parent of the current frame, or HTML5 parent browsing context of the current one. If there is no parent, this option behaves the same way as _self.`)],
         ['_top', new Value(`Load the response into the top-level browsing context (i.e., the browsing context that is an ancestor of the current one, and has no parent). If there is no parent, this option behaves the same way as _self.`)]
       ])));
+
+      this.events.set('submit', new Event(
+        `The submit event is fired when a form is submitted.`,
+        `https://developer.mozilla.org/en-US/docs/Web/Events/submit`, false, false));
   }
 }
