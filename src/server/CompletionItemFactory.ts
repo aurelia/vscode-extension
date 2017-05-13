@@ -47,16 +47,19 @@ export default class CompletionItemFactory {
 
       // auto complete inside a tag
       if (insideTag) {
-        switch (triggerCharacter) {
-          case ' ':
-            return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));
-          case '.':
-            return this.createBindingCompletion(insideTag, text, positionNumber);
-          case '"':
-          case '\'':
-               return this.createValueCompletion(insideTag, text, positionNumber);
-          default:
-            return [];
+
+        if (this.notInAttributeValue(text.substring(insideTag.startOffset, positionNumber))) {
+          switch (triggerCharacter) {
+            case ' ':
+              return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));
+            case '.':
+              return this.createBindingCompletion(insideTag, text, positionNumber);
+            case '"':
+            case '\'':
+                return this.createValueCompletion(insideTag, text, positionNumber);
+            default:
+              return [];
+          }
         }
       }
 
@@ -67,6 +70,15 @@ export default class CompletionItemFactory {
         case '<':
           return this.elementCompletionFactory.create(parentTag);
       }
+  }
+
+  private notInAttributeValue(tagText: string) {
+    let single = 0, double = 0;
+    for(let char of tagText) {
+      if (char === '"') double += 1;
+      if (char === '\'') single += 1;
+    }    
+    return single % 2 == 0 && double % 2 == 0;
   }
 
   private getOpenHtmlTags(nodes: Array<TagDefinition>, lastIdx: number) {
