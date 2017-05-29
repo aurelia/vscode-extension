@@ -43,6 +43,11 @@ export class HTMLValidation {
       return Promise.resolve([]);
     }
 
+    // handle empty document cases
+    if (!htmlDocument || !htmlDocument.roots || htmlDocument.roots.length === 0) {
+      return Promise.resolve([]);
+    }
+
     const text = document.getText();
     const scanner = createScanner(text, htmlDocument.roots[0].start);
 
