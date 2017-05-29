@@ -1,3 +1,25 @@
+<a name="0.3.4"></a>
+## [0.3.4](https://github.com/aurelia/vscode-extension/compare/0.3.3...v0.3.4) (2017-05-29)
+
+
+### Bug Fixes
+
+* **auto-complete:** add submit event auto complete to form element ([b03ecd2](https://github.com/aurelia/vscode-extension/commit/b03ecd2))
+* **auto-complete:** don't auto-complete attibutes inside attribute value ([093a36a](https://github.com/aurelia/vscode-extension/commit/093a36a))
+* **auto-complete:** don't auto-complete bindings on wrong spots ([e650d0d](https://github.com/aurelia/vscode-extension/commit/e650d0d))
+* **auto-complete:** ignore elements that are currently not registered, resolves [#47](https://github.com/aurelia/vscode-extension/issues/47) ([d5e8002](https://github.com/aurelia/vscode-extension/commit/d5e8002))
+* **auto-complete:** use auto-complete from HTML language for closing tag ([180773e](https://github.com/aurelia/vscode-extension/commit/180773e))
+* **html-validation:** don't do anything on empty documents, resolves [#46](https://github.com/aurelia/vscode-extension/issues/46) ([40c2c23](https://github.com/aurelia/vscode-extension/commit/40c2c23))
+
+
+### Features
+
+* **dependencies:** update vscode-language(client/server/server-types) and aurelia-cli ([198dd1f](https://github.com/aurelia/vscode-extension/commit/198dd1f))
+* **syntax:** tokenize capture event binding ([2662c01](https://github.com/aurelia/vscode-extension/commit/2662c01))
+* **vscode:** update vscode version to 1.12.1 ([559f3c2](https://github.com/aurelia/vscode-extension/commit/559f3c2))
+
+
+
 <a name="0.3.3"></a>
 ## [0.3.3](https://github.com/aurelia/vscode-extension/compare/0.3.2...v0.3.3) (2017-05-04)
 
