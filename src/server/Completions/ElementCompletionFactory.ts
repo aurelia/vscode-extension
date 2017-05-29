@@ -17,7 +17,7 @@ export default class ElementCompletionFactory {
 
     if (parent) {
       let parentElementDef = <MozDocElement> this.library.elements[parent];
-      if (parentElementDef.permittedChildren && parentElementDef.permittedChildren.length) {
+      if (parentElementDef && parentElementDef.permittedChildren && parentElementDef.permittedChildren.length) {
         for(let childName of parentElementDef.permittedChildren) {
           result.push({
             documentation: MarkedString.fromPlainText(this.library.elements[childName].documentation).toString(),
