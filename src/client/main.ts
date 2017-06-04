@@ -24,7 +24,7 @@ export function activate(context: ExtensionContext) {
 
   // Register Aurelia language server
   const serverModule = context.asAbsolutePath(path.join('dist', 'src', 'server', 'main.js'));
-  const debugOptions = { execArgv: ['--nolazy', '--debug=6004'] };
+  const debugOptions = { execArgv: ['--nolazy', '--debug=6100'] };
   const serverOptions: ServerOptions = {
     debug: { module: serverModule, options: debugOptions, transport: TransportKind.ipc },
     run: { module: serverModule, transport: TransportKind.ipc },
