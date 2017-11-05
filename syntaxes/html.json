@@ -1,13 +1,12 @@
 {
   "fileTypes": [],
   "name": "au.html",
-  "patterns": [
-    {
+  "patterns": [{
       "include": "#compose.html.au"
     },
     {
       "include": "#router-view.html.au"
-    },    
+    },
     {
       "include": "#meta.tag.block.any.html"
     },
@@ -16,7 +15,7 @@
     },
     {
       "include": "#meta.tag.other.html"
-    },   
+    },
     {
       "include": "#string.interpolation.html.au"
     },
@@ -26,19 +25,18 @@
   ],
   "repository": {
     "string.interpolation.html.au": {
-      "begin": "\\$\\{",
-      "beginCaptures": {
-        "0": {
+      "match": "(\\${)(((?!\\${).|\\s)*)(})",
+      "captures": {
+        "1": {
           "name": "punctuation.definition.string.interpolation.start"
-        }
-      },
-      "end": "\\}",
-      "endCaptures": {
-        "0": {
+        },
+        "2": {
+          "name": "meta.string.interpolation"
+        },
+        "4": {
           "name": "punctuation.definition.string.interpolation.end"
         }
-      },
-      "name": "meta.string.interpolation"
+      }
     },
     "meta.tag.block.any.html": {
       "begin": "(<\/?)((?i:address|blockquote|dd|div|section|article|aside|header|footer|nav|menu|dl|dt|fieldset|form|frame|frameset|h1|h2|h3|h4|h5|h6|iframe|noframes|object|ol|p|ul|applet|center|dir|hr|pre)(?!-)\\b)",
@@ -57,11 +55,9 @@
         }
       },
       "name": "meta.tag.block.any.html",
-      "patterns": [
-        {
-          "include": "#tag-stuff"
-        }
-      ]
+      "patterns": [{
+        "include": "#tag-stuff"
+      }]
     },
     "meta.tag.inline.any.html": {
       "begin": "(<\/?)((?i:a|abbr|acronym|area|b|base|basefont|bdo|big|br|button|caption|cite|code|col|colgroup|del|dfn|em|font|head|html|i|img|input|ins|isindex|kbd|label|legend|li|link|map|meta|noscript|optgroup|option|param|q|s|samp|script|select|small|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|title|tr|tt|u|var)(?!-)\\b)",
@@ -80,11 +76,9 @@
         }
       },
       "name": "meta.tag.inline.any.html",
-      "patterns": [
-        {
-          "include": "#tag-stuff"
-        }
-      ]
+      "patterns": [{
+        "include": "#tag-stuff"
+      }]
     },
     "compose.html.au": {
       "begin": "(<\/?)((?i:compose)\\b)",
@@ -103,11 +97,9 @@
         }
       },
       "name": "meta.tag.inline.any.html",
-      "patterns": [
-        {
-          "include": "#tag-stuff"
-        }
-      ]
+      "patterns": [{
+        "include": "#tag-stuff"
+      }]
     },
     "router-view.html.au": {
       "begin": "(<\/?)((?i:router\\-view)\\b)",
@@ -126,11 +118,9 @@
         }
       },
       "name": "meta.tag.inline.any.html",
-      "patterns": [
-        {
-          "include": "#tag-stuff"
-        }
-      ]
+      "patterns": [{
+        "include": "#tag-stuff"
+      }]
     },
     "meta.tag.other.html": {
       "begin": "(<\/?)([a-zA-Z0-9:\\-]+)",
@@ -149,15 +139,12 @@
         }
       },
       "name": "meta.tag.block.any.html",
-      "patterns": [
-        {
-          "include": "#tag-stuff"
-        }
-      ]
+      "patterns": [{
+        "include": "#tag-stuff"
+      }]
     },
     "tag-stuff": {
-      "patterns": [
-        {
+      "patterns": [{
           "include": "#tag-aurelia-repeat-for-attribute"
         },
         {
@@ -165,24 +152,24 @@
         },
         {
           "include": "#tag-aurelia-model-attribute"
-        }, 
-        {
-          "include" : "#tag-aurelia-view-attribute"
         },
         {
-          "include" : "#tag-aurelia-controller-attribute"
+          "include": "#tag-aurelia-view-attribute"
         },
         {
-          "include" : "#tag-aurelia-matcher-attribute"
+          "include": "#tag-aurelia-controller-attribute"
         },
         {
-          "include" : "#tag-aurelia-if-attribute"
+          "include": "#tag-aurelia-matcher-attribute"
         },
         {
-          "include" : "#tag-aurelia-show-attribute"
+          "include": "#tag-aurelia-if-attribute"
         },
         {
-          "include" : "#tag-aurelia-route-href-attribute"
+          "include": "#tag-aurelia-show-attribute"
+        },
+        {
+          "include": "#tag-aurelia-route-href-attribute"
         },
         {
           "include": "#tag-aurelia-containerless-attribute"
@@ -192,7 +179,7 @@
         },
         {
           "include": "#tag-aurelia-view-spy-attribute"
-        },        
+        },
         {
           "include": "#tag-aurelia-replace-part-attribute"
         },
@@ -269,8 +256,8 @@
           "name": "invoke.attribute.html.au"
         }
       }
-    },        
-    "tag-aurelia-repeat-for-attribute" : {
+    },
+    "tag-aurelia-repeat-for-attribute": {
       "match": "(?<=[^\"-])(repeat)(\\.)(for)(?![-])",
       "captures": {
         "1": {
@@ -284,7 +271,7 @@
         }
       }
     },
-    "tag-aurelia-view-model-attribute" : {
+    "tag-aurelia-view-model-attribute": {
       "match": "(?<=[^\"-])(view-model)(?![-])(\\.)?((bind|one-way|two-way|one-time)|(ref))?",
       "captures": {
         "1": {
@@ -298,10 +285,10 @@
         },
         "5": {
           "name": "ref.attribute.html.au"
-        }       
+        }
       }
     },
-    "tag-aurelia-matcher-attribute" : {
+    "tag-aurelia-matcher-attribute": {
       "match": "(?<=[^\"-])(matcher)(?![-])(\\.)(bind|one-way|two-way|one-time)",
       "captures": {
         "1": {
@@ -312,10 +299,10 @@
         },
         "3": {
           "name": "databinding.attribute.html.au"
-        }  
+        }
       }
     },
-    "tag-aurelia-model-attribute" : {
+    "tag-aurelia-model-attribute": {
       "match": "(?=\\s)[^=-]((model)(\\.)?((bind|one-time|one-way|two-way)|(ref))?)",
       "captures": {
         "2": {
@@ -329,10 +316,10 @@
         },
         "6": {
           "name": "ref.attribute.html.au"
-        }       
+        }
       }
     },
-    "tag-aurelia-view-attribute" : {
+    "tag-aurelia-view-attribute": {
       "match": "(?<![\"'-])\\b(view((\\.)(ref))?(?=\\=))\\b",
       "captures": {
         "1": {
@@ -343,10 +330,10 @@
         },
         "4": {
           "name": "ref.attribute.html.au"
-        }       
+        }
       }
     },
-    "tag-aurelia-controller-attribute" : {
+    "tag-aurelia-controller-attribute": {
       "match": "(?<![\"'-])(controller)(?![\\-])(?=(\\.ref|=))((\\.)?(ref))?",
       "captures": {
         "1": {
@@ -354,48 +341,48 @@
         },
         "2": {
           "name": "punctuation.definition.tag.begin.html"
-        },        
+        },
         "4": {
           "name": "punctuation.definition.tag.begin.html"
         },
         "5": {
           "name": "ref.attribute.html.au"
-        }       
+        }
       }
     },
-    "tag-aurelia-bindable-attribute" : {
+    "tag-aurelia-bindable-attribute": {
       "match": "(?<![\\-\"])(bindable)(?![\\.\\-\"])",
       "captures": {
         "1": {
           "name": "bindable.attribute.html.au"
-        }     
+        }
       }
     },
-    "tag-aurelia-containerless-attribute" : {
+    "tag-aurelia-containerless-attribute": {
       "match": "(containerless)(?= |>)",
       "captures": {
         "1": {
           "name": "containerless.attribute.html.au"
-        }     
+        }
       }
-    }, 
-    "tag-aurelia-compile-spy-attribute" : {
+    },
+    "tag-aurelia-compile-spy-attribute": {
       "match": "(compile-spy)(?= |>)",
       "captures": {
         "1": {
           "name": "compile-spy.attribute.html.au"
-        }     
+        }
       }
     },
-    "tag-aurelia-view-spy-attribute" : {
+    "tag-aurelia-view-spy-attribute": {
       "match": "(view-spy)(?= |>)",
       "captures": {
         "1": {
           "name": "view-spy.attribute.html.au"
-        }     
+        }
       }
-    },              
-    "tag-aurelia-if-attribute" : {
+    },
+    "tag-aurelia-if-attribute": {
       "match": "(?<=[^\"-])(if|naive-if)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
       "captures": {
         "1": {
@@ -406,10 +393,10 @@
         },
         "3": {
           "name": "databinding.attribute.html.au"
-        }       
+        }
       }
     },
-    "tag-aurelia-route-href-attribute" : {
+    "tag-aurelia-route-href-attribute": {
       "match": "(?<=[^\"-])(route-href)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
       "captures": {
         "1": {
@@ -420,10 +407,10 @@
         },
         "3": {
           "name": "databinding.attribute.html.au"
-        }       
+        }
       }
-    },    
-    "tag-aurelia-show-attribute" : {
+    },
+    "tag-aurelia-show-attribute": {
       "match": "(?<=[^\"-])(show)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
       "captures": {
         "1": {
@@ -434,9 +421,9 @@
         },
         "3": {
           "name": "databinding.attribute.html.au"
-        }       
+        }
       }
-    },    
+    },
     "tag-generic-attribute": {
       "match": "(?<=[^=])\\b([a-zA-Z0-9:-]+)",
       "name": "entity.other.attribute-name.html"
@@ -452,7 +439,7 @@
           "name": "as-element.attribute.html.au"
         }
       }
-    },    
+    },
     "tag-aurelia-replace-part-attribute": {
       "match": "(?<![\"'-])\\b(replace-part)(?=\\=)\\b",
       "captures": {
@@ -468,7 +455,7 @@
           "name": "replaceable.attribute.html.au"
         }
       }
-    },      
+    },
     "string-double-quoted": {
       "begin": "\"",
       "beginCaptures": {
@@ -483,8 +470,7 @@
         }
       },
       "name": "string.quoted.double.html",
-      "patterns": [
-        {
+      "patterns": [{
           "include": "#string.interpolation.html.au"
         },
         {
@@ -506,8 +492,7 @@
         }
       },
       "name": "string.quoted.single.html",
-      "patterns": [
-        {
+      "patterns": [{
           "include": "#string.interpolation.html.au"
         },
         {
@@ -516,20 +501,18 @@
       ]
     },
     "entities": {
-      "patterns": [
-        {
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.entity.html"
-            },
-            "3": {
-              "name": "punctuation.definition.entity.html"
-            }
+      "patterns": [{
+        "captures": {
+          "1": {
+            "name": "punctuation.definition.entity.html"
           },
-          "match": "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)",
-          "name": "constant.character.entity.html"
-        }
-      ]
+          "3": {
+            "name": "punctuation.definition.entity.html"
+          }
+        },
+        "match": "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)",
+        "name": "constant.character.entity.html"
+      }]
     }
   },
   "scopeName": "au.html"
