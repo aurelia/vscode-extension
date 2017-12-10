@@ -39,7 +39,7 @@ export class RelatedFiles implements Disposable {
     }
 
     if (relatedFile) {
-      commands.executeCommand('vscode.open', Uri.file(relatedFile));
+      commands.executeCommand('vscode.open', Uri.file(relatedFile), editor.viewColumn);
     }
   }
 
