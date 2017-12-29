@@ -65,9 +65,8 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
       if (!attribute) {
         attribute = GlobalAttributes.attributes.get(name);
       }
-      
-      let bindings = this.getDefaultDataBindings();
-      for(let binding of bindings) {
+
+      for(let binding of this.settings.bindings.data) {
         result.push({
           documentation: binding.documentation,
           insertText: `${binding.name}${snippetPrefix}`,
@@ -76,26 +75,5 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
           label: `.${binding.name}=${this.settings.quote}${this.settings.quote}`
         });
       }   
-  }
-
-  private getDefaultDataBindings() {
-    return [
-        { 
-          name: 'bind',
-          documentation: 'automatically chooses the binding mode. Uses two-way binding for form controls and one-way binding for almost everything else'
-        },
-        { 
-          name: 'one-way',
-          documentation: 'flows data one direction: from the view-model to the view'
-        },
-        { 
-          name: 'two-way',
-          documentation: 'flows data both ways: from view-model to view and from view to view-model'
-        },
-        { 
-          name: 'one-time',
-          documentation: 'flows data one direction: from the view-model to the view, only one'
-        },                        
-      ];
   }
 }
