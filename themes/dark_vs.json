@@ -332,6 +332,7 @@
 			"scope": [
         "compose.element.html.au", 
         "router-view.element.html.au",
+        "let.element.html.au",
         "databinding.attribute.html.au",
         "invoke.attribute.html.au",
         "ref.attribute.html.au",
