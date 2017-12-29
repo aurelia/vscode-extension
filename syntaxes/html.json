@@ -240,7 +240,7 @@
       ]
     },
     "tag-aurelia-attribute-with-databinding-attribute": {
-      "match": "(?<![\"'-])([a-zA-Z0-9:-]+)(?<!controller|bindable|view-model|show|if|naive-if|route-href)(\\.)(bind|one-way|two-way|one-time)(?![\"'-;])",
+      "match": "(?<![\"'-])([a-zA-Z0-9:-]+)(?<!controller|bindable|view-model|show|if|naive-if|route-href)(\\.)(bind|one-way|two-way|one-time|from-view|to-view)(?![\"'-;])",
       "captures": {
         "1": {
           "name": "entity.other.attribute-name.html"
@@ -296,7 +296,7 @@
       }
     },
     "tag-aurelia-view-model-attribute": {
-      "match": "(?<=[^\"-])(view-model)(?![-])(\\.)?((bind|one-way|two-way|one-time)|(ref))?",
+      "match": "(?<=[^\"-])(view-model)(?![-])(\\.)?((bind|one-way|two-way|one-time|from-view|to-view)|(ref))?",
       "captures": {
         "1": {
           "name": "view-model.attribute.html.au"
@@ -313,7 +313,7 @@
       }
     },
     "tag-aurelia-matcher-attribute": {
-      "match": "(?<=[^\"-])(matcher)(?![-])(\\.)(bind|one-way|two-way|one-time)",
+      "match": "(?<=[^\"-])(matcher)(?![-])(\\.)(bind|one-way|two-way|one-time|from-view|to-view)",
       "captures": {
         "1": {
           "name": "matcher.attribute.html.au"
@@ -327,7 +327,7 @@
       }
     },
     "tag-aurelia-model-attribute": {
-      "match": "(?=\\s)[^=-]((model)(\\.)?((bind|one-time|one-way|two-way)|(ref))?)",
+      "match": "(?=\\s)[^=-]((model)(\\.)?((bind|one-time|one-way|two-way|from-view|to-view)|(ref))?)",
       "captures": {
         "2": {
           "name": "model.attribute.html.au"
@@ -407,7 +407,7 @@
       }
     },
     "tag-aurelia-if-attribute": {
-      "match": "(?<=[^\"-])(if|naive-if)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
+      "match": "(?<=[^\"-])(if|naive-if)(?![-])(\\.)?(bind|one-way|two-way|one-time|from-view|to-view)?",
       "captures": {
         "1": {
           "name": "if.attribute.html.au"
@@ -421,7 +421,7 @@
       }
     },
     "tag-aurelia-route-href-attribute": {
-      "match": "(?<=[^\"-])(route-href)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
+      "match": "(?<=[^\"-])(route-href)(?![-])(\\.)?(bind|one-way|two-way|one-time|from-view|to-view)?",
       "captures": {
         "1": {
           "name": "route-href.attribute.html.au"
@@ -435,7 +435,7 @@
       }
     },
     "tag-aurelia-show-attribute": {
-      "match": "(?<=[^\"-])(show)(?![-])(\\.)?(bind|one-way|two-way|one-time)?",
+      "match": "(?<=[^\"-])(show)(?![-])(\\.)?(bind|one-way|two-way|one-time|from-view|to-view)?",
       "captures": {
         "1": {
           "name": "show.attribute.html.au"
