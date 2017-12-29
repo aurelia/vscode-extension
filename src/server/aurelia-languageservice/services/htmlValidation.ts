@@ -3,6 +3,7 @@ import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-lang
 import { LanguageSettings } from '../aureliaLanguageService';
 import { HTMLDocument } from '../parser/htmlParser';
 import { TokenType, createScanner } from '../parser/htmlScanner';
+import { attributeInvalidCaseFix } from './../../../shared/attributeInvalidCaseFix';
 
 export type DiagnosticCodes = 'invalid-casing' | 'invalid-method';
 export const DiagnosticCodes = {
@@ -19,17 +20,11 @@ interface Attribute {
   value?: string;
 }
 
-const kebabCaseValidationRegex = /(.*)\.(bind|one-way|two-way|one-time|call|delegate|trigger)/;
-
-function camelToKebab(s: string) {
-  return s.replace(/\.?([A-Z])/g, (x, y) => '-' + y.toLowerCase()).replace(/^-/, '');
-}
-
 export class HTMLValidation {
   private validationEnabled: boolean;
 
   constructor() {
-    this.validationEnabled = true;
+    this.validationEnabled = true
   }
 
   public configure(raw: LanguageSettings) {
@@ -50,11 +45,11 @@ export class HTMLValidation {
 
     const text = document.getText();
     const scanner = createScanner(text, htmlDocument.roots[0].start);
-
     const diagnostics: Diagnostic[] = [];
 
     let attr;
     let token = scanner.scan();
+    let elementName = '';
     while (token !== TokenType.EOS) {
       // tslint:disable-next-line:switch-default
       switch (token) {
@@ -67,7 +62,10 @@ export class HTMLValidation {
           break;
         case TokenType.AttributeValue:
           attr.value = scanner.getTokenText();
-          await this.validateAttribute(attr, document, diagnostics);
+          this.validateAttribute(attr, elementName, document, diagnostics);
+          break;
+        case TokenType.StartTag:
+          elementName = scanner.getTokenText();
           break;
       }
       token = scanner.scan();
@@ -76,20 +74,13 @@ export class HTMLValidation {
     return Promise.resolve(diagnostics);
   }
 
-  private async validateAttribute(attr: Attribute, document: TextDocument, diagnostics: Diagnostic[]) {
-    let match = kebabCaseValidationRegex.exec(attr.name);
-    if (match && match.length) {
-      const prop = match[1];
-      const op = match[2];
-
-      if (prop !== prop.toLowerCase()) {
-        diagnostics.push(this.toDiagnostic(attr, document,
-          `'${attr.name}' has invalid casing; it should likely be '${camelToKebab(prop)}.${op}'`,
-          DiagnosticCodes.InvalidCasing));
-      }
+  private validateAttribute(attr: Attribute, elementName: string, document: TextDocument, diagnostics: Diagnostic[]) {
+    const {attribute, command, fixed} = attributeInvalidCaseFix(elementName, attr.name);
+    if(fixed && fixed !== attribute) {
+      diagnostics.push(this.toDiagnostic(attr, document,
+        `'${attr.name}' has invalid casing; it should likely be '${fixed}.${command}'`,
+        DiagnosticCodes.InvalidCasing));
     }
-
-    return Promise.resolve();
   }
 
   private toDiagnostic(

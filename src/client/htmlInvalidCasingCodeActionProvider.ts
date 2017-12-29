@@ -1,5 +1,6 @@
 'use strict';
 import vscode = require('vscode');
+import { attributeInvalidCaseFix } from './../shared/attributeInvalidCaseFix';
 
 export default class HtmlInvalidCasingActionProvider implements vscode.CodeActionProvider {
   private static commandId: string = 'aurelia-fix-invalid-casing';
@@ -16,21 +17,20 @@ export default class HtmlInvalidCasingActionProvider implements vscode.CodeActio
     context: vscode.CodeActionContext,
     token: vscode.CancellationToken): vscode.Command[] {
 
-      let diagnostic: vscode.Diagnostic = context.diagnostics[0];
-      let text = document.getText(diagnostic.range);
-      const kebabCaseValidationRegex = /(.*)\.(bind|one-way|two-way|one-time|call|delegate|trigger)/;
+      const diagnostic: vscode.Diagnostic = context.diagnostics[0];
+      const text = document.getText(diagnostic.range);
 
-      let result = kebabCaseValidationRegex.exec(text);
-      let attribute = result[1];
-      let binding = result[2];
-      let fixedAttribute = attribute.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
-      let fixedText = `${fixedAttribute}.${binding}`;
-      let commands: vscode.Command[] = [];
+      const elementResult = /<([a-zA-Z\-]*) .*$/g.exec(document.getText(diagnostic.range.with(new vscode.Position(0,0))));
+      const elementName = elementResult[1];
+
+      const {attribute, command, fixed} = attributeInvalidCaseFix(elementName, text);
+      const fixedText = `${fixed}.${command}`;
+      const commands: vscode.Command[] = [];
 
       commands.push({
             arguments: [document, diagnostic.range, fixedText],
             command: HtmlInvalidCasingActionProvider.commandId,
-            title: `Rename ${attribute} to ${fixedAttribute}`,
+            title: `Rename ${attribute} to ${fixed}`,
         });
 
       return commands;
