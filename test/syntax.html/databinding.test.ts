@@ -59,6 +59,34 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
 
   });
 
+  it(`must tokenize (some).from-view="foo" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div some.from-view="foo">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 10, 19);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
+  it(`must tokenize (some).to-view="foo" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div some.to-view="foo">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 10, 17);
+    assert.isOk(hasScope(token.scopes, scope));
+
+  });
+
   it(`must not tokenize a="x.(bind)" attribute with scope "databinding.attribute.html.au"`, () => {
 
     // arrange
@@ -223,6 +251,90 @@ describe('The Aurelia HTML syntax databinding attributes', () => {
 
     // assert
     let token = getTokenOnCharRange(lineToken, 8, 25);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x.(from-view)" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x.from-view">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 19);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x; x.(from-view)" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x; x.from-view">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 22);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x.(from-view)='\'x\; x" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x.from-view=\'x\'; x">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 26);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x.(to-view)" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x.to-view">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 17);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x; x.(to-view)" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x; x.to-view">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 20);
+    assert.isOk(!hasScope(token.scopes, scope));
+
+  });
+
+  it(`must not tokenize a="x.(to-view)='\'x\; x" attribute with scope "databinding.attribute.html.au"`, () => {
+
+    // arrange
+    let scope = 'databinding.attribute.html.au';
+
+    // act
+    let lineToken = tokenizeLine('<div a="x.to-view=\'x\'; x">');
+
+    // assert
+    let token = getTokenOnCharRange(lineToken, 8, 24);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
