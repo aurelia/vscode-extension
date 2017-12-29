@@ -8,6 +8,9 @@
       "include": "#router-view.html.au"
     },
     {
+      "include": "#let.html.au"
+    },    
+    {
       "include": "#meta.tag.block.any.html"
     },
     {
@@ -122,6 +125,27 @@
         "include": "#tag-stuff"
       }]
     },
+    "let.html.au": {
+      "begin": "(<\/?)((?i:let)\\b)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "2": {
+          "name": "let.element.html.au"
+        }
+      },
+      "end": "(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.html"
+        }
+      },
+      "name": "meta.tag.inline.any.html",
+      "patterns": [{
+        "include": "#tag-stuff"
+      }]
+    },    
     "meta.tag.other.html": {
       "begin": "(<\/?)([a-zA-Z0-9:\\-]+)",
       "beginCaptures": {
