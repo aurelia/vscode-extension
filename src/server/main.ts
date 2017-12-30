@@ -44,6 +44,7 @@ connection.onDidChangeConfiguration(change => {
   let settings = <AureliaSettings> globalContainer.get(AureliaSettings);
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
   settings.validation = change.settings.aurelia.validation;
+  settings.bindings.data = change.settings.aurelia.autocomplete.bindings.data;
 });
 
 // Setup Validation
