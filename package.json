@@ -170,8 +170,13 @@
               "documentation": "automatically chooses the binding mode. Uses two-way binding for form controls and to-view/one-way binding for almost everything else"
             },
             { 
-              "name": "one-way",
+              "name": "to-view",
               "documentation": "flows data one direction: from the view-model to the view"
+            },            
+            { 
+              "name": "one-way",
+              "documentation": "[deprecated, use to-view instead] flows data one direction: from the view-model to the view",
+              "label": ".one-way='' [deprecated]"
             },
             { 
               "name": "from-view",

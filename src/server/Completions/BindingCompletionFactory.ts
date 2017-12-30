@@ -72,7 +72,7 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
           insertText: `${binding.name}${snippetPrefix}`,
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Property,
-          label: `.${binding.name}=${this.settings.quote}${this.settings.quote}`
+          label: binding.label ? (binding.label as string).replace(/'/g, this.settings.quote) : `.${binding.name}=${this.settings.quote}${this.settings.quote}`
         });
       }   
   }
