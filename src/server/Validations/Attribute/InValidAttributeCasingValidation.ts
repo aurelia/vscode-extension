@@ -1,26 +1,47 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver-types';
 import { AttributeDefinition, TagDefinition } from './../../DocumentParser';
-import { attributeInvalidCaseFix } from './../../../shared/attributeInvalidCaseFix';
+import { attributeInvalidCaseFix } from './../../Common/attributeInvalidCaseFix';
+import { unescape } from 'querystring';
 
 export class InValidAttributeCasingValidation {
 
   private fixed: string;
+  private original: string; 
 
-  public match = (attribute: AttributeDefinition, element: TagDefinition) => { 
-    this.fixed = attributeInvalidCaseFix(attribute, element);
-    return (this.fixed && this.fixed !== attribute.name);
+  private attributeStartOffset: number;
+  private attributeEndOffset: number;
+
+
+  public match = (attribute: AttributeDefinition, element: TagDefinition, document: TextDocument) => {
+  
+    if (!attribute.binding) {
+      this.attributeEndOffset = undefined;
+      this.attributeStartOffset = undefined;
+      this.original = undefined;
+      this.fixed = undefined;
+      return false;
+    }
+
+    this.attributeStartOffset = attribute.startOffset;
+    this.attributeEndOffset = this.attributeStartOffset + attribute.name.length;
+
+    this.fixed = attributeInvalidCaseFix(attribute.name, element.name);
+    this.original = document.getText().substring(this.attributeStartOffset, this.attributeEndOffset)
+ 
+    return (this.fixed && this.fixed !== this.original);
   }
 
   public diagnostic(attribute: AttributeDefinition, element: TagDefinition, document: TextDocument) {   
+
     const attributeStartOffset = attribute.startOffset;
     const attributeEndOffset = attributeStartOffset + attribute.name.length;
-    const original = document.getText().substring(attributeStartOffset, attributeEndOffset);
-
     return <Diagnostic> {
-      message: `'${original}' has invalid casing; it should likely be '${this.fixed}'`,
+      message: `'${this.original}' has invalid casing; it should likely be '${this.fixed}'`,
       range: Range.create(document.positionAt(attributeStartOffset), document.positionAt(attributeEndOffset)),
       severity: DiagnosticSeverity.Error,
-      source: 'Aurelia'
+      source: 'Aurelia',
+      code: 'aurelia-attribute-invalid-case',
+      elementName: element.name
     };
   }
 }

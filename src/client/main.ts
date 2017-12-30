@@ -1,8 +1,7 @@
 import * as path from 'path';
-import { ExtensionContext, OutputChannel, window, languages, SnippetString } from 'vscode';
+import { ExtensionContext, OutputChannel, window, languages, SnippetString, commands, TextEdit } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
-//import htmlInvalidCasingActionProvider from './htmlInvalidCasingCodeActionProvider';
 import { RelatedFiles } from './relatedFiles';
 
 let outputChannel: OutputChannel;
@@ -17,10 +16,25 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(AureliaCliCommands.registerCommands(outputChannel));
   context.subscriptions.push(new RelatedFiles());
 
-  // Register code fix
-  //const invalidCasingAction = new htmlInvalidCasingActionProvider();
-  //invalidCasingAction.activate(context.subscriptions);
-  //languages.registerCodeActionsProvider('html', invalidCasingAction);
+  // Register Code Actions
+  const edit = (uri: string, documentVersion: number, edits: TextEdit[]) =>
+  {
+    let textEditor = window.activeTextEditor;
+    if (textEditor && textEditor.document.uri.toString() === uri) {
+      textEditor.edit(mutator => {
+        for(let edit of edits) {
+          mutator.replace(client.protocol2CodeConverter.asRange(edit.range), edit.newText);
+        }
+      }).then((success) => {
+        window.activeTextEditor.document.save();
+        if (!success) {
+          window.showErrorMessage('Failed to apply Aurelia code fixes to the document. Please consider opening an issue with steps to reproduce.');
+        }
+      });
+    }
+  };
+  context.subscriptions.push(commands.registerCommand('aurelia-attribute-invalid-case', edit));
+  context.subscriptions.push(commands.registerCommand('aurelia-binding-one-way-deprecated', edit));
 
   // Register Aurelia language server
   const serverModule = context.asAbsolutePath(path.join('dist', 'src', 'server', 'main.js'));

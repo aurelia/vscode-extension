@@ -1,21 +1,17 @@
 import { AttributeMap } from 'aurelia-templating-binding';
 import {AttributeDefinition, TagDefinition } from './../server/DocumentParser';
 
-export function attributeInvalidCaseFix(attribute: AttributeDefinition, element: TagDefinition) {
-
-  if (!attribute.binding) {
-    return undefined;
-  }
+export function attributeInvalidCaseFix(name: string, elementName: string) {
 
   const attributeMap = new AttributeMap({
     isStandardSvgAttribute: () => false
   });
   
   let fixed;
-  const auElement = attributeMap.elements[element.name];
+  const auElement = attributeMap.elements[elementName];
 
   // only replace dashes in non data-* and aria-* attributes
-  let lookupProperty = attribute.name.toLowerCase();
+  let lookupProperty = name.toLowerCase();
   if (/^(?!(data|aria)-).*$/g.test(lookupProperty)) {
     lookupProperty = lookupProperty.replace('-','');
   }
@@ -27,7 +23,7 @@ export function attributeInvalidCaseFix(attribute: AttributeDefinition, element:
     fixed = attributeMap.allElements[lookupProperty];
   }
   else {
-    fixed = attribute.name.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
+    fixed = name.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
   }
 
   return fixed;

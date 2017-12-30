@@ -14,6 +14,7 @@ export class OneWayDeprecatedValidation {
       range: Range.create(document.positionAt(bindingStartOffset), document.positionAt(bindingEndOffset)),
       severity: DiagnosticSeverity.Warning,
       source: 'Aurelia',
+      code: 'aurelia-binding-one-way-deprecated'
     };
   }
 }

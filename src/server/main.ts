@@ -12,6 +12,8 @@ import ElementLibrary from './Completions/Library/_elementLibrary';
 import AureliaSettings from './AureliaSettings';
 
 import { HtmlValidator } from './Validations/HtmlValidator';
+import { HtmlInvalidCaseCodeAction } from './CodeActions/HtmlInvalidCaseCodeAction';
+import { OneWayBindingDeprecatedCodeAction } from './CodeActions/OneWayBindingDeprecatedCodeAction';
 
 // Bind console.log & error to the Aurelia output
 let connection: IConnection = createConnection();
@@ -34,9 +36,27 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
   return {
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },
+      codeActionProvider: true,
       textDocumentSync: documents.syncKind,
     },
   };
+});
+
+const codeActions = [
+  new HtmlInvalidCaseCodeAction(),
+  new OneWayBindingDeprecatedCodeAction()
+];
+connection.onCodeAction(async codeActionParams => {
+  const diagnostics = codeActionParams.context.diagnostics;
+  const document = documents.get(codeActionParams.textDocument.uri);
+  const commands = []; 
+  for (const diagnostic of diagnostics) {
+    const action = codeActions.find(i => i.name == diagnostic.code);
+    if (action) {
+      commands.push(await action.commands(diagnostic, document));
+    }
+  }
+  return commands;
 });
 
 // Register and get changes to Aurelia settings

@@ -36,7 +36,36 @@ export class DocumentParser {
       });
       stream.pipe(parser);
 
-    });    
+    });  
+  }
+
+  public getElementAtPosition(text: string, start: number, end: number): Promise<TagDefinition> {
+    return new Promise((resolve, reject) => {
+      let stream = new Readable();
+      stream.push(text);
+      stream.push(null);
+
+      let tagDefinition: TagDefinition;
+
+      const parser = new SAXParser({ locationInfo: true });
+      parser.on('startTag', (name, attrs, selfClosing, location) => {
+
+         if (location.startOffset <= start && location.endOffset >= end) {
+          tagDefinition = new TagDefinition(
+            true, 
+            name, 
+            location.startOffset, 
+            location.endOffset,
+            selfClosing,
+            attrs.map(i => new AttributeDefinition(i.name, i.value, location.attrs[i.name])));
+         } 
+      });
+
+      stream.on('end', x => {
+        resolve(tagDefinition);
+      });
+      stream.pipe(parser);
+    }); 
   }
 
 }

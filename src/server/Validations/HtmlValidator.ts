@@ -41,7 +41,7 @@ export class HtmlValidator {
     for (const element of documentNodes) {
       for (const attribute of element.attributes) {
         this.attributeValidators
-          .filter(validator => validator.match(attribute, element))
+          .filter(validator => validator.match(attribute, element, document))
           .forEach(validator => diagnostics.push(validator.diagnostic(attribute, element, document)))
       }
     }
