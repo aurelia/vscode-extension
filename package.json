@@ -160,6 +160,37 @@
           ],
           "default": "double",
           "description": "Quotes to use when performing an autocomplete action"
+        },
+        "aurelia.autocomplete.bindings.data" : {
+          "type": "array",
+          "description": "Auto complete options to provide on data bindings",
+          "default": [
+            { 
+              "name": "bind",
+              "documentation": "automatically chooses the binding mode. Uses two-way binding for form controls and to-view/one-way binding for almost everything else"
+            },
+            { 
+              "name": "to-view",
+              "documentation": "flows data one direction: from the view-model to the view"
+            },            
+            { 
+              "name": "one-way",
+              "documentation": "[deprecated, use to-view instead] flows data one direction: from the view-model to the view",
+              "label": ".one-way='' [deprecated]"
+            },
+            { 
+              "name": "from-view",
+              "documentation": "flows data one direction: from the view to the view-model"
+            },            
+            { 
+              "name": "two-way",
+              "documentation": "flows data both ways: from view-model to view and from view to view-model"
+            },
+            { 
+              "name": "one-time",
+              "documentation": "flows data one direction: from the view-model to the view, once"
+            }
+          ]
         }
       }
     }
