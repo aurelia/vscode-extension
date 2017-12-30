@@ -1,7 +1,7 @@
-import { Diagnostic, TextEdit } from "vscode-languageserver-types/lib/main";
-import { Command } from "vscode-languageserver-protocol/lib/main";
+import { Diagnostic, TextEdit } from "vscode-languageserver-types";
+import { Command } from "vscode-languageserver-protocol";
 import { DocumentParser } from "../DocumentParser";
-import { TextDocument } from "vscode-languageserver/lib/main";
+import { TextDocument } from "vscode-languageserver";
 import { attributeInvalidCaseFix } from "../Common/AttributeInvalidCaseFix";
 
 export class HtmlInvalidCaseCodeAction {

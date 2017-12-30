@@ -1,6 +1,6 @@
-import { Diagnostic, TextEdit } from "vscode-languageserver-types/lib/main";
-import { Command } from "vscode-languageserver-protocol/lib/main";
-import { TextDocument } from "vscode-languageserver/lib/main";
+import { Diagnostic, TextEdit } from "vscode-languageserver-types";
+import { Command } from "vscode-languageserver-protocol";
+import { TextDocument } from "vscode-languageserver";
 
 export class OneWayBindingDeprecatedCodeAction {
   public name = 'aurelia-binding-one-way-deprecated';
