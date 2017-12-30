@@ -1,6 +1,6 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver-types';
 import { AttributeDefinition, TagDefinition } from './../../DocumentParser';
-import { attributeInvalidCaseFix } from './../../Common/attributeInvalidCaseFix';
+import { attributeInvalidCaseFix } from './../../Common/AttributeInvalidCaseFix';
 import { unescape } from 'querystring';
 
 export class InValidAttributeCasingValidation {

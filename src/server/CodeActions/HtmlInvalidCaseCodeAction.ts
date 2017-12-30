@@ -2,7 +2,7 @@ import { Diagnostic, TextEdit } from "vscode-languageserver-types/lib/main";
 import { Command } from "vscode-languageserver-protocol/lib/main";
 import { DocumentParser } from "../DocumentParser";
 import { TextDocument } from "vscode-languageserver/lib/main";
-import { attributeInvalidCaseFix } from "../Common/attributeInvalidCaseFix";
+import { attributeInvalidCaseFix } from "../Common/AttributeInvalidCaseFix";
 
 export class HtmlInvalidCaseCodeAction {
   public name = 'aurelia-attribute-invalid-case';
