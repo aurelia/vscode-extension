@@ -160,7 +160,12 @@
           ],
           "default": "double",
           "description": "Quotes to use when performing an autocomplete action"
-        }
+        },
+        "aurelia.validation": {
+          "type": "boolean",
+          "default": "true",
+          "description": "Enable Aurelia validations"
+        }        
       }
     }
   },

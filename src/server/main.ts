@@ -6,24 +6,20 @@ import { createConnection,
   InitializeResult, 
   CompletionList, Hover } from 'vscode-languageserver';
 import { MarkedString } from 'vscode-languageserver-types';
-import { HTMLDocument, getLanguageService } from './aurelia-languageservice/aureliaLanguageService';
-import { getLanguageModelCache } from './languageModelCache';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
 import AureliaSettings from './AureliaSettings';
+
+import { HtmlValidator } from './Validations/HtmlValidator';
 
 // Bind console.log & error to the Aurelia output
 let connection: IConnection = createConnection();
 console.log = connection.console.log.bind(connection.console);
 console.error = connection.console.error.bind(connection.console);
 
-// Cache documents
 let documents: TextDocuments = new TextDocuments();
 documents.listen(connection);
-let htmlDocuments = getLanguageModelCache<HTMLDocument>(10, 60, document => getLanguageService().parseHTMLDocument(document));
-documents.onDidClose(e => htmlDocuments.onDocumentRemoved(e.document));
-connection.onShutdown(() => htmlDocuments.dispose());
 
 // Setup Aurelia dependency injection
 let globalContainer = new Container();
@@ -47,13 +43,13 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
 connection.onDidChangeConfiguration(change => { 
   let settings = <AureliaSettings> globalContainer.get(AureliaSettings);
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
+  settings.validation = change.settings.aurelia.validation;
 });
 
 // Setup Validation
-let languageService = getLanguageService();
+const validator = <HtmlValidator> globalContainer.get(HtmlValidator);
 documents.onDidChangeContent(async change => {
-  let htmlDocument = htmlDocuments.get(change.document);
-  const diagnostics = await languageService.doValidation(change.document, htmlDocument);
+  const diagnostics = await validator.doValidation(change.document);
   connection.sendDiagnostics({ uri: change.document.uri, diagnostics });
 });
 
