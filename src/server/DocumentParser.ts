@@ -1,5 +1,6 @@
-import { AST, SAXParser } from 'parse5'; 
+import { AST, SAXParser, MarkupData } from 'parse5'; 
 import { Readable } from 'stream';
+import { Location } from 'vscode-languageserver/lib/main';
 
 export class DocumentParser {
 
@@ -13,13 +14,14 @@ export class DocumentParser {
 
       const parser = new SAXParser({ locationInfo: true });
       parser.on('startTag', (name, attrs, selfClosing, location) => {
+
         stack.push(new TagDefinition(
           true, 
           name, 
           location.startOffset, 
           location.endOffset,
           selfClosing,
-          attrs.map(i => new AttributeDefinition(i.name, i.value))));
+          attrs.map(i => new AttributeDefinition(i.name, i.value, location.attrs[i.name]))));
       });
       parser.on("endTag", (name, location) => {
         stack.push(new TagDefinition(
@@ -34,7 +36,36 @@ export class DocumentParser {
       });
       stream.pipe(parser);
 
-    });    
+    });  
+  }
+
+  public getElementAtPosition(text: string, start: number, end: number): Promise<TagDefinition> {
+    return new Promise((resolve, reject) => {
+      let stream = new Readable();
+      stream.push(text);
+      stream.push(null);
+
+      let tagDefinition: TagDefinition;
+
+      const parser = new SAXParser({ locationInfo: true });
+      parser.on('startTag', (name, attrs, selfClosing, location) => {
+
+         if (location.startOffset <= start && location.endOffset >= end) {
+          tagDefinition = new TagDefinition(
+            true, 
+            name, 
+            location.startOffset, 
+            location.endOffset,
+            selfClosing,
+            attrs.map(i => new AttributeDefinition(i.name, i.value, location.attrs[i.name])));
+         } 
+      });
+
+      stream.on('end', x => {
+        resolve(tagDefinition);
+      });
+      stream.pipe(parser);
+    }); 
   }
 
 }
@@ -54,7 +85,10 @@ export class AttributeDefinition {
   public name: string;
   public binding: string;
 
-  constructor(name: string, public value: string) {
+  public endOffset: number;
+  public startOffset: number;
+
+  constructor(name: string, public value: string, location?: MarkupData.Location) {
     let parts = name.split('.');
     if (parts.length == 2) {
       this.name = parts[0];
@@ -62,5 +96,8 @@ export class AttributeDefinition {
     } else {
       this.name = name;
     }
+
+    this.startOffset = location.startOffset;
+    this.endOffset = location.endOffset;
   }
 }
