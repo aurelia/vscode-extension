@@ -86,7 +86,7 @@ export default class CompletionItemFactory {
   }
 
   private canExpandDot(elementString) {
-    return !/([^a-zA-Z]|\.(bind|one-way|two-way|one-time|delegate|trigger|call|capture|ref))\.$/g.test(elementString);    
+    return !/([^a-zA-Z]|\.(bind|one-way|two-way|one-time|from-view|to-view|delegate|trigger|call|capture|ref))\.$/g.test(elementString);    
   }
 
   private getOpenHtmlTags(nodes: Array<TagDefinition>, lastIdx: number) {
