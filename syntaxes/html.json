@@ -175,6 +175,9 @@
           "include": "#tag-aurelia-view-model-attribute"
         },
         {
+          "include": "#tag-aurelia-with-attribute"
+        },
+        {
           "include": "#tag-aurelia-model-attribute"
         },
         {
@@ -292,6 +295,20 @@
         },
         "3": {
           "name": "for.attribute.html.au"
+        }
+      }
+    },
+    "tag-aurelia-with-attribute": {
+      "match": "(?<=[^\"-])(with)(?![-])(\\.)?((bind|one-way|two-way|one-time|from-view|to-view))",
+      "captures": {
+        "1": {
+          "name": "with.attribute.html.au"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "4": {
+          "name": "databinding.attribute.html.au"
         }
       }
     },
