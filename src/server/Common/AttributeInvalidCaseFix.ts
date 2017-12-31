@@ -3,6 +3,7 @@ import {AttributeDefinition, TagDefinition } from './../../server/DocumentParser
 
 export function attributeInvalidCaseFix(name: string, elementName: string) {
 
+  // TODO: find a way to detect if this element is a svg element
   const attributeMap = new AttributeMap({
     isStandardSvgAttribute: () => false
   });
@@ -27,5 +28,4 @@ export function attributeInvalidCaseFix(name: string, elementName: string) {
   }
 
   return fixed;
-
 }
