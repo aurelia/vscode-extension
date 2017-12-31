@@ -338,6 +338,7 @@
         "ref.attribute.html.au",
         "repeat.attribute.html.au",
         "for.attribute.html.au",
+        "with.attribute.html.au",
         "view-model.attribute.html.au",
         "matcher.attribute.html.au",
         "model.attribute.html.au",
