@@ -213,10 +213,10 @@ export class GlobalAttributes {
         'http://aurelia.io/hub.html#/doc/api/aurelia/templating-resources/latest/class/If')
       ],                
       [
-        'with',
+        'with.bind',
         new SimpleAttribute(`Binds the With with provided binding context and override context.`,
         'http://aurelia.io/hub.html#/doc/api/aurelia/templating-resources/1.4.0/class/With')
-      ],        
+      ],   
       [
         'view-spy',
         new EmptyAttribute(`Attribute to be placed on any HTML element in a view to emit the View instance to 
