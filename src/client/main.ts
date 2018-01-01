@@ -3,6 +3,7 @@ import { ExtensionContext, OutputChannel, window, languages, SnippetString, comm
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
 import { RelatedFiles } from './relatedFiles';
+import { registerPreview } from './Preview/Register';
 
 let outputChannel: OutputChannel;
 
@@ -54,6 +55,8 @@ export function activate(context: ExtensionContext) {
   };
 
   const client = new LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
+  registerPreview(context, window, client);
+  
   const disposable = client.start();
   context.subscriptions.push(disposable);
 }

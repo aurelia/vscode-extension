@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver-types';
-import {AttributeDefinition, TagDefinition } from './../../DocumentParser';
+import {AttributeDefinition, TagDefinition } from './../../FileParser/HTMLDocumentParser';
 
 export class OneWayDeprecatedValidation {
   public match(attribute: AttributeDefinition) {

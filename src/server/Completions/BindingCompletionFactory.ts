@@ -4,7 +4,7 @@ import {
   InsertTextFormat, MarkedString } from 'vscode-languageserver-types';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
-import { TagDefinition, AttributeDefinition } from './../DocumentParser';
+import { TagDefinition, AttributeDefinition } from './../FileParser/HTMLDocumentParser';
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 import { GlobalAttributes } from './Library/_elementStructure';
 import AureliaSettings from './../AureliaSettings';
