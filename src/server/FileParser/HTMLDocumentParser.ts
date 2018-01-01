@@ -1,8 +1,8 @@
-import { AST, SAXParser, MarkupData } from 'parse5'; 
+import { AST, SAXParser, MarkupData } from 'parse5';
 import { Readable } from 'stream';
 import { Location } from 'vscode-languageserver/lib/main';
 
-export class DocumentParser {
+export class HTMLDocumentParser {
 
   public parse(text: string): Promise<Array<TagDefinition>> {
     return new Promise((resolve, reject) => {
@@ -14,7 +14,6 @@ export class DocumentParser {
 
       const parser = new SAXParser({ locationInfo: true });
       parser.on('startTag', (name, attrs, selfClosing, location) => {
-
         stack.push(new TagDefinition(
           true, 
           name, 

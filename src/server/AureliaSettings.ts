@@ -4,4 +4,8 @@ export default class AureliaSettings {
   public bindings = {
     data : []
   }
+
+  public featureToggles = {
+    smartAutocomplete : true
+  }
 }

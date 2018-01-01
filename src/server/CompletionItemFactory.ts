@@ -5,7 +5,7 @@ import ElementCompletionFactory from './Completions/ElementCompletionFactory';
 import AttributeValueCompletionFactory from './Completions/AttributeValueCompletionFactory';
 import BindingCompletionFactory from './Completions/BindingCompletionFactory';
 import EmmetCompletionFactory from './Completions/EmmetCompletionFactory';
-import { DocumentParser, TagDefinition, AttributeDefinition } from './DocumentParser';
+import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './FileParser/HTMLDocumentParser';
 
 @autoinject()
 export default class CompletionItemFactory {
@@ -16,7 +16,7 @@ export default class CompletionItemFactory {
     private attributeValueCompletionFactory: AttributeValueCompletionFactory,
     private bindingCompletionFactory: BindingCompletionFactory,
     private emmetCompletionFactory: EmmetCompletionFactory,
-    private parser: DocumentParser) { }
+    private parser: HTMLDocumentParser) { }
 
   public async create(
     triggerCharacter: string,
@@ -61,7 +61,7 @@ export default class CompletionItemFactory {
         
         // inside attribute, perform attribute completion
         } else if (triggerCharacter === '"' || triggerCharacter === '\'') {
-                return this.createValueCompletion(insideTag, text, positionNumber);
+                return this.createValueCompletion(insideTag, text, positionNumber, uri);
         } else {
           return [];
         }
@@ -104,7 +104,7 @@ export default class CompletionItemFactory {
     return tags;
   }
 
-  private createValueCompletion(tag: TagDefinition, text: string, position: number) {
+  private createValueCompletion(tag: TagDefinition, text: string, position: number, uri: string) {
     let nextCharacter = text.substring(position, position + 1);
     if (/['"]/.test(nextCharacter)) {
       let attribute;
@@ -125,7 +125,7 @@ export default class CompletionItemFactory {
       if (!attribute) {
         return [];
       }
-      return this.attributeValueCompletionFactory.create(tag.name, attribute.name, attribute.binding);
+      return this.attributeValueCompletionFactory.create(tag.name, attribute.name, attribute.binding, uri);
     }
   }
 

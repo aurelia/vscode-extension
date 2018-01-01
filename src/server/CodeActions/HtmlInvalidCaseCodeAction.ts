@@ -1,5 +1,5 @@
 import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver-types";
-import { DocumentParser } from "../DocumentParser";
+import { HTMLDocumentParser } from "./../FileParser/HTMLDocumentParser";
 import { attributeInvalidCaseFix } from "../Common/AttributeInvalidCaseFix";
 
 export class HtmlInvalidCaseCodeAction {
@@ -9,7 +9,7 @@ export class HtmlInvalidCaseCodeAction {
     const text = document.getText();
     const start = document.offsetAt(diagnostic.range.start);
     const end = document.offsetAt(diagnostic.range.end);
-    const parser = new DocumentParser();
+    const parser = new HTMLDocumentParser();
     const element = await parser.getElementAtPosition(text, start, end);
 
     const original = text.substring(start, end);

@@ -4,34 +4,45 @@ import { createConnection,
   TextDocuments, 
   InitializeParams, 
   InitializeResult, 
-  CompletionList, Hover } from 'vscode-languageserver';
+  CompletionList, 
+  Hover, 
+  InitializedParams } from 'vscode-languageserver';
 import { MarkedString } from 'vscode-languageserver-types';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
 import AureliaSettings from './AureliaSettings';
 
+import ProcessFiles from './FileParser/ProcessFiles';
+
 import { HtmlValidator } from './Validations/HtmlValidator';
 import { HtmlInvalidCaseCodeAction } from './CodeActions/HtmlInvalidCaseCodeAction';
 import { OneWayBindingDeprecatedCodeAction } from './CodeActions/OneWayBindingDeprecatedCodeAction';
 
+import * as ts from 'typescript';
+import { AureliaApplication } from './FileParser/Model/AureliaApplication';
+import { normalizePath } from './Util/NormalizePath';
+import { connect } from 'net';
+
 // Bind console.log & error to the Aurelia output
-let connection: IConnection = createConnection();
+const connection: IConnection = createConnection();
 console.log = connection.console.log.bind(connection.console);
 console.error = connection.console.error.bind(connection.console);
 
-let documents: TextDocuments = new TextDocuments();
+const documents: TextDocuments = new TextDocuments();
 documents.listen(connection);
 
 // Setup Aurelia dependency injection
-let globalContainer = new Container();
-let completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
+const globalContainer = new Container();
+const completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
+const aureliaApplication = <AureliaApplication> globalContainer.get(AureliaApplication);
+const settings = <AureliaSettings> globalContainer.get(AureliaSettings);
 
 // Register characters to lisen for
-connection.onInitialize((params: InitializeParams): InitializeResult => {
+connection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
   
-  // TODO: find better way to init this
-  let dummy = globalContainer.get(ElementLibrary);
+  // TODO: find better way/place to init this
+  const dummy = globalContainer.get(ElementLibrary);
   
   return {
     capabilities: {
@@ -60,11 +71,13 @@ connection.onCodeAction(async codeActionParams => {
 });
 
 // Register and get changes to Aurelia settings
-connection.onDidChangeConfiguration(change => { 
-  let settings = <AureliaSettings> globalContainer.get(AureliaSettings);
+connection.onDidChangeConfiguration(async (change) => { 
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
   settings.validation = change.settings.aurelia.validation;
   settings.bindings.data = change.settings.aurelia.autocomplete.bindings.data;
+  settings.featureToggles = change.settings.aurelia.featureToggles;
+
+  await featureToggles(settings.featureToggles);
 });
 
 // Setup Validation
@@ -84,4 +97,25 @@ connection.onCompletion(textDocumentPosition => {
   return completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri);
 });
 
+
+
+connection.onRequest('aurelia-view-information', (filePath: string) => {
+  return aureliaApplication.components.find(doc => doc.paths.indexOf(normalizePath(filePath)) > -1);
+});
+
 connection.listen();
+
+
+async function featureToggles(featureToggles) {
+  if (settings.featureToggles.smartAutocomplete) {
+    console.log('smart auto complete init');
+    try {
+      let fileProcessor = new ProcessFiles();
+      await fileProcessor.processPath();
+      aureliaApplication.components = fileProcessor.components;
+    } catch (ex) {
+      console.log('------------- FILE PROCESSOR ERROR ---------------------');
+      console.log(JSON.stringify(ex));
+    }
+  }
+}

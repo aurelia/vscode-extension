@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver-types';
-import {DocumentParser, AttributeDefinition, TagDefinition } from './../DocumentParser';
+import { HTMLDocumentParser, AttributeDefinition, TagDefinition } from './../FileParser/HTMLDocumentParser';
 import { autoinject } from 'aurelia-dependency-injection';
 
 import { OneWayDeprecatedValidation } from './Attribute/OneWayDeprecatedValidation';
@@ -34,7 +34,7 @@ export class HtmlValidator {
       return Promise.resolve([]);
     }
 
-    const parser = new DocumentParser();
+    const parser = new HTMLDocumentParser();
     const documentNodes = await parser.parse(text);
   
     const diagnostics: Diagnostic[] = [];

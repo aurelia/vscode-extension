@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver-types';
-import { AttributeDefinition, TagDefinition } from './../../DocumentParser';
+import { AttributeDefinition, TagDefinition } from './../../FileParser/HTMLDocumentParser';
 import { attributeInvalidCaseFix } from './../../Common/AttributeInvalidCaseFix';
 import { unescape } from 'querystring';
 
