@@ -1,3 +1,26 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/aurelia/vscode-extension/compare/0.3.4...1.0.0) (2018-01-23)
+
+
+### Bug Fixes
+
+* **auto-complete:** suggest with as with.bind ([ea625e1](https://github.com/aurelia/vscode-extension/commit/ea625e1))
+* **codefix:** use the Aurelia attribute map to validate case of attributes, resolves [#54](https://github.com/aurelia/vscode-extension/issues/54) ([b143ce8](https://github.com/aurelia/vscode-extension/commit/b143ce8))
+* **related-file:** add editor column index when opening related file ([#57](https://github.com/aurelia/vscode-extension/issues/57)) ([70875d2](https://github.com/aurelia/vscode-extension/commit/70875d2)), closes [#51](https://github.com/aurelia/vscode-extension/issues/51)
+* **syntax:** tokenize string interpolation end character correctly, fixes [#48](https://github.com/aurelia/vscode-extension/issues/48) ([0921158](https://github.com/aurelia/vscode-extension/commit/0921158))
+* **themes:** add scope for let element ([#63](https://github.com/aurelia/vscode-extension/issues/63)) ([057cdfc](https://github.com/aurelia/vscode-extension/commit/057cdfc))
+
+
+### Features
+
+* **auto-complete:** data binding auto complete configuration option, resolves [#53](https://github.com/aurelia/vscode-extension/issues/53) ([#64](https://github.com/aurelia/vscode-extension/issues/64)) ([06815bd](https://github.com/aurelia/vscode-extension/commit/06815bd))
+* **auto-complete:** experimental auto complete from view model (behind feature toggle: smartAutocomplete) ([7312b03](https://github.com/aurelia/vscode-extension/commit/7312b03))
+* **diagnostics:** code action & diagnostic warning to convert 'one-way' to 'to-view' ([#66](https://github.com/aurelia/vscode-extension/issues/66)) ([2eb4ee1](https://github.com/aurelia/vscode-extension/commit/2eb4ee1))
+* **syntax-highlight:** Add the let command, resolves [#55](https://github.com/aurelia/vscode-extension/issues/55) ([#60](https://github.com/aurelia/vscode-extension/issues/60)) ([5bcdfce](https://github.com/aurelia/vscode-extension/commit/5bcdfce))
+* **vscode:** update vscode engine version and packages to latest ([8caa55b](https://github.com/aurelia/vscode-extension/commit/8caa55b))
+
+
+
 <a name="0.3.4"></a>
 ## [0.3.4](https://github.com/aurelia/vscode-extension/compare/0.3.3...v0.3.4) (2017-05-29)
 

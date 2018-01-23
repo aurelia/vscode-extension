@@ -1,6 +1,6 @@
 {
   "name": "aurelia",
-  "version": "0.3.4",
+  "version": "1.0.0",
   "description": "A VS Code extension for Aurelia.",
   "icon": "images/logo.png",
   "keywords": [
@@ -19,7 +19,7 @@
   "license": "MIT",
   "author": "AureliaEffect",
   "publisher": "AureliaEffect",
-  "preview": true,
+  "preview": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/aurelia/vscode-extension"
