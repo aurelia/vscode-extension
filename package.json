@@ -182,10 +182,9 @@
         "aurelia.featureToggles": {
           "type": "object",
           "description": "enable beta features",
-          "default":
-            {
-              "smartAutocomplete": false
-            }
+          "default": {
+            "smartAutocomplete": false
+          }
         },
         "aurelia.autocomplete.bindings.data": {
           "type": "array",
@@ -255,11 +254,11 @@
     "mocha": "^3.3.0",
     "mocha-junit-reporter": "^1.13.0",
     "tslint": "^5.2.0",
-    "typescript": "^2.3.2",
     "vscode": "^1.1.10",
     "vscode-textmate": "^3.1.4"
   },
   "dependencies": {
+    "typescript": "^2.3.2",
     "aurelia-binding": "^1.2.2",
     "aurelia-cli": "^0.29.0",
     "aurelia-dependency-injection": "^1.3.0",
