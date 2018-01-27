@@ -1,3 +1,14 @@
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/aurelia/vscode-extension/compare/1.0.0...1.0.1) (2018-01-27)
+
+
+### Bug Fixes
+
+* **dependencies:** move Typescript from devDependencies to Dependencies ([f68830b](https://github.com/aurelia/vscode-extension/commit/f68830b))
+* **diagnostics:** suggest lowercase variant, not the JavaScript name for items in attributeMap, resolves [#72](https://github.com/aurelia/vscode-extension/issues/72) ([#73](https://github.com/aurelia/vscode-extension/issues/73)) ([cfd831f](https://github.com/aurelia/vscode-extension/commit/cfd831f))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/aurelia/vscode-extension/compare/0.3.4...1.0.0) (2018-01-23)
 
