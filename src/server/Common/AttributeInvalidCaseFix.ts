@@ -17,11 +17,8 @@ export function attributeInvalidCaseFix(name: string, elementName: string) {
     lookupProperty = lookupProperty.replace('-','');
   }
 
-  if (auElement && lookupProperty in auElement) {
-    fixed = auElement[lookupProperty];
-  }
-  else if (lookupProperty in attributeMap.allElements) {
-    fixed = attributeMap.allElements[lookupProperty];
+  if (auElement && lookupProperty in auElement || lookupProperty in attributeMap.allElements) {
+    fixed = lookupProperty;
   }
   else {
     fixed = name.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
