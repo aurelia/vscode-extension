@@ -27,7 +27,7 @@ export class HTMLDocumentParser {
           false,
           name, 
           location.startOffset, 
-          location.endOffset));        
+          location.endOffset));    
       });
 
       stream.on('end', x => {
@@ -88,15 +88,19 @@ export class AttributeDefinition {
   public startOffset: number;
 
   constructor(name: string, public value: string, location?: MarkupData.Location) {
-    let parts = name.split('.');
-    if (parts.length == 2) {
-      this.name = parts[0];
-      this.binding = parts[1];
-    } else {
-      this.name = name;
+    if (name) {
+      let parts = name.split('.');
+      if (parts.length == 2) {
+        this.name = parts[0];
+        this.binding = parts[1];
+      } else {
+        this.name = name;
+      }
     }
 
-    this.startOffset = location.startOffset;
-    this.endOffset = location.endOffset;
+    if (location) {
+      this.startOffset = location.startOffset;
+      this.endOffset = location.endOffset;
+    }
   }
 }
