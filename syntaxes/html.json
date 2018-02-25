@@ -28,7 +28,7 @@
   ],
   "repository": {
     "string.interpolation.html.au": {
-      "match": "(\\${)(((?!\\${).|\\s)*)(})",
+      "match": "(\\${)(.*)(})",
       "captures": {
         "1": {
           "name": "punctuation.definition.string.interpolation.start"
@@ -36,7 +36,7 @@
         "2": {
           "name": "meta.string.interpolation"
         },
-        "4": {
+        "3": {
           "name": "punctuation.definition.string.interpolation.end"
         }
       }
