@@ -46,56 +46,57 @@
   ],
   "main": "./dist/src/client/main",
   "contributes": {
-    "languages": [
-      {
-        "id": "html",
-        "order": 1,
-        "extensions": [
-          ".html",
-          ".htm",
-          ".shtml",
-          ".xhtml",
-          ".mdoc",
-          ".jsp",
-          ".asp",
-          ".aspx",
-          ".jshtm",
-          ".volt",
-          ".ejs",
-          ".au"
-        ],
-        "aliases": [
-          "HTML",
-          "htm",
-          "html",
-          "xhtml"
-        ],
-        "mimetypes": [
-          "text/html",
-          "text/x-jshtm",
-          "text/template",
-          "text/ng-template",
-          "application/xhtml+xml"
-        ],
-        "embeddedLanguages": {
-          "text.html": "html",
-          "source.css": "css",
-          "source.js": "javascript",
-          "source.python": "python",
-          "source.smarty": "smarty"
-        },
-        "configuration": "./language-configuration.json"
+    "languages": [{
+      "id": "html",
+      "order": 1,
+      "extensions": [
+        ".html",
+        ".htm",
+        ".shtml",
+        ".xhtml",
+        ".mdoc",
+        ".jsp",
+        ".asp",
+        ".aspx",
+        ".jshtm",
+        ".volt",
+        ".ejs",
+        ".au"
+      ],
+      "aliases": [
+        "HTML",
+        "htm",
+        "html",
+        "xhtml"
+      ],
+      "mimetypes": [
+        "text/html",
+        "text/x-jshtm",
+        "text/template",
+        "text/ng-template",
+        "application/xhtml+xml"
+      ],
+      "embeddedLanguages": {
+        "text.html": "html",
+        "source.css": "css",
+        "source.js": "javascript",
+        "source.python": "python",
+        "source.smarty": "smarty"
+      },
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "html",
+      "scopeName": "au.html",
+      "path": "./syntaxes/html.json"
+    }],
+    "folding": {
+      "markers": {
+        "start": "^\\s*<!--\\s*#region\\b\\s*(.*?)-->/",
+        "end": "^\\s*<!--\\s*#endregion\\b\\s*(.*?)-->/"
       }
-    ],
-    "grammars": [
-      {
-        "language": "html",
-        "scopeName": "au.html",
-        "path": "./syntaxes/html.json"
-      }
-    ],
-    "commands": [
-      {
+    },
+    "commands": [{
         "command": "extension.auNew",
         "title": "au new"
       },
@@ -129,15 +130,12 @@
       }
     ],
     "menus": {
-      "editor/title": [
-        {
-          "command": "aurelia.showViewProperties",
-          "when": "resourceLangId == html"
-        }
-      ]
+      "editor/title": [{
+        "command": "aurelia.showViewProperties",
+        "when": "resourceLangId == html"
+      }]
     },
-    "themes": [
-      {
+    "themes": [{
         "label": "Aurelia Dark+",
         "uiTheme": "vs-dark",
         "path": "./themes/dark_plus.json"
@@ -198,8 +196,7 @@
         "aurelia.autocomplete.bindings.data": {
           "type": "array",
           "description": "Auto complete options to provide on data bindings",
-          "default": [
-            {
+          "default": [{
               "name": "bind",
               "documentation": "automatically chooses the binding mode. Uses two-way binding for form controls and to-view/one-way binding for almost everything else"
             },
