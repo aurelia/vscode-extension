@@ -1,6 +1,6 @@
 {
   "name": "aurelia",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A VS Code extension for Aurelia.",
   "icon": "images/logo.png",
   "keywords": [
@@ -45,48 +45,43 @@
   ],
   "main": "./dist/src/client/main",
   "contributes": {
-    "languages": [
-      {
-        "id": "html",
-        "order": 1,
-        "extensions": [
-          ".html",
-          ".htm",
-          ".shtml",
-          ".xhtml",
-          ".mdoc",
-          ".jsp",
-          ".asp",
-          ".aspx",
-          ".jshtm",
-          ".volt",
-          ".ejs"
-        ],
-        "aliases": [
-          "HTML",
-          "htm",
-          "html",
-          "xhtml"
-        ],
-        "mimetypes": [
-          "text/html",
-          "text/x-jshtm",
-          "text/template",
-          "text/ng-template",
-          "application/xhtml+xml"
-        ],
-        "configuration": "./language-configuration.json"
-      }
-    ],
-    "grammars": [
-      {
-        "language": "html",
-        "scopeName": "au.html",
-        "path": "./syntaxes/html.json"
-      }
-    ],
-    "commands": [
-      {
+    "languages": [{
+      "id": "html",
+      "order": 1,
+      "extensions": [
+        ".html",
+        ".htm",
+        ".shtml",
+        ".xhtml",
+        ".mdoc",
+        ".jsp",
+        ".asp",
+        ".aspx",
+        ".jshtm",
+        ".volt",
+        ".ejs"
+      ],
+      "aliases": [
+        "HTML",
+        "htm",
+        "html",
+        "xhtml"
+      ],
+      "mimetypes": [
+        "text/html",
+        "text/x-jshtm",
+        "text/template",
+        "text/ng-template",
+        "application/xhtml+xml"
+      ],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "html",
+      "scopeName": "au.html",
+      "path": "./syntaxes/html.json"
+    }],
+    "commands": [{
         "command": "extension.auNew",
         "title": "au new"
       },
@@ -120,15 +115,12 @@
       }
     ],
     "menus": {
-      "editor/title": [
-        {
-          "command": "aurelia.showViewProperties",
-          "when": "resourceLangId == html"
-        }
-      ]
+      "editor/title": [{
+        "command": "aurelia.showViewProperties",
+        "when": "resourceLangId == html"
+      }]
     },
-    "themes": [
-      {
+    "themes": [{
         "label": "Aurelia Dark+",
         "uiTheme": "vs-dark",
         "path": "./themes/dark_plus.json"
@@ -189,8 +181,7 @@
         "aurelia.autocomplete.bindings.data": {
           "type": "array",
           "description": "Auto complete options to provide on data bindings",
-          "default": [
-            {
+          "default": [{
               "name": "bind",
               "documentation": "automatically chooses the binding mode. Uses two-way binding for form controls and to-view/one-way binding for almost everything else"
             },

@@ -1,3 +1,14 @@
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/aurelia/vscode-extension/compare/1.0.1...1.0.2) (2018-02-26)
+
+
+### Bug Fixes
+
+* **smart-autocomplete:** don't fail on undefined location for attribute, resolves [#74](https://github.com/aurelia/vscode-extension/issues/74) ([#75](https://github.com/aurelia/vscode-extension/issues/75)) ([ac71258](https://github.com/aurelia/vscode-extension/commit/ac71258))
+* **syntax:** string interpolation regex crashed when holding spacebar ([#81](https://github.com/aurelia/vscode-extension/issues/81)) ([e864c5e](https://github.com/aurelia/vscode-extension/commit/e864c5e))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/aurelia/vscode-extension/compare/1.0.0...1.0.1) (2018-01-27)
 
