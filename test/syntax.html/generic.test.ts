@@ -73,20 +73,18 @@ describe('The Aurelia HTML syntax', () => {
 
   });
 
-  // TODO: fix
-  // it('must tokenize block element with dash as scope "entity.name.tag.other.html"', () => {
+  it('must tokenize block element with dash as scope "entity.name.tag.other.html"', () => {
 
-  //   // arrange
-  //   let scope = 'entity.name.tag.other.html';
+    // arrange
+    let scope = 'entity.name.tag.other.html';
 
-  //   // act
-  //   let lineToken = tokenizeLine('<aside-type>');
-  //   writeOut(lineToken, '<aside-type>');
+    // act
+    let lineToken = tokenizeLine('<aside-type>');
 
-  //   // assert
-  //   let token = getTokenOnCharRange(lineToken, 1, 11);
-  //   assert.isOk(hasScope(token.scopes, scope));
+    // assert
+    let token = getTokenOnCharRange(lineToken, 1, 11);
+    assert.isOk(hasScope(token.scopes, scope));
 
-  // });
+  });
 
 });

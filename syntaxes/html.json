@@ -412,7 +412,7 @@
       }]
     },
     {
-      "begin": "(</?)((?i:address|blockquote|dd|div|section|article|aside|header|footer|nav|menu|dl|dt|fieldset|form|frame|frameset|h1|h2|h3|h4|h5|h6|iframe|noframes|object|ol|p|ul|applet|center|dir|hr|pre)\\b)",
+      "begin": "(<\/?)((?i:address|blockquote|dd|div|section|article|aside|header|footer|nav|menu|dl|dt|fieldset|form|frame|frameset|h1|h2|h3|h4|h5|h6|iframe|noframes|object|ol|p|ul|applet|center|dir|hr|pre)(?!-)\\b)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.html"
@@ -454,7 +454,7 @@
       }]
     },
     {
-      "begin": "(</?)([a-zA-Z][a-zA-Z0-9:-]*)",
+      "begin": "(<\/?)([a-zA-Z][a-zA-Z0-9:-]*)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.html"
@@ -557,7 +557,11 @@
         }
       },
       "name": "string.quoted.double.html",
-      "patterns": [{
+      "patterns": [
+        {
+          "include": "#string.interpolation.html.au"
+        },
+        {
           "include": "#embedded-code"
         },
         {
