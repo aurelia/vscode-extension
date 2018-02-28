@@ -1,3 +1,18 @@
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/aurelia/vscode-extension/compare/1.0.2...1.0.3) (2018-02-28)
+
+
+### Bug Fixes
+
+* **syntax:** implement fix from darthInvad0r for string interpolation, resolves [#79](https://github.com/aurelia/vscode-extension/issues/79) ([#83](https://github.com/aurelia/vscode-extension/issues/83)) ([9d7017f](https://github.com/aurelia/vscode-extension/commit/9d7017f))
+
+
+### Features
+
+* **syntax:** upgrade html syntax to latest and support .au files ([#82](https://github.com/aurelia/vscode-extension/issues/82)) ([b1884f7](https://github.com/aurelia/vscode-extension/commit/b1884f7))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/aurelia/vscode-extension/compare/1.0.1...1.0.2) (2018-02-26)
 
