@@ -760,7 +760,7 @@
     },
 
     "string.interpolation.html.au": {
-      "match": "(\\${)(.*)(})",
+      "match": "(\\${)([^{}]*(?:{[^{}]*})*\\s*(?:{[^{}]*})*\\s*(?:{[^{}]*})*\\s*(?:{[^{}]*})*\\s*)(})",
       "captures": {
         "1": {
           "name": "punctuation.definition.string.interpolation.start"
