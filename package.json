@@ -34,6 +34,7 @@
   ],
   "activationEvents": [
     "onLanguage:html",
+    "onLanguage:au",
     "onCommand:extension.auNew",
     "onCommand:extension.auGenerate",
     "onCommand:extension.auTest",
@@ -59,7 +60,8 @@
         ".aspx",
         ".jshtm",
         ".volt",
-        ".ejs"
+        ".ejs",
+        ".au"
       ],
       "aliases": [
         "HTML",
@@ -74,6 +76,13 @@
         "text/ng-template",
         "application/xhtml+xml"
       ],
+      "embeddedLanguages": {
+        "text.html": "html",
+        "source.css": "css",
+        "source.js": "javascript",
+        "source.python": "python",
+        "source.smarty": "smarty"
+      },
       "configuration": "./language-configuration.json"
     }],
     "grammars": [{
@@ -81,6 +90,12 @@
       "scopeName": "au.html",
       "path": "./syntaxes/html.json"
     }],
+    "folding": {
+      "markers": {
+        "start": "^\\s*<!--\\s*#region\\b\\s*(.*?)-->/",
+        "end": "^\\s*<!--\\s*#endregion\\b\\s*(.*?)-->/"
+      }
+    },
     "commands": [{
         "command": "extension.auNew",
         "title": "au new"
