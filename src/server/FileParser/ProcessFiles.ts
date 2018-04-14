@@ -1,11 +1,13 @@
 import * as Path from 'path';
 import * as FileSystem from 'fs';
-import { Parser, AccessScope }  from 'aurelia-binding';
-import { Node, SyntaxKind, SourceFile, createSourceFile, ScriptTarget, ScriptKind, 
-  forEachChild, ClassDeclaration, PropertyDeclaration, MethodDeclaration, ParameterDeclaration, sys} from "typescript";
-import {HtmlTemplateDocument} from './Model/HtmlTemplateDocument';
+import { Parser, AccessScope } from 'aurelia-binding';
+import {
+  Node, SyntaxKind, SourceFile, createSourceFile, ScriptTarget, ScriptKind,
+  forEachChild, ClassDeclaration, PropertyDeclaration, MethodDeclaration, ParameterDeclaration, sys
+} from "typescript";
+import { HtmlTemplateDocument } from './Model/HtmlTemplateDocument';
 
-import {WebComponent} from './Model/WebComponent';
+import { WebComponent } from './Model/WebComponent';
 
 import { AureliaHtmlParser } from './Parsers/AureliaHtmlParser';
 import { ViewModelDocument } from './Model/ViewModelDocument';
@@ -34,9 +36,9 @@ export default class ProcessFiles {
           component.paths.push(path);
         }
 
-        switch(Path.extname(path)) {
+        switch (Path.extname(path)) {
           case '.ts':
-            const fileContent:string = sys.readFile(path, 'utf8');
+            const fileContent: string = sys.readFile(path, 'utf8');
             const result = processSourceFile(path, fileContent, 'typescript');
             component.viewModel = new ViewModelDocument();
             component.viewModel.type = "typescript";
@@ -50,7 +52,7 @@ export default class ProcessFiles {
                 component.viewModel.methods = result.result[0].methods;
               }
 
-              for(const classDef of result.result) {
+              for (const classDef of result.result) {
                 if (classDef === defaultExport) {
                   continue;
                 }
@@ -73,7 +75,7 @@ export default class ProcessFiles {
             component.document = htmlTemplate;
             break;
         }
-       
+
         // replace it
         const idx = this.components.findIndex(c => c.name === component.name);
         if (idx === -1) {
@@ -101,12 +103,12 @@ export default class ProcessFiles {
 
 export function processSourceFile(fileName: string, content: string, type: string) {
   let sourceFile = createSourceFile(
-        fileName, 
-        content, 
-        ScriptTarget.Latest,
-        true,
-        type === "typescript" ? ScriptKind.TS : ScriptKind.JS);
-  
+    fileName,
+    content,
+    ScriptTarget.Latest,
+    true,
+    type === "typescript" ? ScriptKind.TS : ScriptKind.JS);
+
   return {
     result: processFile(sourceFile),
     uri: fileName
@@ -114,8 +116,8 @@ export function processSourceFile(fileName: string, content: string, type: strin
 }
 
 function processFile(sourceFile: SourceFile) {
- 
-  let getCodeInformation = (node : Node) => {  
+
+  let getCodeInformation = (node: Node) => {
     let classes = [];
     forEachChild(node, n => {
       if (n.kind === SyntaxKind.ClassDeclaration) {
@@ -128,76 +130,82 @@ function processFile(sourceFile: SourceFile) {
 }
 
 function processClassDeclaration(node: Node) {
-    let properties = [];
-    let methods = [];
-    if (!node) {
-      return {properties, methods};
-    }
+  let properties = [];
+  let methods = [];
+  if (!node) {
+    return { properties, methods };
+  }
 
-    let declaration = (node as ClassDeclaration);
-    if (declaration.members) {
-      for (let member of declaration.members) {
-        switch(member.kind) {
-          case SyntaxKind.PropertyDeclaration:
-            let property = member as PropertyDeclaration;
-            const propertyModifiers = property.modifiers.map(i => i.getText());
+  let declaration = (node as ClassDeclaration);
+  if (declaration.members) {
+    for (let member of declaration.members) {
+      switch (member.kind) {
+        case SyntaxKind.PropertyDeclaration:
+          let property = member as PropertyDeclaration;
+          let propertyModifiers;
+          if (property.modifiers) {
+            propertyModifiers = property.modifiers.map(i => i.getText());
             if (propertyModifiers.indexOf("private") > -1) {
               continue;
             }
-            const propertyName = property.name.getText();
-            let propertyType = undefined;
-            if (property.type) {
-              propertyType = property.type.getText();
-            }
-            properties.push({
-              name: propertyName,
-              modifiers: propertyModifiers,
-              type: propertyType
-            });
+          }
+          const propertyName = property.name.getText();
+          let propertyType = undefined;
+          if (property.type) {
+            propertyType = property.type.getText();
+          }
+          properties.push({
+            name: propertyName,
+            modifiers: propertyModifiers,
+            type: propertyType
+          });
           break;
-          case SyntaxKind.GetAccessor:
+        case SyntaxKind.GetAccessor:
           break;
-          case SyntaxKind.MethodDeclaration:
-            let memberDeclaration = member as MethodDeclaration;
-            const memberModifiers = memberDeclaration.modifiers.map(i => i.getText());
+        case SyntaxKind.MethodDeclaration:
+          let memberDeclaration = member as MethodDeclaration;
+          let memberModifiers;
+          if (memberDeclaration.modifiers){
+            memberModifiers = memberDeclaration.modifiers.map(i => i.getText());
             if (memberModifiers.indexOf("private") > -1) {
               continue;
-            }            
-            let memberName = memberDeclaration.name.getText();
-            let memberReturnType = undefined;
-            if (memberDeclaration.type) {
-              memberReturnType = memberDeclaration.type.getText();
             }
+          }
+          let memberName = memberDeclaration.name.getText();
+          let memberReturnType = undefined;
+          if (memberDeclaration.type) {
+            memberReturnType = memberDeclaration.type.getText();
+          }
 
-            let params = [];
-            if (memberDeclaration.parameters) {
-              for(let param of memberDeclaration.parameters) {
-                const p = param as ParameterDeclaration;
-                params.push(p.name.getText());
-              }
+          let params = [];
+          if (memberDeclaration.parameters) {
+            for (let param of memberDeclaration.parameters) {
+              const p = param as ParameterDeclaration;
+              params.push(p.name.getText());
             }
-            
-            methods.push({
-              name: memberName,
-              returnType: memberReturnType,
-              modifiers: memberModifiers,
-              parameters: params
+          }
 
-            });
+          methods.push({
+            name: memberName,
+            returnType: memberReturnType,
+            modifiers: memberModifiers,
+            parameters: params
+
+          });
           break;
-        }
       }
     }
+  }
 
-    let classModifiers = [];
-    if (declaration.modifiers) {
-      classModifiers = declaration.modifiers.map(m => m.getText());
-    }
+  let classModifiers = [];
+  if (declaration.modifiers) {
+    classModifiers = declaration.modifiers.map(m => m.getText());
+  }
 
-    return {
-      name: declaration.name.getText(),
-      properties, 
-      methods,
-      modifiers: classModifiers
-    };
+  return {
+    name: declaration.name.getText(),
+    properties,
+    methods,
+    modifiers: classModifiers
+  };
 }
