@@ -1,5 +1,5 @@
 import { autoinject } from 'aurelia-dependency-injection';
-import { CompletionItem, Position } from 'vscode-languageserver-types';
+import { CompletionItem, Position } from 'vscode-languageserver';
 import AttributeCompletionFactory from './Completions/AttributeCompletionFactory';
 import ElementCompletionFactory from './Completions/ElementCompletionFactory';
 import AttributeValueCompletionFactory from './Completions/AttributeValueCompletionFactory';

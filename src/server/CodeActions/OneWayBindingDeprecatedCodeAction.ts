@@ -1,4 +1,4 @@
-import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver-types";
+import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver";
 
 export class OneWayBindingDeprecatedCodeAction {
   public name = 'aurelia-binding-one-way-deprecated';

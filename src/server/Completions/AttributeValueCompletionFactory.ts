@@ -1,7 +1,7 @@
 import { 
   CompletionItem, 
   CompletionItemKind, 
-  InsertTextFormat } from 'vscode-languageserver-types';
+  InsertTextFormat } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';

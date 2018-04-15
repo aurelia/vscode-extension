@@ -1,4 +1,4 @@
-import { Hover } from 'vscode-languageserver-types';
+import { Hover } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Completions/Library/_elementLibrary';
 import { MozDocElement } from './Completions/Library/_elementStructure';

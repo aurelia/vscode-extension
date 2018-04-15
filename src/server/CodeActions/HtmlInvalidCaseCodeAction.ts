@@ -1,4 +1,4 @@
-import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver-types";
+import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver";
 import { HTMLDocumentParser } from "./../FileParser/HTMLDocumentParser";
 import { attributeInvalidCaseFix } from "../Common/AttributeInvalidCaseFix";
 
