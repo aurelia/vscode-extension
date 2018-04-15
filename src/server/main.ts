@@ -4,10 +4,11 @@ import { createConnection,
   TextDocuments, 
   InitializeParams, 
   InitializeResult, 
-  CompletionList, 
   Hover, 
+  CompletionList,
   InitializedParams } from 'vscode-languageserver';
-import { MarkedString } from 'vscode-languageserver-types';
+import { MarkedString } from 'vscode-languageserver';
+
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
@@ -88,15 +89,14 @@ documents.onDidChangeContent(async change => {
 });
 
 // Lisen for completion requests
-connection.onCompletion(textDocumentPosition => {
+connection.onCompletion(async (textDocumentPosition) => {
   let document = documents.get(textDocumentPosition.textDocument.uri);
   let text = document.getText();
   let offset = document.offsetAt(textDocumentPosition.position);
   let triggerCharacter = text.substring(offset - 1, offset);
   let position = textDocumentPosition.position;
-  return completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri);
+  return CompletionList.create(await completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri), false);
 });
-
 
 
 connection.onRequest('aurelia-view-information', (filePath: string) => {

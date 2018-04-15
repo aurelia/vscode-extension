@@ -2,7 +2,7 @@ import {
   CompletionItem, 
   CompletionItemKind, 
   InsertTextFormat, 
-  MarkedString } from 'vscode-languageserver-types';
+  MarkedString } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { BaseElement, SimpleAttribute, BindableAttribute, EmptyAttribute } from './Library/_elementStructure';

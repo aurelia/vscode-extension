@@ -1,4 +1,4 @@
-import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver-types';
+import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver';
 import {AttributeDefinition, TagDefinition } from './../../FileParser/HTMLDocumentParser';
 
 export class OneWayDeprecatedValidation {
