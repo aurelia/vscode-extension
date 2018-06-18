@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: npm install
-          command: npm i
+          command: npm install
       - run:
           name: pre-publish
           command: npm run vscode:prepublish
