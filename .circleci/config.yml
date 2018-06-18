@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: pre-publish
-          comamnd: npm run vscode:prepublish
+          command: npm run vscode:prepublish
   test:
     docker:
       - image: circleci/node:4.8.2
