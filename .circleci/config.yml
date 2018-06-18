@@ -1,14 +1,23 @@
 version: 2
   jobs:
+    build:
+      steps:
+        - checkout
+        - run:
+            name: pre-publish
+            comamnd: npm run vscode:prepublish
     test:
-      pre:
-        - npm run vscode:prepublish
-      override:
-        - "true"
+      - run:
+          name: Test
+          command: npm test
     deployment:
       release:
         tag: /[0-9]+(\.[0-9]+)*/
         owner: aurelia
-        commands:
-          - npm i vsce -g
-          - vsce publish -p $VSTOKEN
+        steps:
+          - run:
+              name: install vsce
+              command: npm i vsce -g"
+          - run:
+              name: publish
+              comamnd: vsce publish -p $VSTOKEN
