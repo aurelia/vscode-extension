@@ -23,7 +23,7 @@ jobs:
             comamnd: vsce publish -p $VSTOKEN
 workflows:
   version: 2
-  build_and_test:
+  build:
     jobs:
       - build
       - test:
