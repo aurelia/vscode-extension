@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: npm install
+          command: npm i
+      - run:
           name: pre-publish
           command: npm run vscode:prepublish
   test:
