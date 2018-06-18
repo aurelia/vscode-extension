@@ -21,7 +21,13 @@ jobs:
       - checkout
       - run:
           name: update-npm 
-          command: 'sudo npm install -g npm@latest'    
+          command: 'sudo npm install -g npm@latest'
+      - run:
+          name: npm install
+          command: npm install
+      - run:
+          name: build
+          command: npm run build
       - run:
           name: Test
           command: npm test
