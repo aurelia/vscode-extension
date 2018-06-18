@@ -1,0 +1,14 @@
+version: 2
+  jobs:
+    test:
+      pre:
+        - npm run vscode:prepublish
+      override:
+        - "true"
+    deployment:
+      release:
+        tag: /[0-9]+(\.[0-9]+)*/
+        owner: aurelia
+        commands:
+          - npm i vsce -g
+          - vsce publish -p $VSTOKEN
