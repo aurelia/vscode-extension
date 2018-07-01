@@ -1,0 +1,44 @@
+{
+	"fileTypes": [],
+	"injectionSelector": "L:source.js -comment -string, L:source.jsx -comment -string,  L:source.js.jsx -comment -string, L:source.ts -comment -string, L:source.tsx -comment -string",
+	"injections": {
+		"L:source": {
+			"patterns": [
+				{
+					"match": "<",
+					"name": "invalid.illegal.bad-angle-bracket.html"
+				}
+			]
+		}
+	},
+	"patterns": [
+		{
+			"name": "string.js.literal.template",
+			"contentName": "meta.embedded.block.html",
+			"begin": "(\\s+?(\\w+\\.)?\\s*)(`)\\s*(?=<template(\\s+[^<]*)?>)",
+			"beginCaptures": {
+				"2": {
+					"name": "string.js"
+				},
+				"3": {
+					"name": "punctuation.definition.string.template.begin.js"
+				}
+			},
+			"end": "(?<=</template>)\\s*(`)",
+			"endCaptures": {
+				"0": {
+					"name": "string.js"
+				},
+				"1": {
+					"name": "punctuation.definition.string.template.end.js"
+				}
+			},
+			"patterns": [
+				{
+					"include": "au.html"
+				}
+			]
+		}
+	],
+	"scopeName": "inline.literal-template"
+}

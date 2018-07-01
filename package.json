@@ -92,7 +92,21 @@
         "language": "html",
         "scopeName": "au.html",
         "path": "./syntaxes/html.json"
-      }
+      },
+      {
+        "injectTo": [
+            "source.js",
+            "source.js.jsx",
+            "source.jsx",
+            "source.ts",
+            "source.tsx"
+        ],
+        "scopeName": "inline.literal-template",
+        "path": "./syntaxes/literal-template.json",
+        "embeddedLanguages": {
+            "meta.embedded.block.html": "html"
+        }
+      } 
     ],
     "folding": {
       "markers": {
