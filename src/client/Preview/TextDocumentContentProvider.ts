@@ -5,7 +5,7 @@
   export class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
 
     constructor(private client: LanguageClient) {
-      
+
     }
 
 		private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
@@ -17,6 +17,8 @@
       }
       let fileName = vscode.window.activeTextEditor.document.fileName;
       let component = <WebComponent> await this.client.sendRequest('aurelia-view-information', fileName);
+
+      if (!component) return `No file path found for: ${fileName}`
 
       let headerHTML = `<h1>Component: '${component.name}'</h1>`;
       headerHTML += '<h2>Files</h2><ul>';
@@ -40,7 +42,7 @@
         for (let prop of component.viewModel.methods) {
           viewModelHTML += `<li>${prop.name} (${prop.returnType}) => (params: ${prop.parameters.join(',')})</li>`;
         }
-        viewModelHTML += '</ul>';        
+        viewModelHTML += '</ul>';
       }
 
       let viewHTML = `<h2>No view found</h2>`;
@@ -96,7 +98,7 @@
           classesHTML += `<li>${cl.name}</li>`;
          }
          classesHTML += '</ul>';
-         
+
       }
 
       return `<body><style>pre { border: 1px solid #333; display: block; background: #1a1a1a; margin: 1rem;color: #999; }</style>
