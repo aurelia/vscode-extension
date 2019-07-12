@@ -24,10 +24,27 @@ export function registerPreview(context, window, client) {
 
     const smartAutocomplete = vscode.workspace.getConfiguration().get('aurelia.featureToggles.smartAutocomplete');
     if (smartAutocomplete) {
-      return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.Two, 'Aurelia view data')
+      const panel = vscode.window.createWebviewPanel(
+        'aureliaViewData',
+        'Aurelia view data',
+        vscode.ViewColumn.Two,
+      );
+
+      provider.provideTextDocumentContent(previewUri.toString())
         .then(
           (success) => {
-          }, 
+            panel.webview.html = `
+              <!DOCTYPE html>
+              <html lang="en">
+              <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>Cat Coding</title>
+              </head>
+                ${success}
+              </html>
+            `
+          },
           (reason) => {
             window.showErrorMessage(reason);
           });
