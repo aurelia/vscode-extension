@@ -30,7 +30,7 @@ export function registerPreview(context, window, client) {
         vscode.ViewColumn.Two,
       );
 
-      provider.provideTextDocumentContent(previewUri.toString())
+      provider.provideTextDocumentContent(previewUri)
         .then(
           (success) => {
             panel.webview.html = `
