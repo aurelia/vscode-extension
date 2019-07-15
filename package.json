@@ -271,7 +271,7 @@
     "oniguruma": "^7.2.0",
     "tslint": "^5.2.0",
     "vscode": "^1.1.10",
-    "vscode-textmate": "^3.1.4"
+    "vscode-textmate": "^4.2.2"
   },
   "dependencies": {
     "aurelia-binding": "^2.3.1",
