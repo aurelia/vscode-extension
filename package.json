@@ -25,7 +25,7 @@
     "url": "https://github.com/aurelia/vscode-extension"
   },
   "engines": {
-    "vscode": "^1.22.0"
+    "vscode": "^1.35.1"
   },
   "categories": [
     "Languages",
