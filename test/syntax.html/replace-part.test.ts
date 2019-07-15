@@ -3,184 +3,184 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax replace-part attribute', () => {
 
-  it(`must tokenize (replace-part)="item-template" attribute with scope "replace-part.attribute.html.au"`, () => {
+  it(`must tokenize (replace-part)="item-template" attribute with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replace-part="item-template">');
+    const lineToken = await tokenizeLine('<template replace-part="item-template">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 22);
+    const token = getTokenOnCharRange(lineToken, 10, 22);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize (replace-part)='item-template' attribute with scope "replace-part.attribute.html.au"`, () => {
+  it(`must tokenize (replace-part)='item-template' attribute with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replace-part=\'item-template\'>');
+    const lineToken = await tokenizeLine('<template replace-part=\'item-template\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 22);
+    const token = getTokenOnCharRange(lineToken, 10, 22);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replace-part) attribute with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (replace-part) attribute with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replace-part>');
+    const lineToken = await tokenizeLine('<template replace-part>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 22);
+    const token = getTokenOnCharRange(lineToken, 10, 22);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize class="replace-part" attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize class="replace-part" attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div class="replace-part">');
+    const lineToken = await tokenizeLine('<div class="replace-part">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 12, 24);
+    const token = getTokenOnCharRange(lineToken, 12, 24);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize class='replace-part' attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize class='replace-part' attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div class=\'replace-part\'>');
+    const lineToken = await tokenizeLine('<div class=\'replace-part\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 12, 24);
+    const token = getTokenOnCharRange(lineToken, 12, 24);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (somereplace-part)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (somereplace-part)="item-template" attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template somereplace-part="item-template">');
+    const lineToken = await tokenizeLine('<template somereplace-part="item-template">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 26);
+    const token = getTokenOnCharRange(lineToken, 10, 26);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (somereplace-part)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (somereplace-part)='item-template' attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template somereplace-part=\'item-template\'>');
+    const lineToken = await tokenizeLine('<template somereplace-part=\'item-template\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 26);
+    const token = getTokenOnCharRange(lineToken, 10, 26);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replace-partsome)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (replace-partsome)="item-template" attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replace-partsome="item-template">');
+    const lineToken = await tokenizeLine('<template replace-partsome="item-template">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 26);
+    const token = getTokenOnCharRange(lineToken, 10, 26);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replace-partsome)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (replace-partsome)='item-template' attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replace-partsome=\'item-template\'>');
+    const lineToken = await tokenizeLine('<template replace-partsome=\'item-template\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 26);
+    const token = getTokenOnCharRange(lineToken, 10, 26);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replace-part-some)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (replace-part-some)="item-template" attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replace-part-some="item-template">');
+    const lineToken = await tokenizeLine('<template replace-part-some="item-template">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 27);
+    const token = getTokenOnCharRange(lineToken, 10, 27);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replace-part-some)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (replace-part-some)='item-template' attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replace-part-some=\'item-template\'>');
+    const lineToken = await tokenizeLine('<template replace-part-some=\'item-template\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 27);
+    const token = getTokenOnCharRange(lineToken, 10, 27);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (some-replace-part)="item-template" attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (some-replace-part)="item-template" attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template some-replace-part="item-template">');
+    const lineToken = await tokenizeLine('<template some-replace-part="item-template">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 27);
+    const token = getTokenOnCharRange(lineToken, 10, 27);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (some-replace-part)='item-template' attribute body with scope "replace-part.attribute.html.au"`, () => {
+  it(`must not tokenize (some-replace-part)='item-template' attribute body with scope "replace-part.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replace-part.attribute.html.au';
+    const scope = 'replace-part.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template some-replace-part=\'item-template\'>');
+    const lineToken = await tokenizeLine('<template some-replace-part=\'item-template\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 27);
+    const token = getTokenOnCharRange(lineToken, 10, 27);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });

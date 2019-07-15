@@ -3,184 +3,184 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe(`The Aurelia HTML syntax matcher attribute`, () => {
 
-  it(`must tokenize (matcher).bind attribute on select element with scope "matcher.attribute.html.au"`, () => {
+  it(`must tokenize (matcher).bind attribute on select element with scope "matcher.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'matcher.attribute.html.au';
+    const scope = 'matcher.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.bind="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.bind="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 36, 43);
+    const token = getTokenOnCharRange(lineToken, 36, 43);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize (matcher).one-way attribute on select element with scope "matcher.attribute.html.au"`, () => {
+  it(`must tokenize (matcher).one-way attribute on select element with scope "matcher.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'matcher.attribute.html.au';
+    const scope = 'matcher.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.one-way="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.one-way="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 36, 43);
+    const token = getTokenOnCharRange(lineToken, 36, 43);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize (matcher).two-way attribute on select element with scope "matcher.attribute.html.au"`, () => {
+  it(`must tokenize (matcher).two-way attribute on select element with scope "matcher.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'matcher.attribute.html.au';
+    const scope = 'matcher.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.two-way="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.two-way="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 36, 43);
+    const token = getTokenOnCharRange(lineToken, 36, 43);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize (matcher).one-time attribute on select element with scope "matcher.attribute.html.au"`, () => {
+  it(`must tokenize (matcher).one-time attribute on select element with scope "matcher.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'matcher.attribute.html.au';
+    const scope = 'matcher.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.one-time="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.one-time="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 36, 43);
+    const token = getTokenOnCharRange(lineToken, 36, 43);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize matcher.(bind) attribute on select element with scope "matcher.attribute.html.au"`, () => {
+  it(`must tokenize matcher.(bind) attribute on select element with scope "matcher.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'databinding.attribute.html.au';
+    const scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.bind="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.bind="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 44, 48);
+    const token = getTokenOnCharRange(lineToken, 44, 48);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize matcher.(one-way) attribute on select element with scope "databinding.attribute.html.au"`, () => {
+  it(`must tokenize matcher.(one-way) attribute on select element with scope "databinding.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'databinding.attribute.html.au';
+    const scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.one-way="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.one-way="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 44, 51);
+    const token = getTokenOnCharRange(lineToken, 44, 51);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize matcher.(two-way) attribute on select element with scope "databinding.attribute.html.au"`, () => {
+  it(`must tokenize matcher.(two-way) attribute on select element with scope "databinding.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'databinding.attribute.html.au';
+    const scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.two-way="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.two-way="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 44, 51);
+    const token = getTokenOnCharRange(lineToken, 44, 51);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize matcher.(one-time) attribute on select element with scope "databinding.attribute.html.au"`, () => {
+  it(`must tokenize matcher.(one-time) attribute on select element with scope "databinding.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'databinding.attribute.html.au';
+    const scope = 'databinding.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher.one-time="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher.one-time="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 44, 52);
+    const token = getTokenOnCharRange(lineToken, 44, 52);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (matcher)="" attribute on select element with scope "databinding.attribute.html.au"`, () => {
+  it(`must not tokenize (matcher)="" attribute on select element with scope "databinding.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'matcher.attribute.html.au';
+    const scope = 'matcher.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine(`<select value.bind="group.users[0]" matcher="userComparer">`);
+    const lineToken = await tokenizeLine(`<select value.bind="group.users[0]" matcher="userComparer">`);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 36, 43);
+    const token = getTokenOnCharRange(lineToken, 36, 43);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize matcher.bind part in body of other attribute', () => {
+  it('must not tokenize matcher.bind part in body of other attribute', async () => {
 
     // arrange
-    let scope = 'meta.tag.inline.any.html';
+    const scope = 'meta.tag.inline.any.html';
 
     // act
-    let lineToken = tokenizeLine('<select name="matcher.bind">');
+    const lineToken = await tokenizeLine('<select name="matcher.bind">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 14, 26);
+    const token = getTokenOnCharRange(lineToken, 14, 26);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize matcher.bind* part in body of other attribute', () => {
+  it('must not tokenize matcher.bind* part in body of other attribute', async () => {
 
     // arrange
-    let scope = 'meta.tag.inline.any.html';
+    const scope = 'meta.tag.inline.any.html';
 
     // act
-    let lineToken = tokenizeLine('<select name="matcher.binding">');
+    const lineToken = await tokenizeLine('<select name="matcher.binding">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 14, 29);
+    const token = getTokenOnCharRange(lineToken, 14, 29);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize matcher.foo part in body of other attribute', () => {
+  it('must not tokenize matcher.foo part in body of other attribute', async () => {
 
     // arrange
-    let scope = 'meta.tag.inline.any.html';
+    const scope = 'meta.tag.inline.any.html';
 
     // act
-    let lineToken = tokenizeLine('<select name="matcher.foo">');
+    const lineToken = await tokenizeLine('<select name="matcher.foo">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 14, 25);
+    const token = getTokenOnCharRange(lineToken, 14, 25);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize matcher part in body of other attribute', () => {
+  it('must not tokenize matcher part in body of other attribute', async () => {
 
     // arrange
-    let scope = 'meta.tag.inline.any.html';
+    const scope = 'meta.tag.inline.any.html';
 
     // act
-    let lineToken = tokenizeLine('<select name="matcher">');
+    const lineToken = await tokenizeLine('<select name="matcher">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 14, 21);
+    const token = getTokenOnCharRange(lineToken, 14, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
   });

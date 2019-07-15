@@ -3,126 +3,126 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax replaceable attribute', () => {
 
-  it('must tokenize (replaceable)> attribute with scope "replaceable.attribute.html.au"', () => {
+  it('must tokenize (replaceable)> attribute with scope "replaceable.attribute.html.au"', async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replaceable>');
+    const lineToken = await tokenizeLine('<template replaceable>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 21);
+    const token = getTokenOnCharRange(lineToken, 10, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize (replaceable) other> attribute with scope "replaceable.attribute.html.au"', () => {
+  it('must tokenize (replaceable) other> attribute with scope "replaceable.attribute.html.au"', async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replaceable other>');
+    const lineToken = await tokenizeLine('<template replaceable other>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 21);
+    const token = getTokenOnCharRange(lineToken, 10, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize (replaceable)="" attribute with scope "replaceable.attribute.html.au"', () => {
+  it('must tokenize (replaceable)="" attribute with scope "replaceable.attribute.html.au"', async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replaceable="">');
+    const lineToken = await tokenizeLine('<template replaceable="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 21);
+    const token = getTokenOnCharRange(lineToken, 10, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize (replaceable)="" other=""> attribute with scope "replaceable.attribute.html.au"', () => {
+  it('must tokenize (replaceable)="" other=""> attribute with scope "replaceable.attribute.html.au"', async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replaceable="" other="">');
+    const lineToken = await tokenizeLine('<template replaceable="" other="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 21);
+    const token = getTokenOnCharRange(lineToken, 10, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize (replaceable)='' attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must tokenize (replaceable)='' attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replaceable=\'\'>');
+    const lineToken = await tokenizeLine('<template replaceable=\'\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 21);
+    const token = getTokenOnCharRange(lineToken, 10, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must tokenize (replaceable)='' other=''> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must tokenize (replaceable)='' other=''> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template replaceable=\'\' other=\'\'>');
+    const lineToken = await tokenizeLine('<template replaceable=\'\' other=\'\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 21);
+    const token = getTokenOnCharRange(lineToken, 10, 21);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize class="replaceable" attribute body with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize class="replaceable" attribute body with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div class="replaceable">');
+    const lineToken = await tokenizeLine('<div class="replaceable">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 12, 23);
+    const token = getTokenOnCharRange(lineToken, 12, 23);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize class='replaceable' attribute body with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize class='replaceable' attribute body with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div class=\'replaceable\'>');
+    const lineToken = await tokenizeLine('<div class=\'replaceable\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 12, 23);
+    const token = getTokenOnCharRange(lineToken, 12, 23);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
   // TODO: fix
-  // it(`must not tokenize class=replaceable attribute body with scope "replaceable.attribute.html.au"`, () => {
+  // it(`must not tokenize class=replaceable attribute body with scope "replaceable.attribute.html.au"`, async () => {
 
   //   // arrange
   //   let scope = 'replaceable.attribute.html.au';
 
   //   // act
-  //   let lineToken = tokenizeLine('<div class=replaceable>');
+  //   let lineToken = await tokenizeLine('<div class=replaceable>');
 
   //   // assert
   //   let token = getTokenOnCharRange(lineToken, 10, 22);
@@ -130,170 +130,170 @@ describe('The Aurelia HTML syntax replaceable attribute', () => {
 
   // });
 
-  it(`must not tokenize (replaceable-some)> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (replaceable-some)> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div replaceable-some>');
+    const lineToken = await tokenizeLine('<div replaceable-some>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 21);
+    const token = getTokenOnCharRange(lineToken, 5, 21);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replaceable-some)=""> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (replaceable-some)=""> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div replaceable-some="">');
+    const lineToken = await tokenizeLine('<div replaceable-some="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 21);
+    const token = getTokenOnCharRange(lineToken, 5, 21);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replaceable-some)=''> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (replaceable-some)=''> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div replaceable-some=\'\'>');
+    const lineToken = await tokenizeLine('<div replaceable-some=\'\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 21);
+    const token = getTokenOnCharRange(lineToken, 5, 21);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (some-replaceable)> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (some-replaceable)> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div some-replaceable>');
+    const lineToken = await tokenizeLine('<div some-replaceable>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 21);
+    const token = getTokenOnCharRange(lineToken, 5, 21);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (some-replaceable)=""> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (some-replaceable)=""> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div some-replaceable="">');
+    const lineToken = await tokenizeLine('<div some-replaceable="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 21);
+    const token = getTokenOnCharRange(lineToken, 5, 21);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (some-replaceable)=''> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (some-replaceable)=''> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div some-replaceable=\'\'>');
+    const lineToken = await tokenizeLine('<div some-replaceable=\'\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 21);
+    const token = getTokenOnCharRange(lineToken, 5, 21);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (somereplaceable)> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (somereplaceable)> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div somereplaceable>');
+    const lineToken = await tokenizeLine('<div somereplaceable>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 20);
+    const token = getTokenOnCharRange(lineToken, 5, 20);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (somereplaceable)=""> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (somereplaceable)=""> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div somereplaceable="">');
+    const lineToken = await tokenizeLine('<div somereplaceable="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 20);
+    const token = getTokenOnCharRange(lineToken, 5, 20);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (somereplaceable)=''> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (somereplaceable)=''> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div somereplaceable=\'\'>');
+    const lineToken = await tokenizeLine('<div somereplaceable=\'\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 20);
+    const token = getTokenOnCharRange(lineToken, 5, 20);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replaceablesome)> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (replaceablesome)> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div replaceablesome>');
+    const lineToken = await tokenizeLine('<div replaceablesome>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 20);
+    const token = getTokenOnCharRange(lineToken, 5, 20);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replaceablesome)=""> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (replaceablesome)=""> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div replaceablesome="">');
+    const lineToken = await tokenizeLine('<div replaceablesome="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 20);
+    const token = getTokenOnCharRange(lineToken, 5, 20);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });
 
-  it(`must not tokenize (replaceablesome)=''> attribute with scope "replaceable.attribute.html.au"`, () => {
+  it(`must not tokenize (replaceablesome)=''> attribute with scope "replaceable.attribute.html.au"`, async () => {
 
     // arrange
-    let scope = 'replaceable.attribute.html.au';
+    const scope = 'replaceable.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<div replaceablesome=\'\'>');
+    const lineToken = await tokenizeLine('<div replaceablesome=\'\'>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 5, 20);
+    const token = getTokenOnCharRange(lineToken, 5, 20);
     assert.isOk(!hasScope(token.scopes, scope));
 
   });

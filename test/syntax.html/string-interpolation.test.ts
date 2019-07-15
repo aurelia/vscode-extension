@@ -1,12 +1,12 @@
 import { assert } from 'chai';
-import { getTokenOnCharRange, hasScope, tokenizeLine, writeOut } from './test.utils';
+import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax string interpolation', () => {
 
-  it('must tokenize string interpolation in element with scope correct scopes', () => {
+  it('must tokenize string interpolation in element with scope correct scopes', async () => {
 
     // act
-    const lineToken = tokenizeLine('<div>${foo}</div>');
+    const lineToken = await tokenizeLine('<div>${foo}</div>');
 
     // assert
     const startToken = getTokenOnCharRange(lineToken, 5, 7);
@@ -19,13 +19,13 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.start"', () => {
+  it('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.start"', async () => {
 
     // arrange
     const scope = 'punctuation.definition.string.interpolation.start';
 
     // act
-    const lineToken = tokenizeLine('<div>${foo}</div>');
+    const lineToken = await tokenizeLine('<div>${foo}</div>');
 
     // assert
     const token = getTokenOnCharRange(lineToken, 5, 7);
@@ -33,13 +33,13 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.end"', () => {
+  it('must tokenize string interpolation in element with scope "punctuation.definition.string.interpolation.end"', async () => {
 
     // arrange
     const scope = 'punctuation.definition.string.interpolation.end';
 
     // act
-    const lineToken = tokenizeLine('<div>${foo}</div>');
+    const lineToken = await tokenizeLine('<div>${foo}</div>');
 
     // assert
     const token = getTokenOnCharRange(lineToken, 10, 11);
@@ -47,10 +47,10 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation in attribute with correct scopes', () => {
+  it('must tokenize string interpolation in attribute with correct scopes', async () => {
 
     // act
-    const lineToken = tokenizeLine('<div class="${foo}"></div>');
+    const lineToken = await tokenizeLine('<div class="${foo}"></div>');
 
     // assert
     const startToken = getTokenOnCharRange(lineToken, 12, 14);
@@ -63,13 +63,13 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.start"', () => {
+  it('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.start"', async () => {
 
     // arrange
     const scope = 'punctuation.definition.string.interpolation.start';
 
     // act
-    const lineToken = tokenizeLine('<div class="${foo}"></div>');
+    const lineToken = await tokenizeLine('<div class="${foo}"></div>');
 
     // assert
     const token = getTokenOnCharRange(lineToken, 12, 14);
@@ -77,13 +77,13 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.end"', () => {
+  it('must tokenize string interpolation in attribute with scope "punctuation.definition.string.interpolation.end"', async () => {
 
     // arrange
     const scope = 'punctuation.definition.string.interpolation.end';
 
     // act
-    const lineToken = tokenizeLine('<div class="${foo}"></div>');
+    const lineToken = await tokenizeLine('<div class="${foo}"></div>');
 
     // assert
     const token = getTokenOnCharRange(lineToken, 17, 18);
@@ -91,10 +91,10 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation with condition with correct scopes', () => {
+  it('must tokenize string interpolation with condition with correct scopes', async () => {
 
     // act
-    const lineToken = tokenizeLine('${foo === true ? "a" : "b"}');
+    const lineToken = await tokenizeLine('${foo === true ? "a" : "b"}');
 
     // assert
     const startToken = getTokenOnCharRange(lineToken, 0, 2);
@@ -107,13 +107,13 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.start"', () => {
+  it('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.start"', async () => {
 
     // arrange
     const scope = 'punctuation.definition.string.interpolation.start';
 
     // act
-    const lineToken = tokenizeLine('${foo === true ? "a" : "b"}');
+    const lineToken = await tokenizeLine('${foo === true ? "a" : "b"}');
 
     // assert
     const token = getTokenOnCharRange(lineToken, 0, 2);
@@ -121,13 +121,13 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.end"', () => {
+  it('must tokenize string interpolation with condition with scope "punctuation.definition.string.interpolation.end"', async () => {
 
     // arrange
     const scope = 'punctuation.definition.string.interpolation.end';
 
     // act
-    const lineToken = tokenizeLine('${foo === true ? "a" : "b"}');
+    const lineToken = await tokenizeLine('${foo === true ? "a" : "b"}');
 
     // assert
     const token = getTokenOnCharRange(lineToken, 26, 27);
@@ -135,13 +135,13 @@ describe('The Aurelia HTML syntax string interpolation', () => {
 
   });
 
-  it('must tokenize only the last } with the scope "punctuation.definition.string.interpolation.end", resolves issue #48', () => {
+  it('must tokenize only the last } with the scope "punctuation.definition.string.interpolation.end", resolves issue #48', async () => {
 
     // arrange
     const scope = 'punctuation.definition.string.interpolation.end';
 
     // act
-    const lineToken = tokenizeLine('<span innerHTML="${\'foo\' & t: {a: \'/foo\'}}"></span>');
+    const lineToken = await tokenizeLine('<span innerHTML="${\'foo\' & t: {a: \'/foo\'}}"></span>');
 
     // assert
     const closeToken = getTokenOnCharRange(lineToken, 41, 42);
