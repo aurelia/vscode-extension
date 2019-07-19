@@ -3,30 +3,30 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax compose element', () => {
 
-  it('must tokenize compose start element with scope "compose.element.html.au"', () => {
+  it('must tokenize compose start element with scope "compose.element.html.au"', async () => {
 
     // arrange
-    let scope = 'compose.element.html.au';
+    const scope = 'compose.element.html.au';
 
     // act
-    let lineToken = tokenizeLine('<compose>');
+    const lineToken = await tokenizeLine('<compose>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 1, 8);
+    const token = getTokenOnCharRange(lineToken, 1, 8);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize compose end element with scope "compose.element.html.au"', () => {
+  it('must tokenize compose end element with scope "compose.element.html.au"', async () => {
 
     // arrange
-    let scope = 'compose.element.html.au';
+    const scope = 'compose.element.html.au';
 
     // act
-    let lineToken = tokenizeLine('</compose>');
+    const lineToken = await tokenizeLine('</compose>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 2, 9);
+    const token = getTokenOnCharRange(lineToken, 2, 9);
     assert.isOk(hasScope(token.scopes, scope));
 
   });

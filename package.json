@@ -25,7 +25,7 @@
     "url": "https://github.com/aurelia/vscode-extension"
   },
   "engines": {
-    "vscode": "^1.22.0"
+    "vscode": "^1.35.1"
   },
   "categories": [
     "Languages",
@@ -270,13 +270,13 @@
     "mocha-junit-reporter": "^1.13.0",
     "tslint": "^5.2.0",
     "vscode": "^1.1.10",
-    "vscode-textmate": "^3.1.4"
+    "vscode-textmate": "^4.2.2"
   },
   "dependencies": {
-    "aurelia-binding": "^1.2.2",
-    "aurelia-cli": "^0.33.1",
-    "aurelia-dependency-injection": "^1.4.1",
-    "aurelia-templating-binding": "^1.4.0",
+    "aurelia-binding": "^2.3.1",
+    "aurelia-cli": "^1.0.2",
+    "aurelia-dependency-injection": "^1.4.2",
+    "aurelia-templating-binding": "^1.5.3",
     "parse5": "^4.0.0",
     "reflect-metadata": "^0.1.9",
     "typescript": "^2.3.2",

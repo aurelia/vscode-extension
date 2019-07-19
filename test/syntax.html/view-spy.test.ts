@@ -3,108 +3,108 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax view-spy attribute', () => {
 
-  it('must tokenize view-spy attribute with scope "view-spy.attribute.html.au"', () => {
+  it('must tokenize view-spy attribute with scope "view-spy.attribute.html.au"', async () => {
 
     // arrange
-    let scope = 'view-spy.attribute.html.au';
+    const scope = 'view-spy.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<p view-spy foo="boo">');
+    const lineToken = await tokenizeLine('<p view-spy foo="boo">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 3, 11);
+    const token = getTokenOnCharRange(lineToken, 3, 11);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize view-spy="" attribute', () => {
+  it('must not tokenize view-spy="" attribute', async () => {
 
     // arrange
-    let scope = 'view-spy.attribute.html.au';
+    const scope = 'view-spy.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<p view-spy="">');
+    const lineToken = await tokenizeLine('<p view-spy="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 3, 11);
+    const token = getTokenOnCharRange(lineToken, 3, 11);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize view-spy-foo="" attribute', () => {
+  it('must not tokenize view-spy-foo="" attribute', async () => {
 
     // arrange
-    let scope = 'view-spy.attribute.html.au';
+    const scope = 'view-spy.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<p view-spy-foo="">');
+    const lineToken = await tokenizeLine('<p view-spy-foo="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 3, 15);
+    const token = getTokenOnCharRange(lineToken, 3, 15);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize foo-containerles="" attribute', () => {
+  it('must not tokenize foo-containerles="" attribute', async () => {
 
     // arrange
-    let scope = 'view-spy.attribute.html.au';
+    const scope = 'view-spy.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<p foo-view-spy="">');
+    const lineToken = await tokenizeLine('<p foo-view-spy="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 3, 15);
+    const token = getTokenOnCharRange(lineToken, 3, 15);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize foo-view-spy="boo" attribute', () => {
+  it('must not tokenize foo-view-spy="boo" attribute', async () => {
 
     // arrange
-    let scope = 'view-spy.attribute.html.au';
+    const scope = 'view-spy.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<p foo-view-spy="boo">');
+    const lineToken = await tokenizeLine('<p foo-view-spy="boo">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 3, 15);
+    const token = getTokenOnCharRange(lineToken, 3, 15);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize view-spyfoo="boo" attribute', () => {
+  it('must not tokenize view-spyfoo="boo" attribute', async () => {
 
     // arrange
-    let scope = 'view-spy.attribute.html.au';
+    const scope = 'view-spy.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<p view-spyfoo="boo">');
+    const lineToken = await tokenizeLine('<p view-spyfoo="boo">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 3, 14);
+    const token = getTokenOnCharRange(lineToken, 3, 14);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize compile-spy attribute', () => {
+  it('must tokenize compile-spy attribute', async () => {
 
     // arrange
-    let scope = 'view-spy.attribute.html.au';
+    const scope = 'view-spy.attribute.html.au';
 
     // act
-    let template = '<template view-spy></template>';
-    let lineToken = tokenizeLine(template);
+    const template = '<template view-spy></template>';
+    const lineToken = await tokenizeLine(template);
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 18);
+    const token = getTokenOnCharRange(lineToken, 10, 18);
     assert.isDefined(token);
     assert.isOk(hasScope(token.scopes, scope));
 
-  });    
+  });
 });

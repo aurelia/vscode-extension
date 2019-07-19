@@ -3,30 +3,30 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax let element', () => {
 
-  it('must tokenize let start element with scope "let.element.html.au"', () => {
+  it('must tokenize let start element with scope "let.element.html.au"', async () => {
 
     // arrange
-    let scope = 'let.element.html.au';
+    const scope = 'let.element.html.au';
 
     // act
-    let lineToken = tokenizeLine('<let>');
+    const lineToken = await tokenizeLine('<let>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 1, 4);
+    const token = getTokenOnCharRange(lineToken, 1, 4);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize let end element with scope "let.element.html.au"', () => {
+  it('must tokenize let end element with scope "let.element.html.au"', async () => {
 
     // arrange
-    let scope = 'let.element.html.au';
+    const scope = 'let.element.html.au';
 
     // act
-    let lineToken = tokenizeLine('</let>');
+    const lineToken = await tokenizeLine('</let>');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 2, 5);
+    const token = getTokenOnCharRange(lineToken, 2, 5);
     assert.isOk(hasScope(token.scopes, scope));
 
   });

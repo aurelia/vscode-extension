@@ -3,106 +3,106 @@ import { getTokenOnCharRange, hasScope, tokenizeLine } from './test.utils';
 
 describe('The Aurelia HTML syntax containerles attribute', () => {
 
-  it('must tokenize containerless attribute with scope "containerless.attribute.html.au"', () => {
+  it('must tokenize containerless attribute with scope "containerless.attribute.html.au"', async () => {
 
     // arrange
-    let scope = 'containerless.attribute.html.au';
+    const scope = 'containerless.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template containerless foo="boo">');
+    const lineToken = await tokenizeLine('<template containerless foo="boo">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 23);
+    const token = getTokenOnCharRange(lineToken, 10, 23);
     assert.isOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize containerless="" attribute', () => {
+  it('must not tokenize containerless="" attribute', async () => {
 
     // arrange
-    let scope = 'containerless.attribute.html.au';
+    const scope = 'containerless.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template containerless="">');
+    const lineToken = await tokenizeLine('<template containerless="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 23);
+    const token = getTokenOnCharRange(lineToken, 10, 23);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize containerless-foo="" attribute', () => {
+  it('must not tokenize containerless-foo="" attribute', async () => {
 
     // arrange
-    let scope = 'containerless.attribute.html.au';
+    const scope = 'containerless.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template containerless-foo="">');
+    const lineToken = await tokenizeLine('<template containerless-foo="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 27);
+    const token = getTokenOnCharRange(lineToken, 10, 27);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize foo-containerles="" attribute', () => {
+  it('must not tokenize foo-containerles="" attribute', async () => {
 
     // arrange
-    let scope = 'containerless.attribute.html.au';
+    const scope = 'containerless.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template foo-containerless="">');
+    const lineToken = await tokenizeLine('<template foo-containerless="">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 27);
+    const token = getTokenOnCharRange(lineToken, 10, 27);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize foo-containerless="boo" attribute', () => {
+  it('must not tokenize foo-containerless="boo" attribute', async () => {
 
     // arrange
-    let scope = 'containerless.attribute.html.au';
+    const scope = 'containerless.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template foo-containerless="boo">');
+    const lineToken = await tokenizeLine('<template foo-containerless="boo">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 27);
+    const token = getTokenOnCharRange(lineToken, 10, 27);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must not tokenize containerlessfoo="boo" attribute', () => {
+  it('must not tokenize containerlessfoo="boo" attribute', async () => {
 
     // arrange
-    let scope = 'containerless.attribute.html.au';
+    const scope = 'containerless.attribute.html.au';
 
     // act
-    let lineToken = tokenizeLine('<template containerlessfoo="boo">');
+    const lineToken = await tokenizeLine('<template containerlessfoo="boo">');
 
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 26);
+    const token = getTokenOnCharRange(lineToken, 10, 26);
     assert.isDefined(token);
     assert.isNotOk(hasScope(token.scopes, scope));
 
   });
 
-  it('must tokenize containerless attribute', () => {
+  it('must tokenize containerless attribute', async () => {
 
     // arrange
-    let scope = 'containerless.attribute.html.au';
+    const scope = 'containerless.attribute.html.au';
 
     // act
-    let template = '<template containerless></template>';
-    let lineToken = tokenizeLine(template);
-    
+    const template = '<template containerless></template>';
+    const lineToken = await tokenizeLine(template);
+
     // assert
-    let token = getTokenOnCharRange(lineToken, 10, 23);
+    const token = getTokenOnCharRange(lineToken, 10, 23);
     assert.isDefined(token);
     assert.isOk(hasScope(token.scopes, scope));
 
