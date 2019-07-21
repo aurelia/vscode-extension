@@ -3,20 +3,44 @@ import {TextDocumentContentProvider} from './TextDocumentContentProvider';
 
 export function registerPreview(context, window, client) {
 
+  const aureliaViewDataPanelType = 'aureliaViewData';
+
   let previewUri = vscode.Uri.parse('aurelia-preview://authority/aurelia-preview');
 
   let provider = new TextDocumentContentProvider(client);
   let registration = vscode.workspace.registerTextDocumentContentProvider('aurelia-preview', provider);
+  let isPanelVisible: boolean = false;
+  let panel: vscode.WebviewPanel;
+
+  function fillWebViewHtml(bodyContent: string): string {
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Cat Coding</title>
+        </head>
+        ${bodyContent}
+      </html>
+    `;
+  }
 
   vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
+    if (!isPanelVisible) return;
     if (e.document === vscode.window.activeTextEditor.document) {
-      provider.update(previewUri);
+      provider.update(previewUri).then(success => {
+        panel.webview.html = fillWebViewHtml(success);
+      });
     }
   });
 
-  vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
-    if (e.textEditor === vscode.window.activeTextEditor) {
-      provider.update(previewUri);
+  vscode.window.onDidChangeActiveTextEditor((editor: vscode.TextEditor) => {
+    if (!isPanelVisible) return;
+    if (editor === vscode.window.activeTextEditor) {
+      provider.update(previewUri).then(success => {
+        panel.webview.html = fillWebViewHtml(success);
+      });
     }
   });
 
@@ -24,8 +48,8 @@ export function registerPreview(context, window, client) {
 
     const smartAutocomplete = vscode.workspace.getConfiguration().get('aurelia.featureToggles.smartAutocomplete');
     if (smartAutocomplete) {
-      const panel = vscode.window.createWebviewPanel(
-        'aureliaViewData',
+      panel = vscode.window.createWebviewPanel(
+        aureliaViewDataPanelType,
         'Aurelia view data',
         vscode.ViewColumn.Two,
       );
@@ -33,17 +57,7 @@ export function registerPreview(context, window, client) {
       provider.provideTextDocumentContent(previewUri)
         .then(
           (success) => {
-            panel.webview.html = `
-              <!DOCTYPE html>
-              <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Cat Coding</title>
-                </head>
-                ${success}
-              </html>
-            `
+            panel.webview.html = fillWebViewHtml(success);
           },
           (reason) => {
             window.showErrorMessage(reason);
@@ -52,6 +66,21 @@ export function registerPreview(context, window, client) {
       return vscode.window.showWarningMessage('This command requires the experimental feature "smartAutocomplete" to be enabled');
     }
 
+    /**
+     * Set panel visible flag to true, if
+     * - we have the correct WebView type (multiple WebView types possible)
+     * - and panel itself is not active
+     */
+    panel.onDidChangeViewState(event => {
+      const correctPanelType = (event.webviewPanel.viewType === aureliaViewDataPanelType);
+      /** Don't update panel if the panel itself is 'active' */
+      const panelNotActive = !event.webviewPanel.active
+      isPanelVisible = correctPanelType && panelNotActive;
+    });
+
+    panel.onDidDispose(event => {
+      isPanelVisible = false;
+    });
 
 	}));
 
