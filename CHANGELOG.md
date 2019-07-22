@@ -1,3 +1,14 @@
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/aurelia/vscode-extension/compare/1.0.3...1.0.4) (2019-07-22)
+
+
+### Bug Fixes
+
+* upgrade to new vs code webview api from vscode.previewHtml ([e1558d9](https://github.com/aurelia/vscode-extension/commit/e1558d9))
+* **language-server:** do not fail when parsing methods and properties without modifiers defined ([#84](https://github.com/aurelia/vscode-extension/issues/84)) ([993f083](https://github.com/aurelia/vscode-extension/commit/993f083))
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/aurelia/vscode-extension/compare/1.0.2...1.0.3) (2018-02-28)
 
