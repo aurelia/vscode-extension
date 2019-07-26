@@ -1,3 +1,4 @@
+import { Range, Position } from 'vscode-languageserver';
 import * as Path from 'path';
 import * as FileSystem from 'fs';
 import { Parser, AccessScope } from 'aurelia-binding';
@@ -6,6 +7,7 @@ import {
   forEachChild, ClassDeclaration, PropertyDeclaration, MethodDeclaration, ParameterDeclaration, sys
 } from "typescript";
 import { HtmlTemplateDocument } from './Model/HtmlTemplateDocument';
+import { Methods, Properties } from './Model/ProcessFiles.d';
 
 import { WebComponent } from './Model/WebComponent';
 
@@ -18,7 +20,7 @@ import { normalizePath } from './../Util/NormalizePath';
 
 export default class ProcessFiles {
 
-  public components = new Array<WebComponent>();
+  public components = Array<WebComponent>();
 
   public async processPath(): Promise<void> {
 
@@ -85,7 +87,7 @@ export default class ProcessFiles {
         }
 
       } catch (ex) {
-        console.log(`failed to parse path ${path}`);
+        console.log(`failed to parse path ${ path }`);
         console.log(JSON.stringify(ex));
       }
     }
@@ -130,8 +132,8 @@ function processFile(sourceFile: SourceFile) {
 }
 
 function processClassDeclaration(node: Node) {
-  let properties = [];
-  let methods = [];
+  let properties: Properties = [];
+  let methods: Methods = [];
   if (!node) {
     return { properties, methods };
   }
@@ -157,7 +159,11 @@ function processClassDeclaration(node: Node) {
           properties.push({
             name: propertyName,
             modifiers: propertyModifiers,
-            type: propertyType
+            type: propertyType,
+            range: Range.create(
+              Position.create(-1, property.name.pos),
+              Position.create(-1, property.name.end)
+            )
           });
           break;
         case SyntaxKind.GetAccessor:
@@ -165,7 +171,7 @@ function processClassDeclaration(node: Node) {
         case SyntaxKind.MethodDeclaration:
           let memberDeclaration = member as MethodDeclaration;
           let memberModifiers;
-          if (memberDeclaration.modifiers){
+          if (memberDeclaration.modifiers) {
             memberModifiers = memberDeclaration.modifiers.map(i => i.getText());
             if (memberModifiers.indexOf("private") > -1) {
               continue;
@@ -189,8 +195,11 @@ function processClassDeclaration(node: Node) {
             name: memberName,
             returnType: memberReturnType,
             modifiers: memberModifiers,
-            parameters: params
-
+            parameters: params,
+            range: Range.create(
+              Position.create(-1, memberDeclaration.name.pos),
+              Position.create(-1, memberDeclaration.name.end),
+            )
           });
           break;
       }
