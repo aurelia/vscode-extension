@@ -1,12 +1,25 @@
 import 'reflect-metadata';
-import { createConnection, 
-  IConnection, 
-  TextDocuments, 
-  InitializeParams, 
-  InitializeResult, 
-  Hover, 
+import {
+  createConnection,
+  IConnection,
+  TextDocuments,
+  InitializeParams,
+  InitializeResult,
+  Hover,
   CompletionList,
-  InitializedParams } from 'vscode-languageserver';
+  InitializedParams,
+  TextDocumentPositionParams,
+  Definition,
+  DocumentLinkParams,
+  DocumentLink,
+  CodeLensParams,
+  CodeLens,
+  ReferenceParams,
+  Location,
+  DefinitionLink,
+  LocationLink,
+  Range,
+} from 'vscode-languageserver';
 import { MarkedString } from 'vscode-languageserver';
 
 import { Container } from 'aurelia-dependency-injection';
@@ -24,6 +37,7 @@ import * as ts from 'typescript';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
 import { connect } from 'net';
+import { Uri } from 'vscode';
 
 // Bind console.log & error to the Aurelia output
 const connection: IConnection = createConnection();
@@ -41,14 +55,15 @@ const settings = <AureliaSettings> globalContainer.get(AureliaSettings);
 
 // Register characters to lisen for
 connection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
-  
+
   // TODO: find better way/place to init this
   const dummy = globalContainer.get(ElementLibrary);
-  
+
   return {
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },
       codeActionProvider: true,
+      definitionProvider: true,
       textDocumentSync: documents.syncKind,
     },
   };
@@ -61,7 +76,7 @@ const codeActions = [
 connection.onCodeAction(async codeActionParams => {
   const diagnostics = codeActionParams.context.diagnostics;
   const document = documents.get(codeActionParams.textDocument.uri);
-  const commands = []; 
+  const commands = [];
   for (const diagnostic of diagnostics) {
     const action = codeActions.find(i => i.name == diagnostic.code);
     if (action) {
@@ -72,7 +87,7 @@ connection.onCodeAction(async codeActionParams => {
 });
 
 // Register and get changes to Aurelia settings
-connection.onDidChangeConfiguration(async (change) => { 
+connection.onDidChangeConfiguration(async (change) => {
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
   settings.validation = change.settings.aurelia.validation;
   settings.bindings.data = change.settings.aurelia.autocomplete.bindings.data;
@@ -99,11 +114,93 @@ connection.onCompletion(async (textDocumentPosition) => {
 });
 
 
-connection.onRequest('aurelia-view-information', (filePath: string) => {
+connection.onRequest('aurelia-view-information', async (filePath: string) => {
+  let fileProcessor = new ProcessFiles();
+  await fileProcessor.processPath();
+  aureliaApplication.components = fileProcessor.components
+
   return aureliaApplication.components.find(doc => doc.paths.indexOf(normalizePath(filePath)) > -1);
 });
 
+connection.onRequest('aurelia-definition-provide', () => {
+  const result = exposeAureliaDefinitions();
+  console.log("TCL: result", result)
+  return result;
+})
+
+connection.onRequest('aurelia-smart-autocomplete-goto', () => {
+  return aureliaApplication.components;
+})
+
+connection.onDefinition((position: TextDocumentPositionParams): Definition => {
+  console.log("TCL: onDefinition")
+  console.log("TCL: position", position)
+  return null;
+})
+
+
+
 connection.listen();
+
+export declare type DefinitionsInfo = {
+  [name: string]: DefinitionLink;
+}
+
+function exposeAureliaDefinitions(): DefinitionsInfo {
+  console.log("TCL: exposeAureliaDefinitions -> aureliaApplication.components", aureliaApplication.components)
+
+
+  const definitionsInfo: DefinitionsInfo = {};
+  // const definitions: LocationLink[] = [];
+  // 1. For each component
+  aureliaApplication.components.forEach(component => {
+    if (!component.viewModel) return;
+
+    const { viewModel } = component;
+    // 1.1 Find target path
+    const viewModelPath = component.paths.find(path => {
+      // todo, get extension from settings
+      return path.endsWith('.ts');
+    });
+    // const targetUri = Uri.parse(viewModelPath)
+    const targetUri = `file://${ viewModelPath }`;
+    const document = documents.get(targetUri);
+    console.log("TCL: document", document)
+
+
+    // 1.2. properties
+    if (viewModel.properties) {
+      viewModel.properties.forEach(property => {
+        const { range } = property
+        const targetRange = Range.create(range.start, range.end);
+
+        definitionsInfo[property.name] = LocationLink.create(
+          targetUri,
+          targetRange,
+          targetRange,
+        )
+      });
+    }
+
+    // 1.3. methods
+    if (viewModel.methods) {
+      viewModel.methods.forEach(method => {
+        const { range } = method
+        const targetRange = Range.create(range.start, range.end);
+
+        definitionsInfo[method.name] = LocationLink.create(
+          targetUri,
+          targetRange,
+          targetRange,
+        )
+      });
+    }
+  });
+
+  const allDocs = documents.all();
+  // and add them into defintions array
+  return definitionsInfo;
+}
 
 
 async function featureToggles(featureToggles) {

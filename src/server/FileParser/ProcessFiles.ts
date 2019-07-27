@@ -30,7 +30,6 @@ export default class ProcessFiles {
     for (let path of paths) {
       path = normalizePath(path);
       try {
-
         const name = Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
         const component = this.findOrCreateWebComponentBy(name);
 
@@ -134,11 +133,14 @@ function processFile(sourceFile: SourceFile) {
 function processClassDeclaration(node: Node) {
   let properties: Properties = [];
   let methods: Methods = [];
+  let lineNumber: number;
   if (!node) {
     return { properties, methods };
   }
 
   let declaration = (node as ClassDeclaration);
+  const srcFile = node.getSourceFile()
+
   if (declaration.members) {
     for (let member of declaration.members) {
       switch (member.kind) {
@@ -156,13 +158,17 @@ function processClassDeclaration(node: Node) {
           if (property.type) {
             propertyType = property.type.getText();
           }
+
+          // getSourceFile
+          lineNumber = srcFile.getLineAndCharacterOfPosition(property.name.pos).line;
+
           properties.push({
             name: propertyName,
             modifiers: propertyModifiers,
             type: propertyType,
             range: Range.create(
-              Position.create(-1, property.name.pos),
-              Position.create(-1, property.name.end)
+              Position.create(lineNumber, property.name.pos),
+              Position.create(lineNumber, property.name.end)
             )
           });
           break;
@@ -191,14 +197,16 @@ function processClassDeclaration(node: Node) {
             }
           }
 
+          lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.pos).line;
+
           methods.push({
             name: memberName,
             returnType: memberReturnType,
             modifiers: memberModifiers,
             parameters: params,
             range: Range.create(
-              Position.create(-1, memberDeclaration.name.pos),
-              Position.create(-1, memberDeclaration.name.end),
+              Position.create(lineNumber, memberDeclaration.name.pos),
+              Position.create(lineNumber, memberDeclaration.name.end),
             )
           });
           break;

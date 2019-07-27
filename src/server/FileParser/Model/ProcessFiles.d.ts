@@ -1,5 +1,6 @@
 import { Range } from 'vscode-languageserver';
 
+// Can take this from `ViewModelDocuments.ts`;
 
 type Method = {
   name: string;
