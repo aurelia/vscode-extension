@@ -36,12 +36,14 @@ export function registerPreview(context, window, client) {
   });
 
   vscode.window.onDidChangeActiveTextEditor((editor: vscode.TextEditor) => {
-    if (!isPanelVisible) return;
-    if (editor === vscode.window.activeTextEditor) {
-      provider.update(previewUri).then(success => {
-        panel.webview.html = fillWebViewHtml(success);
-      });
-    }
+    setTimeout(() => {
+      if (!isPanelVisible) return;
+      if (editor === vscode.window.activeTextEditor) {
+        provider.update(previewUri).then(success => {
+          panel.webview.html = fillWebViewHtml(success);
+        });
+      }
+    }, 0);
   });
 
   context.subscriptions.push(vscode.commands.registerCommand('aurelia.showViewProperties', () => {
@@ -82,7 +84,7 @@ export function registerPreview(context, window, client) {
       isPanelVisible = false;
     });
 
-	}));
+  }));
 
 }
 
