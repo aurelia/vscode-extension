@@ -37,7 +37,7 @@ import * as ts from 'typescript';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
 import { connect } from 'net';
-import { Uri } from 'vscode';
+import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
 
 // Bind console.log & error to the Aurelia output
 const connection: IConnection = createConnection();
@@ -117,14 +117,13 @@ connection.onCompletion(async (textDocumentPosition) => {
 connection.onRequest('aurelia-view-information', async (filePath: string) => {
   let fileProcessor = new ProcessFiles();
   await fileProcessor.processPath();
-  aureliaApplication.components = fileProcessor.components
+  aureliaApplication.components = fileProcessor.components;
 
   return aureliaApplication.components.find(doc => doc.paths.indexOf(normalizePath(filePath)) > -1);
 });
 
-connection.onRequest('aurelia-definition-provide', () => {
-  const result = exposeAureliaDefinitions();
-  console.log("TCL: result", result)
+connection.onRequest('aurelia-definition-provide', (extensionsFromSettings: AureliaConfigProperties['relatedFiles']) => {
+  const result = exposeAureliaDefinitions(extensionsFromSettings);
   return result;
 })
 
@@ -143,58 +142,48 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
 connection.listen();
 
 export declare type DefinitionsInfo = {
-  [name: string]: DefinitionLink;
+  [name: string]: DefinitionLink[];
 }
 
-function exposeAureliaDefinitions(): DefinitionsInfo {
-  console.log("TCL: exposeAureliaDefinitions -> aureliaApplication.components", aureliaApplication.components)
-
-
+function exposeAureliaDefinitions(extensionsFromSettings: AureliaConfigProperties['relatedFiles']): DefinitionsInfo {
   const definitionsInfo: DefinitionsInfo = {};
-  // const definitions: LocationLink[] = [];
+
   // 1. For each component
   aureliaApplication.components.forEach(component => {
     if (!component.viewModel) return;
 
     const { viewModel } = component;
     // 1.1 Find target path
+    const { script } = extensionsFromSettings;
     const viewModelPath = component.paths.find(path => {
-      // todo, get extension from settings
-      return path.endsWith('.ts');
+      return path.endsWith(script);
     });
-    // const targetUri = Uri.parse(viewModelPath)
-    const targetUri = `file://${ viewModelPath }`;
+    const targetUri = `file://${viewModelPath}`;
     const document = documents.get(targetUri);
-    console.log("TCL: document", document)
 
+    function storeDefinitions(propName: string) {
+      if (!viewModel[propName]) return;
 
-    // 1.2. properties
-    if (viewModel.properties) {
-      viewModel.properties.forEach(property => {
+      viewModel[propName].forEach(property => {
         const { range } = property
         const targetRange = Range.create(range.start, range.end);
 
-        definitionsInfo[property.name] = LocationLink.create(
-          targetUri,
-          targetRange,
-          targetRange,
-        )
+        const def = definitionsInfo[property.name] || [];
+        def.push(
+          LocationLink.create(
+            targetUri,
+            targetRange,
+            targetRange,
+          )
+        );
+
+        definitionsInfo[property.name] = def;
       });
     }
 
-    // 1.3. methods
-    if (viewModel.methods) {
-      viewModel.methods.forEach(method => {
-        const { range } = method
-        const targetRange = Range.create(range.start, range.end);
+    storeDefinitions('properties');
+    storeDefinitions('methods');
 
-        definitionsInfo[method.name] = LocationLink.create(
-          targetUri,
-          targetRange,
-          targetRange,
-        )
-      });
-    }
   });
 
   const allDocs = documents.all();

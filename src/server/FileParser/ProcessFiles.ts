@@ -29,8 +29,10 @@ export default class ProcessFiles {
 
     for (let path of paths) {
       path = normalizePath(path);
+      const name = Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
       try {
-        const name = Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
+        if (name.endsWith('.spec')) continue;
+
         const component = this.findOrCreateWebComponentBy(name);
 
         if (component.paths.indexOf(path) === -1) {
@@ -38,6 +40,7 @@ export default class ProcessFiles {
         }
 
         switch (Path.extname(path)) {
+          case '.js':
           case '.ts':
             const fileContent: string = sys.readFile(path, 'utf8');
             const result = processSourceFile(path, fileContent, 'typescript');
@@ -68,9 +71,6 @@ export default class ProcessFiles {
             }
 
             break;
-          case '.js':
-            //console.log('proces js', path);
-            break;
           case '.html':
             const htmlTemplate = await new AureliaHtmlParser().processFile(path);
             component.document = htmlTemplate;
@@ -86,8 +86,9 @@ export default class ProcessFiles {
         }
 
       } catch (ex) {
-        console.log(`failed to parse path ${ path }`);
-        console.log(JSON.stringify(ex));
+        console.log(`failed to parse path ${path}`);
+        console.log(JSON.stringify(ex.message));
+        console.log(JSON.stringify(ex.stack));
       }
     }
   }
@@ -160,7 +161,7 @@ function processClassDeclaration(node: Node) {
           }
 
           // getSourceFile
-          lineNumber = srcFile.getLineAndCharacterOfPosition(property.name.pos).line;
+          lineNumber = srcFile.getLineAndCharacterOfPosition(property.name.end).line;
 
           properties.push({
             name: propertyName,
@@ -197,7 +198,7 @@ function processClassDeclaration(node: Node) {
             }
           }
 
-          lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.pos).line;
+          lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.end).line;
 
           methods.push({
             name: memberName,

@@ -9,7 +9,8 @@ import {
   commands,
   TextEdit,
   LocationLink,
-  Uri
+  Uri,
+  workspace,
 } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
@@ -18,7 +19,7 @@ import { registerPreview } from './Preview/Register';
 import { TextDocumentContentProvider } from './Preview/TextDocumentContentProvider';
 import { WebComponent } from '../server/FileParser/Model/WebComponent';
 import { getFileNameAsKebabCase } from '../Util/GetFileNameAsKebabCase';
-// import { TextDocuments } from 'vscode-languageserver';
+import { getFileExtensionsFromConfig } from './GetFileExtensionsFromConfig';
 
 let outputChannel: OutputChannel;
 
@@ -32,17 +33,27 @@ class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
   public async provideDefinition(
     document: vscode.TextDocument,
     position: vscode.Position): Promise<vscode.DefinitionLink[]> {
-    const definitionsInfo = await this.client.sendRequest('aurelia-definition-provide');
+    const extensionsFromSettings = getFileExtensionsFromConfig(workspace);
+    const definitionsInfo = await this.client.sendRequest('aurelia-definition-provide', extensionsFromSettings);
 
     // 1. get value name (property or method) CHECK
     const goToSourceWordRange = document.getWordRangeAtPosition(position);
     const goToSourceWord = document.getText(goToSourceWordRange);
 
-    definitionsInfo[goToSourceWord].targetUri = Uri.parse(
-      definitionsInfo[goToSourceWord].targetUri
-    )
-    console.log("TCL: SearchDefinitionInViewV2 -> definitionsInfo[goToSourceWord]", definitionsInfo[goToSourceWord])
-    return definitionsInfo[goToSourceWord];
+    const foundDefinitions = definitionsInfo[goToSourceWord];
+    const getFileName = (path: string): string => {
+      return path.split('/').pop().replace(/\..+/, '');
+    }
+    const currentFileName = getFileName(document.fileName);
+    const targetDef = foundDefinitions.filter(def => {
+      const defFileName = getFileName(def.targetUri);
+      return defFileName === currentFileName;
+    });
+
+    return {
+      ...targetDef[0],
+      targetUri: Uri.parse(targetDef[0].targetUri)
+    }
   }
 }
 
