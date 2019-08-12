@@ -20,7 +20,7 @@ import {
   LocationLink,
   Range,
 } from 'vscode-languageserver';
-import { MarkedString } from 'vscode-languageserver';
+import { MarkedString, Position } from 'vscode-languageserver';
 
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
@@ -184,6 +184,45 @@ function exposeAureliaDefinitions(extensionsFromSettings: AureliaConfigPropertie
     storeDefinitions('properties');
     storeDefinitions('methods');
 
+    function storeViewDefinitions() {
+      const viewDocument = component.document;
+      if (!viewDocument) return;
+
+      const tags = viewDocument.tags.filter(tag => {
+        const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
+        const isStartTag = !isDontParseTags && tag.startTag;
+        return (!isDontParseTags && tag.startTag) // omit closing tags
+      });
+
+      tags.forEach(tag => {
+        tag.attributes.forEach(attr => {
+          if (attr.name !== 'repeat') return;
+          /* eg. value = 'button of buttons' */
+          const { value } = attr;
+          const definitionWord = value.split(' ')[0];
+          const targetViewUri = `file://${viewDocument.path}`;
+          /* parse5 line index starts 1 */
+          const lineNum = tag.line - 1;
+
+          const targetRange = Range.create(
+            Position.create(lineNum, attr.startOffset),
+            Position.create(lineNum, attr.endOffset),
+          );
+
+          const def = definitionsInfo[definitionWord] || [];
+          def.push(
+            LocationLink.create(
+              targetViewUri,
+              targetRange,
+              targetRange,
+            )
+          );
+          definitionsInfo[definitionWord] = def;
+        });
+      });
+    }
+
+    storeViewDefinitions();
   });
 
   const allDocs = documents.all();
