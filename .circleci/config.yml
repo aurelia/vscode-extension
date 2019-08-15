@@ -14,18 +14,8 @@ jobs:
       - run:
           name: pre-publish
           command: npm run vscode:prepublish
-  test:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - run:
-          name: Test
-          command: npm test
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
-      - test:
-          requires:
-            - build
