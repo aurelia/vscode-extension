@@ -32,8 +32,10 @@
     "Themes",
     "Snippets"
   ],
-  "activationEvents": [],
-  "main": "./dist/src/client/main",
+  "activationEvents": [
+    "workspaceContains:**/aurelia_project/aurelia.json"
+  ],
+  "main": "./client/dist/extension",
   "contributes": {},
   "scripts": {
     "vscode:prepublish": "npm run compile",

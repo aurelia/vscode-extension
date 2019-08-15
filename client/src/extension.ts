@@ -6,7 +6,8 @@ import {
   workspace as Workspace, 
   ExtensionContext, 
   WorkspaceFolder,
-  Uri
+  Uri,
+  window as Window
 } from 'vscode';
 
 import {
@@ -17,7 +18,8 @@ let defaultClient: LanguageClient;
 let clients: Map<string, LanguageClient> = new Map();
 
 export function activate(context: ExtensionContext) {
-
+  const channel = Window.createOutputChannel('aurelia');
+  channel.appendLine('extension activated');
 }
 
 export function deactivate(): Thenable<void> {
