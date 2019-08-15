@@ -7,4 +7,3 @@ npm-debug.log*
 dist/doc-temp
 dist/test
 dist
-package-lock.json
