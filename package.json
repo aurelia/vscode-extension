@@ -6,8 +6,7 @@
   "icon": "images/logo.png",
   "keywords": [
     "aurelia",
-    "vscode",
-    "extension"
+    "multi-root ready"
   ],
   "homepage": "http://aurelia.io",
   "bugs": {
@@ -33,7 +32,7 @@
     "Snippets"
   ],
   "activationEvents": [
-    "workspaceContains:**/aurelia_project/aurelia.json"
+    "workspaceContains:package.json"
   ],
   "main": "./client/dist/extension",
   "contributes": {},
