@@ -4,6 +4,5 @@ node_modules
 *.swp
 npm-debug.log*
 .test
-dist/doc-temp
-dist/test
 dist
+client/server

@@ -5,15 +5,18 @@
         "outDir": "dist",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "lib": [
-            "es6",
-            "dom"
-        ],
         "sourceMap": true,
-        "rootDir": "."
+        "rootDir": "src"
     },
+    "include": [
+      "src"
+    ],
     "exclude": [
         "node_modules",
         ".vscode-test"
+    ],
+    "references": [
+      { "path": "./client" },
+      { "path": "./server" }
     ]
 }

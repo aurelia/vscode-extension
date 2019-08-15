@@ -1,7 +1,7 @@
 See our [wiki page](https://github.com/aurelia/vscode-extension/wiki) for a complete overview of all the features available in this extension.
 
 
-# aurelia-vscode-extension
+# aurelia-vscode-extension (vNext)
 
 [![ZenHub](https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png)](https://zenhub.io)
 [![Join the chat at https://gitter.im/aurelia/discuss](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aurelia/discuss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

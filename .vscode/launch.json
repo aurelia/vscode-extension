@@ -1,33 +1,47 @@
 {
-  "version": "0.2.0",
-  "compounds": [
-    {
-      "name": "all",
-      "configurations": ["server", "client"]
-    }
-  ],
-  "configurations": [
-    {
-      "name": "client",
-      "type": "extensionHost",
-      "request": "launch",
-      "runtimeExecutable": "${execPath}",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}"
-      ],
-      "internalConsoleOptions": "neverOpen",
-      "sourceMaps": true,
-      "outFiles": ["${workspaceRoot}/dist/src/client/**/*.js"],
-      "preLaunchTask": "npm"
-    },
-    {
-      "name": "server",
-      "type": "node",
-      "request": "attach",
-      "port": 6100,
-      "sourceMaps": true,
-      "outFiles": ["${workspaceRoot}/dist/src/server/**/*.js"],
-      "protocol": "legacy"
-    }
-  ]
+	"version": "0.2.0",
+	// List of configurations. Add new configurations or edit existing ones.
+	"configurations": [
+		{
+			"type": "extensionHost",
+			"request": "launch",
+			"name": "Launch Client",
+			"runtimeExecutable": "${execPath}",
+			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
+			"stopOnEntry": false,
+			"sourceMaps": true,
+			"outFiles": ["${workspaceRoot}/client/dist/**/*.js"],
+			"preLaunchTask": "npm: watch"
+		},
+		{
+			"type": "node",
+			"request": "attach",
+			"name": "Attach to Server 6010",
+			"address": "localhost",
+			"protocol": "inspector",
+			"port": 6010,
+			"sourceMaps": true,
+			"outFiles": ["${workspaceRoot}/server/dist/**/*.js"]
+		},
+		{
+			"type": "node",
+			"request": "attach",
+			"name": "Attach to Server 6011",
+			"address": "localhost",
+			"protocol": "inspector",
+			"port": 6011,
+			"sourceMaps": true,
+			"outFiles": ["${workspaceRoot}/server/dist/**/*.js"]
+		},
+		{
+			"type": "node",
+			"request": "attach",
+			"name": "Attach to Server 6012",
+			"address": "localhost",
+			"protocol": "inspector",
+			"port": 6012,
+			"sourceMaps": true,
+			"outFiles": ["${workspaceRoot}/server/dist/**/*.js"]
+		}
+	]
 }
