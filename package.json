@@ -39,6 +39,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -b",
     "watch": "tsc -b -w",
+    "test": "",
     "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
   },
   "commitplease": {

@@ -18,38 +18,9 @@ jobs:
     docker:
       - image: circleci/node:latest
     steps:
-      - checkout
-      - run:
-          name: update-npm 
-          command: 'sudo npm install -g npm@latest'
-      - run:
-          name: npm install
-          command: npm install
-      - run:
-          name: build
-          command: npm run build
       - run:
           name: Test
           command: npm test
-  publish:
-    docker:
-      - image: circleci/node:latest
-    requires:
-      - build
-    filters:
-      branches:
-        ignore: /.*/
-      tags:
-        only: /^\d+\.\d+\.\d+$/
-    owner: aurelia
-    steps:
-      - run:
-        name: install VS Code Extension Manager
-        command: npm i vsce -g
-      - run:
-        name: publish to marketplace
-        command: vsce publish -p $VSTOKEN
-
 workflows:
   version: 2
   build_and_test:
