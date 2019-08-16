@@ -12,16 +12,16 @@ export class RelatedFiles implements Disposable {
 
     const fileExtensionsConfig = this.getFileExtensionsFromConfig();
     const {
-      script: scriptExtension,
-      style: styleExtension,
-      unit: unitExtension,
-      view: viewExtension,
+      scriptExtensions,
+      styleExtensions,
+      unitExtensions,
+      viewExtensions,
     } = fileExtensionsConfig
 
-    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedScript', this.openRelatedFactory(scriptExtension), this));
-    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedStyle', this.openRelatedFactory(styleExtension), this));
-    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedUnit', this.openRelatedFactory(unitExtension), this));
-    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedView', this.openRelatedFactory(viewExtension), this));
+    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedScript', this.openRelatedFactory(scriptExtensions), this));
+    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedStyle', this.openRelatedFactory(styleExtensions), this));
+    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedUnit', this.openRelatedFactory(unitExtensions), this));
+    this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedView', this.openRelatedFactory(viewExtensions), this));
   }
 
   public dispose() {
@@ -34,15 +34,15 @@ export class RelatedFiles implements Disposable {
 
   private getFileExtensionsFromConfig() {
     const defaultSettings = {
-      script: '.js',
-      style: '.less',
-      unit: '.spec.js',
-      view: '.html',
+      scriptExtensions: [".js", ".ts"],
+      styleExtensions: [".less", ".sass", ".scss", ".styl", ".css"],
+      unitExtensions: [".spec.js", ".spec.ts"],
+      viewExtensions: [".html"],
     };
-    return workspace.getConfiguration().get<AureliaConfigProperties['relatedFiles']>('aurelia.relatedFiles', defaultSettings);
+    return defaultSettings;
   }
 
-  private async onOpenRelated(editor: TextEditor, edit: TextEditorEdit) {
+  private onOpenRelated(editor: TextEditor, edit: TextEditorEdit) {
     if (!editor || !editor.document || editor.document.isUntitled) {
       return;
     }
@@ -52,15 +52,15 @@ export class RelatedFiles implements Disposable {
     const extension = path.extname(fileName).toLowerCase();
     const fileExtensionsConfig = this.getFileExtensionsFromConfig();
     const {
-      view: viewExtension,
-      script: scriptExtension,
+      viewExtensions,
+      scriptExtensions,
     } = fileExtensionsConfig
 
-    if (extension === viewExtension) {
-      relatedFile = await this.relatedFileExists(fileName, scriptExtension);
+    if (viewExtensions.includes(extension)) {
+      relatedFile = this.relatedFileExists(fileName, scriptExtensions);
     }
-    else if (extension === scriptExtension) {
-      relatedFile = await this.relatedFileExists(fileName, viewExtension);
+    else if (scriptExtensions.includes(extension)) {
+      relatedFile = this.relatedFileExists(fileName, viewExtensions);
     }
 
     if (relatedFile) {
@@ -68,27 +68,34 @@ export class RelatedFiles implements Disposable {
     }
   }
 
-  private openRelatedFactory(switchToExtension) {
-    return async (editor, edit) => {
+  private openRelatedFactory(switchToExtensions) {
+    return (editor, edit) => {
       if (!editor || !editor.document || editor.document.isUntitled) {
         return;
       }
 
-      const fileName = editor.document.fileName;
+      /**
+       * '.spec' is not recognized as an file extension.
+       * Thus, `replace`, so we are able to switch from, eg. 'unit' to 'style'.
+       * */
+      const fileName = editor.document.fileName.replace('.spec', '');
       const extension = path.extname(fileName).toLowerCase();
-      const relatedFile = await this.relatedFileExists(fileName, switchToExtension);
-
+      const relatedFile = this.relatedFileExists(fileName, switchToExtensions);
       if (relatedFile) {
         commands.executeCommand('vscode.open', Uri.file(relatedFile), editor.viewColumn);
       }
     }
   }
 
-  private async relatedFileExists(fullPath: string, relatedExt: string): Promise<string | undefined> {
-    const fileName = `${path.basename(fullPath, path.extname(fullPath))}${relatedExt}`;
-    fullPath = path.join(path.dirname(fullPath), fileName);
-
-    return new Promise<string | undefined>((resolve, reject) =>
-      fs.access(fullPath, fs.constants.R_OK, err => resolve(err ? undefined : fullPath)));
+  private relatedFileExists(fullPath: string, relatedExts: string[]): string {
+    let targetFile: string;
+    relatedExts.forEach(ext => {
+      let fileName = `${path.basename(fullPath, path.extname(fullPath))}${ext}`
+        .replace('.spec.spec', '.spec'); // Quick fix because we are appending eg. '.spec.ts' to 'file.spec'
+      fullPath = path.join(path.dirname(fullPath), fileName);
+      if (!fs.existsSync(fullPath)) return;
+      targetFile = fullPath;
+    });
+    return targetFile
   }
 }
