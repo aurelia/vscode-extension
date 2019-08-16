@@ -34,7 +34,7 @@ class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
     document: vscode.TextDocument,
     position: vscode.Position): Promise<vscode.DefinitionLink[]> {
     const extensionsFromSettings = getFileExtensionsFromConfig(workspace);
-    const definitionsInfo = await this.client.sendRequest('aurelia-definition-provide', extensionsFromSettings);
+    const { definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide', extensionsFromSettings);
 
     // 1. get value name (property or method) CHECK
     const goToSourceWordRange = document.getWordRangeAtPosition(position);

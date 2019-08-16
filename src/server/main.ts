@@ -22,6 +22,7 @@ import {
 } from 'vscode-languageserver';
 import { MarkedString, Position } from 'vscode-languageserver';
 
+import { camelCase } from 'aurelia-binding';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
@@ -38,6 +39,7 @@ import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
 import { connect } from 'net';
 import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
+import { exposeAureliaDefinitions } from './ExposeAureliaDefinitions';
 
 // Bind console.log & error to the Aurelia output
 const connection: IConnection = createConnection();
@@ -123,8 +125,10 @@ connection.onRequest('aurelia-view-information', async (filePath: string) => {
 });
 
 connection.onRequest('aurelia-definition-provide', (extensionsFromSettings: AureliaConfigProperties['relatedFiles']) => {
-  const result = exposeAureliaDefinitions(extensionsFromSettings);
-  return result;
+  const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(extensionsFromSettings, aureliaApplication);
+  definitionsInfo
+  definitionsAttributesInfo
+  return { definitionsInfo, definitionsAttributesInfo };
 })
 
 connection.onRequest('aurelia-smart-autocomplete-goto', () => {
@@ -141,94 +145,6 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
 
 connection.listen();
 
-export declare type DefinitionsInfo = {
-  [name: string]: DefinitionLink[];
-}
-
-function exposeAureliaDefinitions(extensionsFromSettings: AureliaConfigProperties['relatedFiles']): DefinitionsInfo {
-  const definitionsInfo: DefinitionsInfo = {};
-
-  // 1. For each component
-  aureliaApplication.components.forEach(component => {
-    if (!component.viewModel) return;
-
-    const { viewModel } = component;
-    // 1.1 Find target path
-    const { script } = extensionsFromSettings;
-    const viewModelPath = component.paths.find(path => {
-      return path.endsWith(script);
-    });
-    const targetUri = `file://${viewModelPath}`;
-    const document = documents.get(targetUri);
-
-    function storeDefinitions(propName: string) {
-      if (!viewModel[propName]) return;
-
-      viewModel[propName].forEach(property => {
-        const { range } = property
-        const targetRange = Range.create(range.start, range.end);
-
-        const def = definitionsInfo[property.name] || [];
-        def.push(
-          LocationLink.create(
-            targetUri,
-            targetRange,
-            targetRange,
-          )
-        );
-
-        definitionsInfo[property.name] = def;
-      });
-    }
-
-    storeDefinitions('properties');
-    storeDefinitions('methods');
-
-    function storeViewDefinitions() {
-      const viewDocument = component.document;
-      if (!viewDocument) return;
-
-      const tags = viewDocument.tags.filter(tag => {
-        const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
-        const isStartTag = !isDontParseTags && tag.startTag;
-        return (!isDontParseTags && tag.startTag) // omit closing tags
-      });
-
-      tags.forEach(tag => {
-        tag.attributes.forEach(attr => {
-          if (attr.name !== 'repeat') return;
-          /* eg. value = 'button of buttons' */
-          const { value } = attr;
-          const definitionWord = value.split(' ')[0];
-          const targetViewUri = `file://${viewDocument.path}`;
-          /* parse5 line index starts 1 */
-          const lineNum = tag.line - 1;
-
-          const targetRange = Range.create(
-            Position.create(lineNum, attr.startOffset),
-            Position.create(lineNum, attr.endOffset),
-          );
-
-          const def = definitionsInfo[definitionWord] || [];
-          def.push(
-            LocationLink.create(
-              targetViewUri,
-              targetRange,
-              targetRange,
-            )
-          );
-          definitionsInfo[definitionWord] = def;
-        });
-      });
-    }
-
-    storeViewDefinitions();
-  });
-
-  const allDocs = documents.all();
-  // and add them into defintions array
-  return definitionsInfo;
-}
 
 
 async function featureToggles(featureToggles) {
