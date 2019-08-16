@@ -131,7 +131,7 @@
       },
       {
         "command": "extension.auOpenRelated",
-        "title": "Open Related Aurelia File"
+        "title": "Switch between Aurelia view and view model"
       },
       {
         "command": "extension.auOpenRelatedScript",
@@ -220,16 +220,6 @@
           "description": "enable beta features",
           "default": {
             "smartAutocomplete": false
-          }
-        },
-        "aurelia.relatedFiles": {
-          "type": "object",
-          "description": "Configure extensions for related files",
-          "default": {
-            "script": [".js", ".ts"],
-            "style": [".less", ".sass", ".scss", ".styl", ".css"],
-            "unit": [".spec.js", ".spec.ts"],
-            "view": [".html"]
           }
         },
         "aurelia.autocomplete.bindings.data": {
