@@ -10,7 +10,7 @@ export class RelatedFiles implements Disposable {
   constructor() {
     this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelated', this.onOpenRelated, this));
 
-    const fileExtensionsConfig = this.getFileExtensionsFromConfig();
+    const fileExtensionsConfig = this.getRelatedFileExtensions();
     const {
       scriptExtensions,
       styleExtensions,
@@ -35,7 +35,7 @@ export class RelatedFiles implements Disposable {
   /**
    * Provide file extensions for navigating between Aurelia files.
    */
-  private getFileExtensionsFromConfig() {
+  private getRelatedFileExtensions() {
     const defaultSettings = {
       scriptExtensions: [".js", ".ts"],
       styleExtensions: [".less", ".sass", ".scss", ".styl", ".css"],
@@ -53,7 +53,7 @@ export class RelatedFiles implements Disposable {
     let relatedFile: string;
     const fileName = editor.document.fileName;
     const extension = path.extname(fileName).toLowerCase();
-    const fileExtensionsConfig = this.getFileExtensionsFromConfig();
+    const fileExtensionsConfig = this.getRelatedFileExtensions();
     const {
       viewExtensions,
       scriptExtensions,
