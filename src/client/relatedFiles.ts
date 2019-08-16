@@ -32,6 +32,9 @@ export class RelatedFiles implements Disposable {
     }
   }
 
+  /**
+   * Provide file extensions for navigating between Aurelia files.
+   */
   private getFileExtensionsFromConfig() {
     const defaultSettings = {
       scriptExtensions: [".js", ".ts"],
@@ -68,7 +71,12 @@ export class RelatedFiles implements Disposable {
     }
   }
 
-  private openRelatedFactory(switchToExtensions) {
+  /**
+   * Open a related Aurelia file, and
+   * return a function, which can be used by vscode's registerTextEditorCommand
+   * @param switchToExtensions Possible extensions, for target file
+   */
+  private openRelatedFactory(switchToExtensions: string[]) {
     return (editor, edit) => {
       if (!editor || !editor.document || editor.document.isUntitled) {
         return;
@@ -87,6 +95,11 @@ export class RelatedFiles implements Disposable {
     }
   }
 
+  /**
+   * @param fullPath Full path of the file, which triggered the command
+   * @param relatedExts Possible extensions, for target file
+   * @returns targetFile
+   */
   private relatedFileExists(fullPath: string, relatedExts: string[]): string {
     let targetFile: string;
     relatedExts.forEach(ext => {
