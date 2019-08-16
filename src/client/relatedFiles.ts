@@ -2,7 +2,6 @@
 import { commands, Disposable, TextEditor, TextEditorEdit, Uri, workspace } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { AureliaConfigProperties } from './Model/AureliaConfigProperties';
 
 export class RelatedFiles implements Disposable {
   private disposables: Disposable[] = [];
