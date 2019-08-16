@@ -222,16 +222,6 @@
             "smartAutocomplete": false
           }
         },
-        "aurelia.relatedFiles": {
-          "type": "object",
-          "description": "Configure extensions for related files",
-          "default": {
-            "script": [".js", ".ts"],
-            "style": [".less", ".sass", ".scss", ".styl", ".css"],
-            "unit": [".spec.js", ".spec.ts"],
-            "view": [".html"]
-          }
-        },
         "aurelia.autocomplete.bindings.data": {
           "type": "array",
           "description": "Auto complete options to provide on data bindings",
