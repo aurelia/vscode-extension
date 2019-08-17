@@ -135,6 +135,9 @@ function processClassDeclaration(node: Node) {
   let properties: Properties = [];
   let methods: Methods = [];
   let lineNumber: number;
+  let lineStart: number;
+  let startPos: number;
+  let endPos: number;
   if (!node) {
     return { properties, methods };
   }
@@ -162,14 +165,17 @@ function processClassDeclaration(node: Node) {
 
           // getSourceFile
           lineNumber = srcFile.getLineAndCharacterOfPosition(property.name.end).line;
+          lineStart = srcFile.getLineStarts()[lineNumber];
+          startPos = property.name.pos - lineStart + 1;
+          endPos = srcFile.getLineEndOfPosition(lineNumber);
 
           properties.push({
             name: propertyName,
             modifiers: propertyModifiers,
             type: propertyType,
             range: Range.create(
-              Position.create(lineNumber, property.name.pos),
-              Position.create(lineNumber, property.name.end)
+              Position.create(lineNumber, startPos),
+              Position.create(lineNumber, endPos)
             )
           });
           break;
@@ -199,6 +205,9 @@ function processClassDeclaration(node: Node) {
           }
 
           lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.end).line;
+          lineStart = srcFile.getLineStarts()[lineNumber];
+          startPos = memberDeclaration.name.pos - lineStart + 1;
+          endPos = srcFile.getLineEndOfPosition(lineNumber);
 
           methods.push({
             name: memberName,
@@ -206,8 +215,8 @@ function processClassDeclaration(node: Node) {
             modifiers: memberModifiers,
             parameters: params,
             range: Range.create(
-              Position.create(lineNumber, memberDeclaration.name.pos),
-              Position.create(lineNumber, memberDeclaration.name.end),
+              Position.create(lineNumber, startPos),
+              Position.create(lineNumber, endPos),
             )
           });
           break;
