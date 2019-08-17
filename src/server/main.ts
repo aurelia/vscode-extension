@@ -124,8 +124,8 @@ connection.onRequest('aurelia-view-information', async (filePath: string) => {
   return aureliaApplication.components.find(doc => doc.paths.indexOf(normalizePath(filePath)) > -1);
 });
 
-connection.onRequest('aurelia-definition-provide', (extensionsFromSettings: AureliaConfigProperties['relatedFiles']) => {
-  const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(extensionsFromSettings, aureliaApplication);
+connection.onRequest('aurelia-definition-provide', () => {
+  const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(aureliaApplication);
   definitionsInfo
   definitionsAttributesInfo
   return { definitionsInfo, definitionsAttributesInfo };

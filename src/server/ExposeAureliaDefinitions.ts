@@ -3,6 +3,18 @@ export declare type DefinitionsInfo = {
   [name: string]: DefinitionLink[];
 }
 
+declare type DefinitionsAttributesInfo = {
+  [name: string]: {
+    customElementName: string,
+    asCamelCase: string,
+  }[]
+}
+
+declare type AureliaDefinition = {
+  definitionsInfo: DefinitionsInfo,
+  definitionsAttributesInfo: DefinitionsAttributesInfo,
+}
+
 import {
   Location,
   DefinitionLink,
@@ -16,20 +28,24 @@ import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { camelCase } from 'aurelia-binding';
 import { WebComponent } from './FileParser/Model/WebComponent';
 import { HtmlTemplateDocument } from './FileParser/Model/HtmlTemplateDocument';
+import { DefinitionInfo } from 'typescript';
+import RelatedFileExtensions from '../Util/RelatedFileExtensions';
 
 function storeDefinitions(
   propName: string,
   component: WebComponent,
-  extensionsFromSettings: AureliaConfigProperties['relatedFiles'],
+  definitionsInfo: DefinitionsInfo
 ): DefinitionsInfo {
   const { viewModel } = component;
   if (!viewModel[propName]) return;
 
-  const definitionsInfo: DefinitionsInfo = {};
   // 1.1 Find target path
-  const { script: scriptExtension } = extensionsFromSettings;
+  const { scriptExtensions } = RelatedFileExtensions
   const viewModelPath = component.paths.find(path => {
-    return path.endsWith(scriptExtension);
+    return scriptExtensions.some(ext => {
+      ext;
+      return path.endsWith(ext)
+    })
   });
   const targetUri = `file://${viewModelPath}`;
 
@@ -48,12 +64,12 @@ function storeDefinitions(
 
     definitionsInfo[property.name] = def;
   });
+  return definitionsInfo;
 }
 
 function storeViewDefinitions(
   component: WebComponent,
   aureliaApplication: AureliaApplication,
-  extensionsFromSettings: AureliaConfigProperties['relatedFiles'],
 ) {
   const viewDocument = component.document;
   if (!viewDocument) return;
@@ -61,7 +77,7 @@ function storeViewDefinitions(
   const definitionsInfo: DefinitionsInfo = {};
   const definitionsAttributesInfo = {};
 
-  const { script: scriptExtension } = extensionsFromSettings;
+  const { scriptExtensions } = RelatedFileExtensions;
   const tags = viewDocument.tags.filter(tag => {
     const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
     const isStartTag = !isDontParseTags && tag.startTag;
@@ -117,7 +133,8 @@ function storeViewDefinitions(
             return (component.name === customElementName)
           })
           .paths.find(path => {
-            return path.endsWith(scriptExtension)
+            return scriptExtensions.some(ext => path.endsWith(ext))
+            // return path.endsWith(scriptExtensions)
           });
         const targetViewUri = `file://${targetViewPath}`;
 
@@ -142,31 +159,84 @@ function storeViewDefinitions(
       }
     });
   });
+  return {
+    definitionsInfo,
+    definitionsAttributesInfo
+  };
+}
+
+/**
+ * Map attrs bindables to corresponding view model variables
+ * @param definitionsInfo
+ * @param definitionsAttributesInfo
+ *
+ * @example
+ * // some-view.html:
+ *
+ * `
+ * <custom-ele
+ *   some-attribute.bind=""      1.
+ * ></custom-ele>
+ * `
+ *
+ * // custom-ele.ts:
+ * export class CustomEle {
+ *   public someAttribute      2.
+ * }
+ *
+ * Map 1. to 2.
+ */
+function mapAttributesToViewModelDefinitions(definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: DefinitionsAttributesInfo): AureliaDefinition {
+  Object.entries(definitionsAttributesInfo).forEach(([key, attrInfos]) => {
+    attrInfos.forEach(attrInfo => {
+      const { customElementName, asCamelCase } = attrInfo
+      definitionsInfo[key] = definitionsInfo[asCamelCase]
+    })
+  })
+
+  return {
+    definitionsInfo,
+    definitionsAttributesInfo,
+  }
 }
 
 export function exposeAureliaDefinitions(
-  extensionsFromSettings: AureliaConfigProperties['relatedFiles'],
   aureliaApplication: AureliaApplication,
-): { definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: {} } {
+): AureliaDefinition {
+  let definitionsInfo: DefinitionsInfo = {};
   let propertiesDefinition: DefinitionsInfo = {};
   let methodsDefinitions: DefinitionsInfo = {};
-  let definitionsAttributesInfo: any = {};
+  let definitionsAttributesInfo: DefinitionsAttributesInfo = {};
 
   // 1. For each component
   aureliaApplication.components.forEach(component => {
     if (!component.viewModel) return;
 
-    propertiesDefinition = storeDefinitions('properties', component, extensionsFromSettings);
-    methodsDefinitions = storeDefinitions('methods', component, extensionsFromSettings);
+    storeDefinitions('properties', component, propertiesDefinition);
+    storeDefinitions('methods', component, methodsDefinitions);
 
-    definitionsAttributesInfo = storeViewDefinitions(component, aureliaApplication, extensionsFromSettings);
+    const viewDefs = storeViewDefinitions(component, aureliaApplication)
+    if (!viewDefs) return;
+
+    propertiesDefinition = {
+      ...propertiesDefinition,
+      ...viewDefs.definitionsInfo
+    }
+    definitionsAttributesInfo = {
+      ...definitionsAttributesInfo,
+      ...viewDefs.definitionsAttributesInfo
+    };
   });
 
+  definitionsInfo = {
+    ...propertiesDefinition,
+    ...methodsDefinitions,
+  };
+
+  ({ definitionsInfo, definitionsAttributesInfo } = mapAttributesToViewModelDefinitions(definitionsInfo, definitionsAttributesInfo))
+
   return {
-    definitionsInfo: {
-      ...propertiesDefinition,
-      ...methodsDefinitions,
-    },
+    definitionsInfo,
     definitionsAttributesInfo
   };
 }

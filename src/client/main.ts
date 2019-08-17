@@ -10,7 +10,6 @@ import {
   TextEdit,
   LocationLink,
   Uri,
-  workspace,
 } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
@@ -19,22 +18,26 @@ import { registerPreview } from './Preview/Register';
 import { TextDocumentContentProvider } from './Preview/TextDocumentContentProvider';
 import { WebComponent } from '../server/FileParser/Model/WebComponent';
 import { getFileNameAsKebabCase } from '../Util/GetFileNameAsKebabCase';
-import { getFileExtensionsFromConfig } from './GetFileExtensionsFromConfig';
 
 let outputChannel: OutputChannel;
 
 class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
   client: LanguageClient;
 
-  constructor (client: LanguageClient) {
+  constructor(client: LanguageClient) {
     this.client = client;
   }
 
   public async provideDefinition(
     document: vscode.TextDocument,
     position: vscode.Position): Promise<vscode.DefinitionLink[]> {
-    const extensionsFromSettings = getFileExtensionsFromConfig(workspace);
-    const { definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide', extensionsFromSettings);
+    let definitionsInfo;
+    let definitionsAttributesInfo;
+    try {
+      ({ definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide'));
+    } catch (e) {
+      e
+    }
 
     // 1. get value name (property or method) CHECK
     const goToSourceWordRange = document.getWordRangeAtPosition(position);
@@ -46,8 +49,9 @@ class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
     }
     const currentFileName = getFileName(document.fileName);
     const targetDef = foundDefinitions.filter(def => {
-      const defFileName = getFileName(def.targetUri);
-      return defFileName === currentFileName;
+      const isViewModelVariable = getFileName(def.targetUri) === currentFileName; // .bind="viewModelVariable"
+      const isBindingAttribute = definitionsAttributesInfo[goToSourceWord] // eg. 'binding-attribute.bind="..."'
+      return isViewModelVariable || isBindingAttribute;
     });
 
     return {
