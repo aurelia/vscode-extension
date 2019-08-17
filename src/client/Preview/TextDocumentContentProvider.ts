@@ -119,5 +119,6 @@
 
 		public update(uri: vscode.Uri) {
 			this._onDidChange.fire(uri);
+      return this.provideTextDocumentContent(uri);
 		}
 	}
