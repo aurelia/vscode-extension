@@ -48,15 +48,27 @@ class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
       return path.split('/').pop().replace(/\..+/, '');
     }
     const currentFileName = getFileName(document.fileName);
-    const targetDef = foundDefinitions.filter(def => {
-      const isViewModelVariable = getFileName(def.targetUri) === currentFileName; // .bind="viewModelVariable"
-      const isBindingAttribute = definitionsAttributesInfo[goToSourceWord] // eg. 'binding-attribute.bind="..."'
+    const possibleDefs = foundDefinitions.filter(foundDef => {
+      const isViewModelVariable = getFileName(foundDef.targetUri) === currentFileName; // eg. `.bind="viewModelVariable"`
+      const isBindingAttribute = definitionsAttributesInfo[goToSourceWord] // eg. `binding-attribute.bind="..."`
+
       return isViewModelVariable || isBindingAttribute;
     });
 
+    let targetDef;
+    if (possibleDefs.length === 1) {
+      targetDef = possibleDefs[0];
+    } else {
+      targetDef = possibleDefs.find(possibleDef => {
+        const attrInfos = definitionsAttributesInfo[goToSourceWord] // eg. `binding-attribute.bind="..."`
+        const isBindingAttribute = attrInfos[0].customElementName === getFileName(possibleDef.targetUri);
+        return isBindingAttribute;
+      });
+    }
+
     return {
-      ...targetDef[0],
-      targetUri: Uri.parse(targetDef[0].targetUri)
+      ...targetDef,
+      targetUri: Uri.parse(targetDef.targetUri)
     }
   }
 }
