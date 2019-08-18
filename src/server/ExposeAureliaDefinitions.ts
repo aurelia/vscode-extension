@@ -67,15 +67,19 @@ function storeDefinitions(
   return definitionsInfo;
 }
 
+/**
+ * Store definitions from an aurelia view, eg.
+ * - 1. `repeat.for=">>>button<<< of buttons"`
+ * - 2. `<div >>>my-attr<<<.bind=""></div>
+ */
 function storeViewDefinitions(
   component: WebComponent,
   aureliaApplication: AureliaApplication,
+  definitionsInfo: DefinitionsInfo,
+  definitionsAttributesInfo: DefinitionsAttributesInfo,
 ) {
   const viewDocument = component.document;
   if (!viewDocument) return;
-
-  const definitionsInfo: DefinitionsInfo = {};
-  const definitionsAttributesInfo = {};
 
   const { scriptExtensions } = RelatedFileExtensions;
   const tags = viewDocument.tags.filter(tag => {
@@ -87,10 +91,19 @@ function storeViewDefinitions(
   tags.forEach(tag => {
     const customElementName = tag.name;
     tag.attributes.forEach(attr => {
+      /**
+       * 1.
+       * TODO: Cursor at the end of the line, and not directly where the value was defined, ie.
+       * `repeat.for="button of buttons"|`
+       * But we want `repeat.for="|button of buttons"`
+       * Fix approach: get startOffSet from `repeat.for` attribute
+       * (because parse5 only gives us attr positions)
+       * then + 12 (= num of char in `repeat.for="`) to get the beginning of value.
+       */
       if (attr.name === 'repeat') {
         /* eg. value = 'button of buttons' */
         const { value } = attr;
-        const definitionWord = value.split(' ')[0];
+        const definitionWord = value.split(' ')[0]; /* button */
         const targetViewUri = `file://${viewDocument.path}`;
         /* parse5 line index starts 1 */
         const lineNum = tag.line - 1;
@@ -112,6 +125,7 @@ function storeViewDefinitions(
       }
 
       /*
+       * 2.
        * Here, I assume, that .binding will only be true for valid attr. bindings
        */
       if (attr.binding === 'bind') {
@@ -126,15 +140,13 @@ function storeViewDefinitions(
           return getFileName(ref.path);
         });
         if (!foundRefs.includes(customElementName)) return;
-        customElementName
-        // find in aurelai components
+
         const targetViewPath = aureliaApplication.components
           .find(component => {
             return (component.name === customElementName)
           })
           .paths.find(path => {
             return scriptExtensions.some(ext => path.endsWith(ext))
-            // return path.endsWith(scriptExtensions)
           });
         const targetViewUri = `file://${targetViewPath}`;
 
@@ -147,7 +159,6 @@ function storeViewDefinitions(
         );
 
         const asCamelCase = camelCase(bindingName);
-        // definitionsInfo[bindingName] = definitionsInfo[asCamelCase];
         const def = definitionsAttributesInfo[bindingName] || [];
         def.push(
           {
@@ -208,30 +219,14 @@ export function exposeAureliaDefinitions(
   let methodsDefinitions: DefinitionsInfo = {};
   let definitionsAttributesInfo: DefinitionsAttributesInfo = {};
 
-  // 1. For each component
   aureliaApplication.components.forEach(component => {
     if (!component.viewModel) return;
 
     storeDefinitions('properties', component, propertiesDefinition);
     storeDefinitions('methods', component, methodsDefinitions);
 
-    const viewDefs = storeViewDefinitions(component, aureliaApplication)
-    if (!viewDefs) return;
-
-    propertiesDefinition = {
-      ...propertiesDefinition,
-      ...viewDefs.definitionsInfo
-    }
-    definitionsAttributesInfo = {
-      ...definitionsAttributesInfo,
-      ...viewDefs.definitionsAttributesInfo
-    };
+    storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo)
   });
-
-  definitionsInfo = {
-    ...propertiesDefinition,
-    ...methodsDefinitions,
-  };
 
   ({ definitionsInfo, definitionsAttributesInfo } = mapAttributesToViewModelDefinitions(definitionsInfo, definitionsAttributesInfo))
 
