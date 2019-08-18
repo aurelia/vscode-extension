@@ -215,17 +215,15 @@ export function exposeAureliaDefinitions(
   aureliaApplication: AureliaApplication,
 ): AureliaDefinition {
   let definitionsInfo: DefinitionsInfo = {};
-  let propertiesDefinition: DefinitionsInfo = {};
-  let methodsDefinitions: DefinitionsInfo = {};
   let definitionsAttributesInfo: DefinitionsAttributesInfo = {};
 
   aureliaApplication.components.forEach(component => {
     if (!component.viewModel) return;
 
-    storeViewModelDefinitions('properties', component, propertiesDefinition);
-    storeViewModelDefinitions('methods', component, methodsDefinitions);
+    storeViewModelDefinitions('properties', component, definitionsInfo);
+    storeViewModelDefinitions('methods', component, definitionsInfo);
 
-    storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo)
+    storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo);
   });
 
   ({ definitionsInfo, definitionsAttributesInfo } = mapAttributesToViewModelDefinitions(definitionsInfo, definitionsAttributesInfo))
