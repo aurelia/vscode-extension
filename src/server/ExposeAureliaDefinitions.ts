@@ -31,7 +31,7 @@ import { HtmlTemplateDocument } from './FileParser/Model/HtmlTemplateDocument';
 import { DefinitionInfo } from 'typescript';
 import RelatedFileExtensions from '../Util/RelatedFileExtensions';
 
-function storeDefinitions(
+function storeViewModelDefinitions(
   propName: string,
   component: WebComponent,
   definitionsInfo: DefinitionsInfo
@@ -222,8 +222,8 @@ export function exposeAureliaDefinitions(
   aureliaApplication.components.forEach(component => {
     if (!component.viewModel) return;
 
-    storeDefinitions('properties', component, propertiesDefinition);
-    storeDefinitions('methods', component, methodsDefinitions);
+    storeViewModelDefinitions('properties', component, propertiesDefinition);
+    storeViewModelDefinitions('methods', component, methodsDefinitions);
 
     storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo)
   });
