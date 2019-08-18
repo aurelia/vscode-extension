@@ -49,10 +49,11 @@ class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
     }
     const currentFileName = getFileName(document.fileName);
     const possibleDefs = foundDefinitions.filter(foundDef => {
+      const isCustomElement = getFileName(foundDef.targetUri) === goToSourceWord;
       const isViewModelVariable = getFileName(foundDef.targetUri) === currentFileName; // eg. `.bind="viewModelVariable"`
       const isBindingAttribute = definitionsAttributesInfo[goToSourceWord] // eg. `binding-attribute.bind="..."`
 
-      return isViewModelVariable || isBindingAttribute;
+      return isCustomElement || isViewModelVariable || isBindingAttribute;
     });
 
     let targetDef;

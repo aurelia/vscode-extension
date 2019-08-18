@@ -177,6 +177,26 @@ function storeViewDefinitions(
 }
 
 /**
+ *
+ */
+function storeCustomElementDefinitions(
+  component: WebComponent,
+  definitionsInfo: DefinitionsInfo,
+) {
+  const { name, paths } = component;
+  const targetRange = Range.create(
+    Position.create(0, 0),
+    Position.create(0, 6),
+  )
+  /** Assume, there is no name class with custom elements name */
+  definitionsInfo[name] = [{
+    targetRange,
+    targetSelectionRange: targetRange,
+    targetUri: paths[1] // quick win: 1 is the .ts file
+  }];
+}
+
+/**
  * Map attrs bindables to corresponding view model variables
  * @param definitionsInfo
  * @param definitionsAttributesInfo
@@ -222,8 +242,9 @@ export function exposeAureliaDefinitions(
 
     storeViewModelDefinitions('properties', component, definitionsInfo);
     storeViewModelDefinitions('methods', component, definitionsInfo);
+    storeCustomElementDefinitions(component, definitionsInfo);
 
-    storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo);
+    storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo)
   });
 
   ({ definitionsInfo, definitionsAttributesInfo } = mapAttributesToViewModelDefinitions(definitionsInfo, definitionsAttributesInfo))
