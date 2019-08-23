@@ -135,16 +135,7 @@ connection.onRequest('aurelia-smart-autocomplete-goto', () => {
   return aureliaApplication.components;
 })
 
-connection.onDefinition((position: TextDocumentPositionParams): Definition => {
-  console.log("TCL: onDefinition")
-  console.log("TCL: position", position)
-  return null;
-})
-
-
-
 connection.listen();
-
 
 async function featureToggles(featureToggles) {
   if (settings.featureToggles.smartAutocomplete) {

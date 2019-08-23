@@ -7,12 +7,11 @@ import {
   forEachChild, ClassDeclaration, PropertyDeclaration, MethodDeclaration, ParameterDeclaration, sys
 } from "typescript";
 import { HtmlTemplateDocument } from './Model/HtmlTemplateDocument';
-import { Methods, Properties } from './Model/ProcessFiles.d';
 
 import { WebComponent } from './Model/WebComponent';
 
 import { AureliaHtmlParser } from './Parsers/AureliaHtmlParser';
-import { ViewModelDocument } from './Model/ViewModelDocument';
+import { Methods, Properties, ViewModelDocument } from './Model/ViewModelDocument';
 
 import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './HTMLDocumentParser';
 import { normalizePath } from './../Util/NormalizePath';
