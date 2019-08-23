@@ -146,7 +146,6 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
 connection.listen();
 
 
-
 async function featureToggles(featureToggles) {
   if (settings.featureToggles.smartAutocomplete) {
     console.log('smart auto complete init');

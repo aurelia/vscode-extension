@@ -74,7 +74,7 @@ export class HTMLDocumentParser {
 }
 
 export class TagDefinition {
-  constructor (
+  constructor(
     public startTag: boolean,
     public name: string,
     public startOffset: number,
@@ -92,7 +92,7 @@ export class AttributeDefinition {
   public endOffset: number;
   public startOffset: number;
 
-  constructor (name: string, public value: string, location?: MarkupData.Location) {
+  constructor(name: string, public value: string, location?: MarkupData.Location) {
     if (name) {
       let parts = name.split('.');
       if (parts.length == 2) {

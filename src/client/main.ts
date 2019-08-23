@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as vscode from 'vscode';
 import {
   ExtensionContext,
   OutputChannel,
@@ -10,6 +9,10 @@ import {
   TextEdit,
   LocationLink,
   Uri,
+  DefinitionProvider,
+  TextDocument,
+  Position,
+  DefinitionLink,
 } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
@@ -21,7 +24,7 @@ import { getFileNameAsKebabCase } from '../Util/GetFileNameAsKebabCase';
 
 let outputChannel: OutputChannel;
 
-class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
+class SearchDefinitionInViewV2 implements DefinitionProvider {
   client: LanguageClient;
 
   constructor(client: LanguageClient) {
@@ -29,17 +32,10 @@ class SearchDefinitionInViewV2 implements vscode.DefinitionProvider {
   }
 
   public async provideDefinition(
-    document: vscode.TextDocument,
-    position: vscode.Position): Promise<vscode.DefinitionLink[]> {
-    let definitionsInfo;
-    let definitionsAttributesInfo;
-    try {
-      ({ definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide'));
-    } catch (e) {
-      e
-    }
+    document: TextDocument,
+    position: Position): Promise<DefinitionLink[]> {
+    const { definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide');
 
-    // 1. get value name (property or method) CHECK
     const goToSourceWordRange = document.getWordRangeAtPosition(position);
     const goToSourceWord = document.getText(goToSourceWordRange);
 
@@ -78,7 +74,6 @@ export function activate(context: ExtensionContext) {
   // Create default output channel
   outputChannel = window.createOutputChannel('aurelia');
   context.subscriptions.push(outputChannel);
-
 
   // Register CLI commands
   context.subscriptions.push(AureliaCliCommands.registerCommands(outputChannel));
@@ -123,7 +118,7 @@ export function activate(context: ExtensionContext) {
   const client = new LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
   registerPreview(context, window, client);
 
-  context.subscriptions.push(vscode.languages.registerDefinitionProvider(
+  context.subscriptions.push(languages.registerDefinitionProvider(
     { scheme: 'file', language: 'html' },
     new SearchDefinitionInViewV2(client))
   );
