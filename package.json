@@ -28,7 +28,7 @@
     "vscode": "^1.35.1"
   },
   "categories": [
-    "Languages",
+    "Programming Languages",
     "Themes",
     "Snippets"
   ],
@@ -149,7 +149,6 @@
         "command": "extension.auOpenRelatedView",
         "title": "Open Related Aurelia File: View"
       },
-
       {
         "command": "aurelia.showViewProperties",
         "title": "Show Aurelia view data to side"
