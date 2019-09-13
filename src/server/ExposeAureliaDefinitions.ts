@@ -128,7 +128,10 @@ function storeViewDefinitions(
        * 2.
        * Here, I assume, that .binding will only be true for valid attr. bindings
        */
-      if (attr.binding === 'bind') {
+      const aureliaBindings: string[] = ["bind", "to-view", "one-way", "from-view", "two-way", "one-time", "call"];
+
+      // if (attr.binding === 'bind') {
+      if (aureliaBindings.includes(attr.binding)) {
         const { name: bindingName } = attr;
 
         // check if is reference
