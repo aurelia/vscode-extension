@@ -135,6 +135,16 @@ connection.onRequest('aurelia-smart-autocomplete-goto', () => {
   return aureliaApplication.components;
 })
 
+connection.onDefinition((position: TextDocumentPositionParams): Definition => {
+  /**
+   * Need to have this onDefinition here, else we get following error in the console
+   * Request textDocument/definition failed.
+   * Message: Unhandled method textDocument/definition
+   * Code: -32601
+   */
+  return null;
+})
+
 connection.listen();
 
 async function featureToggles(featureToggles) {
