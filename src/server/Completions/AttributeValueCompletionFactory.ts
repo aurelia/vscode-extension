@@ -1,6 +1,6 @@
-import { 
-  CompletionItem, 
-  CompletionItemKind, 
+import {
+  CompletionItem,
+  CompletionItemKind,
   InsertTextFormat } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
@@ -16,14 +16,14 @@ import { normalizePath } from './../Util/NormalizePath';
 export default class AttributeCompletionFactory extends BaseAttributeCompletionFactory {
 
   constructor(
-    library: ElementLibrary, 
+    library: ElementLibrary,
     private application: AureliaApplication,
     private settings: AureliaSettings) { super(library); }
 
   public create(elementName: string, attributeName: string, bindingName: string, uri: string): Array<CompletionItem> {
 
     let result:Array<CompletionItem> = [];
-    
+
     if (bindingName === undefined || bindingName === null || bindingName === '') {
       let element = this.getElement(elementName);
 
@@ -35,12 +35,12 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
       if (attribute && attribute.values) {
         for (let [key, value] of attribute.values.entries()) {
           result.push({
-              documentation: value.documentation,
-              insertText: key,
-              insertTextFormat: InsertTextFormat.Snippet,
-              kind: CompletionItemKind.Property,
-              label: key,
-            });
+            documentation: value.documentation,
+            insertText: key,
+            insertTextFormat: InsertTextFormat.Snippet,
+            kind: CompletionItemKind.Property,
+            label: key,
+          });
         }
       }
     }
@@ -54,8 +54,10 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
 }
 
 function includeCodeAutoComplete(application, result, path) {
-  path = path.toLowerCase();
-  const compoment = application.components.find(i => i.paths.map(x => x.toLowerCase()).indexOf(path) > -1);
+  const targetPath = `/${path}`;
+  const compoment = application.components.find(component => {
+    return component.paths.find(path => path === targetPath);
+  });
 
   if (compoment) {
     if (compoment.viewModel) {
@@ -91,7 +93,7 @@ function includeCodeAutoComplete(application, result, path) {
           kind: CompletionItemKind.Property,
           label: x.name,
         })
-      });          
+      });
     }
-  }  
+  }
 }
