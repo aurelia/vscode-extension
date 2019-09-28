@@ -53,7 +53,7 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
   }
 }
 
-function includeCodeAutoComplete(application, result, path) {
+export function includeCodeAutoComplete(application, result, path) {
   const targetPath = `/${path}`;
   const compoment = application.components.find(component => {
     return component.paths.find(path => path === targetPath);
