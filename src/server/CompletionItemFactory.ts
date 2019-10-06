@@ -25,7 +25,8 @@ export default class CompletionItemFactory {
     position: Position,
     text: string,
     positionNumber: number,
-    uri: string): Promise<Array<CompletionItem>> {
+    uri: string,
+    aureliaApplication: AureliaApplication): Promise<Array<CompletionItem>> {
 
       let nodes = await this.parser.parse(text);
       let insideTag: TagDefinition = null;
@@ -54,7 +55,7 @@ export default class CompletionItemFactory {
         if (this.notInAttributeValue(elementString)) {
 
           if (triggerCharacter === ' ') {
-            return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name));
+            return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name), aureliaApplication);
           } else if (triggerCharacter === '.' && this.canExpandDot(elementString)) {
             return this.createBindingCompletion(insideTag, text, positionNumber);
           } else {
