@@ -58,12 +58,13 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
         component.viewModel.properties.forEach(property => {
           if (!property.isBindable) return;
 
+          const quote = this.settings.quote;
           const varAsKebabCase = property.name.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
           result.push({
-            documentation: '',
-            detail: '',
-            insertText: varAsKebabCase,
-            insertTextFormat: InsertTextFormat.PlainText,
+            documentation: property.type,
+            detail: 'View Model Bindable',
+            insertText: `${varAsKebabCase}.$\{1:bind\}=${quote}$\{0:${property.name}\}${quote}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Variable,
             label: `View Model: ${varAsKebabCase}`
           });
