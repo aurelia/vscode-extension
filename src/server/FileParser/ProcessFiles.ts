@@ -168,9 +168,15 @@ function processClassDeclaration(node: Node) {
           startPos = property.name.pos - lineStart + 1;
           endPos = srcFile.getLineEndOfPosition(lineNumber);
 
+          let isBindable = false;
+          if (member.decorators) {
+            isBindable = member.decorators[0].getText() === '@bindable';
+          }
+
           properties.push({
             name: propertyName,
             modifiers: propertyModifiers,
+            isBindable,
             type: propertyType,
             range: Range.create(
               Position.create(lineNumber, startPos),

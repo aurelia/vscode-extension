@@ -56,6 +56,8 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
         if (!component.viewModel.properties) return;
 
         component.viewModel.properties.forEach(property => {
+          if (!property.isBindable) return;
+
           const varAsKebabCase = property.name.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
           result.push({
             documentation: '',
