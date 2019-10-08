@@ -1,12 +1,15 @@
+import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { autoinject } from 'aurelia-dependency-injection';
 import { CompletionItem, Position } from 'vscode-languageserver';
 import AttributeCompletionFactory from './Completions/AttributeCompletionFactory';
 import ElementCompletionFactory from './Completions/ElementCompletionFactory';
+import CustomElementCompletionFactory from './Completions/CustomElementCompletionFactory';
 import AttributeValueCompletionFactory from './Completions/AttributeValueCompletionFactory';
 import BindingCompletionFactory from './Completions/BindingCompletionFactory';
 import EmmetCompletionFactory from './Completions/EmmetCompletionFactory';
 import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './FileParser/HTMLDocumentParser';
 import ViewModelVariablesCompletionFactory from './Completions/ViewModelVariablesCompletionFactory';
+import ViewModelViewAttributesCompletionFactory from './Completions/ViewModelViewAttributesCompletionFactory';
 
 @autoinject()
 export default class CompletionItemFactory {
@@ -14,10 +17,12 @@ export default class CompletionItemFactory {
   constructor(
     private attributeCompletionFactory: AttributeCompletionFactory,
     private elementCompletionFactory: ElementCompletionFactory,
+    private customElementCompletionFactory: CustomElementCompletionFactory,
     private attributeValueCompletionFactory: AttributeValueCompletionFactory,
     private bindingCompletionFactory: BindingCompletionFactory,
     private emmetCompletionFactory: EmmetCompletionFactory,
     private viewModelVariablesCompletionFactory: ViewModelVariablesCompletionFactory,
+    private viewModelViewAttributesCompletionFactory: ViewModelViewAttributesCompletionFactory,
     private parser: HTMLDocumentParser) { }
 
   public async create(
@@ -76,7 +81,9 @@ export default class CompletionItemFactory {
         case '[':
           return this.createEmmetCompletion(text, positionNumber);
         case '<':
-          return this.elementCompletionFactory.create(parentTag);
+          const customElementResult = this.customElementCompletionFactory.create('what', aureliaApplication);
+          const elementResult = this.elementCompletionFactory.create(parentTag);
+          return customElementResult.concat(elementResult);
       }
   }
 
