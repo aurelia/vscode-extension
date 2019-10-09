@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { createConnection, 
-  IConnection, 
-  TextDocuments, 
-  InitializeParams, 
-  InitializeResult, 
-  Hover, 
+import { createConnection,
+  IConnection,
+  TextDocuments,
+  InitializeParams,
+  InitializeResult,
+  Hover,
   CompletionList,
   InitializedParams } from 'vscode-languageserver';
 import { MarkedString } from 'vscode-languageserver';
@@ -41,13 +41,13 @@ const settings = <AureliaSettings> globalContainer.get(AureliaSettings);
 
 // Register characters to lisen for
 connection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
-  
+
   // TODO: find better way/place to init this
   const dummy = globalContainer.get(ElementLibrary);
-  
+
   return {
     capabilities: {
-      completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },
+      completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\'', '{'] },
       codeActionProvider: true,
       textDocumentSync: documents.syncKind,
     },
@@ -61,7 +61,7 @@ const codeActions = [
 connection.onCodeAction(async codeActionParams => {
   const diagnostics = codeActionParams.context.diagnostics;
   const document = documents.get(codeActionParams.textDocument.uri);
-  const commands = []; 
+  const commands = [];
   for (const diagnostic of diagnostics) {
     const action = codeActions.find(i => i.name == diagnostic.code);
     if (action) {
@@ -72,7 +72,7 @@ connection.onCodeAction(async codeActionParams => {
 });
 
 // Register and get changes to Aurelia settings
-connection.onDidChangeConfiguration(async (change) => { 
+connection.onDidChangeConfiguration(async (change) => {
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
   settings.validation = change.settings.aurelia.validation;
   settings.bindings.data = change.settings.aurelia.autocomplete.bindings.data;

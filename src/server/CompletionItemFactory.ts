@@ -6,6 +6,7 @@ import AttributeValueCompletionFactory from './Completions/AttributeValueComplet
 import BindingCompletionFactory from './Completions/BindingCompletionFactory';
 import EmmetCompletionFactory from './Completions/EmmetCompletionFactory';
 import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './FileParser/HTMLDocumentParser';
+import ViewModelVariablesCompletionFactory from './Completions/ViewModelVariablesCompletionFactory';
 
 @autoinject()
 export default class CompletionItemFactory {
@@ -16,16 +17,17 @@ export default class CompletionItemFactory {
     private attributeValueCompletionFactory: AttributeValueCompletionFactory,
     private bindingCompletionFactory: BindingCompletionFactory,
     private emmetCompletionFactory: EmmetCompletionFactory,
+    private viewModelVariablesCompletionFactory: ViewModelVariablesCompletionFactory,
     private parser: HTMLDocumentParser) { }
 
   public async create(
     triggerCharacter: string,
-    position: Position,    
+    position: Position,
     text: string,
     positionNumber: number,
     uri: string): Promise<Array<CompletionItem>> {
 
-      let nodes = await this.parser.parse(text);     
+      let nodes = await this.parser.parse(text);
       let insideTag: TagDefinition = null;
       let lastIdx = 0;
 
@@ -57,14 +59,15 @@ export default class CompletionItemFactory {
             return this.createBindingCompletion(insideTag, text, positionNumber);
           } else {
             return [];
-          } 
-        
+          }
         // inside attribute, perform attribute completion
         } else if (triggerCharacter === '"' || triggerCharacter === '\'') {
                 return this.createValueCompletion(insideTag, text, positionNumber, uri);
         } else {
           return [];
         }
+      } else if (triggerCharacter === '{') {
+        return this.viewModelVariablesCompletionFactory.create(uri);
       }
 
       // auto complete others
@@ -81,12 +84,12 @@ export default class CompletionItemFactory {
     for(let char of tagText) {
       if (char === '"') double += 1;
       if (char === '\'') single += 1;
-    }    
+    }
     return single % 2 == 0 && double % 2 == 0;
   }
 
   private canExpandDot(elementString) {
-    return !/([^a-zA-Z]|\.(bind|one-way|two-way|one-time|from-view|to-view|delegate|trigger|call|capture|ref))\.$/g.test(elementString);    
+    return !/([^a-zA-Z]|\.(bind|one-way|two-way|one-time|from-view|to-view|delegate|trigger|call|capture|ref))\.$/g.test(elementString);
   }
 
   private getOpenHtmlTags(nodes: Array<TagDefinition>, lastIdx: number) {
@@ -98,7 +101,7 @@ export default class CompletionItemFactory {
         var index = tags.indexOf(nodes[i].name);
         if (index >= 0) {
           tags.splice( index, 1 );
-        }          
+        }
       }
     }
     return tags;
@@ -120,7 +123,7 @@ export default class CompletionItemFactory {
             attribute = attributes[0];
             break;
           }
-        }  
+        }
       }
       if (!attribute) {
         return [];
@@ -154,7 +157,7 @@ export default class CompletionItemFactory {
           attribute = attributes[0];
           break;
         }
-      }  
+      }
     }
     if (!attribute) {
       attribute = new AttributeDefinition(foundText.substring(0, foundText.length-1), '');
