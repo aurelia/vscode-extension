@@ -63,7 +63,7 @@ connection.onInitialize(async (params: InitializeParams): Promise<InitializeResu
 
   return {
     capabilities: {
-      completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\''] },
+      completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\'', '{'] },
       codeActionProvider: true,
       definitionProvider: true,
       textDocumentSync: documents.syncKind,
