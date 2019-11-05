@@ -1,3 +1,4 @@
+import { Range, Position } from 'vscode-languageserver';
 import * as Path from 'path';
 import * as FileSystem from 'fs';
 import { Parser, AccessScope } from 'aurelia-binding';
@@ -10,7 +11,7 @@ import { HtmlTemplateDocument } from './Model/HtmlTemplateDocument';
 import { WebComponent } from './Model/WebComponent';
 
 import { AureliaHtmlParser } from './Parsers/AureliaHtmlParser';
-import { ViewModelDocument } from './Model/ViewModelDocument';
+import { Methods, Properties, ViewModelDocument } from './Model/ViewModelDocument';
 
 import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './HTMLDocumentParser';
 import { normalizePath } from './../Util/NormalizePath';
@@ -18,7 +19,7 @@ import { normalizePath } from './../Util/NormalizePath';
 
 export default class ProcessFiles {
 
-  public components = new Array<WebComponent>();
+  public components = Array<WebComponent>();
 
   public async processPath(): Promise<void> {
 
@@ -27,9 +28,10 @@ export default class ProcessFiles {
 
     for (let path of paths) {
       path = normalizePath(path);
+      const name = Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
       try {
+        if (name.endsWith('.spec')) continue;
 
-        const name = Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
         const component = this.findOrCreateWebComponentBy(name);
 
         if (component.paths.indexOf(path) === -1) {
@@ -37,6 +39,7 @@ export default class ProcessFiles {
         }
 
         switch (Path.extname(path)) {
+          case '.js':
           case '.ts':
             const fileContent: string = sys.readFile(path, 'utf8');
             const result = processSourceFile(path, fileContent, 'typescript');
@@ -67,9 +70,6 @@ export default class ProcessFiles {
             }
 
             break;
-          case '.js':
-            //console.log('proces js', path);
-            break;
           case '.html':
             const htmlTemplate = await new AureliaHtmlParser().processFile(path);
             component.document = htmlTemplate;
@@ -86,7 +86,8 @@ export default class ProcessFiles {
 
       } catch (ex) {
         console.log(`failed to parse path ${path}`);
-        console.log(JSON.stringify(ex));
+        console.log(JSON.stringify(ex.message));
+        console.log(JSON.stringify(ex.stack));
       }
     }
   }
@@ -130,13 +131,19 @@ function processFile(sourceFile: SourceFile) {
 }
 
 function processClassDeclaration(node: Node) {
-  let properties = [];
-  let methods = [];
+  let properties: Properties = [];
+  let methods: Methods = [];
+  let lineNumber: number;
+  let lineStart: number;
+  let startPos: number;
+  let endPos: number;
   if (!node) {
     return { properties, methods };
   }
 
   let declaration = (node as ClassDeclaration);
+  const srcFile = node.getSourceFile()
+
   if (declaration.members) {
     for (let member of declaration.members) {
       switch (member.kind) {
@@ -154,10 +161,21 @@ function processClassDeclaration(node: Node) {
           if (property.type) {
             propertyType = property.type.getText();
           }
+
+          // getSourceFile
+          lineNumber = srcFile.getLineAndCharacterOfPosition(property.name.end).line;
+          lineStart = srcFile.getLineStarts()[lineNumber];
+          startPos = property.name.pos - lineStart + 1;
+          endPos = srcFile.getLineEndOfPosition(lineNumber);
+
           properties.push({
             name: propertyName,
             modifiers: propertyModifiers,
-            type: propertyType
+            type: propertyType,
+            range: Range.create(
+              Position.create(lineNumber, startPos),
+              Position.create(lineNumber, endPos)
+            )
           });
           break;
         case SyntaxKind.GetAccessor:
@@ -165,7 +183,7 @@ function processClassDeclaration(node: Node) {
         case SyntaxKind.MethodDeclaration:
           let memberDeclaration = member as MethodDeclaration;
           let memberModifiers;
-          if (memberDeclaration.modifiers){
+          if (memberDeclaration.modifiers) {
             memberModifiers = memberDeclaration.modifiers.map(i => i.getText());
             if (memberModifiers.indexOf("private") > -1) {
               continue;
@@ -185,12 +203,20 @@ function processClassDeclaration(node: Node) {
             }
           }
 
+          lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.end).line;
+          lineStart = srcFile.getLineStarts()[lineNumber];
+          startPos = memberDeclaration.name.pos - lineStart + 1;
+          endPos = srcFile.getLineEndOfPosition(lineNumber);
+
           methods.push({
             name: memberName,
             returnType: memberReturnType,
             modifiers: memberModifiers,
-            parameters: params
-
+            parameters: params,
+            range: Range.create(
+              Position.create(lineNumber, startPos),
+              Position.create(lineNumber, endPos),
+            )
           });
           break;
       }

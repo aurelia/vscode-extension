@@ -1,14 +1,28 @@
 import 'reflect-metadata';
-import { createConnection,
+import {
+  createConnection,
   IConnection,
   TextDocuments,
   InitializeParams,
   InitializeResult,
   Hover,
   CompletionList,
-  InitializedParams } from 'vscode-languageserver';
-import { MarkedString } from 'vscode-languageserver';
+  InitializedParams,
+  TextDocumentPositionParams,
+  Definition,
+  DocumentLinkParams,
+  DocumentLink,
+  CodeLensParams,
+  CodeLens,
+  ReferenceParams,
+  Location,
+  DefinitionLink,
+  LocationLink,
+  Range,
+} from 'vscode-languageserver';
+import { MarkedString, Position } from 'vscode-languageserver';
 
+import { camelCase } from 'aurelia-binding';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
@@ -24,6 +38,8 @@ import * as ts from 'typescript';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
 import { connect } from 'net';
+import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
+import { exposeAureliaDefinitions } from './ExposeAureliaDefinitions';
 
 // Bind console.log & error to the Aurelia output
 const connection: IConnection = createConnection();
@@ -49,6 +65,7 @@ connection.onInitialize(async (params: InitializeParams): Promise<InitializeResu
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\'', '{'] },
       codeActionProvider: true,
+      definitionProvider: true,
       textDocumentSync: documents.syncKind,
     },
   };
@@ -99,12 +116,36 @@ connection.onCompletion(async (textDocumentPosition) => {
 });
 
 
-connection.onRequest('aurelia-view-information', (filePath: string) => {
+connection.onRequest('aurelia-view-information', async (filePath: string) => {
+  let fileProcessor = new ProcessFiles();
+  await fileProcessor.processPath();
+  aureliaApplication.components = fileProcessor.components;
+
   return aureliaApplication.components.find(doc => doc.paths.indexOf(normalizePath(filePath)) > -1);
 });
 
-connection.listen();
+connection.onRequest('aurelia-definition-provide', () => {
+  const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(aureliaApplication);
+  definitionsInfo
+  definitionsAttributesInfo
+  return { definitionsInfo, definitionsAttributesInfo };
+})
 
+connection.onRequest('aurelia-smart-autocomplete-goto', () => {
+  return aureliaApplication.components;
+})
+
+connection.onDefinition((position: TextDocumentPositionParams): Definition => {
+  /**
+   * Need to have this onDefinition here, else we get following error in the console
+   * Request textDocument/definition failed.
+   * Message: Unhandled method textDocument/definition
+   * Code: -32601
+   */
+  return null;
+})
+
+connection.listen();
 
 async function featureToggles(featureToggles) {
   if (settings.featureToggles.smartAutocomplete) {

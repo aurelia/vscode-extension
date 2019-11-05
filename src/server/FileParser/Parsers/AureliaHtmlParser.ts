@@ -1,8 +1,8 @@
 import * as Path from 'path';
-import { Parser }  from 'aurelia-binding';
-import {HtmlTemplateDocument} from './../Model/HtmlTemplateDocument';
-import {TemplateReference} from './../Model/TemplateReference';
-import {HTMLDocumentParser} from './../HTMLDocumentParser';
+import { Parser } from 'aurelia-binding';
+import { HtmlTemplateDocument } from './../Model/HtmlTemplateDocument';
+import { TemplateReference } from './../Model/TemplateReference';
+import { HTMLDocumentParser, TagDefinition } from './../HTMLDocumentParser';
 import { sys } from 'typescript';
 
 export class AureliaHtmlParser {
@@ -27,7 +27,7 @@ export class AureliaHtmlParser {
 
     template.references = this.getRequireImportsFrom(document);
     template.dynamicBindables = this.getAttributeCommands(document);
-    template.interpolationBindings = this.getStringInterpolationBindings(fileContent);
+    template.interpolationBindings = this.getStringInterpolationBindings(fileContent, document);
     template.tags = document;
     return template;
   }
@@ -43,24 +43,24 @@ export class AureliaHtmlParser {
 
   private getRequireImportsFrom(document) {
 
-      const requireStatements = document.filter(tag => tag.name === 'require' && tag.startTag);
-      let references = [];
+    const requireStatements = document.filter(tag => tag.name === 'require' && tag.startTag);
+    let references = [];
 
-      for (let require of requireStatements) {
-        const pathAttribute = require.attributes.find(attr => attr.name === 'from');
-        const asAttribute = require.attributes.find(attr => attr.name === 'as');
+    for (let require of requireStatements) {
+      const pathAttribute = require.attributes.find(attr => attr.name === 'from');
+      const asAttribute = require.attributes.find(attr => attr.name === 'as');
 
-        let path, asElementValue;
-        if (pathAttribute) {
-          path = pathAttribute.value;
-        }
-        if (asAttribute) {
-          asElementValue = asAttribute.value;
-        }
-        references.push(new TemplateReference(path, asElementValue));
+      let path, asElementValue;
+      if (pathAttribute) {
+        path = pathAttribute.value;
       }
+      if (asAttribute) {
+        asElementValue = asAttribute.value;
+      }
+      references.push(new TemplateReference(path, asElementValue));
+    }
 
-      return references;
+    return references;
   }
 
   private getAttributeCommands(document) {
@@ -87,7 +87,14 @@ export class AureliaHtmlParser {
     return bindings;
   }
 
-  private getStringInterpolationBindings(fileContent) {
+
+  private getStringInterpolationBindings(fileContent: string, document: TagDefinition[]) {
+    const tags = document.filter(tag => {
+      const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
+      const isStartTag = !isDontParseTags && tag.startTag;
+      return (!isDontParseTags && tag.startTag) // omit closing tags
+    });
+
     let bindings = [];
     const aureliaParser = new Parser();
     const interpolationRegex = /\$\{(.*)\}/g;
@@ -95,7 +102,7 @@ export class AureliaHtmlParser {
     while (match = interpolationRegex.exec(fileContent)) {
       bindings.push({
         value: match[0],
-        bindingData: aureliaParser.parse(match[1])
+        // bindingData: aureliaParser.parse(match[1]) // some files got parsing errors
       });
     }
 

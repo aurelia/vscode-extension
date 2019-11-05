@@ -15,19 +15,22 @@ export class HTMLDocumentParser {
       const parser = new SAXParser({ locationInfo: true });
       parser.on('startTag', (name, attrs, selfClosing, location) => {
         stack.push(new TagDefinition(
-          true, 
-          name, 
-          location.startOffset, 
+          true,
+          name,
+          location.startOffset,
           location.endOffset,
+          location.line,
           selfClosing,
           attrs.map(i => new AttributeDefinition(i.name, i.value, location.attrs[i.name]))));
       });
       parser.on("endTag", (name, location) => {
         stack.push(new TagDefinition(
           false,
-          name, 
-          location.startOffset, 
-          location.endOffset));    
+          name,
+          location.startOffset,
+          location.endOffset,
+          location.line,
+        ));
       });
 
       stream.on('end', x => {
@@ -35,7 +38,7 @@ export class HTMLDocumentParser {
       });
       stream.pipe(parser);
 
-    });  
+    });
   }
 
   public getElementAtPosition(text: string, start: number, end: number): Promise<TagDefinition> {
@@ -49,32 +52,34 @@ export class HTMLDocumentParser {
       const parser = new SAXParser({ locationInfo: true });
       parser.on('startTag', (name, attrs, selfClosing, location) => {
 
-         if (location.startOffset <= start && location.endOffset >= end) {
+        if (location.startOffset <= start && location.endOffset >= end) {
           tagDefinition = new TagDefinition(
-            true, 
-            name, 
-            location.startOffset, 
+            true,
+            name,
+            location.startOffset,
             location.endOffset,
+            location.line,
             selfClosing,
             attrs.map(i => new AttributeDefinition(i.name, i.value, location.attrs[i.name])));
-         } 
+        }
       });
 
       stream.on('end', x => {
         resolve(tagDefinition);
       });
       stream.pipe(parser);
-    }); 
+    });
   }
 
 }
 
 export class TagDefinition {
   constructor(
-    public startTag: boolean, 
-    public name: string, 
-    public startOffset: number, 
+    public startTag: boolean,
+    public name: string,
+    public startOffset: number,
     public endOffset: number,
+    public line: number,
     public selfClosing: boolean = null,
     public attributes: Array<AttributeDefinition> = []) {
   }
