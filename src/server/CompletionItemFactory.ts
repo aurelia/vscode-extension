@@ -81,7 +81,7 @@ export default class CompletionItemFactory {
         case '[':
           return this.createEmmetCompletion(text, positionNumber);
         case '<':
-          const customElementResult = this.customElementCompletionFactory.create('what', aureliaApplication);
+          const customElementResult = this.customElementCompletionFactory.create('', aureliaApplication);
           const elementResult = this.elementCompletionFactory.create(parentTag);
           return customElementResult.concat(elementResult);
       }
