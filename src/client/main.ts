@@ -1,3 +1,4 @@
+import { DefinitionInfo } from 'typescript';
 import * as path from 'path';
 import {
   ExtensionContext,
@@ -21,6 +22,7 @@ import { registerPreview } from './Preview/Register';
 import { TextDocumentContentProvider } from './Preview/TextDocumentContentProvider';
 import { WebComponent } from '../server/FileParser/Model/WebComponent';
 import { getFileNameAsKebabCase } from '../Util/GetFileNameAsKebabCase';
+import { DefinitionsInfo, DefinitionsAttributesInfo } from '../server/ExposeAureliaDefinitions';
 
 let outputChannel: OutputChannel;
 
@@ -34,7 +36,9 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
   public async provideDefinition(
     document: TextDocument,
     position: Position): Promise<DefinitionLink[]> {
-    const { definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide');
+    const { definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest<{
+      definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: DefinitionsAttributesInfo,
+    }>('aurelia-definition-provide');
 
     const goToSourceWordRange = document.getWordRangeAtPosition(position);
     const goToSourceWord = document.getText(goToSourceWordRange);

@@ -3,7 +3,7 @@ export declare type DefinitionsInfo = {
   [name: string]: DefinitionLink[];
 }
 
-declare type DefinitionsAttributesInfo = {
+export declare type DefinitionsAttributesInfo = {
   [name: string]: {
     customElementName: string,
     asCamelCase: string,
