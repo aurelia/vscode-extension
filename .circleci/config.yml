@@ -34,27 +34,29 @@ jobs:
   publish:
     docker:
       - image: circleci/node:latest
-    requires:
-      - build
-    filters:
-      branches:
-        ignore: /.*/
-      tags:
-        only: /^\d+\.\d+\.\d+$/
-    owner: aurelia
     steps:
+      - checkout
       - run:
-        name: install VS Code Extension Manager
-        command: npm i vsce -g
+          name: install VS Code Extension Manager
+          command: npm i vsce
       - run:
-        name: publish to marketplace
-        command: vsce publish -p $VSTOKEN
+          name: publish to marketplace
+          command: npx vsce publish -p ${VSTOKEN}
 
 workflows:
   version: 2
-  build_and_test:
+  main:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+$/
       - test:
           requires:
             - build
+      - publish:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
