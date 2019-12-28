@@ -1,3 +1,16 @@
+<a name="1.0.5"></a>
+## [1.0.5](https://github.com/aurelia/vscode-extension/compare/1.0.4...1.0.5) (2019-12-28)
+
+
+### Features
+
+* **autocomplete:** custom elements in view ([#111](https://github.com/aurelia/vscode-extension/issues/111)) ([25b123f](https://github.com/aurelia/vscode-extension/commit/25b123f))
+* **relatedFiles:** Add more open related files support ([#102](https://github.com/aurelia/vscode-extension/issues/102)) ([1caecb9](https://github.com/aurelia/vscode-extension/commit/1caecb9))
+* **smartAutocomplete:** Go to Definition ([#104](https://github.com/aurelia/vscode-extension/issues/104)) ([f49cea9](https://github.com/aurelia/vscode-extension/commit/f49cea9))
+* **smartAutocomplete:** View data update on file change ([#103](https://github.com/aurelia/vscode-extension/issues/103)) ([26dcb05](https://github.com/aurelia/vscode-extension/commit/26dcb05))
+
+
+
 <a name="1.0.4"></a>
 ## [1.0.4](https://github.com/aurelia/vscode-extension/compare/1.0.3...1.0.4) (2019-07-22)
 
