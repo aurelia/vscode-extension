@@ -1,4 +1,5 @@
 import { DefinitionInfo } from 'typescript';
+import * as ts from 'typescript';
 import * as path from 'path';
 import {
   ExtensionContext,
@@ -14,6 +15,10 @@ import {
   TextDocument,
   Position,
   DefinitionLink,
+  CompletionItemProvider,
+  CompletionItem,
+  CancellationToken,
+  CompletionContext,
 } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
@@ -74,6 +79,68 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
   }
 }
 
+class ViewCompletionItemProvider implements CompletionItemProvider {
+  client: LanguageClient;
+
+  constructor(client: LanguageClient) {
+    this.client = client;
+  }
+
+  private useTypescriptCompletionWithTypeApi(fileName: string) {
+    if (fileName !== '/Users/hdn/Desktop/Coding Platzsparer/au-ts-wallaby/src/app.ts') return;
+
+    const program: ts.Program = ts.createProgram([fileName], { strict: true });
+    const resultObj: any = {};
+    ts.forEachChild(program.getSourceFile(fileName), (node: ts.Node) => {
+      const typeChecker = program.getTypeChecker();
+      const type = typeChecker.getTypeAtLocation(node)
+      if (ts.isClassDeclaration(node) && node.name) {
+        let symbol = typeChecker.getSymbolAtLocation(node.name);
+        symbol.members.forEach(value => {
+          value
+          console.log('CLASS VAR: ' + value.name)
+          const classVarNode = value.declarations[0] /*?*/
+          let typeOfClassVar: ts.Type;
+
+          typeOfClassVar = typeChecker.getTypeAtLocation(classVarNode);
+          if (typeOfClassVar.symbol) {
+
+            console.log('--AND its type name: ' + typeOfClassVar.symbol.name)
+            if (typeOfClassVar.symbol.members) {
+              const propArr: string[] = [];
+              typeOfClassVar.symbol.members.forEach(prop => {
+                console.log('----AND its type props: ' + prop.name)
+                propArr.push(prop.name)
+              });
+              resultObj[value.name] = propArr;
+            }
+          }
+        })
+      }
+    });
+    return resultObj;
+  }
+
+  public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): CompletionItem[] {
+    const pos = new Position(position.line, position.character - 1);
+    const word = document.getWordRangeAtPosition(pos)
+    const goToSourceWord = document.getText(word);
+    const fileName = document.fileName.replace('.html', '.ts');
+    const resutlObj = this.useTypescriptCompletionWithTypeApi(fileName);
+    const targetObjPropsName = resutlObj[goToSourceWord] as string[];
+
+    const objCompletion = targetObjPropsName.map(propName => ({
+      // documentation: property.type,
+      // detail: 'View Model Bindable',
+      // insertText: `${varAsKebabCase}.$\{1:bind\}=${quote}$\{0:${property.name}\}${quote}`,
+      // insertTextFormat: InsertTextFormat.Snippet,
+      // kind: CompletionItemKind.Variable,
+      label: propName
+    } as CompletionItem));
+    return objCompletion;
+  }
+}
+
 export function activate(context: ExtensionContext) {
   // Create default output channel
   outputChannel = window.createOutputChannel('aurelia');
@@ -126,6 +193,12 @@ export function activate(context: ExtensionContext) {
     { scheme: 'file', language: 'html' },
     new SearchDefinitionInViewV2(client))
   );
+
+  context.subscriptions.push(languages.registerCompletionItemProvider(
+    { scheme: 'file', language: 'html' },
+    new ViewCompletionItemProvider(client),
+    '.'
+  ));
 
   const disposable = client.start();
   context.subscriptions.push(disposable);
