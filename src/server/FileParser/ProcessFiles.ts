@@ -23,7 +23,7 @@ export default class ProcessFiles {
 
   public async processPath(): Promise<void> {
 
-    const sourceDirectory = Path.join(sys.getCurrentDirectory(), '/src/');
+    const sourceDirectory = sys.getCurrentDirectory();
     const paths = sys.readDirectory(sourceDirectory, ['ts', 'js', 'html']);
 
     for (let path of paths) {

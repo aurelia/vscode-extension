@@ -65,7 +65,7 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
 
     return {
       ...targetDef,
-      targetUri: Uri.parse(targetDef.targetUri)
+      targetUri: Uri.file(targetDef.targetUri)
     }
   }
 }
