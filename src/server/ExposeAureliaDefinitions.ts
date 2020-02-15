@@ -47,7 +47,7 @@ function storeViewModelDefinitions(
       return path.endsWith(ext)
     })
   });
-  const targetUri = `file://${viewModelPath}`;
+  const targetUri = `${viewModelPath}`;
 
   viewModel[propName].forEach(property => {
     const { range } = property
@@ -104,7 +104,7 @@ function storeViewDefinitions(
         /* eg. value = 'button of buttons' */
         const { value } = attr;
         const definitionWord = value.split(' ')[0]; /* button */
-        const targetViewUri = `file://${viewDocument.path}`;
+        const targetViewUri = `${viewDocument.path}`;
         /* parse5 line index starts 1 */
         const lineNum = tag.line - 1;
 
@@ -151,7 +151,7 @@ function storeViewDefinitions(
           .paths.find(path => {
             return scriptExtensions.some(ext => path.endsWith(ext))
           });
-        const targetViewUri = `file://${targetViewPath}`;
+        const targetViewUri = `${targetViewPath}`;
 
         /* parse5 line index starts 1 */
         const lineNum = tag.line - 1;
