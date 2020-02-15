@@ -40,8 +40,8 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
     const goToSourceWord = document.getText(goToSourceWordRange);
 
     const foundDefinitions = definitionsInfo[goToSourceWord];
-    const getFileName = (path: string): string => {
-      return path.split('/').pop().replace(/\..+/, '');
+    const getFileName = (filePath: string): string => {
+      return path.parse(filePath).name
     }
     const currentFileName = getFileName(document.fileName);
     const possibleDefs = foundDefinitions.filter(foundDef => {
