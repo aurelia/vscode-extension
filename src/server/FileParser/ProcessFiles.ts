@@ -24,7 +24,8 @@ export default class ProcessFiles {
   public async processPath(): Promise<void> {
 
     const sourceDirectory = sys.getCurrentDirectory();
-    const paths = sys.readDirectory(sourceDirectory, ['ts', 'js', 'html']);
+    const paths = sys.readDirectory(sourceDirectory, ['ts', 'js', 'html'], ['node_modules', 'aurelia_project']);
+
 
     for (let path of paths) {
       path = normalizePath(path);
