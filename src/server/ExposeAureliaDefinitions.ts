@@ -23,6 +23,7 @@ import {
   MarkedString,
   Position,
 } from 'vscode-languageserver';
+import * as path from 'path';
 import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { camelCase } from 'aurelia-binding';
@@ -136,8 +137,8 @@ function storeViewDefinitions(
 
         // check if is reference
         const references = viewDocument.references;
-        const getFileName = (path: string): string => {
-          return path.split('/').pop().replace(/\..+/, '');
+        const getFileName = (filePath: string): string => {
+          return path.parse(filePath).name
         }
         const foundRefs = references.map(ref => {
           return getFileName(ref.path);
