@@ -31,6 +31,7 @@ import { WebComponent } from './FileParser/Model/WebComponent';
 import { HtmlTemplateDocument } from './FileParser/Model/HtmlTemplateDocument';
 import { DefinitionInfo } from 'typescript';
 import RelatedFileExtensions from '../Util/RelatedFileExtensions';
+import { kebabCase } from '../Util/kebabCase';
 
 function storeViewModelDefinitions(
   propName: string,
@@ -201,31 +202,14 @@ function storeCustomElementDefinitions(
 }
 
 /**
- * Map attrs bindables to corresponding view model variables
- * @param definitionsInfo
- * @param definitionsAttributesInfo
- *
- * @example
- * // some-view.html:
- *
- * `
- * <custom-ele
- *   some-attribute.bind=""      1.
- * ></custom-ele>
- * `
- *
- * // custom-ele.ts:
- * export class CustomEle {
- *   public someAttribute      2.
- * }
- *
- * Map 1. to 2.
+ * After all view model variables/methods were collected,
+ * converted them to kebab case (for goto in view).
  */
-function mapAttributesToViewModelDefinitions(definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: DefinitionsAttributesInfo): AureliaDefinition {
-  Object.entries(definitionsAttributesInfo).forEach(([key, attrInfos]) => {
+function convertViewModelVariablesToKebabCase(definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: DefinitionsAttributesInfo): AureliaDefinition {
+  Object.entries(definitionsInfo).forEach(([key, attrInfos]) => {
     attrInfos.forEach(attrInfo => {
-      const { customElementName, asCamelCase } = attrInfo
-      definitionsInfo[key] = definitionsInfo[asCamelCase]
+      const asKebabCase = kebabCase(key);
+      definitionsInfo[asKebabCase] = definitionsInfo[key]
     })
   })
 
@@ -251,7 +235,7 @@ export function exposeAureliaDefinitions(
     storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo)
   });
 
-  ({ definitionsInfo, definitionsAttributesInfo } = mapAttributesToViewModelDefinitions(definitionsInfo, definitionsAttributesInfo))
+  ({ definitionsInfo, definitionsAttributesInfo } = convertViewModelVariablesToKebabCase(definitionsInfo, definitionsAttributesInfo))
 
   return {
     definitionsInfo,

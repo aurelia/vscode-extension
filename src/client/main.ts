@@ -47,7 +47,7 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
     const possibleDefs = foundDefinitions.filter(foundDef => {
       const isCustomElement = getFileName(foundDef.targetUri) === goToSourceWord;
       const isViewModelVariable = getFileName(foundDef.targetUri) === currentFileName; // eg. `.bind="viewModelVariable"`
-      const isBindingAttribute = definitionsAttributesInfo[goToSourceWord] // eg. `binding-attribute.bind="..."`
+      const isBindingAttribute = definitionsInfo[goToSourceWord]
 
       return isCustomElement || isViewModelVariable || isBindingAttribute;
     });
@@ -57,9 +57,11 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
       targetDef = possibleDefs[0];
     } else {
       targetDef = possibleDefs.find(possibleDef => {
-        const attrInfos = definitionsAttributesInfo[goToSourceWord] // eg. `binding-attribute.bind="..."`
-        const isBindingAttribute = attrInfos[0].customElementName === getFileName(possibleDef.targetUri);
-        return isBindingAttribute;
+        // Out of all possible defs. take the one of the corresponding view model.
+        // Eg. goto was triggered in `list.html` and we found possible defs in
+        // `create.ts` and `list.ts`, then look for `list.ts`.
+        const isCurrentFileViewModelVariable = currentFileName === getFileName(possibleDef.targetUri);
+        return isCurrentFileViewModelVariable;
       });
     }
 
