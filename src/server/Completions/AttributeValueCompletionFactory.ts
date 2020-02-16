@@ -11,6 +11,7 @@ import AureliaSettings from '../AureliaSettings';
 import { settings } from 'cluster';
 import { fileUriToPath } from './../Util/FileUriToPath';
 import { normalizePath } from './../Util/NormalizePath';
+import * as os from 'os';
 
 @autoinject()
 export default class AttributeCompletionFactory extends BaseAttributeCompletionFactory {
@@ -54,6 +55,9 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
 }
 
 export function includeCodeAutoComplete(application, result, targetPath) {
+  if (os.platform() === 'darwin') {
+    targetPath = `/${targetPath}`;
+  }
   const compoment = application.components.find(component => {
     return component.paths.find(path => path === targetPath);
   });
