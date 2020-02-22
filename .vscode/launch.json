@@ -26,8 +26,25 @@
       "request": "attach",
       "port": 6100,
       "sourceMaps": true,
+      // "processId": "${command:PickProcess}",
       "outFiles": ["${workspaceRoot}/dist/src/server/**/*.js"],
       "protocol": "legacy"
+    },
+    // Copied from https://github.com/microsoft/vscode-extension-samples/blob/master/lsp-sample/.vscode/launch.json
+    {
+      "name": "Language Server E2E Test",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}",
+        "--extensionTestsPath=${workspaceRoot}/dist/src/client/test",
+        "${workspaceRoot}/src/testFixture"
+      ],
+      "outFiles": [
+        "${workspaceRoot}/dist/src/client/test/**/*.js"
+      ],
+      "preLaunchTask": "npm"
     }
   ]
 }
