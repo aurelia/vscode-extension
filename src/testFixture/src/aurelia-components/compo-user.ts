@@ -1,6 +1,7 @@
 import { Aurelia, bindable } from 'aurelia-framework';
 import { PLATFORM } from 'aurelia-pal';
-export class Hello {
+
+export class ComponentUser {
   @bindable saying: string;
   @bindable fareWell: string = 'standard fare';
   @bindable shouting: string;

@@ -1,0 +1,32 @@
+<template>
+  <!-- ATTENTION: Beware that tests are based on line numbers, so are fragil in the current setup -->
+  <!-- ATTENTION: Beware that tests are based on line numbers, so are fragil in the current setup -->
+  <!-- ATTENTION: Beware that tests are based on line numbers, so are fragil in the current setup -->
+
+  <!-- {{uOE33Pqm}} -->
+  <!-- Should open view model of `my-compo.ts` at `class MyCompoCustomElement` -->
+  <require from='../my-compo/my-compo'></require>
+
+  <!-- {{uIomH6bP}} -->
+  <!-- Should open view model of `my-compot.ts` at `@bindable fareWell` -->
+  <my-compo string-bindable.bind="fareWell"></my-compo>
+
+  <!-- {{6e2vD6BY}} -->
+  <!-- Should open class of `SquareCustomAttribute` -->
+  <!-- <div square="color.bind: squareColor; side-length.bind: squareSize"></div> -->
+
+  <!-- {{EUmcjqaIO}} -->
+  <!-- Should open view model of `my-compo.ts` at `class MyCompoCustomElement` -->
+  <my-compo></my-compo>
+
+  <!-- {{3BLEC0vn}} -->
+  <!-- <tr repeat.for="repo of repos | sort:column.value:direction.value | take:10"> -->
+
+  <!-- {{xhdu5mWv}} -->
+  <!-- Should open `my-compo.ts` at eg. `public message: string;` -->
+  <div class="hello-component">${message}</div>
+
+  <!-- {{hEePRI08}} -->
+  <!-- Should open view model `compo-user.ts` at `class CompoUserCustomElement` -->
+  <my-compo fare-well.bind="fareWell"></my-compo>
+</template>
