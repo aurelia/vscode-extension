@@ -1,3 +1,13 @@
+interface IViewCompletionParam {
+  document: vscode.TextDocument
+  position: vscode.Position
+  token: vscode.CancellationToken,
+  context: vscode.CompletionContext,
+  text: string,
+  offset: number,
+  triggerCharacter: string,
+}
+
 import 'reflect-metadata';
 import {
   createConnection,
@@ -20,7 +30,7 @@ import {
   LocationLink,
   Range,
 } from 'vscode-languageserver';
-import { MarkedString, Position } from 'vscode-languageserver';
+import { MarkedString, Position, TextDocument } from 'vscode-languageserver';
 
 import { camelCase } from 'aurelia-binding';
 import { Container } from 'aurelia-dependency-injection';
@@ -35,6 +45,7 @@ import { HtmlInvalidCaseCodeAction } from './CodeActions/HtmlInvalidCaseCodeActi
 import { OneWayBindingDeprecatedCodeAction } from './CodeActions/OneWayBindingDeprecatedCodeAction';
 
 import * as ts from 'typescript';
+import * as vscode from 'vscode';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
 import { connect } from 'net';
@@ -106,13 +117,13 @@ documents.onDidChangeContent(async change => {
 });
 
 // Lisen for completion requests
-connection.onCompletion(async (textDocumentPosition) => {
-  let document = documents.get(textDocumentPosition.textDocument.uri);
-  let text = document.getText();
-  let offset = document.offsetAt(textDocumentPosition.position);
-  let triggerCharacter = text.substring(offset - 1, offset);
-  let position = textDocumentPosition.position;
-  return CompletionList.create(await completionItemFactory.create(triggerCharacter, position, text, offset, textDocumentPosition.textDocument.uri, aureliaApplication), false);
+connection.onRequest('aurelia-view-completion', async (params: IViewCompletionParam) => {
+  const {
+    document, position, token, context, text, offset, triggerCharacter,
+  } = params;
+  const completionResult = await completionItemFactory.create(triggerCharacter, position, text, offset, document.uri, aureliaApplication);
+  const result = CompletionList.create(completionResult, false);
+  return result;
 });
 
 

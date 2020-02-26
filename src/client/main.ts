@@ -13,7 +13,13 @@ import {
   TextDocument,
   Position,
   DefinitionLink,
+  CompletionItemProvider,
+  CompletionList,
+  CancellationToken,
+  CompletionContext,
+  CompletionItem,
 } from 'vscode';
+import * as vscode from 'vscode'
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
 import { RelatedFiles } from './relatedFiles';
@@ -72,6 +78,21 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
   }
 }
 
+class CompletionItemProviderInView implements CompletionItemProvider {
+  constructor(private client: LanguageClient) { }
+
+  public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[] | CompletionList> {
+    const text = document.getText();
+    const offset = document.offsetAt(position);
+    const triggerCharacter = text.substring(offset - 1, offset);
+    const result = await this.client.sendRequest<CompletionList>('aurelia-view-completion', {
+      document, position, token, context, text, offset, triggerCharacter,
+    })
+    return result;
+  }
+
+}
+
 export function activate(context: ExtensionContext) {
   // Create default output channel
   outputChannel = window.createOutputChannel('aurelia');
@@ -120,9 +141,16 @@ export function activate(context: ExtensionContext) {
   const client = new LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
   registerPreview(context, window, client);
 
-  context.subscriptions.push(languages.registerDefinitionProvider(
-    { scheme: 'file', language: 'html' },
-    new SearchDefinitionInViewV2(client))
+  context.subscriptions.push(
+    languages.registerDefinitionProvider(
+      { scheme: 'file', language: 'html' },
+      new SearchDefinitionInViewV2(client)
+    ),
+    languages.registerCompletionItemProvider(
+      {scheme: 'file', language: 'html'},
+      new CompletionItemProviderInView(client),
+      '<',
+    ),
   );
 
   const disposable = client.start();
