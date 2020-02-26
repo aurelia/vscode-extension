@@ -7,8 +7,13 @@
     - [1.4. Require from](#14-require-from)
   - [2. Value Converter (later)](#2-value-converter-later)
   - [3. View Model Variable](#3-view-model-variable)
-      - [3.1. ${ | } in view](#31----in-view)
-      - [3.2. .bind="|"](#32-bind%22%22)
+    - [3.1. ${ | } in view](#31----in-view)
+    - [3.2. .bind="|"](#32-bind%22%22)
+- [2. Autocomplete In View](#2-autocomplete-in-view)
+    - [2.1. Custom Element Completion](#21-custom-element-completion)
+    - [2.2. Custom Element Bindable Completion](#22-custom-element-bindable-completion)
+    - [2.3. View Model Method Completion](#23-view-model-method-completion)
+    - [2.4. View Model Variable Completion](#24-view-model-variable-completion)
 
 _Smartautocomplete Test Plan_
 
@@ -53,7 +58,7 @@ _Smartautocomplete Test Plan_
 
 ## 3. View Model Variable
 
-#### 3.1. ${ | } in view
+### 3.1. ${ | } in view
 {{xhdu5mWv}}
 --> Should open `my-compo.ts` at eg. `public message: string;`
 ```html
@@ -61,10 +66,40 @@ _Smartautocomplete Test Plan_
 <div class="hello-component">${mes|sage}</div>
 ```
 
-#### 3.2. .bind="|"
+### 3.2. .bind="|"
 {{hEePRI08}}
 --> Should open view model `compo-user.ts` at `class CompoUserCustomElement`
 ```html
 <!-- compo-user.html -->
 <my-compo fare-well.bind="fare|Well"></my-compo>
+```
+
+# 2. Autocomplete In View
+
+### 2.1. Custom Element Completion
+{{hmtMmuEY}}
+--> Should have completion for custom elements
+```html
+<|
+```
+
+### 2.2. Custom Element Bindable Completion
+{{aqwmpQ1H}}
+--> Should have completion for bindables of `my-compo.ts`
+```html
+<my-compo |></my-compo>
+```
+
+### 2.3. View Model Method Completion
+{{tMPtsRoE}}
+--> Should have completion for `autocomplete-in-view.ts` methods
+```html
+<my-compo string-bindable.bind=" |"></my-compo>
+```
+
+### 2.4. View Model Variable Completion
+{{IuBC7VP8}}
+--> Should have completion for `autocomplete-in-view.ts` variables
+```html
+<my-compo string-bindable.bind=|></my-compo>
 ```
