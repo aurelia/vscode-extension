@@ -51,6 +51,7 @@ import { normalizePath } from './Util/NormalizePath';
 import { connect } from 'net';
 import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
 import { exposeAureliaDefinitions } from './ExposeAureliaDefinitions';
+import { sys } from 'typescript';
 
 // Bind console.log & error to the Aurelia output
 const connection: IConnection = createConnection();
@@ -104,9 +105,16 @@ connection.onDidChangeConfiguration(async (change) => {
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
   settings.validation = change.settings.aurelia.validation;
   settings.bindings.data = change.settings.aurelia.autocomplete.bindings.data;
-  settings.featureToggles = change.settings.aurelia.featureToggles;
+  settings.featureToggles = {
+    ...settings.featureToggles,
+    ...change.settings.aurelia.featureToggles,
+  };
+  settings.extensionSettings = {
+    ...settings.extensionSettings,
+    ...change.settings.aurelia.extensionSettings
+  }
 
-  await featureToggles(settings.featureToggles);
+  await handlefeatureToggles(settings);
 });
 
 // Setup Validation
@@ -128,9 +136,9 @@ connection.onRequest('aurelia-view-completion', async (params: IViewCompletionPa
 
 
 connection.onRequest('aurelia-view-information', async (filePath: string) => {
-  let fileProcessor = new ProcessFiles();
-  await fileProcessor.processPath();
-  aureliaApplication.components = fileProcessor.components;
+  // let fileProcessor = new ProcessFiles();
+  // await fileProcessor.processPath();
+  // aureliaApplication.components = fileProcessor.components;
 
   return aureliaApplication.components.find(doc => doc.paths.indexOf(normalizePath(filePath)) > -1);
 });
@@ -158,13 +166,26 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
 
 connection.listen();
 
-async function featureToggles(featureToggles) {
+async function handlefeatureToggles({featureToggles, extensionSettings}: AureliaSettings) {
   if (settings.featureToggles.smartAutocomplete) {
     console.log('smart auto complete init');
+
+    // Aurelia project path to parse
+    console.log('>>> 1.1 This is the project\'s directory:');
+    const sourceDirectory = sys.getCurrentDirectory();
+    console.log(sourceDirectory);
+    console.log('>>> 1.2. The extension will try to parse Aurelia components inside:')
+    console.log(settings.extensionSettings.pathToAureliaProject);
+    console.log('>>> 1.3. Eg.')
+    console.log(sourceDirectory + '/' + settings.extensionSettings.pathToAureliaProject[0]);
+
     try {
       let fileProcessor = new ProcessFiles();
-      await fileProcessor.processPath();
+      await fileProcessor.processPath(extensionSettings);
       aureliaApplication.components = fileProcessor.components;
+      console.log('>>> 2. The extension found this many components:');
+      console.log(aureliaApplication.components.length);
+
     } catch (ex) {
       console.log('------------- FILE PROCESSOR ERROR ---------------------');
       console.log(JSON.stringify(ex));

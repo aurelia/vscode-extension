@@ -1,3 +1,13 @@
+export namespace AureliaSettingsNS {
+  export interface IFeatureToggles {
+    smartAutocomplete : boolean,
+  }
+
+  export interface IExtensionSettings {
+    pathToAureliaProject: string[]
+  }
+}
+
 export default class AureliaSettings {
   public quote: string = '"';
   public validation: boolean = true;
@@ -5,7 +15,12 @@ export default class AureliaSettings {
     data : []
   }
 
-  public featureToggles = {
-    smartAutocomplete : true
+  public featureToggles: AureliaSettingsNS.IFeatureToggles = {
+    smartAutocomplete : true,
+
+  }
+
+  public extensionSettings: AureliaSettingsNS.IExtensionSettings = {
+    pathToAureliaProject: ['labfolder-eln-webapp/src']
   }
 }
