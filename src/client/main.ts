@@ -141,6 +141,7 @@ export function activate(context: ExtensionContext) {
   const client = new LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
   registerPreview(context, window, client);
 
+  const triggerCharacters: string[] = ['<'];
   context.subscriptions.push(
     languages.registerDefinitionProvider(
       { scheme: 'file', language: 'html' },
@@ -149,7 +150,7 @@ export function activate(context: ExtensionContext) {
     languages.registerCompletionItemProvider(
       {scheme: 'file', language: 'html'},
       new CompletionItemProviderInView(client),
-      '<',
+      ...triggerCharacters,
     ),
   );
 

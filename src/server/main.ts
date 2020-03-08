@@ -29,6 +29,7 @@ import {
   DefinitionLink,
   LocationLink,
   Range,
+  CompletionParams,
 } from 'vscode-languageserver';
 import { MarkedString, Position, TextDocument } from 'vscode-languageserver';
 
@@ -46,6 +47,7 @@ import { OneWayBindingDeprecatedCodeAction } from './CodeActions/OneWayBindingDe
 
 import * as ts from 'typescript';
 import * as vscode from 'vscode';
+import { Uri } from 'vscode';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
 import { connect } from 'net';
@@ -75,7 +77,7 @@ connection.onInitialize(async (params: InitializeParams): Promise<InitializeResu
 
   return {
     capabilities: {
-      completionProvider: { resolveProvider: false, triggerCharacters: ['<', ' ', '.', '[', '"', '\'', '{'] },
+      completionProvider: { resolveProvider: false, triggerCharacters: [' ', '.', '[', '"', '\'', '{'] },
       codeActionProvider: true,
       definitionProvider: true,
       textDocumentSync: documents.syncKind,
@@ -131,6 +133,17 @@ connection.onRequest('aurelia-view-completion', async (params: IViewCompletionPa
   } = params;
   const completionResult = await completionItemFactory.create(triggerCharacter, position, text, offset, document.uri, aureliaApplication);
   const result = CompletionList.create(completionResult, false);
+  return result;
+});
+
+connection.onCompletion(async (textDocumentPosition: CompletionParams): Promise<CompletionList> => {
+  let document = documents.get(textDocumentPosition.textDocument.uri);
+  let text = document.getText();
+  let offset = document.offsetAt(textDocumentPosition.position);
+  let triggerCharacter = text.substring(offset - 1, offset);
+  let position = textDocumentPosition.position;
+  const uriLike = {path: document.uri}
+  const result = CompletionList.create(await completionItemFactory.create(triggerCharacter, position, text, offset, uriLike, aureliaApplication), false);
   return result;
 });
 

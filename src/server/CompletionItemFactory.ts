@@ -31,7 +31,7 @@ export default class CompletionItemFactory {
     position: Position,
     text: string,
     positionNumber: number,
-    uri: Uri,
+    uri: any,
     aureliaApplication: AureliaApplication): Promise<Array<CompletionItem>> {
 
       let nodes = await this.parser.parse(text);
