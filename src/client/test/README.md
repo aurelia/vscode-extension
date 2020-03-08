@@ -90,16 +90,30 @@ _Smartautocomplete Test Plan_
 <my-compo |></my-compo>
 ```
 
-### 2.3. View Model Method Completion
+### 2.3.1 View Model Method Completion for attribute
 {{tMPtsRoE}}
 --> Should have completion for `autocomplete-in-view.ts` methods
 ```html
 <my-compo string-bindable.bind=" |"></my-compo>
 ```
 
-### 2.4. View Model Variable Completion
+### 2.3.2 View Model Method Completion for ${}
+{{Iku78qwA}}
+--> Should have completion for `autocomplete-in-view.ts` methods
+```html
+${ }
+```
+
+### 2.4.1 View Model Variable Completion attribute
 {{IuBC7VP8}}
 --> Should have completion for `autocomplete-in-view.ts` variables
 ```html
 <my-compo string-bindable.bind=|></my-compo>
+```
+
+### 2.4.2 View Model Method Completion for ${}
+--> Should have completion for `autocomplete-in-view.ts` variables
+{{Qf7at0ET}}
+```html
+${ }
 ```
