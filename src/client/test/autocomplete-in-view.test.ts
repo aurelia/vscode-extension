@@ -38,6 +38,16 @@ describe('Completion In View', () => {
     });
   });
 
+  it('(Iku78qwA) Should have completion for `autocomplete-in-view.ts` methods', async () => {
+    const position = new vscode.Position(21, 4);
+    await testCompletion(docUri, position, {
+      label: 'View Model: ',
+      expectedNames: [
+        'completeMe',
+        'numberCompleteMe',
+      ]
+    });
+  });
 });
 
 async function testCompletion(
