@@ -251,6 +251,13 @@
               "documentation": "flows data one direction: from the view-model to the view, once"
             }
           ]
+        },
+        "aurelia.extensionSettings": {
+          "type": "object",
+          "description": "Configure the extension",
+          "default": {
+            "pathToAureliaProject": ["src"]
+          }
         }
       }
     }
