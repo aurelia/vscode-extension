@@ -56,9 +56,7 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
 }
 
 export function includeCodeAutoComplete(application, result, targetPath) {
-  if (os.platform() === 'darwin') {
-    targetPath = `/${targetPath}`;
-  }
+  targetPath = `/${targetPath}`;
   const compoment = application.components.find(component => {
     return component.paths.find(path => path === targetPath);
   });
