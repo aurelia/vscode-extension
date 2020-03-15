@@ -46,7 +46,8 @@
     "onCommand:extension.auOpenRelatedStyle",
     "onCommand:extension.auOpenRelatedUnit",
     "onCommand:extension.auOpenRelatedView",
-    "onCommand:aurelia.showViewProperties"
+    "onCommand:aurelia.showViewProperties",
+    "onCommand:aurelia.getAureliaComponents"
   ],
   "main": "./dist/src/client/main",
   "contributes": {
@@ -152,6 +153,10 @@
       {
         "command": "aurelia.showViewProperties",
         "title": "Show Aurelia view data to side"
+      },
+      {
+        "command": "aurelia.getAureliaComponents",
+        "title": "[Au VSC Ext] Show Aurelia Components parsed by the extension"
       }
     ],
     "menus": {
