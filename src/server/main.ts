@@ -77,7 +77,7 @@ connection.onInitialize(async (params: InitializeParams): Promise<InitializeResu
 
   return {
     capabilities: {
-      completionProvider: { resolveProvider: false, triggerCharacters: [' ', '.', '[', '"', '\'', '{'] },
+      completionProvider: { resolveProvider: false, triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<'] },
       codeActionProvider: true,
       definitionProvider: true,
       textDocumentSync: documents.syncKind,
@@ -161,7 +161,12 @@ connection.onRequest('aurelia-definition-provide', () => {
   definitionsInfo
   definitionsAttributesInfo
   return { definitionsInfo, definitionsAttributesInfo };
-})
+});
+
+connection.onRequest('aurelia-get-components', () => {
+  const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(aureliaApplication);
+  return { definitionsInfo, definitionsAttributesInfo, aureliaApplication };
+});
 
 connection.onRequest('aurelia-smart-autocomplete-goto', () => {
   return aureliaApplication.components;
