@@ -21,6 +21,6 @@ export default class AureliaSettings {
   }
 
   public extensionSettings: AureliaSettingsNS.IExtensionSettings = {
-    pathToAureliaProject: ['labfolder-eln-webapp/src']
+    pathToAureliaProject: ['src']
   }
 }
