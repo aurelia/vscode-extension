@@ -143,7 +143,8 @@ connection.onCompletion(async (textDocumentPosition: CompletionParams): Promise<
   let triggerCharacter = text.substring(offset - 1, offset);
   let position = textDocumentPosition.position;
   const uriLike = {path: document.uri}
-  const result = CompletionList.create(await completionItemFactory.create(triggerCharacter, position, text, offset, uriLike, aureliaApplication), false);
+  const completionItem = await completionItemFactory.create(triggerCharacter, position, text, offset, uriLike, aureliaApplication)
+  const result = CompletionList.create(completionItem, false);
   return result;
 });
 
