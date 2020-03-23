@@ -38,11 +38,8 @@ async function sleep(ms: number) {
 
 export const getDocPath = (p: string) => {
   let resultPath = path.resolve(__dirname, '../../testFixture', p);
-  resultPath = resultPath.replace('/dist', '')
+  resultPath = resultPath.replace(/[\\\/]dist/, '')
   return resultPath;
-  // return path.resolve(__dirname, '../../testFixture', p);
-  // console.log("TCL: getDocPath -> resultPath", resultPath)
-  // return '/Users/hdn/Desktop/(official)-aurelia-vscode-extension/src/testFixture/completion.txt'
 };
 export const getDocUri = (p: string) => {
   return vscode.Uri.file(getDocPath(p));
