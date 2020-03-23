@@ -56,7 +56,10 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
 }
 
 export function includeCodeAutoComplete(application, result, targetPath) {
-  targetPath = `/${targetPath}`;
+  const isWin = process.platform === "win32";
+  if (!isWin) {
+    targetPath = `/${targetPath}`;
+  }
   const compoment = application.components.find(component => {
     return component.paths.find(path => path === targetPath);
   });
