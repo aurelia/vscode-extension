@@ -12,6 +12,7 @@ import AureliaSettings from '../AureliaSettings';
 import { settings } from 'cluster';
 import { fileUriToPath } from './../Util/FileUriToPath';
 import { normalizePath } from './../Util/NormalizePath';
+import { Uri } from 'vscode';
 
 @autoinject()
 /**
@@ -29,7 +30,7 @@ export default class ViewModelVariablesCompletionFactory extends BaseAttributeCo
     private application: AureliaApplication,
     private settings: AureliaSettings) { super(library); }
 
-  public create(uri: string): Array<CompletionItem> {
+  public create(uri: Uri): Array<CompletionItem> {
     let result: Array<CompletionItem> = [];
 
     if (this.settings.featureToggles.smartAutocomplete) {

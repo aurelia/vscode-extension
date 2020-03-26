@@ -11,6 +11,8 @@ import AureliaSettings from '../AureliaSettings';
 import { settings } from 'cluster';
 import { fileUriToPath } from './../Util/FileUriToPath';
 import { normalizePath } from './../Util/NormalizePath';
+import * as os from 'os';
+import { Uri } from 'vscode';
 
 @autoinject()
 export default class AttributeCompletionFactory extends BaseAttributeCompletionFactory {
@@ -20,7 +22,7 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
     private application: AureliaApplication,
     private settings: AureliaSettings) { super(library); }
 
-  public create(elementName: string, attributeName: string, bindingName: string, uri: string): Array<CompletionItem> {
+  public create(elementName: string, attributeName: string, bindingName: string, uri: Uri): Array<CompletionItem> {
 
     let result:Array<CompletionItem> = [];
 
@@ -53,8 +55,11 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
   }
 }
 
-export function includeCodeAutoComplete(application, result, path) {
-  const targetPath = `/${path}`;
+export function includeCodeAutoComplete(application, result, targetPath) {
+  const isWin = process.platform === "win32";
+  if (!isWin) {
+    targetPath = `/${targetPath}`;
+  }
   const compoment = application.components.find(component => {
     return component.paths.find(path => path === targetPath);
   });

@@ -23,6 +23,7 @@ import {
   MarkedString,
   Position,
 } from 'vscode-languageserver';
+import * as path from 'path';
 import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { camelCase } from 'aurelia-binding';
@@ -30,6 +31,7 @@ import { WebComponent } from './FileParser/Model/WebComponent';
 import { HtmlTemplateDocument } from './FileParser/Model/HtmlTemplateDocument';
 import { DefinitionInfo } from 'typescript';
 import RelatedFileExtensions from '../Util/RelatedFileExtensions';
+import { kebabCase } from '../Util/kebabCase';
 
 function storeViewModelDefinitions(
   propName: string,
@@ -47,7 +49,7 @@ function storeViewModelDefinitions(
       return path.endsWith(ext)
     })
   });
-  const targetUri = `file://${viewModelPath}`;
+  const targetUri = `${viewModelPath}`;
 
   viewModel[propName].forEach(property => {
     const { range } = property
@@ -104,7 +106,7 @@ function storeViewDefinitions(
         /* eg. value = 'button of buttons' */
         const { value } = attr;
         const definitionWord = value.split(' ')[0]; /* button */
-        const targetViewUri = `file://${viewDocument.path}`;
+        const targetViewUri = `${viewDocument.path}`;
         /* parse5 line index starts 1 */
         const lineNum = tag.line - 1;
 
@@ -136,8 +138,8 @@ function storeViewDefinitions(
 
         // check if is reference
         const references = viewDocument.references;
-        const getFileName = (path: string): string => {
-          return path.split('/').pop().replace(/\..+/, '');
+        const getFileName = (filePath: string): string => {
+          return path.parse(filePath).name
         }
         const foundRefs = references.map(ref => {
           return getFileName(ref.path);
@@ -151,7 +153,7 @@ function storeViewDefinitions(
           .paths.find(path => {
             return scriptExtensions.some(ext => path.endsWith(ext))
           });
-        const targetViewUri = `file://${targetViewPath}`;
+        const targetViewUri = `${targetViewPath}`;
 
         /* parse5 line index starts 1 */
         const lineNum = tag.line - 1;
@@ -200,31 +202,14 @@ function storeCustomElementDefinitions(
 }
 
 /**
- * Map attrs bindables to corresponding view model variables
- * @param definitionsInfo
- * @param definitionsAttributesInfo
- *
- * @example
- * // some-view.html:
- *
- * `
- * <custom-ele
- *   some-attribute.bind=""      1.
- * ></custom-ele>
- * `
- *
- * // custom-ele.ts:
- * export class CustomEle {
- *   public someAttribute      2.
- * }
- *
- * Map 1. to 2.
+ * After all view model variables/methods were collected,
+ * converted them to kebab case (for goto in view).
  */
-function mapAttributesToViewModelDefinitions(definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: DefinitionsAttributesInfo): AureliaDefinition {
-  Object.entries(definitionsAttributesInfo).forEach(([key, attrInfos]) => {
+function convertViewModelVariablesToKebabCase(definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: DefinitionsAttributesInfo): AureliaDefinition {
+  Object.entries(definitionsInfo).forEach(([key, attrInfos]) => {
     attrInfos.forEach(attrInfo => {
-      const { customElementName, asCamelCase } = attrInfo
-      definitionsInfo[key] = definitionsInfo[asCamelCase]
+      const asKebabCase = kebabCase(key);
+      definitionsInfo[asKebabCase] = definitionsInfo[key]
     })
   })
 
@@ -250,7 +235,7 @@ export function exposeAureliaDefinitions(
     storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo)
   });
 
-  ({ definitionsInfo, definitionsAttributesInfo } = mapAttributesToViewModelDefinitions(definitionsInfo, definitionsAttributesInfo))
+  ({ definitionsInfo, definitionsAttributesInfo } = convertViewModelVariablesToKebabCase(definitionsInfo, definitionsAttributesInfo))
 
   return {
     definitionsInfo,

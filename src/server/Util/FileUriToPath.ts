@@ -1,7 +1,8 @@
 import * as Path from 'path';
-export function fileUriToPath (uri: string) {
+import { Uri } from 'vscode';
+export function fileUriToPath (uri: Uri) {
 
-  const rest = decodeURI(uri.substring(7));
+  const rest = decodeURI(uri.path.substring(7));
   const firstSlash = rest.indexOf('/');
   let host = rest.substring(0, firstSlash);
   let path = rest.substring(firstSlash + 1);

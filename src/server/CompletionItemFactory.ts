@@ -10,6 +10,7 @@ import EmmetCompletionFactory from './Completions/EmmetCompletionFactory';
 import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './FileParser/HTMLDocumentParser';
 import ViewModelVariablesCompletionFactory from './Completions/ViewModelVariablesCompletionFactory';
 import ViewModelViewAttributesCompletionFactory from './Completions/ViewModelViewAttributesCompletionFactory';
+import { Uri } from 'vscode';
 
 @autoinject()
 export default class CompletionItemFactory {
@@ -30,7 +31,7 @@ export default class CompletionItemFactory {
     position: Position,
     text: string,
     positionNumber: number,
-    uri: string,
+    uri: any,
     aureliaApplication: AureliaApplication): Promise<Array<CompletionItem>> {
 
       let nodes = await this.parser.parse(text);
@@ -115,7 +116,7 @@ export default class CompletionItemFactory {
     return tags;
   }
 
-  private createValueCompletion(tag: TagDefinition, text: string, position: number, uri: string) {
+  private createValueCompletion(tag: TagDefinition, text: string, position: number, uri: Uri) {
     let nextCharacter = text.substring(position, position + 1);
     if (/['"]/.test(nextCharacter)) {
       let attribute;

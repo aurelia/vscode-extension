@@ -13,7 +13,13 @@ import {
   TextDocument,
   Position,
   DefinitionLink,
+  CompletionItemProvider,
+  CompletionList,
+  CancellationToken,
+  CompletionContext,
+  CompletionItem,
 } from 'vscode';
+import * as vscode from 'vscode'
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
 import { RelatedFiles } from './relatedFiles';
@@ -40,14 +46,14 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
     const goToSourceWord = document.getText(goToSourceWordRange);
 
     const foundDefinitions = definitionsInfo[goToSourceWord];
-    const getFileName = (path: string): string => {
-      return path.split('/').pop().replace(/\..+/, '');
+    const getFileName = (filePath: string): string => {
+      return path.parse(filePath).name
     }
     const currentFileName = getFileName(document.fileName);
     const possibleDefs = foundDefinitions.filter(foundDef => {
       const isCustomElement = getFileName(foundDef.targetUri) === goToSourceWord;
       const isViewModelVariable = getFileName(foundDef.targetUri) === currentFileName; // eg. `.bind="viewModelVariable"`
-      const isBindingAttribute = definitionsAttributesInfo[goToSourceWord] // eg. `binding-attribute.bind="..."`
+      const isBindingAttribute = definitionsInfo[goToSourceWord]
 
       return isCustomElement || isViewModelVariable || isBindingAttribute;
     });
@@ -57,17 +63,34 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
       targetDef = possibleDefs[0];
     } else {
       targetDef = possibleDefs.find(possibleDef => {
-        const attrInfos = definitionsAttributesInfo[goToSourceWord] // eg. `binding-attribute.bind="..."`
-        const isBindingAttribute = attrInfos[0].customElementName === getFileName(possibleDef.targetUri);
-        return isBindingAttribute;
+        // Out of all possible defs. take the one of the corresponding view model.
+        // Eg. goto was triggered in `list.html` and we found possible defs in
+        // `create.ts` and `list.ts`, then look for `list.ts`.
+        const isCurrentFileViewModelVariable = currentFileName === getFileName(possibleDef.targetUri);
+        return isCurrentFileViewModelVariable;
       });
     }
 
     return {
       ...targetDef,
-      targetUri: Uri.parse(targetDef.targetUri)
+      targetUri: Uri.file(targetDef.targetUri)
     }
   }
+}
+
+class CompletionItemProviderInView implements CompletionItemProvider {
+  constructor(private client: LanguageClient) { }
+
+  public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[] | CompletionList> {
+    const text = document.getText();
+    const offset = document.offsetAt(position);
+    const triggerCharacter = text.substring(offset - 1, offset);
+    const result = await this.client.sendRequest<CompletionList>('aurelia-view-completion', {
+      document, position, token, context, text, offset, triggerCharacter,
+    })
+    return result;
+  }
+
 }
 
 export function activate(context: ExtensionContext) {
@@ -118,10 +141,21 @@ export function activate(context: ExtensionContext) {
   const client = new LanguageClient('html', 'Aurelia', serverOptions, clientOptions);
   registerPreview(context, window, client);
 
-  context.subscriptions.push(languages.registerDefinitionProvider(
-    { scheme: 'file', language: 'html' },
-    new SearchDefinitionInViewV2(client))
+  context.subscriptions.push(
+    languages.registerDefinitionProvider(
+      { scheme: 'file', language: 'html' },
+      new SearchDefinitionInViewV2(client)
+    ),
+    languages.registerCompletionItemProvider(
+      {scheme: 'file', language: 'html'},
+      new CompletionItemProviderInView(client),
+    ),
   );
+
+  context.subscriptions.push(vscode.commands.registerCommand('aurelia.getAureliaComponents', async () => {
+    const components = await client.sendRequest('aurelia-get-components');
+    console.log("TCL: activate -> components", components)
+  }));
 
   const disposable = client.start();
   context.subscriptions.push(disposable);

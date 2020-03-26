@@ -15,16 +15,18 @@ import { Methods, Properties, ViewModelDocument } from './Model/ViewModelDocumen
 
 import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './HTMLDocumentParser';
 import { normalizePath } from './../Util/NormalizePath';
+import { AureliaSettingsNS } from '../AureliaSettings';
 
 
 export default class ProcessFiles {
 
   public components = Array<WebComponent>();
 
-  public async processPath(): Promise<void> {
+  public async processPath(extensionSettings: AureliaSettingsNS.IExtensionSettings): Promise<void> {
 
-    const sourceDirectory = Path.join(sys.getCurrentDirectory(), '/src/');
-    const paths = sys.readDirectory(sourceDirectory, ['ts', 'js', 'html']);
+    const sourceDirectory = sys.getCurrentDirectory();
+    const paths = sys.readDirectory(sourceDirectory, ['ts', 'js', 'html'], ['node_modules', 'aurelia_project'], extensionSettings.pathToAureliaProject);
+
 
     for (let path of paths) {
       path = normalizePath(path);
