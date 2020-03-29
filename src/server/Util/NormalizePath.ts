@@ -1,5 +1,6 @@
-export function normalizePath(input) {
+export function normalizePath(input: string) {
   const isExtendedLengthPath = input.startsWith("\\\\?\\");
+  // eslint-disable-next-line no-control-regex
   const hasNonAscii = /[^\u0000-\u0080]+/.test(input);
 
   if (isExtendedLengthPath || hasNonAscii) {

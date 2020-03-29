@@ -7,13 +7,13 @@ export function fileUriToPath(uri: Uri) {
   let host = rest.substring(0, firstSlash);
   let path = rest.substring(firstSlash + 1);
 
-  if ('localhost' == host) host = '';
+  if ('localhost' === host) host = '';
 
-  if (host) {
+  if (host !== '') {
     host = Path.sep + Path.sep + host;
   }
   path = path.replace(/^(.+)\|/, '$1:');
-  if (Path.sep == '\\') {
+  if (Path.sep === '\\') {
     path = path.replace(/\//g, '\\');
   }
   path = path.replace('%3A', ':');
