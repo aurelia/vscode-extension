@@ -4,10 +4,8 @@ import {
   OutputChannel,
   window,
   languages,
-  SnippetString,
   commands,
   TextEdit,
-  LocationLink,
   Uri,
   DefinitionProvider,
   TextDocument,
@@ -24,23 +22,20 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 import AureliaCliCommands from './aureliaCLICommands';
 import { RelatedFiles } from './relatedFiles';
 import { registerPreview } from './Preview/Register';
-import { TextDocumentContentProvider } from './Preview/TextDocumentContentProvider';
-import { WebComponent } from '../server/FileParser/Model/WebComponent';
-import { getFileNameAsKebabCase } from '../Util/GetFileNameAsKebabCase';
 
 let outputChannel: OutputChannel;
 
 class SearchDefinitionInViewV2 implements DefinitionProvider {
-  client: LanguageClient;
+  public client: LanguageClient;
 
-  constructor(client: LanguageClient) {
+  public constructor(client: LanguageClient) {
     this.client = client;
   }
 
   public async provideDefinition(
     document: TextDocument,
     position: Position): Promise<DefinitionLink[]> {
-    const { definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide');
+    const { definitionsInfo } = await this.client.sendRequest('aurelia-definition-provide');
 
     const goToSourceWordRange = document.getWordRangeAtPosition(position);
     const goToSourceWord = document.getText(goToSourceWordRange);
@@ -55,7 +50,7 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
       const isViewModelVariable = getFileName(foundDef.targetUri) === currentFileName; // eg. `.bind="viewModelVariable"`
       const isBindingAttribute = definitionsInfo[goToSourceWord];
 
-      return isCustomElement || isViewModelVariable || isBindingAttribute;
+      return isCustomElement || isViewModelVariable || (typeof isBindingAttribute !== 'undefined');
     });
 
     let targetDef;
@@ -78,7 +73,7 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
 }
 
 class CompletionItemProviderInView implements CompletionItemProvider {
-  constructor(private readonly client: LanguageClient) { }
+  public constructor(private readonly client: LanguageClient) { }
 
   public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[] | CompletionList> {
     const text = document.getText();
@@ -101,23 +96,23 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(new RelatedFiles());
 
   // Register Code Actions
-  const edit = (uri: string, documentVersion: number, edits: TextEdit[]) => {
+  const editFunc = async (uri: string, documentVersion: number, edits: TextEdit[]) => {
     const textEditor = window.activeTextEditor;
-    if (textEditor && textEditor.document.uri.toString() === uri) {
-      textEditor.edit(mutator => {
+    if ((typeof textEditor !== 'undefined') && textEditor.document.uri.toString() === uri) {
+      await textEditor.edit(mutator => {
         for (const edit of edits) {
           mutator.replace(client.protocol2CodeConverter.asRange(edit.range), edit.newText);
         }
-      }).then((success) => {
-        window.activeTextEditor.document.save();
+      }).then(async (success) => {
+        await window.activeTextEditor.document.save();
         if (!success) {
-          window.showErrorMessage('Failed to apply Aurelia code fixes to the document. Please consider opening an issue with steps to reproduce.');
+          await window.showErrorMessage('Failed to apply Aurelia code fixes to the document. Please consider opening an issue with steps to reproduce.');
         }
       });
     }
   };
-  context.subscriptions.push(commands.registerCommand('aurelia-attribute-invalid-case', edit));
-  context.subscriptions.push(commands.registerCommand('aurelia-binding-one-way-deprecated', edit));
+  context.subscriptions.push(commands.registerCommand('aurelia-attribute-invalid-case', editFunc));
+  context.subscriptions.push(commands.registerCommand('aurelia-binding-one-way-deprecated', editFunc));
 
   // Register Aurelia language server
   const serverModule = context.asAbsolutePath(path.join('dist', 'src', 'server', 'main.js'));

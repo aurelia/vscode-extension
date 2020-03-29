@@ -8,7 +8,6 @@ export function registerPreview(context, window, client) {
   const previewUri = vscode.Uri.parse('aurelia-preview://authority/aurelia-preview');
 
   const provider = new TextDocumentContentProvider(client);
-  const registration = vscode.workspace.registerTextDocumentContentProvider('aurelia-preview', provider);
   let isPanelVisible: boolean = false;
   let panel: vscode.WebviewPanel;
 
@@ -26,10 +25,10 @@ export function registerPreview(context, window, client) {
     `;
   }
 
-  vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
+  vscode.workspace.onDidChangeTextDocument(async (e: vscode.TextDocumentChangeEvent) => {
     if (!isPanelVisible) return;
     if (e.document === vscode.window.activeTextEditor.document) {
-      provider.update(previewUri).then(success => {
+      await provider.update(previewUri).then(success => {
         panel.webview.html = fillWebViewHtml(success);
       });
     }
@@ -49,7 +48,7 @@ export function registerPreview(context, window, client) {
   context.subscriptions.push(vscode.commands.registerCommand('aurelia.showViewProperties', () => {
 
     const smartAutocomplete = vscode.workspace.getConfiguration().get('aurelia.featureToggles.smartAutocomplete');
-    if (smartAutocomplete) {
+    if (smartAutocomplete as boolean) {
       panel = vscode.window.createWebviewPanel(
         aureliaViewDataPanelType,
         'Aurelia view data',
@@ -80,7 +79,7 @@ export function registerPreview(context, window, client) {
       isPanelVisible = correctPanelType && panelNotActive;
     });
 
-    panel.onDidDispose(event => {
+    panel.onDidDispose(() => {
       isPanelVisible = false;
     });
 

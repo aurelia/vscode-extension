@@ -1,12 +1,12 @@
 'use strict';
-import { commands, Disposable, TextEditor, TextEditorEdit, Uri, workspace } from 'vscode';
+import { commands, Disposable, TextEditor, TextEditorEdit, Uri } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
 export class RelatedFiles implements Disposable {
   private readonly disposables: Disposable[] = [];
 
-  constructor() {
+  public constructor() {
     this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelated', this.onOpenRelated, this));
 
     const fileExtensionsConfig = this.getRelatedFileExtensions();
@@ -24,7 +24,7 @@ export class RelatedFiles implements Disposable {
   }
 
   public dispose() {
-    if (this.disposables.length) {
+    if (this.disposables.length > 0) {
       this.disposables.forEach((disposable) => {
         disposable.dispose();
       });
@@ -43,8 +43,9 @@ export class RelatedFiles implements Disposable {
     };
   }
 
-  private onOpenRelated(editor: TextEditor, edit: TextEditorEdit) {
-    if (!editor || !editor.document || editor.document.isUntitled) {
+  private onOpenRelated(editor: TextEditor) {
+    if (editor?.document?.isUntitled) {
+      // if (!editor || !editor.document || editor.document.isUntitled) {
       return;
     }
 
