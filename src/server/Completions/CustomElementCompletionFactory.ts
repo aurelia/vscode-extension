@@ -4,7 +4,7 @@ import {
   InsertTextFormat, MarkedString
 } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
-import { AureliaApplication } from './../FileParser/Model/AureliaApplication';
+import { AureliaApplication } from "../FileParser/Model/AureliaApplication";
 import ElementLibrary from './Library/_elementLibrary';
 
 /**
@@ -13,11 +13,11 @@ import ElementLibrary from './Library/_elementLibrary';
 @autoinject()
 export default class CustomElementCompletionFactory {
 
-  constructor(private library: ElementLibrary) { }
+  constructor(private readonly library: ElementLibrary) { }
 
-  public create(parent: string, aureliaApplication: AureliaApplication): Array<CompletionItem> {
+  public create(parent: string, aureliaApplication: AureliaApplication): CompletionItem[] {
 
-    let result: Array<CompletionItem> = [];
+    const result: CompletionItem[] = [];
 
     // Assumption: Every custom element has a script and a template
     const customElements = aureliaApplication.components.filter(component => component.paths.length >= 2);

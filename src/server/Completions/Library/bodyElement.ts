@@ -17,7 +17,8 @@ export default class BodyElement extends MozDocElement {
     this.events.set('beforeunload', new Event(
       'The beforeunload event is fired when the window, the document and its resources are about to be unloaded.',
       'https://developer.mozilla.org/en-US/docs/Web/Events/beforeunload',
-      false, true));
+      false,
+true));
     this.events.set('blur', new Event(
       'The blur event is fired when an element has lost focus.',
       'https://developer.mozilla.org/en-US/docs/Web/Events/blur'));
@@ -30,7 +31,8 @@ export default class BodyElement extends MozDocElement {
     this.events.set('hashchange', new Event(
       'The hashchange event is fired when the fragment identifier of the URL has changed (the part of the URL that follows the # symbol, including the # symbol).',
       'https://developer.mozilla.org/en-US/docs/Web/Events/hashchange',
-      true, false));
+      true,
+false));
     this.events.set('load', new Event(
       'The load event is fired when a resource and its dependent resources have finished loading',
       'https://developer.mozilla.org/en-US/docs/Web/Events/load'));

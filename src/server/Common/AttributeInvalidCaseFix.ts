@@ -1,5 +1,5 @@
 import { AttributeMap } from 'aurelia-templating-binding';
-import { AttributeDefinition, TagDefinition } from './../FileParser/HTMLDocumentParser';
+import { AttributeDefinition, TagDefinition } from "../FileParser/HTMLDocumentParser";
 
 export function attributeInvalidCaseFix(name: string, elementName: string) {
 
@@ -19,8 +19,7 @@ export function attributeInvalidCaseFix(name: string, elementName: string) {
 
   if (auElement && lookupProperty in auElement || lookupProperty in attributeMap.allElements) {
     fixed = lookupProperty;
-  }
-  else {
+  } else {
     fixed = name.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
   }
 

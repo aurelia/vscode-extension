@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 export class RelatedFiles implements Disposable {
-  private disposables: Disposable[] = [];
+  private readonly disposables: Disposable[] = [];
 
   constructor() {
     this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelated', this.onOpenRelated, this));
@@ -15,7 +15,7 @@ export class RelatedFiles implements Disposable {
       styleExtensions,
       unitExtensions,
       viewExtensions,
-    } = fileExtensionsConfig
+    } = fileExtensionsConfig;
 
     this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedScript', this.openRelatedFactory(scriptExtensions), this));
     this.disposables.push(commands.registerTextEditorCommand('extension.auOpenRelatedStyle', this.openRelatedFactory(styleExtensions), this));
@@ -35,13 +35,12 @@ export class RelatedFiles implements Disposable {
    * Provide file extensions for navigating between Aurelia files.
    */
   private getRelatedFileExtensions() {
-    const defaultSettings = {
+    return {
       scriptExtensions: [".js", ".ts"],
       styleExtensions: [".less", ".sass", ".scss", ".styl", ".css"],
       unitExtensions: [".spec.js", ".spec.ts"],
       viewExtensions: [".html"],
     };
-    return defaultSettings;
   }
 
   private onOpenRelated(editor: TextEditor, edit: TextEditorEdit) {
@@ -56,12 +55,11 @@ export class RelatedFiles implements Disposable {
     const {
       viewExtensions,
       scriptExtensions,
-    } = fileExtensionsConfig
+    } = fileExtensionsConfig;
 
     if (viewExtensions.includes(extension)) {
       relatedFile = this.relatedFileExists(fileName, scriptExtensions);
-    }
-    else if (scriptExtensions.includes(extension)) {
+    } else if (scriptExtensions.includes(extension)) {
       relatedFile = this.relatedFileExists(fileName, viewExtensions);
     }
 
@@ -73,7 +71,8 @@ export class RelatedFiles implements Disposable {
   /**
    * Open a related Aurelia file, and
    * return a function, which can be used by vscode's registerTextEditorCommand
-   * @param switchToExtensions Possible extensions, for target file
+   *
+   * @param switchToExtensions - Possible extensions, for target file
    */
   private openRelatedFactory(switchToExtensions: string[]) {
     return (editor, edit) => {
@@ -91,23 +90,23 @@ export class RelatedFiles implements Disposable {
       if (relatedFile) {
         commands.executeCommand('vscode.open', Uri.file(relatedFile), editor.viewColumn);
       }
-    }
+    };
   }
 
   /**
-   * @param fullPath Full path of the file, which triggered the command
-   * @param relatedExts Possible extensions, for target file
+   * @param fullPath - Full path of the file, which triggered the command
+   * @param relatedExts - Possible extensions, for target file
    * @returns targetFile
    */
   private relatedFileExists(fullPath: string, relatedExts: string[]): string {
     let targetFile: string;
     relatedExts.forEach(ext => {
-      let fileName = `${path.basename(fullPath, path.extname(fullPath))}${ext}`
+      const fileName = `${path.basename(fullPath, path.extname(fullPath))}${ext}`
         .replace('.spec.spec', '.spec'); // Quick fix because we are appending eg. '.spec.ts' to 'file.spec'
       fullPath = path.join(path.dirname(fullPath), fileName);
       if (!fs.existsSync(fullPath)) return;
       targetFile = fullPath;
     });
-    return targetFile
+    return targetFile;
   }
 }

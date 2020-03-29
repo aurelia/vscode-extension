@@ -5,22 +5,22 @@ import {
 } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
-import { TagDefinition, AttributeDefinition } from './../FileParser/HTMLDocumentParser';
+import { TagDefinition, AttributeDefinition } from "../FileParser/HTMLDocumentParser";
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 import { GlobalAttributes } from './Library/_elementStructure';
-import AureliaSettings from './../AureliaSettings';
+import AureliaSettings from "../AureliaSettings";
 
 @autoinject()
 export default class BindingCompletionFactory extends BaseAttributeCompletionFactory {
 
-  constructor(library: ElementLibrary, private settings: AureliaSettings) { super(library); }
+  constructor(library: ElementLibrary, private readonly settings: AureliaSettings) { super(library); }
 
-  public create(tagDef: TagDefinition, attributeDef: AttributeDefinition, nextChar: string): Array<CompletionItem> {
+  public create(tagDef: TagDefinition, attributeDef: AttributeDefinition, nextChar: string): CompletionItem[] {
 
-    let snippetPrefix = nextChar === '=' ? '' : `=${this.settings.quote}$0${this.settings.quote}`;
-    let result: Array<CompletionItem> = [];
+    const snippetPrefix = nextChar === '=' ? '' : `=${this.settings.quote}$0${this.settings.quote}`;
+    const result: CompletionItem[] = [];
 
-    let element = this.getElement(tagDef.name);
+    const element = this.getElement(tagDef.name);
     if (!element.events.get(attributeDef.name) && !GlobalAttributes.events.get(attributeDef.name)) {
       this.setAttributes(element.attributes, attributeDef.name, snippetPrefix, result);
     }
@@ -38,7 +38,7 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
 
     if (event) {
       if (event.bubbles) {
-        for (let binding of ['delegate', 'capture']) {
+        for (const binding of ['delegate', 'capture']) {
           result.push({
             documentation: binding,
             insertText: binding + snippetPrefix,
@@ -49,7 +49,7 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
         }
       }
 
-      for (let binding of ['trigger', 'call']) {
+      for (const binding of ['trigger', 'call']) {
         result.push({
           documentation: binding,
           insertText: binding + snippetPrefix,
@@ -67,7 +67,7 @@ export default class BindingCompletionFactory extends BaseAttributeCompletionFac
       attribute = GlobalAttributes.attributes.get(name);
     }
 
-    for (let binding of this.settings.bindings.data) {
+    for (const binding of this.settings.bindings.data) {
       result.push({
         documentation: binding.documentation,
         insertText: `${binding.name}${snippetPrefix}`,

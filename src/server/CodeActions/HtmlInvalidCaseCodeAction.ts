@@ -1,5 +1,5 @@
 import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver";
-import { HTMLDocumentParser } from "./../FileParser/HTMLDocumentParser";
+import { HTMLDocumentParser } from "../FileParser/HTMLDocumentParser";
 import { attributeInvalidCaseFix } from "../Common/AttributeInvalidCaseFix";
 
 export class HtmlInvalidCaseCodeAction {

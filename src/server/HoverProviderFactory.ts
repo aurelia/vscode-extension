@@ -6,7 +6,7 @@ import { MozDocElement } from './Completions/Library/_elementStructure';
 @autoinject()
 export default class HoverProviderFactory {
 
-  constructor(private elementLibrary: ElementLibrary) { }
+  constructor(private readonly elementLibrary: ElementLibrary) { }
 
   public create(text: string, offset: number): Hover {
 
@@ -14,7 +14,7 @@ export default class HoverProviderFactory {
 
     let backPos = offset;
     while (true) {
-      let char = text[backPos];
+      const char = text[backPos];
       if (char === ' ' || char === '/' || char === '<' || char === undefined) {
         leadingCharacter = char;
         backPos = backPos + 1;
@@ -25,7 +25,7 @@ export default class HoverProviderFactory {
 
     let nextPos = offset;
     while (true) {
-      let char = text[nextPos];
+      const char = text[nextPos];
       if (char === ' ' || char === '/' || char === '>' || char === '=' || char === undefined) {
         appixCharacter = char;
         break;
@@ -57,11 +57,11 @@ export default class HoverProviderFactory {
         }
         break;
       case ' ':
-        let matches = /<(\w*)\b.*$/g.exec(text.substring(0, offset));
+        const matches = /<(\w*)\b.*$/g.exec(text.substring(0, offset));
         if (!matches || matches.length === 0) {
           return;
         }
-        let elementName = matches[1];
+        const elementName = matches[1];
         displayValue = `<${elementName} ${tag}="">`;
 
         // fixes
@@ -73,8 +73,8 @@ export default class HoverProviderFactory {
         }
 
         element = this.elementLibrary.elements[elementName] || this.elementLibrary.unknownElement;
-        let attribute = element.attributes.get(tag);
-        let event = element.events.get(tag);
+        const attribute = element.attributes.get(tag);
+        const event = element.events.get(tag);
         if (attribute) {
           documentation = attribute.documentation;
           moreInfo = attribute.url || element.url;
@@ -103,7 +103,7 @@ export default class HoverProviderFactory {
         moreInfo,
         source
       ]
-    }
+    };
 
   }
 }

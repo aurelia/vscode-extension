@@ -1,19 +1,19 @@
 import { ViewModelDocument } from './FileParser/Model/ViewModelDocument';
 export declare type DefinitionsInfo = {
   [name: string]: DefinitionLink[];
-}
+};
 
 declare type DefinitionsAttributesInfo = {
   [name: string]: {
-    customElementName: string,
-    asCamelCase: string,
-  }[]
-}
+    customElementName: string;
+    asCamelCase: string;
+  }[];
+};
 
 declare type AureliaDefinition = {
-  definitionsInfo: DefinitionsInfo,
-  definitionsAttributesInfo: DefinitionsAttributesInfo,
-}
+  definitionsInfo: DefinitionsInfo;
+  definitionsAttributesInfo: DefinitionsAttributesInfo;
+};
 
 import {
   Location,
@@ -42,17 +42,17 @@ function storeViewModelDefinitions(
   if (!viewModel[propName]) return;
 
   // 1.1 Find target path
-  const { scriptExtensions } = RelatedFileExtensions
+  const { scriptExtensions } = RelatedFileExtensions;
   const viewModelPath = component.paths.find(path => {
     return scriptExtensions.some(ext => {
       ext;
-      return path.endsWith(ext)
-    })
+      return path.endsWith(ext);
+    });
   });
   const targetUri = `${viewModelPath}`;
 
   viewModel[propName].forEach(property => {
-    const { range } = property
+    const { range } = property;
     const targetRange = Range.create(range.start, range.end);
 
     const def = definitionsInfo[property.name] || [];
@@ -87,7 +87,7 @@ function storeViewDefinitions(
   const tags = viewDocument.tags.filter(tag => {
     const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
     const isStartTag = !isDontParseTags && tag.startTag;
-    return (!isDontParseTags && tag.startTag) // omit closing tags
+    return (!isDontParseTags && tag.startTag); // omit closing tags
   });
 
   tags.forEach(tag => {
@@ -139,8 +139,8 @@ function storeViewDefinitions(
         // check if is reference
         const references = viewDocument.references;
         const getFileName = (filePath: string): string => {
-          return path.parse(filePath).name
-        }
+          return path.parse(filePath).name;
+        };
         const foundRefs = references.map(ref => {
           return getFileName(ref.path);
         });
@@ -148,10 +148,10 @@ function storeViewDefinitions(
 
         const targetViewPath = aureliaApplication.components
           .find(component => {
-            return (component.name === customElementName)
+            return (component.name === customElementName);
           })
           .paths.find(path => {
-            return scriptExtensions.some(ext => path.endsWith(ext))
+            return scriptExtensions.some(ext => path.endsWith(ext));
           });
         const targetViewUri = `${targetViewPath}`;
 
@@ -192,7 +192,7 @@ function storeCustomElementDefinitions(
   const targetRange = Range.create(
     Position.create(0, 0),
     Position.create(0, 6),
-  )
+  );
   /** Assume, there is no name class with custom elements name */
   definitionsInfo[name] = [{
     targetRange,
@@ -209,14 +209,14 @@ function convertViewModelVariablesToKebabCase(definitionsInfo: DefinitionsInfo, 
   Object.entries(definitionsInfo).forEach(([key, attrInfos]) => {
     attrInfos.forEach(attrInfo => {
       const asKebabCase = kebabCase(key);
-      definitionsInfo[asKebabCase] = definitionsInfo[key]
-    })
-  })
+      definitionsInfo[asKebabCase] = definitionsInfo[key];
+    });
+  });
 
   return {
     definitionsInfo,
     definitionsAttributesInfo,
-  }
+  };
 }
 
 export function exposeAureliaDefinitions(
@@ -232,10 +232,10 @@ export function exposeAureliaDefinitions(
     storeViewModelDefinitions('methods', component, definitionsInfo);
     storeCustomElementDefinitions(component, definitionsInfo);
 
-    storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo)
+    storeViewDefinitions(component, aureliaApplication, definitionsInfo, definitionsAttributesInfo);
   });
 
-  ({ definitionsInfo, definitionsAttributesInfo } = convertViewModelVariablesToKebabCase(definitionsInfo, definitionsAttributesInfo))
+  ({ definitionsInfo, definitionsAttributesInfo } = convertViewModelVariablesToKebabCase(definitionsInfo, definitionsAttributesInfo));
 
   return {
     definitionsInfo,

@@ -7,5 +7,5 @@ export class AureliaApplication {
   constructor() {
   }
 
-  public components: Array<WebComponent> = [];
+  public components: WebComponent[] = [];
 }
