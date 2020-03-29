@@ -1,11 +1,10 @@
-import { AST, SAXParser, MarkupData } from 'parse5';
+import { SAXParser, MarkupData } from 'parse5';
 import { Readable } from 'stream';
-import { Location } from 'vscode-languageserver/lib/main';
 
 export class HTMLDocumentParser {
 
-  public parse(text: string): Promise<TagDefinition[]> {
-    return new Promise((resolve, reject) => {
+  public async parse(text: string): Promise<TagDefinition[]> {
+    return new Promise((resolve) => {
       const stream = new Readable();
       stream.push(text);
       stream.push(null);
@@ -33,7 +32,7 @@ export class HTMLDocumentParser {
         ));
       });
 
-      stream.on('end', x => {
+      stream.on('end', () => {
         resolve(stack);
       });
       stream.pipe(parser);
@@ -41,8 +40,8 @@ export class HTMLDocumentParser {
     });
   }
 
-  public getElementAtPosition(text: string, start: number, end: number): Promise<TagDefinition> {
-    return new Promise((resolve, reject) => {
+  public async getElementAtPosition(text: string, start: number, end: number): Promise<TagDefinition> {
+    return new Promise((resolve) => {
       const stream = new Readable();
       stream.push(text);
       stream.push(null);
@@ -64,7 +63,7 @@ export class HTMLDocumentParser {
         }
       });
 
-      stream.on('end', x => {
+      stream.on('end', () => {
         resolve(tagDefinition);
       });
       stream.pipe(parser);
@@ -74,7 +73,7 @@ export class HTMLDocumentParser {
 }
 
 export class TagDefinition {
-  constructor(
+  public constructor(
     public startTag: boolean,
     public name: string,
     public startOffset: number,
@@ -92,10 +91,10 @@ export class AttributeDefinition {
   public endOffset: number;
   public startOffset: number;
 
-  constructor(name: string, public value: string, location?: MarkupData.Location) {
-    if (name) {
+  public constructor(name: string, public value: string, location?: MarkupData.Location) {
+    if (name !== '') {
       const parts = name.split('.');
-      if (parts.length == 2) {
+      if (parts.length === 2) {
         this.name = parts[0];
         this.binding = parts[1];
       } else {
@@ -103,7 +102,7 @@ export class AttributeDefinition {
       }
     }
 
-    if (location) {
+    if (typeof location !== 'undefined') {
       this.startOffset = location.startOffset;
       this.endOffset = location.endOffset;
     }

@@ -1,25 +1,21 @@
 import { Range, Position } from 'vscode-languageserver';
 import * as Path from 'path';
-import * as FileSystem from 'fs';
-import { Parser, AccessScope } from 'aurelia-binding';
 import {
   Node, SyntaxKind, SourceFile, createSourceFile, ScriptTarget, ScriptKind,
-  forEachChild, ClassDeclaration, PropertyDeclaration, MethodDeclaration, ParameterDeclaration, sys
+  forEachChild, ClassDeclaration, PropertyDeclaration, MethodDeclaration, sys
 } from "typescript";
-import { HtmlTemplateDocument } from './Model/HtmlTemplateDocument';
 
 import { WebComponent } from './Model/WebComponent';
 
 import { AureliaHtmlParser } from './Parsers/AureliaHtmlParser';
 import { Methods, Properties, ViewModelDocument } from './Model/ViewModelDocument';
 
-import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './HTMLDocumentParser';
 import { normalizePath } from "../Util/NormalizePath";
 import { AureliaSettingsNS } from '../AureliaSettings';
 
 export default class ProcessFiles {
 
-  public components = Array<WebComponent>();
+  public components: WebComponent[] = Array<WebComponent>();
 
   public async processPath(extensionSettings: AureliaSettingsNS.IExtensionSettings): Promise<void> {
 
@@ -40,14 +36,14 @@ export default class ProcessFiles {
 
         switch (Path.extname(path)) {
           case '.js':
-          case '.ts':
+          case '.ts': {
             const fileContent: string = sys.readFile(path, 'utf8');
             const result = processSourceFile(path, fileContent, 'typescript');
             component.viewModel = new ViewModelDocument();
             component.viewModel.type = "typescript";
-            if (result?.result.length) {
-              const defaultExport = result.result.find(cl => cl.modifiers && cl.modifiers.indexOf('default') > -1);
-              if (defaultExport) {
+            if (result?.result.length > 0) {
+              const defaultExport = result.result.find(cl => cl.modifiers?.indexOf('default') > -1);
+              if (typeof defaultExport !== 'undefined') {
                 component.viewModel.properties = defaultExport.properties;
                 component.viewModel.methods = defaultExport.methods;
               } else {
@@ -60,7 +56,7 @@ export default class ProcessFiles {
                   continue;
                 }
 
-                if (classDef.modifiers && classDef.modifiers.indexOf('export') > -1) {
+                if (classDef.modifiers?.indexOf('export') > -1) {
                   component.classes.push({
                     name: classDef.name,
                     methods: classDef.methods
@@ -70,10 +66,13 @@ export default class ProcessFiles {
             }
 
             break;
-          case '.html':
+          }
+          case '.html': {
+            // eslint-disable-next-line no-await-in-loop
             const htmlTemplate = await new AureliaHtmlParser().processFile(path);
             component.document = htmlTemplate;
             break;
+          }
         }
 
         // replace it
@@ -94,7 +93,7 @@ export default class ProcessFiles {
 
   private findOrCreateWebComponentBy(name) {
     let component = this.components.find(c => c.name === name);
-    if (!component) {
+    if (typeof component === 'undefined') {
       component = new WebComponent(name);
     }
     return component;
@@ -136,20 +135,20 @@ function processClassDeclaration(node: Node) {
   let lineStart: number;
   let startPos: number;
   let endPos: number;
-  if (!node) {
+  if (typeof node === 'undefined') {
     return { properties, methods };
   }
 
   const declaration = (node as ClassDeclaration);
   const srcFile = node.getSourceFile();
 
-  if (declaration.members) {
+  if (typeof declaration.members !== 'undefined') {
     for (const member of declaration.members) {
       switch (member.kind) {
-        case SyntaxKind.PropertyDeclaration:
+        case SyntaxKind.PropertyDeclaration: {
           const property = member as PropertyDeclaration;
           let propertyModifiers;
-          if (property.modifiers) {
+          if (typeof property.modifiers !== 'undefined') {
             propertyModifiers = property.modifiers.map(i => i.getText());
             if (propertyModifiers.indexOf("private") > -1) {
               continue;
@@ -157,7 +156,7 @@ function processClassDeclaration(node: Node) {
           }
           const propertyName = property.name.getText();
           let propertyType;
-          if (property.type) {
+          if (typeof property.type !== 'undefined') {
             propertyType = property.type.getText();
           }
 
@@ -168,7 +167,7 @@ function processClassDeclaration(node: Node) {
           endPos = srcFile.getLineEndOfPosition(lineNumber);
 
           let isBindable = false;
-          if (member.decorators) {
+          if (typeof member.decorators !== 'undefined') {
             isBindable = member.decorators[0].getText() === '@bindable';
           }
 
@@ -183,12 +182,13 @@ function processClassDeclaration(node: Node) {
             )
           });
           break;
+        }
         case SyntaxKind.GetAccessor:
           break;
-        case SyntaxKind.MethodDeclaration:
+        case SyntaxKind.MethodDeclaration: {
           const memberDeclaration = member as MethodDeclaration;
           let memberModifiers;
-          if (memberDeclaration.modifiers) {
+          if (typeof memberDeclaration.modifiers !== 'undefined') {
             memberModifiers = memberDeclaration.modifiers.map(i => i.getText());
             if (memberModifiers.indexOf("private") > -1) {
               continue;
@@ -196,12 +196,12 @@ function processClassDeclaration(node: Node) {
           }
           const memberName = memberDeclaration.name.getText();
           let memberReturnType;
-          if (memberDeclaration.type) {
+          if (typeof memberDeclaration.type !== 'undefined') {
             memberReturnType = memberDeclaration.type.getText();
           }
 
           const params = [];
-          if (memberDeclaration.parameters) {
+          if (typeof memberDeclaration.parameters !== 'undefined') {
             for (const param of memberDeclaration.parameters) {
               const p = param;
               params.push(p.name.getText());
@@ -224,12 +224,13 @@ function processClassDeclaration(node: Node) {
             )
           });
           break;
+        }
       }
     }
   }
 
   let classModifiers = [];
-  if (declaration.modifiers) {
+  if (typeof declaration.modifiers !== 'undefined') {
     classModifiers = declaration.modifiers.map(m => m.getText());
   }
 

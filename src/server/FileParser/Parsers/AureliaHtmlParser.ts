@@ -21,7 +21,7 @@ export class AureliaHtmlParser {
     const docParser = new HTMLDocumentParser();
     const document = await docParser.parse(fileContent);
     const templateTag = document.find(tag => tag.name === 'template');
-    if (templateTag) {
+    if (typeof templateTag !== 'undefined') {
       template.bindables = this.getBindableValuesFrom(templateTag);
     }
 
@@ -32,18 +32,19 @@ export class AureliaHtmlParser {
     return template;
   }
 
-  private getBindableValuesFrom(templateTag) {
+  private getBindableValuesFrom(templateTag: TagDefinition) {
     const bindableAttribute = templateTag.attributes.find(attribute => attribute.name === 'bindable');
-    if (bindableAttribute?.value) {
+    if (bindableAttribute?.value !== '') {
       return bindableAttribute.value.split(',').map(i => i.trim());
     } else {
       return [];
     }
   }
 
-  private getRequireImportsFrom(document) {
+  private getRequireImportsFrom(document: TagDefinition[]) {
 
-    const requireStatements = document.filter(tag => tag.name === 'require' && tag.startTag);
+    // FIX_ME: `Boolean(tag.startTag)` is always true
+    const requireStatements = document.filter(tag => tag.name === 'require' && Boolean(tag.startTag));
     const references = [];
 
     for (const require of requireStatements) {
@@ -51,10 +52,10 @@ export class AureliaHtmlParser {
       const asAttribute = require.attributes.find(attr => attr.name === 'as');
 
       let path, asElementValue;
-      if (pathAttribute) {
+      if (typeof pathAttribute !== 'undefined') {
         path = pathAttribute.value;
       }
-      if (asAttribute) {
+      if (typeof asAttribute !== 'undefined') {
         asElementValue = asAttribute.value;
       }
       references.push(new TemplateReference(path, asElementValue));
@@ -63,7 +64,7 @@ export class AureliaHtmlParser {
     return references;
   }
 
-  private getAttributeCommands(document) {
+  private getAttributeCommands(document: TagDefinition[]) {
 
     const bindings = [];
     const aureliaParser = new Parser();
@@ -87,17 +88,19 @@ export class AureliaHtmlParser {
     return bindings;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private getStringInterpolationBindings(fileContent: string, document: TagDefinition[]) {
-    const tags = document.filter(tag => {
-      const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
-      const isStartTag = !isDontParseTags && tag.startTag;
-      return (!isDontParseTags && tag.startTag); // omit closing tags
-    });
+    // const tags = document.filter(tag => {
+    //   const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
+    //   const isStartTag = !isDontParseTags && tag.startTag;
+    //   return (!isDontParseTags && tag.startTag); // omit closing tags
+    // });
 
     const bindings = [];
-    const aureliaParser = new Parser();
+    // const aureliaParser = new Parser();
     const interpolationRegex = /\$\{(.*)\}/g;
     let match;
+    // eslint-disable-next-line
     while (match = interpolationRegex.exec(fileContent)) {
       bindings.push({
         value: match[0],
