@@ -9,19 +9,20 @@ import { GlobalAttributes } from './Library/_elementStructure';
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 import { AureliaApplication } from "../FileParser/Model/AureliaApplication";
 import AureliaSettings from '../AureliaSettings';
-import { settings } from 'cluster';
 import { fileUriToPath } from "../Util/FileUriToPath";
 import { normalizePath } from "../Util/NormalizePath";
-import * as os from 'os';
 import { Uri } from 'vscode';
+import * as process from 'process';
 
 @autoinject()
 export default class AttributeCompletionFactory extends BaseAttributeCompletionFactory {
 
-  constructor(
-    library: ElementLibrary,
+  public constructor(
+    public library: ElementLibrary,
     private readonly application: AureliaApplication,
-    private readonly settings: AureliaSettings) { super(library); }
+    private readonly settings: AureliaSettings) {
+    super(library);
+  }
 
   public create(elementName: string, attributeName: string, bindingName: string, uri: Uri): CompletionItem[] {
 
@@ -31,11 +32,11 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
       const element = this.getElement(elementName);
 
       let attribute = element.attributes.get(attributeName);
-      if (!attribute) {
+      if (typeof attribute === 'undefined') {
         attribute = GlobalAttributes.attributes.get(attributeName);
       }
 
-      if (attribute?.values) {
+      if (typeof attribute?.values !== 'undefined') {
         for (const [key, value] of attribute.values.entries()) {
           result.push({
             documentation: value.documentation,
@@ -56,7 +57,7 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
   }
 }
 
-export function includeCodeAutoComplete(application, result, targetPath) {
+export function includeCodeAutoComplete(application: AureliaApplication, result: CompletionItem[], targetPath: string) {
   const isWin = process.platform === "win32";
   if (!isWin) {
     targetPath = `/${targetPath}`;
@@ -65,41 +66,39 @@ export function includeCodeAutoComplete(application, result, targetPath) {
     return component.paths.find(path => path === targetPath);
   });
 
-  if (compoment) {
-    if (compoment.viewModel) {
-      compoment.viewModel.methods.forEach(x => {
+  if (typeof compoment?.viewModel !== 'undefined') {
+    compoment.viewModel.methods.forEach(x => {
 
-        let inner = '';
-        for (let i = 0; i < x.parameters.length; i++) {
-          inner += `\$${i + 1},`;
-        }
-        if (x.parameters.length) {
-          inner = inner.substring(0, inner.length - 1);
-        }
+      let inner = '';
+      for (let i = 0; i < x.parameters.length; i++) {
+        inner += `\\$${i + 1},`;
+      }
+      if (x.parameters.length > 0) {
+        inner = inner.substring(0, inner.length - 1);
+      }
 
-        result.push({
-          documentation: x.name,
-          insertText: `${x.name}(${inner})$0`,
-          insertTextFormat: InsertTextFormat.Snippet,
-          kind: CompletionItemKind.Method,
-          label: x.name,
-        });
+      result.push({
+        documentation: x.name,
+        insertText: `${x.name}(${inner})$0`,
+        insertTextFormat: InsertTextFormat.Snippet,
+        kind: CompletionItemKind.Method,
+        label: x.name,
       });
+    });
 
-      compoment.viewModel.properties.forEach(x => {
-        let documentation = x.name;
-        if (x.type) {
-          documentation += ` (${x.type})`;
-        }
+    compoment.viewModel.properties.forEach(x => {
+      let documentation = x.name;
+      if (x.type !== '') {
+        documentation += ` (${x.type})`;
+      }
 
-        result.push({
-          documentation: documentation,
-          insertText: x.name,
-          insertTextFormat: InsertTextFormat.Snippet,
-          kind: CompletionItemKind.Property,
-          label: x.name,
-        });
+      result.push({
+        documentation: documentation,
+        insertText: x.name,
+        insertTextFormat: InsertTextFormat.Snippet,
+        kind: CompletionItemKind.Property,
+        label: x.name,
       });
-    }
+    });
   }
 }

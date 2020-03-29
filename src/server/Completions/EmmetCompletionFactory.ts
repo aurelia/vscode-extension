@@ -1,8 +1,5 @@
 import {
   CompletionItem,
-  CompletionItemKind,
-  InsertTextFormat,
-  MarkedString
 } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
@@ -13,7 +10,11 @@ import AureliaSettings from "../AureliaSettings";
 @autoinject()
 export default class EmmetCompletionFactory extends BaseAttributeCompletionFactory {
 
-  constructor(library: ElementLibrary, private readonly settings: AureliaSettings) { super(library); }
+  public constructor(
+    public library: ElementLibrary,
+    private readonly settings: AureliaSettings) {
+    super(library);
+  }
 
   public create(elementName: string): CompletionItem[] {
     const result: CompletionItem[] = [];
@@ -22,14 +23,14 @@ export default class EmmetCompletionFactory extends BaseAttributeCompletionFacto
     if (element.hasGlobalAttributes) {
       this.addAttributes(GlobalAttributes.attributes, result, [], this.settings.quote);
     }
-    if (element.attributes) {
+    if (typeof element.attributes !== 'undefined') {
       this.addAttributes(element.attributes, result, [], this.settings.quote);
     }
 
     if (element.hasGlobalEvents) {
       this.addEvents(GlobalAttributes.events, result, [], this.settings.quote);
     }
-    if (element.events) {
+    if (typeof element.events !== 'undefined') {
       this.addEvents(element.events, result, [], this.settings.quote);
     }
 

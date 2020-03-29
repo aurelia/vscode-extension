@@ -1,7 +1,7 @@
 import {
   CompletionItem,
   CompletionItemKind,
-  InsertTextFormat, MarkedString
+  InsertTextFormat
 } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
@@ -13,7 +13,11 @@ import AureliaSettings from "../AureliaSettings";
 @autoinject()
 export default class BindingCompletionFactory extends BaseAttributeCompletionFactory {
 
-  constructor(library: ElementLibrary, private readonly settings: AureliaSettings) { super(library); }
+  public constructor(
+    public library: ElementLibrary,
+    private readonly settings: AureliaSettings) {
+    super(library);
+  }
 
   public create(tagDef: TagDefinition, attributeDef: AttributeDefinition, nextChar: string): CompletionItem[] {
 

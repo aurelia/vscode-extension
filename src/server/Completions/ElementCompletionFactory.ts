@@ -10,20 +10,20 @@ import { MozDocElement } from './Library/_elementStructure';
 @autoinject()
 export default class ElementCompletionFactory {
 
-  constructor(private readonly library: ElementLibrary) { }
+  public constructor(private readonly library: ElementLibrary) { }
 
   public create(parent: string): CompletionItem[] {
 
     const result: CompletionItem[] = [];
 
-    if (parent) {
-      const parentElementDef = <MozDocElement> this.library.elements[parent];
-      if (parentElementDef?.permittedChildren?.length) {
+    if (parent !== '') {
+      const parentElementDef = this.library.elements[parent] as MozDocElement;
+      if (parentElementDef?.permittedChildren?.length > 0) {
         for (const childName of parentElementDef.permittedChildren) {
           result.push({
             documentation: MarkedString.fromPlainText(this.library.elements[childName].documentation).toString(),
             detail: 'HTMLElement',
-            insertText: `${childName  }>`,
+            insertText: `${childName}>`,
             insertTextFormat: InsertTextFormat.PlainText,
             kind: CompletionItemKind.Property,
             label: `<${childName}>`,
@@ -42,7 +42,7 @@ export default class ElementCompletionFactory {
       result.push({
         documentation: MarkedString.fromPlainText(item.documentation).toString(),
         detail: 'HTMLElement',
-        insertText: `${name  }>`,
+        insertText: `${name}>`,
         insertTextFormat: InsertTextFormat.PlainText,
         kind: CompletionItemKind.Property,
         label: `<${name}>`,

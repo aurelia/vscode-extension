@@ -13,7 +13,7 @@ import ElementLibrary from './Library/_elementLibrary';
 @autoinject()
 export default class CustomElementCompletionFactory {
 
-  constructor(private readonly library: ElementLibrary) { }
+  public constructor(private readonly library: ElementLibrary) { }
 
   public create(parent: string, aureliaApplication: AureliaApplication): CompletionItem[] {
 
