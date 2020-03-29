@@ -4,8 +4,9 @@
 export function kebabCase(str: string): string {
   const result = str.replace(
     /[A-Z\u00C0-\u00D6\u00D8-\u00DE]/g,
-    match => `-${  match.toLowerCase()}`
+    match => `-${match.toLowerCase()}`
   );
+  // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
   return (str[0] === str[0].toUpperCase())
     ? result.substring(1)
     : result;
