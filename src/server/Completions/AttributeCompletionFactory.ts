@@ -3,7 +3,8 @@ import {
   CompletionItem,
   CompletionItemKind,
   InsertTextFormat,
-  MarkedString } from 'vscode-languageserver';
+  MarkedString
+} from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';
@@ -17,7 +18,7 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
 
   public create(elementName: string, existingAttributes: Array<string>, aureliaApplication: AureliaApplication): Array<CompletionItem> {
 
-    let result:Array<CompletionItem> = [];
+    let result: Array<CompletionItem> = [];
     let element = this.getElement(elementName);
 
     this.addViewModelBindables(result, elementName, aureliaApplication);

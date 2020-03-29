@@ -6,14 +6,14 @@ import { unescape } from 'querystring';
 export class InValidAttributeCasingValidation {
 
   private fixed: string;
-  private original: string; 
+  private original: string;
 
   private attributeStartOffset: number;
   private attributeEndOffset: number;
 
 
   public match = (attribute: AttributeDefinition, element: TagDefinition, document: TextDocument) => {
-  
+
     if (!attribute.binding) {
       this.attributeEndOffset = undefined;
       this.attributeStartOffset = undefined;
@@ -27,11 +27,11 @@ export class InValidAttributeCasingValidation {
 
     this.fixed = attributeInvalidCaseFix(attribute.name, element.name);
     this.original = document.getText().substring(this.attributeStartOffset, this.attributeEndOffset)
- 
+
     return (this.fixed && this.fixed !== this.original);
   }
 
-  public diagnostic(attribute: AttributeDefinition, element: TagDefinition, document: TextDocument) {   
+  public diagnostic(attribute: AttributeDefinition, element: TagDefinition, document: TextDocument) {
 
     const attributeStartOffset = attribute.startOffset;
     const attributeEndOffset = attributeStartOffset + attribute.name.length;

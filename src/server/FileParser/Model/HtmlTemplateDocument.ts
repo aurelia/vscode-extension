@@ -1,5 +1,5 @@
-import {TemplateReference} from './TemplateReference';
-import {TagDefinition} from './../HTMLDocumentParser';
+import { TemplateReference } from './TemplateReference';
+import { TagDefinition } from './../HTMLDocumentParser';
 
 export class HtmlTemplateDocument {
   public bindables: Array<string> = [];
@@ -11,5 +11,5 @@ export class HtmlTemplateDocument {
   public path: string;
   public name: string;
 
-  
+
 }

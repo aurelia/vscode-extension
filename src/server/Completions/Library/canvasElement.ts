@@ -2,7 +2,7 @@ import { BindableAttribute, MozDocElement } from './_elementStructure';
 
 export default class CanvasElement extends MozDocElement {
 
-  public documentation = `Use the HTML <canvas> element with the canvas 
+  public documentation = `Use the HTML <canvas> element with the canvas
   scripting API (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) to draw graphics and animations.`;
 
   constructor() {

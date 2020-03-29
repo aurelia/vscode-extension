@@ -2,7 +2,7 @@ import { BindableAttribute, MozDocElement } from './_elementStructure';
 
 export default class ColElement extends MozDocElement {
 
-  public documentation = `The HTML <col> element defines a column within a table and is used for defining 
+  public documentation = `The HTML <col> element defines a column within a table and is used for defining
   common semantics on all common cells. It is generally found within a <colgroup> element.`;
 
   constructor() {

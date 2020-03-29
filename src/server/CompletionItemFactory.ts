@@ -34,63 +34,63 @@ export default class CompletionItemFactory {
     uri: any,
     aureliaApplication: AureliaApplication): Promise<Array<CompletionItem>> {
 
-      let nodes = await this.parser.parse(text);
-      let insideTag: TagDefinition = null;
-      let lastIdx = 0;
+    let nodes = await this.parser.parse(text);
+    let insideTag: TagDefinition = null;
+    let lastIdx = 0;
 
-      // get insidetag and last index of tag
-      for(let i = 0; i < nodes.length; i++) {
-        let node = nodes[i];
-        if (!insideTag && positionNumber >= node.startOffset && positionNumber <= node.endOffset) {
-          insideTag = node;
-        }
-        if (node !== insideTag && node.endOffset > positionNumber) {
-          lastIdx = i;
-          break;
-        }
+    // get insidetag and last index of tag
+    for (let i = 0; i < nodes.length; i++) {
+      let node = nodes[i];
+      if (!insideTag && positionNumber >= node.startOffset && positionNumber <= node.endOffset) {
+        insideTag = node;
       }
+      if (node !== insideTag && node.endOffset > positionNumber) {
+        lastIdx = i;
+        break;
+      }
+    }
 
-      // get open parent tag
-      let tags = this.getOpenHtmlTags(nodes, lastIdx);
-      let parentTag = tags[tags.length - 1];
+    // get open parent tag
+    let tags = this.getOpenHtmlTags(nodes, lastIdx);
+    let parentTag = tags[tags.length - 1];
 
-      // auto complete inside a tag
-      if (insideTag) {
+    // auto complete inside a tag
+    if (insideTag) {
 
-        let elementString = text.substring(insideTag.startOffset, positionNumber);
-        if (this.notInAttributeValue(elementString)) {
+      let elementString = text.substring(insideTag.startOffset, positionNumber);
+      if (this.notInAttributeValue(elementString)) {
 
-          if (triggerCharacter === ' ') {
-            return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name), aureliaApplication);
-          } else if (triggerCharacter === '.' && this.canExpandDot(elementString)) {
-            return this.createBindingCompletion(insideTag, text, positionNumber);
-          } else {
-            return [];
-          }
-        // inside attribute, perform attribute completion
-        } else if (triggerCharacter === '"' || triggerCharacter === '\'') {
-                return this.createValueCompletion(insideTag, text, positionNumber, uri);
+        if (triggerCharacter === ' ') {
+          return this.attributeCompletionFactory.create(insideTag.name, insideTag.attributes.map(i => i.name), aureliaApplication);
+        } else if (triggerCharacter === '.' && this.canExpandDot(elementString)) {
+          return this.createBindingCompletion(insideTag, text, positionNumber);
         } else {
           return [];
         }
-      } else if (triggerCharacter === '{') {
-        return this.viewModelVariablesCompletionFactory.create(uri);
+        // inside attribute, perform attribute completion
+      } else if (triggerCharacter === '"' || triggerCharacter === '\'') {
+        return this.createValueCompletion(insideTag, text, positionNumber, uri);
+      } else {
+        return [];
       }
+    } else if (triggerCharacter === '{') {
+      return this.viewModelVariablesCompletionFactory.create(uri);
+    }
 
-      // auto complete others
-      switch (triggerCharacter) {
-        case '[':
-          return this.createEmmetCompletion(text, positionNumber);
-        case '<':
-          const customElementResult = this.customElementCompletionFactory.create('', aureliaApplication);
-          const elementResult = this.elementCompletionFactory.create(parentTag);
-          return customElementResult.concat(elementResult);
-      }
+    // auto complete others
+    switch (triggerCharacter) {
+      case '[':
+        return this.createEmmetCompletion(text, positionNumber);
+      case '<':
+        const customElementResult = this.customElementCompletionFactory.create('', aureliaApplication);
+        const elementResult = this.elementCompletionFactory.create(parentTag);
+        return customElementResult.concat(elementResult);
+    }
   }
 
   private notInAttributeValue(tagText: string) {
     let single = 0, double = 0;
-    for(let char of tagText) {
+    for (let char of tagText) {
       if (char === '"') double += 1;
       if (char === '\'') single += 1;
     }
@@ -103,13 +103,13 @@ export default class CompletionItemFactory {
 
   private getOpenHtmlTags(nodes: Array<TagDefinition>, lastIdx: number) {
     let tags: Array<string> = [];
-    for(let i = 0; i < lastIdx; i++) {
+    for (let i = 0; i < lastIdx; i++) {
       if (nodes[i].startTag) {
         tags.push(nodes[i].name);
       } else {
         var index = tags.indexOf(nodes[i].name);
         if (index >= 0) {
-          tags.splice( index, 1 );
+          tags.splice(index, 1);
         }
       }
     }
@@ -169,7 +169,7 @@ export default class CompletionItemFactory {
       }
     }
     if (!attribute) {
-      attribute = new AttributeDefinition(foundText.substring(0, foundText.length-1), '');
+      attribute = new AttributeDefinition(foundText.substring(0, foundText.length - 1), '');
     }
     return this.bindingCompletionFactory.create(tag, attribute, text.substring(position, position + 1));
   }

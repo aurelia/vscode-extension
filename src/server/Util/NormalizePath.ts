@@ -7,4 +7,4 @@ export function normalizePath(input) {
   }
 
   return input.replace(/\\/g, '/');
-} 
+}

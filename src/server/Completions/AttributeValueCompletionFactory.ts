@@ -1,12 +1,13 @@
 import {
   CompletionItem,
   CompletionItemKind,
-  InsertTextFormat } from 'vscode-languageserver';
+  InsertTextFormat
+} from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
-import {AureliaApplication} from './../FileParser/Model/AureliaApplication';
+import { AureliaApplication } from './../FileParser/Model/AureliaApplication';
 import AureliaSettings from '../AureliaSettings';
 import { settings } from 'cluster';
 import { fileUriToPath } from './../Util/FileUriToPath';
@@ -24,7 +25,7 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
 
   public create(elementName: string, attributeName: string, bindingName: string, uri: Uri): Array<CompletionItem> {
 
-    let result:Array<CompletionItem> = [];
+    let result: Array<CompletionItem> = [];
 
     if (bindingName === undefined || bindingName === null || bindingName === '') {
       let element = this.getElement(elementName);
@@ -69,11 +70,11 @@ export function includeCodeAutoComplete(application, result, targetPath) {
       compoment.viewModel.methods.forEach(x => {
 
         let inner = '';
-        for(let i=0; i < x.parameters.length;i++) {
-          inner += `\$${i+1},`;
+        for (let i = 0; i < x.parameters.length; i++) {
+          inner += `\$${i + 1},`;
         }
         if (x.parameters.length) {
-          inner = inner.substring(0, inner.length-1);
+          inner = inner.substring(0, inner.length - 1);
         }
 
         result.push({

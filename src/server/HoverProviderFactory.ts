@@ -11,9 +11,9 @@ export default class HoverProviderFactory {
   public create(text: string, offset: number): Hover {
 
     let leadingCharacter = '', appixCharacter = '';
-    
+
     let backPos = offset;
-    while(true) {
+    while (true) {
       let char = text[backPos];
       if (char === ' ' || char === '/' || char === '<' || char === undefined) {
         leadingCharacter = char;
@@ -24,7 +24,7 @@ export default class HoverProviderFactory {
     }
 
     let nextPos = offset;
-    while(true) {
+    while (true) {
       let char = text[nextPos];
       if (char === ' ' || char === '/' || char === '>' || char === '=' || char === undefined) {
         appixCharacter = char;
@@ -39,7 +39,7 @@ export default class HoverProviderFactory {
     let source = '';
     let moreInfo = '';
     let element;
-    switch(leadingCharacter) {
+    switch (leadingCharacter) {
       case '<':
         element = this.elementLibrary.elements[tag] || this.elementLibrary.unknownElement;
         if (element) {
@@ -47,15 +47,15 @@ export default class HoverProviderFactory {
           moreInfo = `more information: ${element.url}`;
           displayValue = `<${tag}>`;
         }
-      break;
+        break;
       case '/':
         element = this.elementLibrary.elements[tag];
         if (element) {
           documentation = element.documentation;
-          moreInfo = `more information: ${element.url}`;    
+          moreInfo = `more information: ${element.url}`;
           displayValue = `</${tag}>`;
         }
-      break;
+        break;
       case ' ':
         let matches = /<(\w*)\b.*$/g.exec(text.substring(0, offset));
         if (!matches || matches.length === 0) {
@@ -63,7 +63,7 @@ export default class HoverProviderFactory {
         }
         let elementName = matches[1];
         displayValue = `<${elementName} ${tag}="">`;
-        
+
         // fixes
         if (tag.startsWith('data-')) {
           tag = 'data-*';
@@ -71,7 +71,7 @@ export default class HoverProviderFactory {
         if (tag.indexOf('.')) {
           tag = tag.split('.')[0];
         }
-       
+
         element = this.elementLibrary.elements[elementName] || this.elementLibrary.unknownElement;
         let attribute = element.attributes.get(tag);
         let event = element.events.get(tag);
@@ -82,8 +82,8 @@ export default class HoverProviderFactory {
         if (event) {
           documentation = event.documentation;
           moreInfo = event.url;
-          source =  `MDN by Mozilla Contributors (${event.url}$history) is licensed under CC-BY-SA 2.5.`;
-        }      
+          source = `MDN by Mozilla Contributors (${event.url}$history) is licensed under CC-BY-SA 2.5.`;
+        }
     }
 
     documentation = documentation.replace(/\s\s+/g, ' ');
@@ -94,12 +94,12 @@ export default class HoverProviderFactory {
 
     if (element instanceof MozDocElement) {
       source = element.licenceText;
-    } 
+    }
 
     return {
-      contents: [ 
-        { language: 'html', value: displayValue }, 
-        { language: 'markdown', value: documentation }, 
+      contents: [
+        { language: 'html', value: displayValue },
+        { language: 'markdown', value: documentation },
         moreInfo,
         source
       ]

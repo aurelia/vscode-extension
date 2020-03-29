@@ -3,10 +3,10 @@ import { BindableAttribute, Value, MozDocElement } from './_elementStructure';
 export default class IframeElement extends MozDocElement {
 
   public documentation = `The HTML Inline Frame Element <iframe> represents a nested browsing context, effectively
-   embedding another HTML page into the current page. In HTML 4.01, a document may contain a head and a body or a 
-   head and a frameset, but not both a body and a frameset. However, an <iframe> can be used within a normal 
-   document body. Each browsing context has its own session history and active document. The browsing context 
-   that contains the embedded content is called the parent browsing context. The top-level browsing context 
+   embedding another HTML page into the current page. In HTML 4.01, a document may contain a head and a body or a
+   head and a frameset, but not both a body and a frameset. However, an <iframe> can be used within a normal
+   document body. Each browsing context has its own session history and active document. The browsing context
+   that contains the embedded content is called the parent browsing context. The top-level browsing context
    (which has no parent) is typically the browser window.`;
 
   constructor() {
@@ -29,22 +29,22 @@ export default class IframeElement extends MozDocElement {
       new BindableAttribute(`A name for the embedded browsing context (or frame). This can be used as the value of the target attribute of an <a> or <form> element, or the formtarget attribute of an <input> or <button> element.`));
     this.attributes.set('scrolling',
       new BindableAttribute(`Enumerated attribute indicating when the browser should provide a scroll bar (or other scrolling device) for the frame`,
-      null,
-      null,
-      null,
-      null,
-      new Map([
+        null,
+        null,
+        null,
+        null,
+        new Map([
           ['auto', new Value(`Only when needed`)],
           ['yes', new Value(`Always provide a scroll bar`)],
           ['no', new Value(`Never provide a scroll bar`)]
-      ])));
+        ])));
     this.attributes.set('sandbox',
       new BindableAttribute(`If specified as an empty string, this attribute enables extra restrictions on the content that can appear in the inline frame. The value of the attribute can either be an empty string (all the restrictions are applied), or a space-separated list of tokens that lift particular restrictions.`,
-      null,
-      null,
-      null,
-      null,
-      new Map([
+        null,
+        null,
+        null,
+        null,
+        new Map([
           ['allow-forms', new Value(`Allows the embedded browsing context to submit forms. If this keyword is not used, this operation is not allowed.`)],
           ['allow-modals', new Value(`Allows the embedded browsing context to open modal windows.`)],
           ['allow-orientation-lock', new Value(`Allows the embedded browsing context to disable the ability to lock the screen orientation.`)],
@@ -55,7 +55,7 @@ export default class IframeElement extends MozDocElement {
           ['allow-same-origin', new Value(`Allows the content to be treated as being from its normal origin. If this keyword is not used, the embedded content is treated as being from a unique origin.`)],
           ['allow-scripts', new Value(`Allows the embedded browsing context to run scripts (but not create pop-up windows). If this keyword is not used, this operation is not allowed.`)],
           ['allow-top-navigation', new Value(`Allows the embedded browsing context to navigate (load) content to the top-level browsing context. If this keyword is not used, this operation is not allowed.`)],
-       ])));      
+        ])));
     this.attributes.set('src',
       new BindableAttribute(`The URL of the page to embed.`));
     this.attributes.set('srcdoc',

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import {TextDocumentContentProvider} from './TextDocumentContentProvider';
+import { TextDocumentContentProvider } from './TextDocumentContentProvider';
 
 export function registerPreview(context, window, client) {
 

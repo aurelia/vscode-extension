@@ -19,10 +19,10 @@ export class HtmlInvalidCaseCodeAction {
     }
 
     return Command.create(
-      `Rename ${original} to ${fixed}`, 
-      'aurelia-attribute-invalid-case', 
-      document.uri, 
-      document.version, 
+      `Rename ${original} to ${fixed}`,
+      'aurelia-attribute-invalid-case',
+      document.uri,
+      document.version,
       [
         TextEdit.replace(diagnostic.range, fixed)
       ]);

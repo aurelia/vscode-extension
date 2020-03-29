@@ -1,9 +1,9 @@
-import {HtmlTemplateDocument} from './HtmlTemplateDocument';
-import {ViewModelDocument} from './ViewModelDocument';
+import { HtmlTemplateDocument } from './HtmlTemplateDocument';
+import { ViewModelDocument } from './ViewModelDocument';
 
 export class WebComponent {
   constructor(public name: string) {
-    
+
   }
 
   public document: HtmlTemplateDocument;

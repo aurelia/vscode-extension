@@ -147,7 +147,7 @@ export function activate(context: ExtensionContext) {
       new SearchDefinitionInViewV2(client)
     ),
     languages.registerCompletionItemProvider(
-      {scheme: 'file', language: 'html'},
+      { scheme: 'file', language: 'html' },
       new CompletionItemProviderInView(client),
     ),
   );
@@ -156,7 +156,7 @@ export function activate(context: ExtensionContext) {
     const components = await client.sendRequest('aurelia-get-components');
     console.log("TCL: activate -> components", components)
   }));
-
   const disposable = client.start();
+
   context.subscriptions.push(disposable);
 }

@@ -1,8 +1,9 @@
-import { 
-  CompletionItem, 
-  CompletionItemKind, 
-  InsertTextFormat, 
-  MarkedString } from 'vscode-languageserver';
+import {
+  CompletionItem,
+  CompletionItemKind,
+  InsertTextFormat,
+  MarkedString
+} from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { BaseElement, SimpleAttribute, BindableAttribute, EmptyAttribute } from './Library/_elementStructure';
@@ -12,12 +13,12 @@ export default class BaseAttributeCompletionFactory {
 
   constructor(protected library: ElementLibrary) { }
 
-  protected getElement(elementName: string) : BaseElement {
+  protected getElement(elementName: string): BaseElement {
     let element = this.library.elements[elementName];
     if (!element) {
       element = this.library.unknownElement;
     }
-    return element;    
+    return element;
   }
 
   protected addAttributes(attributes, result: CompletionItem[], existingAttributes, quote: string) {
@@ -28,20 +29,20 @@ export default class BaseAttributeCompletionFactory {
       }
 
       // remove duplicates (only leave latest addition)
-      for(let item of result.filter(i => 
-        i.label === key || 
+      for (let item of result.filter(i =>
+        i.label === key ||
         i.label === (value.customLabel === null ? (key + '.bind') : value.customLabel))) {
         let index = result.indexOf(item, 0);
         if (index > -1) {
           result.splice(index, 1);
-        }        
+        }
       }
 
       if (value instanceof BindableAttribute) {
         result.push({
           documentation: MarkedString.fromPlainText(value.documentation).toString(),
           detail: 'Bindable Attribute',
-          insertText: value.customBindingSnippet === null ? `${key}.bind=${quote}$0${quote}`: value.customBindingSnippet.replace('"', quote),
+          insertText: value.customBindingSnippet === null ? `${key}.bind=${quote}$0${quote}` : value.customBindingSnippet.replace('"', quote),
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Value,
           label: value.customLabel === null ? (key + '.bind') : value.customLabel,
@@ -56,7 +57,7 @@ export default class BaseAttributeCompletionFactory {
           insertTextFormat: InsertTextFormat.PlainText,
           kind: CompletionItemKind.Property,
           label: key,
-        });        
+        });
       }
 
       if (value instanceof SimpleAttribute || value instanceof BindableAttribute) {
@@ -67,28 +68,28 @@ export default class BaseAttributeCompletionFactory {
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Property,
           label: key,
-        });        
+        });
       }
-    }  
-    return result;  
+    }
+    return result;
   }
 
   protected addEvents(events, result, existingAttributes, quote: string) {
 
-    for (let [key, value] of events.entries()) { 
+    for (let [key, value] of events.entries()) {
 
       if (existingAttributes.filter(i => i === key).length || value === null) {
         continue;
       }
 
       // remove exiting items that are doubles
-      for(let item of result.filter(i => 
-        i.label === key || 
+      for (let item of result.filter(i =>
+        i.label === key ||
         i.label === key + (value.bubbles ? `.delegate` : `.trigger`))) {
         let index = result.indexOf(item, 0);
         if (index > -1) {
           result.splice(index, 1);
-        }        
+        }
       }
 
       result.push({
@@ -98,7 +99,7 @@ export default class BaseAttributeCompletionFactory {
         insertTextFormat: InsertTextFormat.Snippet,
         kind: CompletionItemKind.Function,
         label: key + (value.bubbles ? `.delegate` : `.trigger`),
-      }); 
+      });
     }
 
     return result;

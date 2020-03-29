@@ -2,7 +2,7 @@ import { BindableAttribute, Value, MozDocElement } from './_elementStructure';
 
 export default class LinkElement extends MozDocElement {
 
-  public documentation = `The HTML <link> element specifies relationships between the current document and an external 
+  public documentation = `The HTML <link> element specifies relationships between the current document and an external
   resource. Possible uses for this element include defining a relational framework for navigation. This Element is
    most used to link to style sheets.`;
 
@@ -11,14 +11,14 @@ export default class LinkElement extends MozDocElement {
     this.url = 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link';
     this.attributes.set('crossorigin',
       new BindableAttribute(`This enumerated attribute indicates if the fetching of the related image must be done using CORS or not. CORS-enabled images can be reused in the <canvas> element without being "tainted.`,
-      null,
-      null,
-      null,
-      null,
-      new Map([
+        null,
+        null,
+        null,
+        null,
+        new Map([
           ['anonymous', new Value(`A cross-origin request (i.e., with Origin: HTTP header) is performed. But no credential is sent (i.e., no cookie, no X.509 certificate, and no HTTP Basic authentication is sent). If the server does not give credentials to the origin site (by not setting the Access-Control-Allow-Origin: HTTP header), the image will be tainted and its usage restricted.`)],
           ['use-credentials', new Value(`A cross-origin request (i.e., with Origin: HTTP header) performed with credential is sent (i.e., a cookie, a certificate, and HTTP Basic authentication is performed). If the server does not give credentials to the origin site (through Access-Control-Allow-Credentials: HTTP header), the image will be tainted and its usage restricted.`)],
-      ])));    
+        ])));
     this.attributes.set('href',
       new BindableAttribute(`This attribute specifies the URL of the linked resource. A URL might be absolute or relative.`));
     this.attributes.set('hreflang',

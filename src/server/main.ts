@@ -142,7 +142,7 @@ connection.onCompletion(async (textDocumentPosition: CompletionParams): Promise<
   let offset = document.offsetAt(textDocumentPosition.position);
   let triggerCharacter = text.substring(offset - 1, offset);
   let position = textDocumentPosition.position;
-  const uriLike = {path: document.uri}
+  const uriLike = { path: document.uri }
   const completionItem = await completionItemFactory.create(triggerCharacter, position, text, offset, uriLike, aureliaApplication)
   const result = CompletionList.create(completionItem, false);
   return result;
@@ -185,7 +185,7 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
 
 connection.listen();
 
-async function handlefeatureToggles({featureToggles, extensionSettings}: AureliaSettings) {
+async function handlefeatureToggles({ featureToggles, extensionSettings }: AureliaSettings) {
   if (settings.featureToggles.smartAutocomplete) {
     console.log('smart auto complete init');
 

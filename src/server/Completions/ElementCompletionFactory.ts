@@ -1,7 +1,8 @@
-import { 
-  CompletionItem, 
-  CompletionItemKind, 
-  InsertTextFormat, MarkedString } from 'vscode-languageserver';
+import {
+  CompletionItem,
+  CompletionItemKind,
+  InsertTextFormat, MarkedString
+} from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { MozDocElement } from './Library/_elementStructure';
@@ -18,7 +19,7 @@ export default class ElementCompletionFactory {
     if (parent) {
       let parentElementDef = <MozDocElement> this.library.elements[parent];
       if (parentElementDef && parentElementDef.permittedChildren && parentElementDef.permittedChildren.length) {
-        for(let childName of parentElementDef.permittedChildren) {
+        for (let childName of parentElementDef.permittedChildren) {
           result.push({
             documentation: MarkedString.fromPlainText(this.library.elements[childName].documentation).toString(),
             detail: 'HTMLElement',
@@ -33,7 +34,7 @@ export default class ElementCompletionFactory {
       }
     }
 
-    for(let name in this.library.elements) {
+    for (let name in this.library.elements) {
       let item = this.library.elements[name];
       // if (item instanceof MozDocElement && item.permittedParents.length) {
       //   continue;

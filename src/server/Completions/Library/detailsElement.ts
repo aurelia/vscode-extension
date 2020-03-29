@@ -2,7 +2,7 @@ import { BindableAttribute, MozDocElement } from './_elementStructure';
 
 export default class DetailsElement extends MozDocElement {
 
-  public documentation = `The HTML <details> element is used as a disclosure widget from which the user can retrieve 
+  public documentation = `The HTML <details> element is used as a disclosure widget from which the user can retrieve
   additional information.`;
 
   constructor() {

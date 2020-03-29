@@ -1,5 +1,5 @@
-import {WebComponent} from './WebComponent';
-import {singleton} from 'aurelia-dependency-injection';
+import { WebComponent } from './WebComponent';
+import { singleton } from 'aurelia-dependency-injection';
 
 @singleton()
 export class AureliaApplication {

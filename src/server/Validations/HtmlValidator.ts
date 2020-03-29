@@ -36,7 +36,7 @@ export class HtmlValidator {
 
     const parser = new HTMLDocumentParser();
     const documentNodes = await parser.parse(text);
-  
+
     const diagnostics: Diagnostic[] = [];
     for (const element of documentNodes) {
       for (const attribute of element.attributes) {
@@ -47,7 +47,7 @@ export class HtmlValidator {
     }
 
     return Promise.resolve(diagnostics);
-  }  
+  }
 }
 
 
