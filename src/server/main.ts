@@ -182,7 +182,7 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
 connection.listen();
 
 async function handlefeatureToggles({ featureToggles, extensionSettings }: AureliaSettings) {
-  if (settings.featureToggles.smartAutocomplete) {
+  if (featureToggles.smartAutocomplete) {
     console.log('smart auto complete init');
 
     // Aurelia project path to parse
@@ -195,11 +195,60 @@ async function handlefeatureToggles({ featureToggles, extensionSettings }: Aurel
     console.log(`${sourceDirectory  }/${  settings.extensionSettings.pathToAureliaProject[0]}`);
 
     try {
-      const fileProcessor = new ProcessFiles();
-      await fileProcessor.processPath(extensionSettings);
-      aureliaApplication.components = fileProcessor.components;
-      console.log('>>> 2. The extension found this many components:');
-      console.log(aureliaApplication.components.length);
+      const updateAureliaComponents = async () => {
+        const fileProcessor = new ProcessFiles();
+        await fileProcessor.processPath(extensionSettings);
+        aureliaApplication.components = fileProcessor.components;
+
+        console.log('>>> The extension found this many components:');
+        console.log(aureliaApplication.components.length);
+      };
+
+      const configPath = ts.findConfigFile(
+        /* searchPath */ "./",
+        ts.sys.fileExists,
+        "tsconfig.json"
+      );
+
+      // Skip watcher if no tsconfig found
+      const createWatchProgram = configPath !== undefined;
+
+      if (createWatchProgram) {
+        console.log(">>> 1.4 Initiating a watcher for documentation and fetching changes in custom components");
+
+        const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
+
+        const host = ts.createWatchCompilerHost(
+          configPath,
+          {},
+          ts.sys,
+          createProgram,
+        );
+
+        // We hook into createProgram to enable manual update of AureliaComponents of the application
+        // upon changes. We also need to call the original createProgram to fulfill the lifecycle of the host.
+        const origCreateProgram = host.createProgram;
+        host.createProgram = (rootNames: readonly string[], options, programHost, oldProgram) => {
+          // Call update on AureliaComponents to ensure that the custom components are in sync
+          updateAureliaComponents();
+          return origCreateProgram(rootNames, options, programHost, oldProgram);
+        };
+
+        // We also overwrite afterProgramCreate to avoid actually running a compile towards the file system
+        host.afterProgramCreate = program => {
+          aureliaApplication.watcherProgram = program;
+        };
+
+        // Create initial watch program with our specially crafted host for aurelia component handling
+        ts.createWatchProgram(host);
+      } else {
+        console.log("Not tsconfig file found. The watcher needs a working tsconfig file to");
+      }
+
+      // To avoid an extra call to the AureliaComponents mapping we check whether the host has been created
+      if (!createWatchProgram) {
+        await updateAureliaComponents();
+      }
 
     } catch (ex) {
       console.log('------------- FILE PROCESSOR ERROR ---------------------');
