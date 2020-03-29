@@ -1,10 +1,10 @@
 export namespace AureliaSettingsNS {
   export interface IFeatureToggles {
-    smartAutocomplete : boolean,
+    smartAutocomplete: boolean;
   }
 
   export interface IExtensionSettings {
-    pathToAureliaProject: string[]
+    pathToAureliaProject: string[];
   }
 }
 
@@ -12,15 +12,15 @@ export default class AureliaSettings {
   public quote: string = '"';
   public validation: boolean = true;
   public bindings = {
-    data : []
-  }
+    data: []
+  };
 
   public featureToggles: AureliaSettingsNS.IFeatureToggles = {
-    smartAutocomplete : true,
+    smartAutocomplete: true,
 
-  }
+  };
 
   public extensionSettings: AureliaSettingsNS.IExtensionSettings = {
     pathToAureliaProject: ['src']
-  }
+  };
 }

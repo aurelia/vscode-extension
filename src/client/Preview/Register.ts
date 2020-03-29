@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
-import {TextDocumentContentProvider} from './TextDocumentContentProvider';
+import { TextDocumentContentProvider } from './TextDocumentContentProvider';
 
 export function registerPreview(context, window, client) {
 
   const aureliaViewDataPanelType = 'aureliaViewData';
 
-  let previewUri = vscode.Uri.parse('aurelia-preview://authority/aurelia-preview');
+  const previewUri = vscode.Uri.parse('aurelia-preview://authority/aurelia-preview');
 
-  let provider = new TextDocumentContentProvider(client);
-  let registration = vscode.workspace.registerTextDocumentContentProvider('aurelia-preview', provider);
+  const provider = new TextDocumentContentProvider(client);
+  const registration = vscode.workspace.registerTextDocumentContentProvider('aurelia-preview', provider);
   let isPanelVisible: boolean = false;
   let panel: vscode.WebviewPanel;
 
@@ -76,7 +76,7 @@ export function registerPreview(context, window, client) {
     panel.onDidChangeViewState(event => {
       const correctPanelType = (event.webviewPanel.viewType === aureliaViewDataPanelType);
       /** Don't update panel if the panel itself is 'active' */
-      const panelNotActive = !event.webviewPanel.active
+      const panelNotActive = !event.webviewPanel.active;
       isPanelVisible = correctPanelType && panelNotActive;
     });
 

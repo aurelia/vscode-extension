@@ -1,5 +1,5 @@
 export function normalizePath(input) {
-  const isExtendedLengthPath = /^\\\\\?\\/.test(input);
+  const isExtendedLengthPath = input.startsWith("\\\\?\\");
   const hasNonAscii = /[^\u0000-\u0080]+/.test(input);
 
   if (isExtendedLengthPath || hasNonAscii) {
@@ -7,4 +7,4 @@ export function normalizePath(input) {
   }
 
   return input.replace(/\\/g, '/');
-} 
+}

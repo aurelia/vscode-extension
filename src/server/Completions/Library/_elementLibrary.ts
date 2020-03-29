@@ -48,7 +48,7 @@ import IframeElement from './iframeElement';
 import ImgElement from './imgElement';
 import InsElement from './insElement';
 import KdbElement from './kdbElement';
-import LabelElement from './labelElement'; 
+import LabelElement from './labelElement';
 import LegendElement from './legendElement';
 import LiElement from './liElement';
 import LinkElement from './linkElement';
@@ -111,7 +111,7 @@ import RequireElement from './requireElement';
 
 @singleton()
 export default class ElementLibrary {
-  
+
   public elements = {};
 
   public unknownElement = new UnknownElement();
@@ -154,7 +154,7 @@ export default class ElementLibrary {
     this.elements['figure'] = new FigureElement();
     this.elements['footer'] = new FooterElement();
     this.elements['form'] = new FormElement();
-    let header = new HElement();
+    const header = new HElement();
     this.elements['h1'] = header;
     this.elements['h2'] = header;
     this.elements['h3'] = header;
@@ -229,10 +229,8 @@ export default class ElementLibrary {
     this.elements['video'] = new VideoElement();
     this.elements['wbr'] = new WbrElement();
 
-        
     this.elements['compose'] = new ComposeElement();
     this.elements['require'] = new RequireElement();
-
 
   }
 }

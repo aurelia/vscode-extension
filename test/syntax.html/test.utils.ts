@@ -3,18 +3,18 @@ import { parseRawGrammar, Registry } from 'vscode-textmate';
 
 function readFile(path) {
   return new Promise((resolve, reject) => {
-      fs.readFile(path, 'utf8', (error, data) => error ? reject(error) : resolve(data));
+    fs.readFile(path, 'utf8', (error, data) => error ? reject(error) : resolve(data));
   });
 }
 
 const registry = new Registry({
   loadGrammar: (scopeName) => {
-      if (scopeName === 'au.html') {
-        return readFile('./syntaxes/html.json').then((data: string) => {
-            return parseRawGrammar(data, './syntaxes/html.json');
-          });
-      }
-      return null;
+    if (scopeName === 'au.html') {
+      return readFile('./syntaxes/html.json').then((data: string) => {
+        return parseRawGrammar(data, './syntaxes/html.json');
+      });
+    }
+    return null;
   },
 });
 

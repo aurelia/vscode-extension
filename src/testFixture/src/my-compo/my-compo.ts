@@ -1,17 +1,17 @@
 import { bindable } from "aurelia-framework";
 
 interface ICompoInter {
-  stringInter: string
+  stringInter: string;
 }
 
 export class MyCompoCustomElement {
-  @bindable stringBindable: string = 'foo';
+  @bindable public stringBindable: string = 'foo';
 
-  @bindable numberBindable: number = 123;
+  @bindable public numberBindable: number = 123;
 
-  @bindable stringArrayBindable: string[] = ['hello', 'world'];
+  @bindable public stringArrayBindable: string[] = ['hello', 'world'];
 
-  @bindable interBindable: ICompoInter = {
+  @bindable public interBindable: ICompoInter = {
     stringInter: 'stringInter',
-  }
+  };
 }

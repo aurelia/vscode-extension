@@ -41,10 +41,10 @@ export default class AreaElement extends MozDocElement {
         null,
         null,
         new Map([
-            ['_self', new Value(`Load the response into the same HTML4 frame (or HTML5 browsing context) as the current one. This value is the default if the attribute is not specified.`)],
-            ['_blank', new Value(`Load the response into a new unnamed HTML4 window or HTML5 browsing context.`)],
-            ['_parent', new Value(`Load the response into the HTML4 frameset parent of the current frame or HTML5 parent browsing context of the current one. If there is no parent, this option behaves the same way as _self.`)],
-            ['_top', new Value(`In HTML4: Load the response into the full, original window, canceling all other frames. In HTML5: Load the response into the top-level browsing context (that is, the browsing context that is an ancestor of the current one, and has no parent). If there is no parent, this option behaves the same way as _self.`)],
-          ])));                                                
+          ['_self', new Value(`Load the response into the same HTML4 frame (or HTML5 browsing context) as the current one. This value is the default if the attribute is not specified.`)],
+          ['_blank', new Value(`Load the response into a new unnamed HTML4 window or HTML5 browsing context.`)],
+          ['_parent', new Value(`Load the response into the HTML4 frameset parent of the current frame or HTML5 parent browsing context of the current one. If there is no parent, this option behaves the same way as _self.`)],
+          ['_top', new Value(`In HTML4: Load the response into the full, original window, canceling all other frames. In HTML5: Load the response into the top-level browsing context (that is, the browsing context that is an ancestor of the current one, and has no parent). If there is no parent, this option behaves the same way as _self.`)],
+        ])));
   }
 }

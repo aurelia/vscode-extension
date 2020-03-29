@@ -21,5 +21,5 @@ async function testCompletion(
     'vscode.executeDefinitionProvider',
     docUri,
     position
-  )) as vscode.Location[];
+  ));
 }

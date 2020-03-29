@@ -16,28 +16,28 @@ export default class AureliaCliCommands {
   }
 
   private static async auNew(outputChannel) {
-    let projectName = await vscode.window.showInputBox({ placeHolder: 'Please enter a name for your new project' });
+    const projectName = await vscode.window.showInputBox({ placeHolder: 'Please enter a name for your new project' });
     this.runCommand(['new', projectName], outputChannel, 'aurelia-cli');
   }
 
   private static async auGenerate(outputChannel) {
 
-    let param: string[] = ['generate'];
-    let type = await vscode.window.showQuickPick(
+    const param: string[] = ['generate'];
+    const type = await vscode.window.showQuickPick(
       this.getGeneratorTypes(),
       { matchOnDescription: false, placeHolder: 'Select type' });
     param.push(type);
 
-    let name = await vscode.window.showInputBox({ placeHolder: `What would you like to call the ${type}?` });
+    const name = await vscode.window.showInputBox({ placeHolder: `What would you like to call the ${type}?` });
     param.push(name);
 
     this.runCommand(param, outputChannel);
   }
 
   private static async auBuild(outputChannel) {
-    let param: string[] = ['build'];
-    let auTemplatePath = path.join(vscode.workspace.rootPath, 'aurelia_project/environments');
-    let items = [];
+    const param: string[] = ['build'];
+    const auTemplatePath = path.join(vscode.workspace.rootPath, 'aurelia_project/environments');
+    const items = [];
 
     fs.readdirSync(auTemplatePath).forEach((name) => {
       if (path.extname(name) === '.ts' || path.extname(name) === '.js') {
@@ -45,15 +45,15 @@ export default class AureliaCliCommands {
       }
     });
 
-    let options = { matchOnDescription: false, placeHolder: 'Select environment to build' };
+    const options = { matchOnDescription: false, placeHolder: 'Select environment to build' };
     vscode.window.showQuickPick(items, options).then((data) => {
-      param.push('--env ' + data);
+      param.push(`--env ${  data}`);
       this.runCommand(param, outputChannel);
     });
   }
 
   private static getGeneratorTypes() {
-    let items = [];
+    const items = [];
     fs.readdirSync(path.join(vscode.workspace.rootPath, 'aurelia_project/generators')).forEach(name => {
       if (path.extname(name) === '.ts' || path.extname(name) === '.js') {
         items.push(path.basename(name.replace('.ts', '').replace('.js', '')));
@@ -67,8 +67,8 @@ export default class AureliaCliCommands {
   }
 
   private static runCommand(args: string[], outputChannel: vscode.OutputChannel, terminalName?: string): void {
-    let cwd = vscode.workspace.rootPath;
-    if (terminalName && terminalName.length) {
+    const cwd = vscode.workspace.rootPath;
+    if (terminalName?.length) {
       this.runCommandInTerminal(args);
     } else {
       this.runCommandInOutputWindow(args, cwd, outputChannel);
@@ -77,8 +77,8 @@ export default class AureliaCliCommands {
 
   private static runCommandInOutputWindow(args: string[], cwd: string, outputChannel: vscode.OutputChannel) {
 
-    let cmd = 'au ' + args.join(' ');
-    let childProcess = cp.exec(cmd, { cwd: cwd, env: process.env });
+    const cmd = `au ${  args.join(' ')}`;
+    const childProcess = cp.exec(cmd, { cwd: cwd, env: process.env });
     childProcess.stderr.on('data', data => outputChannel.append(<string> data));
     childProcess.stdout.on('data', data => outputChannel.append(<string> data));
 
@@ -93,9 +93,9 @@ export default class AureliaCliCommands {
       return;
     }
 
-    let terminal = vscode.window.createTerminal('aurelia-cli');
+    const terminal = vscode.window.createTerminal('aurelia-cli');
     terminal.show(true);
     terminal.sendText(`cd ${vscode.workspace.rootPath}`, true);
-    terminal.sendText('au ' + args.join(' '), true);
+    terminal.sendText(`au ${  args.join(' ')}`, true);
   }
 }

@@ -1,12 +1,12 @@
 import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver';
-import {AttributeDefinition, TagDefinition } from './../../FileParser/HTMLDocumentParser';
+import { AttributeDefinition, TagDefinition } from "../../FileParser/HTMLDocumentParser";
 
 export class OneWayDeprecatedValidation {
   public match(attribute: AttributeDefinition) {
     return attribute.binding === 'one-way';
   }
 
-  public diagnostic(attribute: AttributeDefinition, element: TagDefinition, document: TextDocument) {   
+  public diagnostic(attribute: AttributeDefinition, element: TagDefinition, document: TextDocument) {
     const bindingStartOffset = attribute.startOffset + attribute.name.length + 1;
     const bindingEndOffset = bindingStartOffset + attribute.binding.length;
     return <Diagnostic> {

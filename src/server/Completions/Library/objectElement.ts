@@ -2,7 +2,7 @@ import { BindableAttribute, MozDocElement } from './_elementStructure';
 
 export default class ObjectElement extends MozDocElement {
 
-  public documentation = `The HTML <object> element represents an external resource, which can be treated as an image, 
+  public documentation = `The HTML <object> element represents an external resource, which can be treated as an image,
   a nested browsing context, or a resource to be handled by a plugin`;
 
   constructor() {

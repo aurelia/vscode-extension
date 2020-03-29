@@ -4,8 +4,8 @@ import * as path from 'path';
 import { getDocUri, activate } from './helper';
 
 interface IExpectedResult {
-  expectedLocation: number[]
-  expectedFileName: string
+  expectedLocation: number[];
+  expectedFileName: string;
 }
 
 describe('Go To Definition', () => {
@@ -24,7 +24,7 @@ describe('Go To Definition', () => {
     await testCompletion(docUri, position, {
       expectedLocation: [5, 12, 5, 54],
       expectedFileName: 'compo-user.ts',
-    })
+    });
   });
 
   it('(uOE33Pqm) Should open view model of `my-compo.ts`', async () => {
@@ -32,7 +32,7 @@ describe('Go To Definition', () => {
     await testCompletion(docUri, position, {
       expectedLocation: [0, 0, 0, 6],
       expectedFileName: 'my-compo.ts',
-    })
+    });
   });
 
   it('(EUmcjqaIO) Should open view model of `my-compo.ts`', async () => {
@@ -40,7 +40,7 @@ describe('Go To Definition', () => {
     await testCompletion(docUri, position, {
       expectedLocation: [0, 0, 0, 6],
       expectedFileName: 'my-compo.ts',
-    })
+    });
   });
 
 });
@@ -57,10 +57,10 @@ async function testCompletion(
     'vscode.executeDefinitionProvider',
     docUri,
     position
-  )) as vscode.Location[];
+  ));
 
   const targetDefinition = definitionLocation[0];
-  const { range, uri } = targetDefinition
+  const { range, uri } = targetDefinition;
 
   assert.equal(range.start.line, expectedLocation[0]);
   assert.equal(range.start.character, expectedLocation[1]);

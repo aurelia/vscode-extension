@@ -1,5 +1,5 @@
 import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver";
-import { HTMLDocumentParser } from "./../FileParser/HTMLDocumentParser";
+import { HTMLDocumentParser } from "../FileParser/HTMLDocumentParser";
 import { attributeInvalidCaseFix } from "../Common/AttributeInvalidCaseFix";
 
 export class HtmlInvalidCaseCodeAction {
@@ -19,10 +19,10 @@ export class HtmlInvalidCaseCodeAction {
     }
 
     return Command.create(
-      `Rename ${original} to ${fixed}`, 
-      'aurelia-attribute-invalid-case', 
-      document.uri, 
-      document.version, 
+      `Rename ${original} to ${fixed}`,
+      'aurelia-attribute-invalid-case',
+      document.uri,
+      document.version,
       [
         TextEdit.replace(diagnostic.range, fixed)
       ]);

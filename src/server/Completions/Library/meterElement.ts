@@ -22,6 +22,6 @@ export default class MeterElement extends MozDocElement {
     this.attributes.set('optimum',
       new BindableAttribute(`This attribute indicates the optimal numeric value. It must be within the range (as defined by the min attribute and max attribute). When used with the low attribute and high attribute, it gives an indication where along the range is considered preferable. For example, if it is between the min attribute and the low attribute, then the lower range is considered preferred.`));
     this.attributes.set('form',
-      new BindableAttribute(`This attribute associates the element with a form element that has ownership of the meter element. For example, a meter might be displaying a range corresponding to an input element of type number. This attribute is only used if the meter element is being used as a form-associated element; even then, it may be omitted if the element appears as a descendant of a form element.`));                               
+      new BindableAttribute(`This attribute associates the element with a form element that has ownership of the meter element. For example, a meter might be displaying a range corresponding to an input element of type number. This attribute is only used if the meter element is being used as a form-associated element; even then, it may be omitted if the element appears as a descendant of a form element.`));
   }
 }

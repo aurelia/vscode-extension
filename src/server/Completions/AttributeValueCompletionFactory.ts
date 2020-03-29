@@ -1,16 +1,17 @@
 import {
   CompletionItem,
   CompletionItemKind,
-  InsertTextFormat } from 'vscode-languageserver';
+  InsertTextFormat
+} from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
-import {AureliaApplication} from './../FileParser/Model/AureliaApplication';
+import { AureliaApplication } from "../FileParser/Model/AureliaApplication";
 import AureliaSettings from '../AureliaSettings';
 import { settings } from 'cluster';
-import { fileUriToPath } from './../Util/FileUriToPath';
-import { normalizePath } from './../Util/NormalizePath';
+import { fileUriToPath } from "../Util/FileUriToPath";
+import { normalizePath } from "../Util/NormalizePath";
 import * as os from 'os';
 import { Uri } from 'vscode';
 
@@ -19,23 +20,23 @@ export default class AttributeCompletionFactory extends BaseAttributeCompletionF
 
   constructor(
     library: ElementLibrary,
-    private application: AureliaApplication,
-    private settings: AureliaSettings) { super(library); }
+    private readonly application: AureliaApplication,
+    private readonly settings: AureliaSettings) { super(library); }
 
-  public create(elementName: string, attributeName: string, bindingName: string, uri: Uri): Array<CompletionItem> {
+  public create(elementName: string, attributeName: string, bindingName: string, uri: Uri): CompletionItem[] {
 
-    let result:Array<CompletionItem> = [];
+    const result: CompletionItem[] = [];
 
     if (bindingName === undefined || bindingName === null || bindingName === '') {
-      let element = this.getElement(elementName);
+      const element = this.getElement(elementName);
 
       let attribute = element.attributes.get(attributeName);
       if (!attribute) {
         attribute = GlobalAttributes.attributes.get(attributeName);
       }
 
-      if (attribute && attribute.values) {
-        for (let [key, value] of attribute.values.entries()) {
+      if (attribute?.values) {
+        for (const [key, value] of attribute.values.entries()) {
           result.push({
             documentation: value.documentation,
             insertText: key,
@@ -69,11 +70,11 @@ export function includeCodeAutoComplete(application, result, targetPath) {
       compoment.viewModel.methods.forEach(x => {
 
         let inner = '';
-        for(let i=0; i < x.parameters.length;i++) {
-          inner += `\$${i+1},`;
+        for (let i = 0; i < x.parameters.length; i++) {
+          inner += `\$${i + 1},`;
         }
         if (x.parameters.length) {
-          inner = inner.substring(0, inner.length-1);
+          inner = inner.substring(0, inner.length - 1);
         }
 
         result.push({
@@ -97,7 +98,7 @@ export function includeCodeAutoComplete(application, result, targetPath) {
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Property,
           label: x.name,
-        })
+        });
       });
     }
   }

@@ -2,7 +2,7 @@ import { BindableAttribute, MozDocElement } from './_elementStructure';
 
 export default class FieldsetElement extends MozDocElement {
 
-  public documentation = `The HTML <fieldset> element is used to group several controls as well as labels 
+  public documentation = `The HTML <fieldset> element is used to group several controls as well as labels
   (<label>) within a web form.`;
 
   constructor() {
@@ -14,6 +14,6 @@ export default class FieldsetElement extends MozDocElement {
     this.attributes.set('form',
       new BindableAttribute(`This attribute has the value of the id attribute of the <form> element it's related to. Its default value is the id of the nearest <form> element it is a descendant of.`));
     this.attributes.set('name',
-      new BindableAttribute(`The name associated with the group.`));      
+      new BindableAttribute(`The name associated with the group.`));
   }
 }

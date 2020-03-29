@@ -12,8 +12,10 @@
 - [2. Autocomplete In View](#2-autocomplete-in-view)
     - [2.1. Custom Element Completion](#21-custom-element-completion)
     - [2.2. Custom Element Bindable Completion](#22-custom-element-bindable-completion)
-    - [2.3. View Model Method Completion](#23-view-model-method-completion)
-    - [2.4. View Model Variable Completion](#24-view-model-variable-completion)
+    - [2.3.1 View Model Method Completion for attribute](#231-view-model-method-completion-for-attribute)
+    - [2.3.2 View Model Method Completion for ${}](#232-view-model-method-completion-for)
+    - [2.4.1 View Model Variable Completion attribute](#241-view-model-variable-completion-attribute)
+    - [2.4.2 View Model Method Completion for ${}](#242-view-model-method-completion-for)
 
 _Smartautocomplete Test Plan_
 

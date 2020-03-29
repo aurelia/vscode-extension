@@ -2,7 +2,7 @@ import { BindableAttribute, MozDocElement } from './_elementStructure';
 
 export default class AbbrElement extends MozDocElement {
 
-  public documentation = `The HTML <abbr> element represents an abbreviation and optionally provides a full description 
+  public documentation = `The HTML <abbr> element represents an abbreviation and optionally provides a full description
   for it. If present, the title attribute must contain this full description and nothing else.`;
 
   constructor() {
