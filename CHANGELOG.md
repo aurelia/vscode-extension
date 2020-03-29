@@ -1,3 +1,41 @@
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/aurelia/vscode-extension/compare/1.0.5...1.0.6) (2020-03-29)
+
+### Fixes
+- **autocomplete**
+Now support windows and linux [#116](https://github.com/aurelia/vscode-extension/issues/116)
+
+### Additions
+- **Parsing components setting**
+  - Added a setting, which allows to fine-tune the paths to parse your Aurelia components.
+  - This will potentially allow the extension to correctly work on monorepos.
+    - If you still have trouble, please [create an issue](https://github.com/aurelia/vscode-extension/issues/new). Ideally, with an example setup of your monorepo. Thank you.
+```json
+	"aurelia.extensionSettings": {
+		"pathToAureliaProject": [
+			"src", // this is the default
+			"some/other/path/one",
+			"some/other/path/two",
+			"some/other/path/three",
+		]
+	},
+```
+
+### Wiki
+- **New articeles in the wiki**
+  - [Developing the extension](https://github.com/aurelia/vscode-extension/wiki/Developing-the-extension)
+  - [View Autocomplete](https://github.com/aurelia/vscode-extension/wiki/View-Autocomplete)
+
+
+### Bugs
+- Newly added bindables/variables/methods
+  - If you add new bindables or view model variables/methods, a *restart* of VSCode is required to have them appear in the autocompletes
+- [Parser error for components with "repeat.for"-binding](https://github.com/aurelia/vscode-extension/issues/115)
+  - ` "Parser Error: Unconsumed token of at column 5 in expression [user of users]"`
+  - [Workaround](https://github.com/aurelia/vscode-extension/issues/116#issuecomment-602876294)
+
+
+
 <a name="1.0.5"></a>
 ## [1.0.5](https://github.com/aurelia/vscode-extension/compare/1.0.4...1.0.5) (2019-12-28)
 
