@@ -80,7 +80,7 @@ export class TagDefinition {
     public endOffset: number,
     public line: number,
     public selfClosing: boolean = null,
-    public attributes: AttributeDefinition[] = []) {
+    public attributes?: AttributeDefinition[]) {
   }
 }
 export class AttributeDefinition {

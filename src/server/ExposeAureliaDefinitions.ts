@@ -1,4 +1,3 @@
-import { ViewModelDocument } from './FileParser/Model/ViewModelDocument';
 export declare type DefinitionsInfo = {
   [name: string]: DefinitionLink[];
 };
@@ -16,20 +15,15 @@ declare type AureliaDefinition = {
 };
 
 import {
-  Location,
   DefinitionLink,
   LocationLink,
   Range,
-  MarkedString,
   Position,
 } from 'vscode-languageserver';
 import * as path from 'path';
-import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { camelCase } from 'aurelia-binding';
 import { WebComponent } from './FileParser/Model/WebComponent';
-import { HtmlTemplateDocument } from './FileParser/Model/HtmlTemplateDocument';
-import { DefinitionInfo } from 'typescript';
 import RelatedFileExtensions from '../Util/RelatedFileExtensions';
 import { kebabCase } from '../Util/kebabCase';
 
@@ -39,23 +33,23 @@ function storeViewModelDefinitions(
   definitionsInfo: DefinitionsInfo
 ): DefinitionsInfo {
   const { viewModel } = component;
-  if (!viewModel[propName]) return;
+  if (viewModel[propName].length === 0) return;
 
   // 1.1 Find target path
   const { scriptExtensions } = RelatedFileExtensions;
-  const viewModelPath = component.paths.find(path => {
+  const viewModelPath = component.paths.find(componentPath => {
     return scriptExtensions.some(ext => {
-      ext;
-      return path.endsWith(ext);
+      return componentPath.endsWith(ext);
     });
   });
-  const targetUri = `${viewModelPath}`;
+  const targetUri = viewModelPath;
 
   viewModel[propName].forEach(property => {
     const { range } = property;
     const targetRange = Range.create(range.start, range.end);
 
-    const def = definitionsInfo[property.name] || [];
+    const def = (typeof definitionsInfo[property.name] !== 'undefined')
+      ? definitionsInfo[property.name] : [];
     def.push(
       LocationLink.create(
         targetUri,
@@ -81,12 +75,12 @@ function storeViewDefinitions(
   definitionsAttributesInfo: DefinitionsAttributesInfo,
 ) {
   const viewDocument = component.document;
-  if (!viewDocument) return;
+  if (typeof viewDocument === 'undefined') return;
+  // if (typeof viewDocument === 'undefined') return;
 
-  const { scriptExtensions } = RelatedFileExtensions;
   const tags = viewDocument.tags.filter(tag => {
     const isDontParseTags = (tag.name === 'template') || (tag.name === 'require');
-    const isStartTag = !isDontParseTags && tag.startTag;
+    // const isStartTag = !isDontParseTags && tag.startTag;
     return (!isDontParseTags && tag.startTag); // omit closing tags
   });
 
@@ -115,7 +109,8 @@ function storeViewDefinitions(
           Position.create(lineNum, attr.endOffset),
         );
 
-        const def = definitionsInfo[definitionWord] || [];
+        const def = (typeof definitionsInfo[definitionWord] !== 'undefined')
+          ? definitionsInfo[definitionWord] : [];
         def.push(
           LocationLink.create(
             targetViewUri,
@@ -146,25 +141,9 @@ function storeViewDefinitions(
         });
         if (!foundRefs.includes(customElementName)) return;
 
-        const targetViewPath = aureliaApplication.components
-          .find(component => {
-            return (component.name === customElementName);
-          })
-          .paths.find(path => {
-            return scriptExtensions.some(ext => path.endsWith(ext));
-          });
-        const targetViewUri = `${targetViewPath}`;
-
-        /* parse5 line index starts 1 */
-        const lineNum = tag.line - 1;
-
-        const targetRange = Range.create(
-          Position.create(lineNum, attr.startOffset),
-          Position.create(lineNum, attr.endOffset),
-        );
-
         const asCamelCase = camelCase(bindingName);
-        const def = definitionsAttributesInfo[bindingName] || [];
+        const def = (typeof definitionsAttributesInfo[bindingName] !== 'undefined')
+          ? definitionsAttributesInfo[bindingName] : [];
         def.push(
           {
             customElementName,
@@ -207,7 +186,7 @@ function storeCustomElementDefinitions(
  */
 function convertViewModelVariablesToKebabCase(definitionsInfo: DefinitionsInfo, definitionsAttributesInfo: DefinitionsAttributesInfo): AureliaDefinition {
   Object.entries(definitionsInfo).forEach(([key, attrInfos]) => {
-    attrInfos.forEach(attrInfo => {
+    attrInfos.forEach(() => {
       const asKebabCase = kebabCase(key);
       definitionsInfo[asKebabCase] = definitionsInfo[key];
     });
@@ -226,7 +205,7 @@ export function exposeAureliaDefinitions(
   let definitionsAttributesInfo: DefinitionsAttributesInfo = {};
 
   aureliaApplication.components.forEach(component => {
-    if (!component.viewModel) return;
+    if (typeof component.viewModel === 'undefined') return;
 
     storeViewModelDefinitions('properties', component, definitionsInfo);
     storeViewModelDefinitions('methods', component, definitionsInfo);

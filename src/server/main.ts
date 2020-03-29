@@ -8,31 +8,18 @@ interface IViewCompletionParam {
   triggerCharacter: string;
 }
 
+// eslint-disable-next-line import/no-unassigned-import
 import 'reflect-metadata';
 import {
   createConnection,
   IConnection,
   TextDocuments,
-  InitializeParams,
   InitializeResult,
-  Hover,
   CompletionList,
-  InitializedParams,
-  TextDocumentPositionParams,
   Definition,
-  DocumentLinkParams,
-  DocumentLink,
-  CodeLensParams,
-  CodeLens,
-  ReferenceParams,
-  Location,
-  DefinitionLink,
-  LocationLink,
-  Range,
   CompletionParams,
- MarkedString, Position, TextDocument } from 'vscode-languageserver';
+} from 'vscode-languageserver';
 
-import { camelCase } from 'aurelia-binding';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
@@ -44,13 +31,9 @@ import { HtmlValidator } from './Validations/HtmlValidator';
 import { HtmlInvalidCaseCodeAction } from './CodeActions/HtmlInvalidCaseCodeAction';
 import { OneWayBindingDeprecatedCodeAction } from './CodeActions/OneWayBindingDeprecatedCodeAction';
 
-import * as ts from 'typescript';
 import * as vscode from 'vscode';
-import { Uri } from 'vscode';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
-import { connect } from 'net';
-import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
 import { exposeAureliaDefinitions } from './ExposeAureliaDefinitions';
 import { sys } from 'typescript';
 
@@ -69,9 +52,10 @@ const aureliaApplication = globalContainer.get(AureliaApplication);
 const settings = globalContainer.get(AureliaSettings);
 
 // Register characters to lisen for
-connection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
+connection.onInitialize((): InitializeResult => {
 
   // TODO: find better way/place to init this
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const dummy = globalContainer.get(ElementLibrary);
 
   return {
@@ -93,8 +77,9 @@ connection.onCodeAction(async codeActionParams => {
   const document = documents.get(codeActionParams.textDocument.uri);
   const commands = [];
   for (const diagnostic of diagnostics) {
-    const action = codeActions.find(i => i.name == diagnostic.code);
-    if (action) {
+    const action = codeActions.find(i => i.name === diagnostic.code);
+    if (typeof action !== 'undefined') {
+      // eslint-disable-next-line no-await-in-loop
       commands.push(await action.commands(diagnostic, document));
     }
   }
@@ -102,6 +87,7 @@ connection.onCodeAction(async codeActionParams => {
 });
 
 // Register and get changes to Aurelia settings
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 connection.onDidChangeConfiguration(async (change) => {
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
   settings.validation = change.settings.aurelia.validation;
@@ -128,7 +114,7 @@ documents.onDidChangeContent(async change => {
 // Lisen for completion requests
 connection.onRequest('aurelia-view-completion', async (params: IViewCompletionParam) => {
   const {
-    document, position, token, context, text, offset, triggerCharacter,
+    document, position, text, offset, triggerCharacter,
   } = params;
   const completionResult = await completionItemFactory.create(triggerCharacter, position, text, offset, document.uri, aureliaApplication);
   return CompletionList.create(completionResult, false);
@@ -145,7 +131,7 @@ connection.onCompletion(async (textDocumentPosition: CompletionParams): Promise<
   return CompletionList.create(completionItem, false);
 });
 
-connection.onRequest('aurelia-view-information', async (filePath: string) => {
+connection.onRequest('aurelia-view-information', (filePath: string) => {
   // let fileProcessor = new ProcessFiles();
   // await fileProcessor.processPath();
   // aureliaApplication.components = fileProcessor.components;
@@ -155,8 +141,6 @@ connection.onRequest('aurelia-view-information', async (filePath: string) => {
 
 connection.onRequest('aurelia-definition-provide', () => {
   const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(aureliaApplication);
-  definitionsInfo;
-  definitionsAttributesInfo;
   return { definitionsInfo, definitionsAttributesInfo };
 });
 
@@ -169,7 +153,7 @@ connection.onRequest('aurelia-smart-autocomplete-goto', () => {
   return aureliaApplication.components;
 });
 
-connection.onDefinition((position: TextDocumentPositionParams): Definition => {
+connection.onDefinition((): Definition => {
   /**
    * Need to have this onDefinition here, else we get following error in the console
    * Request textDocument/definition failed.
@@ -181,7 +165,7 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
 
 connection.listen();
 
-async function handlefeatureToggles({ featureToggles, extensionSettings }: AureliaSettings) {
+async function handlefeatureToggles({ extensionSettings }: AureliaSettings) {
   if (settings.featureToggles.smartAutocomplete) {
     console.log('smart auto complete init');
 
@@ -192,7 +176,7 @@ async function handlefeatureToggles({ featureToggles, extensionSettings }: Aurel
     console.log('>>> 1.2. The extension will try to parse Aurelia components inside:');
     console.log(settings.extensionSettings.pathToAureliaProject);
     console.log('>>> 1.3. Eg.');
-    console.log(`${sourceDirectory  }/${  settings.extensionSettings.pathToAureliaProject[0]}`);
+    console.log(`${sourceDirectory}/${settings.extensionSettings.pathToAureliaProject[0]}`);
 
     try {
       const fileProcessor = new ProcessFiles();

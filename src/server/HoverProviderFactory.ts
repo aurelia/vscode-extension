@@ -6,13 +6,16 @@ import { MozDocElement } from './Completions/Library/_elementStructure';
 @autoinject()
 export default class HoverProviderFactory {
 
-  constructor(private readonly elementLibrary: ElementLibrary) { }
+  public constructor(private readonly elementLibrary: ElementLibrary) { }
 
   public create(text: string, offset: number): Hover {
 
-    let leadingCharacter = '', appixCharacter = '';
+    let leadingCharacter = '';
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let appixCharacter = '';
 
     let backPos = offset;
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const char = text[backPos];
       if (char === ' ' || char === '/' || char === '<' || char === undefined) {
@@ -24,6 +27,7 @@ export default class HoverProviderFactory {
     }
 
     let nextPos = offset;
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const char = text[nextPos];
       if (char === ' ' || char === '/' || char === '>' || char === '=' || char === undefined) {
@@ -56,7 +60,7 @@ export default class HoverProviderFactory {
           displayValue = `</${tag}>`;
         }
         break;
-      case ' ':
+      case ' ': {
         const matches = /<(\w*)\b.*$/g.exec(text.substring(0, offset));
         if (!matches || matches.length === 0) {
           return;
@@ -68,7 +72,7 @@ export default class HoverProviderFactory {
         if (tag.startsWith('data-')) {
           tag = 'data-*';
         }
-        if (tag.indexOf('.')) {
+        if (tag.indexOf('.') > 0) {
           tag = tag.split('.')[0];
         }
 
@@ -84,11 +88,12 @@ export default class HoverProviderFactory {
           moreInfo = event.url;
           source = `MDN by Mozilla Contributors (${event.url}$history) is licensed under CC-BY-SA 2.5.`;
         }
+      }
     }
 
     documentation = documentation.replace(/\s\s+/g, ' ');
 
-    if (documentation == '') {
+    if (documentation === '') {
       return undefined;
     }
 

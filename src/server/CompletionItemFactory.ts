@@ -15,7 +15,7 @@ import { Uri } from 'vscode';
 @autoinject()
 export default class CompletionItemFactory {
 
-  constructor(
+  public constructor(
     private readonly attributeCompletionFactory: AttributeCompletionFactory,
     private readonly elementCompletionFactory: ElementCompletionFactory,
     private readonly customElementCompletionFactory: CustomElementCompletionFactory,
@@ -81,10 +81,11 @@ export default class CompletionItemFactory {
     switch (triggerCharacter) {
       case '[':
         return this.createEmmetCompletion(text, positionNumber);
-      case '<':
+      case '<': {
         const customElementResult = this.customElementCompletionFactory.create('', aureliaApplication);
         const elementResult = this.elementCompletionFactory.create(parentTag);
         return customElementResult.concat(elementResult);
+      }
     }
   }
 
@@ -94,7 +95,7 @@ export default class CompletionItemFactory {
       if (char === '"') double += 1;
       if (char === '\'') single += 1;
     }
-    return single % 2 == 0 && double % 2 == 0;
+    return single % 2 === 0 && double % 2 === 0;
   }
 
   private canExpandDot(elementString) {
@@ -122,13 +123,14 @@ export default class CompletionItemFactory {
       let attribute;
       const elementText = text.substring(tag.startOffset, tag.endOffset);
       const tagPosition = position - tag.startOffset;
-      const attributeRegex = /([\w-]+)\.?\w*\=['"]/g;
-      let matches;
+      const attributeRegex = /([\w-]+)\.?\w*=['"]/g;
+      let matches: RegExpExecArray;
+      // eslint-disable-next-line
       while (matches = attributeRegex.exec(elementText)) {
         if (tagPosition >= matches.index && (tagPosition <= matches.index + matches[0].length)) {
           const foundText = matches[1];
-          const attributes = tag.attributes.filter(a => a && a.name == foundText);
-          if (attributes.length) {
+          const attributes = tag.attributes.filter(a => a?.name === foundText);
+          if (attributes.length > 0) {
             attribute = attributes[0];
             break;
           }
@@ -155,14 +157,15 @@ export default class CompletionItemFactory {
     let attribute;
     const elementText = text.substring(tag.startOffset, tag.endOffset);
     const tagPosition = position - tag.startOffset;
-    const attributeRegex = /([\w\.-]+)(\=['"](.*?)["'])?/g;
-    let matches;
+    const attributeRegex = /([\w.-]+)(=['"](.*?)["'])?/g;
+    let matches: RegExpExecArray;
     let foundText = '';
+    // eslint-disable-next-line
     while (matches = attributeRegex.exec(elementText)) {
       if (tagPosition >= matches.index && (tagPosition <= matches.index + matches[1].length)) {
         foundText = matches[1];
-        const attributes = tag.attributes.filter(a => a.name + (a.binding !== undefined ? '.' : '') == foundText);
-        if (attributes.length) {
+        const attributes = tag.attributes.filter(a => a.name + (a.binding !== undefined ? '.' : '') === foundText);
+        if (attributes.length > 0) {
           attribute = attributes[0];
           break;
         }
