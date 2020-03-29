@@ -261,7 +261,9 @@
           "type": "object",
           "description": "Configure the extension",
           "default": {
-            "pathToAureliaProject": ["src"]
+            "pathToAureliaProject": [
+              "src"
+            ]
           }
         }
       }
@@ -295,10 +297,18 @@
     "@types/chai": "^4.1.2",
     "@types/mocha": "^5.0.0",
     "@types/node": "^9.6.5",
-    "aurelia-framework": "^1.3.1",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
     "chai": "^4.1.2",
     "commitplease": "^3.2.0",
     "conventional-changelog-cli": "^1.3.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-compat": "^3.5.1",
+    "eslint-plugin-cypress": "^2.10.3",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsdoc": "^22.1.0",
+    "eslint-plugin-mocha": "^6.3.0",
+    "eslint-plugin-sonarjs": "^0.5.0",
     "mocha": "^5.1.0",
     "mocha-junit-reporter": "^1.13.0",
     "tslint": "^5.2.0",
@@ -310,6 +320,7 @@
     "aurelia-binding": "^2.3.1",
     "aurelia-cli": "^1.0.2",
     "aurelia-dependency-injection": "^1.4.2",
+    "aurelia-framework": "^1.3.1",
     "aurelia-templating-binding": "^1.5.3",
     "parse5": "^4.0.0",
     "reflect-metadata": "^0.1.9",
