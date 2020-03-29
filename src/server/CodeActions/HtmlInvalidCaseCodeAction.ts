@@ -3,7 +3,7 @@ import { HTMLDocumentParser } from "../FileParser/HTMLDocumentParser";
 import { attributeInvalidCaseFix } from "../Common/AttributeInvalidCaseFix";
 
 export class HtmlInvalidCaseCodeAction {
-  public name = 'aurelia-attribute-invalid-case';
+  public name: string = 'aurelia-attribute-invalid-case';
 
   public async commands(diagnostic: Diagnostic, document: TextDocument): Promise<Command> {
     const text = document.getText();
@@ -14,7 +14,7 @@ export class HtmlInvalidCaseCodeAction {
 
     const original = text.substring(start, end);
     let fixed = original;
-    if (element) {
+    if (typeof element !== 'undefined') {
       fixed = attributeInvalidCaseFix(fixed, element.name);
     }
 

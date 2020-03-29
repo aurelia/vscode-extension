@@ -1,9 +1,9 @@
 import { Diagnostic, TextEdit, Command, TextDocument } from "vscode-languageserver";
 
 export class OneWayBindingDeprecatedCodeAction {
-  public name = 'aurelia-binding-one-way-deprecated';
+  public name: string = 'aurelia-binding-one-way-deprecated';
 
-  public async commands(diagnostic: Diagnostic, document: TextDocument): Promise<Command> {
+  public commands(diagnostic: Diagnostic, document: TextDocument): Command {
 
     return Command.create(
       `Change 'one-way' binding behaviour to 'to-view'`,
