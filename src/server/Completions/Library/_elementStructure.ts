@@ -4,7 +4,7 @@ export class Value {
   }
 }
 
-class BaseAttribute {
+export class BaseAttribute {
   constructor(
     public documentation: string,
     public url: string,
