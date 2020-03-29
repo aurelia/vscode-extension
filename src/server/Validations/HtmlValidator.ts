@@ -1,5 +1,5 @@
-import { Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver';
-import { HTMLDocumentParser, AttributeDefinition, TagDefinition } from "../FileParser/HTMLDocumentParser";
+import { Diagnostic, TextDocument } from 'vscode-languageserver';
+import { HTMLDocumentParser } from "../FileParser/HTMLDocumentParser";
 import { autoinject } from 'aurelia-dependency-injection';
 
 import { OneWayDeprecatedValidation } from './Attribute/OneWayDeprecatedValidation';
@@ -10,9 +10,11 @@ import AureliaSettings from '../AureliaSettings';
 export class HtmlValidator {
   private readonly validationEnabled: boolean;
 
-  private readonly attributeValidators = [];
+  private readonly attributeValidators: (
+    OneWayDeprecatedValidation | InValidAttributeCasingValidation)[]
+    = [];
 
-  constructor(
+  public constructor(
     oneWayDeprecatedValidation: OneWayDeprecatedValidation,
     inValidAttributeCasingValidation: InValidAttributeCasingValidation,
     private readonly settings: AureliaSettings) {
@@ -30,7 +32,7 @@ export class HtmlValidator {
     }
 
     const text = document.getText();
-    if (text.trim().length == 0) {
+    if (text.trim().length === 0) {
       return Promise.resolve([]);
     }
 
