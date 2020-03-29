@@ -23,16 +23,16 @@ export default class BaseAttributeCompletionFactory {
 
   protected addAttributes(attributes, result: CompletionItem[], existingAttributes, quote: string) {
 
-    for (let [key, value] of attributes.entries()) {
+    for (const [key, value] of attributes.entries()) {
       if (existingAttributes.filter(i => i === key).length || value === null) {
         continue;
       }
 
       // remove duplicates (only leave latest addition)
-      for (let item of result.filter(i =>
+      for (const item of result.filter(i =>
         i.label === key ||
-        i.label === (value.customLabel === null ? (key + '.bind') : value.customLabel))) {
-        let index = result.indexOf(item, 0);
+        i.label === (value.customLabel === null ? (`${key  }.bind`) : value.customLabel))) {
+        const index = result.indexOf(item, 0);
         if (index > -1) {
           result.splice(index, 1);
         }
@@ -45,7 +45,7 @@ export default class BaseAttributeCompletionFactory {
           insertText: value.customBindingSnippet === null ? `${key}.bind=${quote}$0${quote}` : value.customBindingSnippet.replace('"', quote),
           insertTextFormat: InsertTextFormat.Snippet,
           kind: CompletionItemKind.Value,
-          label: value.customLabel === null ? (key + '.bind') : value.customLabel,
+          label: value.customLabel === null ? (`${key  }.bind`) : value.customLabel,
         });
       }
 
@@ -76,17 +76,17 @@ export default class BaseAttributeCompletionFactory {
 
   protected addEvents(events, result, existingAttributes, quote: string) {
 
-    for (let [key, value] of events.entries()) {
+    for (const [key, value] of events.entries()) {
 
       if (existingAttributes.filter(i => i === key).length || value === null) {
         continue;
       }
 
       // remove exiting items that are doubles
-      for (let item of result.filter(i =>
+      for (const item of result.filter(i =>
         i.label === key ||
         i.label === key + (value.bubbles ? `.delegate` : `.trigger`))) {
-        let index = result.indexOf(item, 0);
+        const index = result.indexOf(item, 0);
         if (index > -1) {
           result.splice(index, 1);
         }

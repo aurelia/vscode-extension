@@ -1,4 +1,4 @@
-import { AureliaApplication } from './../FileParser/Model/AureliaApplication';
+import { AureliaApplication } from "../FileParser/Model/AureliaApplication";
 import {
   CompletionItem,
   CompletionItemKind,
@@ -9,17 +9,17 @@ import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
-import AureliaSettings from './../AureliaSettings';
+import AureliaSettings from "../AureliaSettings";
 
 @autoinject()
 export default class AureliaAttributeCompletionFactory extends BaseAttributeCompletionFactory {
 
-  constructor(library: ElementLibrary, private settings: AureliaSettings) { super(library); }
+  constructor(library: ElementLibrary, private readonly settings: AureliaSettings) { super(library); }
 
-  public create(elementName: string, existingAttributes: Array<string>, aureliaApplication: AureliaApplication): Array<CompletionItem> {
+  public create(elementName: string, existingAttributes: string[], aureliaApplication: AureliaApplication): CompletionItem[] {
 
-    let result: Array<CompletionItem> = [];
-    let element = this.getElement(elementName);
+    const result: CompletionItem[] = [];
+    const element = this.getElement(elementName);
 
     this.addViewModelBindables(result, elementName, aureliaApplication);
 
@@ -45,11 +45,12 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
   /**
    * Look at the View Model and provide all class variables as completion in kebab case.
    * TODO: Only bindables should be provided.
+   *
    * @param result
    * @param elementName
    * @param aureliaApplication
    */
-  private addViewModelBindables(result: Array<CompletionItem>, elementName: string, aureliaApplication: AureliaApplication) {
+  private addViewModelBindables(result: CompletionItem[], elementName: string, aureliaApplication: AureliaApplication) {
     if (aureliaApplication.components) {
       aureliaApplication.components.forEach(component => {
         if (component.name !== elementName) return;
@@ -70,7 +71,7 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
             label: `View Model: ${varAsKebabCase}`
           });
         });
-      })
+      });
     }
   }
 }

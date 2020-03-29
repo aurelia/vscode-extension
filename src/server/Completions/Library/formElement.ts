@@ -64,6 +64,8 @@ In previous versions of HTML, the different character encodings could be delimit
 
     this.events.set('submit', new Event(
       `The submit event is fired when a form is submitted.`,
-      `https://developer.mozilla.org/en-US/docs/Web/Events/submit`, false, false));
+      `https://developer.mozilla.org/en-US/docs/Web/Events/submit`,
+false,
+false));
   }
 }

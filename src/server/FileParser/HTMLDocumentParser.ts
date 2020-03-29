@@ -4,13 +4,13 @@ import { Location } from 'vscode-languageserver/lib/main';
 
 export class HTMLDocumentParser {
 
-  public parse(text: string): Promise<Array<TagDefinition>> {
+  public parse(text: string): Promise<TagDefinition[]> {
     return new Promise((resolve, reject) => {
-      let stream = new Readable();
+      const stream = new Readable();
       stream.push(text);
       stream.push(null);
 
-      let stack: Array<TagDefinition> = [];
+      const stack: TagDefinition[] = [];
 
       const parser = new SAXParser({ locationInfo: true });
       parser.on('startTag', (name, attrs, selfClosing, location) => {
@@ -43,7 +43,7 @@ export class HTMLDocumentParser {
 
   public getElementAtPosition(text: string, start: number, end: number): Promise<TagDefinition> {
     return new Promise((resolve, reject) => {
-      let stream = new Readable();
+      const stream = new Readable();
       stream.push(text);
       stream.push(null);
 
@@ -81,7 +81,7 @@ export class TagDefinition {
     public endOffset: number,
     public line: number,
     public selfClosing: boolean = null,
-    public attributes: Array<AttributeDefinition> = []) {
+    public attributes: AttributeDefinition[] = []) {
   }
 }
 export class AttributeDefinition {
@@ -94,7 +94,7 @@ export class AttributeDefinition {
 
   constructor(name: string, public value: string, location?: MarkupData.Location) {
     if (name) {
-      let parts = name.split('.');
+      const parts = name.split('.');
       if (parts.length == 2) {
         this.name = parts[0];
         this.binding = parts[1];

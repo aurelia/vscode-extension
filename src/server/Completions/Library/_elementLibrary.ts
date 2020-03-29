@@ -154,7 +154,7 @@ export default class ElementLibrary {
     this.elements['figure'] = new FigureElement();
     this.elements['footer'] = new FooterElement();
     this.elements['form'] = new FormElement();
-    let header = new HElement();
+    const header = new HElement();
     this.elements['h1'] = header;
     this.elements['h2'] = header;
     this.elements['h3'] = header;
@@ -229,10 +229,8 @@ export default class ElementLibrary {
     this.elements['video'] = new VideoElement();
     this.elements['wbr'] = new WbrElement();
 
-
     this.elements['compose'] = new ComposeElement();
     this.elements['require'] = new RequireElement();
-
 
   }
 }

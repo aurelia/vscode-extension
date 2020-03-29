@@ -14,9 +14,8 @@ import { AureliaHtmlParser } from './Parsers/AureliaHtmlParser';
 import { Methods, Properties, ViewModelDocument } from './Model/ViewModelDocument';
 
 import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './HTMLDocumentParser';
-import { normalizePath } from './../Util/NormalizePath';
+import { normalizePath } from "../Util/NormalizePath";
 import { AureliaSettingsNS } from '../AureliaSettings';
-
 
 export default class ProcessFiles {
 
@@ -27,7 +26,6 @@ export default class ProcessFiles {
     const sourceDirectory = sys.getCurrentDirectory();
     const paths = sys.readDirectory(sourceDirectory, ['ts', 'js', 'html'], ['node_modules', 'aurelia_project'], extensionSettings.pathToAureliaProject);
 
-
     for (let path of paths) {
       path = normalizePath(path);
       const name = Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
@@ -36,7 +34,7 @@ export default class ProcessFiles {
 
         const component = this.findOrCreateWebComponentBy(name);
 
-        if (component.paths.indexOf(path) === -1) {
+        if (!component.paths.includes(path)) {
           component.paths.push(path);
         }
 
@@ -47,8 +45,8 @@ export default class ProcessFiles {
             const result = processSourceFile(path, fileContent, 'typescript');
             component.viewModel = new ViewModelDocument();
             component.viewModel.type = "typescript";
-            if (result && result.result.length) {
-              var defaultExport = result.result.find(cl => cl.modifiers && cl.modifiers.indexOf('default') > -1);
+            if (result?.result.length) {
+              const defaultExport = result.result.find(cl => cl.modifiers && cl.modifiers.indexOf('default') > -1);
               if (defaultExport) {
                 component.viewModel.properties = defaultExport.properties;
                 component.viewModel.methods = defaultExport.methods;
@@ -103,9 +101,8 @@ export default class ProcessFiles {
   }
 }
 
-
 export function processSourceFile(fileName: string, content: string, type: string) {
-  let sourceFile = createSourceFile(
+  const sourceFile = createSourceFile(
     fileName,
     content,
     ScriptTarget.Latest,
@@ -115,26 +112,26 @@ export function processSourceFile(fileName: string, content: string, type: strin
   return {
     result: processFile(sourceFile),
     uri: fileName
-  }
+  };
 }
 
 function processFile(sourceFile: SourceFile) {
 
-  let getCodeInformation = (node: Node) => {
-    let classes = [];
+  const getCodeInformation = (node: Node) => {
+    const classes = [];
     forEachChild(node, n => {
       if (n.kind === SyntaxKind.ClassDeclaration) {
         classes.push(processClassDeclaration(n));
       }
     });
     return classes;
-  }
+  };
   return getCodeInformation(sourceFile);
 }
 
 function processClassDeclaration(node: Node) {
-  let properties: Properties = [];
-  let methods: Methods = [];
+  const properties: Properties = [];
+  const methods: Methods = [];
   let lineNumber: number;
   let lineStart: number;
   let startPos: number;
@@ -143,14 +140,14 @@ function processClassDeclaration(node: Node) {
     return { properties, methods };
   }
 
-  let declaration = (node as ClassDeclaration);
-  const srcFile = node.getSourceFile()
+  const declaration = (node as ClassDeclaration);
+  const srcFile = node.getSourceFile();
 
   if (declaration.members) {
-    for (let member of declaration.members) {
+    for (const member of declaration.members) {
       switch (member.kind) {
         case SyntaxKind.PropertyDeclaration:
-          let property = member as PropertyDeclaration;
+          const property = member as PropertyDeclaration;
           let propertyModifiers;
           if (property.modifiers) {
             propertyModifiers = property.modifiers.map(i => i.getText());
@@ -159,7 +156,7 @@ function processClassDeclaration(node: Node) {
             }
           }
           const propertyName = property.name.getText();
-          let propertyType = undefined;
+          let propertyType;
           if (property.type) {
             propertyType = property.type.getText();
           }
@@ -189,7 +186,7 @@ function processClassDeclaration(node: Node) {
         case SyntaxKind.GetAccessor:
           break;
         case SyntaxKind.MethodDeclaration:
-          let memberDeclaration = member as MethodDeclaration;
+          const memberDeclaration = member as MethodDeclaration;
           let memberModifiers;
           if (memberDeclaration.modifiers) {
             memberModifiers = memberDeclaration.modifiers.map(i => i.getText());
@@ -197,16 +194,16 @@ function processClassDeclaration(node: Node) {
               continue;
             }
           }
-          let memberName = memberDeclaration.name.getText();
-          let memberReturnType = undefined;
+          const memberName = memberDeclaration.name.getText();
+          let memberReturnType;
           if (memberDeclaration.type) {
             memberReturnType = memberDeclaration.type.getText();
           }
 
-          let params = [];
+          const params = [];
           if (memberDeclaration.parameters) {
-            for (let param of memberDeclaration.parameters) {
-              const p = param as ParameterDeclaration;
+            for (const param of memberDeclaration.parameters) {
+              const p = param;
               params.push(p.name.getText());
             }
           }

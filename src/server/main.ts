@@ -1,11 +1,11 @@
 interface IViewCompletionParam {
-  document: vscode.TextDocument
-  position: vscode.Position
-  token: vscode.CancellationToken,
-  context: vscode.CompletionContext,
-  text: string,
-  offset: number,
-  triggerCharacter: string,
+  document: vscode.TextDocument;
+  position: vscode.Position;
+  token: vscode.CancellationToken;
+  context: vscode.CompletionContext;
+  text: string;
+  offset: number;
+  triggerCharacter: string;
 }
 
 import 'reflect-metadata';
@@ -30,8 +30,7 @@ import {
   LocationLink,
   Range,
   CompletionParams,
-} from 'vscode-languageserver';
-import { MarkedString, Position, TextDocument } from 'vscode-languageserver';
+ MarkedString, Position, TextDocument } from 'vscode-languageserver';
 
 import { camelCase } from 'aurelia-binding';
 import { Container } from 'aurelia-dependency-injection';
@@ -65,9 +64,9 @@ documents.listen(connection);
 
 // Setup Aurelia dependency injection
 const globalContainer = new Container();
-const completionItemFactory = <CompletionItemFactory> globalContainer.get(CompletionItemFactory);
-const aureliaApplication = <AureliaApplication> globalContainer.get(AureliaApplication);
-const settings = <AureliaSettings> globalContainer.get(AureliaSettings);
+const completionItemFactory = globalContainer.get(CompletionItemFactory);
+const aureliaApplication = globalContainer.get(AureliaApplication);
+const settings = globalContainer.get(AureliaSettings);
 
 // Register characters to lisen for
 connection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
@@ -114,13 +113,13 @@ connection.onDidChangeConfiguration(async (change) => {
   settings.extensionSettings = {
     ...settings.extensionSettings,
     ...change.settings.aurelia.extensionSettings
-  }
+  };
 
   await handlefeatureToggles(settings);
 });
 
 // Setup Validation
-const validator = <HtmlValidator> globalContainer.get(HtmlValidator);
+const validator = globalContainer.get(HtmlValidator);
 documents.onDidChangeContent(async change => {
   const diagnostics = await validator.doValidation(change.document);
   connection.sendDiagnostics({ uri: change.document.uri, diagnostics });
@@ -132,35 +131,32 @@ connection.onRequest('aurelia-view-completion', async (params: IViewCompletionPa
     document, position, token, context, text, offset, triggerCharacter,
   } = params;
   const completionResult = await completionItemFactory.create(triggerCharacter, position, text, offset, document.uri, aureliaApplication);
-  const result = CompletionList.create(completionResult, false);
-  return result;
+  return CompletionList.create(completionResult, false);
 });
 
 connection.onCompletion(async (textDocumentPosition: CompletionParams): Promise<CompletionList> => {
-  let document = documents.get(textDocumentPosition.textDocument.uri);
-  let text = document.getText();
-  let offset = document.offsetAt(textDocumentPosition.position);
-  let triggerCharacter = text.substring(offset - 1, offset);
-  let position = textDocumentPosition.position;
-  const uriLike = { path: document.uri }
-  const completionItem = await completionItemFactory.create(triggerCharacter, position, text, offset, uriLike, aureliaApplication)
-  const result = CompletionList.create(completionItem, false);
-  return result;
+  const document = documents.get(textDocumentPosition.textDocument.uri);
+  const text = document.getText();
+  const offset = document.offsetAt(textDocumentPosition.position);
+  const triggerCharacter = text.substring(offset - 1, offset);
+  const position = textDocumentPosition.position;
+  const uriLike = { path: document.uri };
+  const completionItem = await completionItemFactory.create(triggerCharacter, position, text, offset, uriLike, aureliaApplication);
+  return CompletionList.create(completionItem, false);
 });
-
 
 connection.onRequest('aurelia-view-information', async (filePath: string) => {
   // let fileProcessor = new ProcessFiles();
   // await fileProcessor.processPath();
   // aureliaApplication.components = fileProcessor.components;
 
-  return aureliaApplication.components.find(doc => doc.paths.indexOf(normalizePath(filePath)) > -1);
+  return aureliaApplication.components.find(doc => doc.paths.includes(normalizePath(filePath)));
 });
 
 connection.onRequest('aurelia-definition-provide', () => {
   const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(aureliaApplication);
-  definitionsInfo
-  definitionsAttributesInfo
+  definitionsInfo;
+  definitionsAttributesInfo;
   return { definitionsInfo, definitionsAttributesInfo };
 });
 
@@ -171,7 +167,7 @@ connection.onRequest('aurelia-get-components', () => {
 
 connection.onRequest('aurelia-smart-autocomplete-goto', () => {
   return aureliaApplication.components;
-})
+});
 
 connection.onDefinition((position: TextDocumentPositionParams): Definition => {
   /**
@@ -181,7 +177,7 @@ connection.onDefinition((position: TextDocumentPositionParams): Definition => {
    * Code: -32601
    */
   return null;
-})
+});
 
 connection.listen();
 
@@ -193,13 +189,13 @@ async function handlefeatureToggles({ featureToggles, extensionSettings }: Aurel
     console.log('>>> 1.1 This is the project\'s directory:');
     const sourceDirectory = sys.getCurrentDirectory();
     console.log(sourceDirectory);
-    console.log('>>> 1.2. The extension will try to parse Aurelia components inside:')
+    console.log('>>> 1.2. The extension will try to parse Aurelia components inside:');
     console.log(settings.extensionSettings.pathToAureliaProject);
-    console.log('>>> 1.3. Eg.')
-    console.log(sourceDirectory + '/' + settings.extensionSettings.pathToAureliaProject[0]);
+    console.log('>>> 1.3. Eg.');
+    console.log(`${sourceDirectory  }/${  settings.extensionSettings.pathToAureliaProject[0]}`);
 
     try {
-      let fileProcessor = new ProcessFiles();
+      const fileProcessor = new ProcessFiles();
       await fileProcessor.processPath(extensionSettings);
       aureliaApplication.components = fileProcessor.components;
       console.log('>>> 2. The extension found this many components:');

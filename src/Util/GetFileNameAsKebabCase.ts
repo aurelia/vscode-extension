@@ -2,7 +2,8 @@ import * as Path from 'path';
 
 /**
  * Note, this function's logic was taken from `ProcessFiles.ts`
- * @param path Path of a file
+ *
+ * @param path - Path of a file
  * @returns file name in kebab case
  *
  * @example
@@ -15,6 +16,5 @@ import * as Path from 'path';
  * result // my-other-text
  */
 export function getFileNameAsKebabCase(path: string): string {
-  const name = Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
-  return name;
+  return Path.basename(path).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
 }

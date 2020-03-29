@@ -1,28 +1,28 @@
 import * as vscode from 'vscode';
 import { LanguageClient } from 'vscode-languageclient';
-import { WebComponent } from './../../server/FileParser/Model/WebComponent';
+import { WebComponent } from "../../server/FileParser/Model/WebComponent";
 
 export class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
 
-  constructor(private client: LanguageClient) {
+  constructor(private readonly client: LanguageClient) {
 
   }
 
-  private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
+  private readonly _onDidChange = new vscode.EventEmitter<vscode.Uri>();
 
   public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
-    let editor = vscode.window.activeTextEditor;
+    const editor = vscode.window.activeTextEditor;
     if (!vscode.window.activeTextEditor.document) {
       return Promise.resolve('<p>no data</p>');
     }
-    let fileName = vscode.window.activeTextEditor.document.fileName;
-    let component = <WebComponent> await this.client.sendRequest('aurelia-view-information', fileName);
+    const fileName = vscode.window.activeTextEditor.document.fileName;
+    const component = await this.client.sendRequest<WebComponent>('aurelia-view-information', fileName);
 
-    if (!component) return `No file path found for: ${fileName}`
+    if (!component) return `No file path found for: ${fileName}`;
 
     let headerHTML = `<h1>Component: '${component.name}'</h1>`;
     headerHTML += '<h2>Files</h2><ul>';
-    for (let path of component.paths) {
+    for (const path of component.paths) {
       headerHTML += `<li>${path}</li>`;
     }
     headerHTML += '</ul>';
@@ -33,13 +33,13 @@ export class TextDocumentContentProvider implements vscode.TextDocumentContentPr
       viewModelHTML += `<p>type: ${component.viewModel.type}</p>`;
       viewModelHTML += `<h3>Properties</h3>`;
       viewModelHTML += '<ul>';
-      for (let prop of component.viewModel.properties) {
+      for (const prop of component.viewModel.properties) {
         viewModelHTML += `<li>${prop.name} (${prop.type})</li>`;
       }
       viewModelHTML += '</ul>';
       viewModelHTML += `<h3>Methods</h3>`;
       viewModelHTML += '<ul>';
-      for (let prop of component.viewModel.methods) {
+      for (const prop of component.viewModel.methods) {
         viewModelHTML += `<li>${prop.name} (${prop.returnType}) => (params: ${prop.parameters.join(',')})</li>`;
       }
       viewModelHTML += '</ul>';
@@ -49,11 +49,10 @@ export class TextDocumentContentProvider implements vscode.TextDocumentContentPr
     if (component.document) {
       viewHTML = `<h2>View</h2>`;
 
-
       if (component.document.references && component.document.references.length) {
         viewHTML += '<h3>Require/ references in template</h3>';
         viewHTML += `<ul>`;
-        for (let reference of component.document.references) {
+        for (const reference of component.document.references) {
           viewHTML += `<li>path: ${reference.path}</li>`;
           viewHTML += `<li>as: ${reference.as}</li>`;
         }
@@ -62,7 +61,7 @@ export class TextDocumentContentProvider implements vscode.TextDocumentContentPr
 
       if (component.document.bindables && component.document.bindables.length) {
         viewHTML += '<h3>bindable property on template</h3><ul>';
-        for (let bindable of component.document.bindables) {
+        for (const bindable of component.document.bindables) {
           viewHTML += `<li>${bindable}</li>`;
         }
         viewHTML += '</ul>';
@@ -70,7 +69,7 @@ export class TextDocumentContentProvider implements vscode.TextDocumentContentPr
 
       if (component.document.dynamicBindables && component.document.dynamicBindables.length) {
         viewHTML += '<h3>Attributes with bindings found in template</h3>';
-        for (let bindable of component.document.dynamicBindables) {
+        for (const bindable of component.document.dynamicBindables) {
           viewHTML += `
               <ul>
                 <li>attribute name : <code>${bindable.name}</code></li>
@@ -83,7 +82,7 @@ export class TextDocumentContentProvider implements vscode.TextDocumentContentPr
 
       if (component.document.interpolationBindings && component.document.interpolationBindings.length) {
         viewHTML += '<h2>String interpolation found in template</h2>';
-        for (let bindable of component.document.interpolationBindings) {
+        for (const bindable of component.document.interpolationBindings) {
           viewHTML += `
               <code>${bindable.value}</code>`;
           viewHTML += `<pre><code>${JSON.stringify(bindable.bindingData, null, 2)}</code></pre>`;
@@ -94,7 +93,7 @@ export class TextDocumentContentProvider implements vscode.TextDocumentContentPr
     let classesHTML = '<h2>no extra classes found</h2>';
     if (component.classes) {
       classesHTML = '<h2>exports to this view</h2>';
-      for (let cl of component.classes) {
+      for (const cl of component.classes) {
         classesHTML += `<li>${cl.name}</li>`;
       }
       classesHTML += '</ul>';

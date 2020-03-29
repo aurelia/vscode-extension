@@ -16,15 +16,15 @@ import { Uri } from 'vscode';
 export default class CompletionItemFactory {
 
   constructor(
-    private attributeCompletionFactory: AttributeCompletionFactory,
-    private elementCompletionFactory: ElementCompletionFactory,
-    private customElementCompletionFactory: CustomElementCompletionFactory,
-    private attributeValueCompletionFactory: AttributeValueCompletionFactory,
-    private bindingCompletionFactory: BindingCompletionFactory,
-    private emmetCompletionFactory: EmmetCompletionFactory,
-    private viewModelVariablesCompletionFactory: ViewModelVariablesCompletionFactory,
-    private viewModelViewAttributesCompletionFactory: ViewModelViewAttributesCompletionFactory,
-    private parser: HTMLDocumentParser) { }
+    private readonly attributeCompletionFactory: AttributeCompletionFactory,
+    private readonly elementCompletionFactory: ElementCompletionFactory,
+    private readonly customElementCompletionFactory: CustomElementCompletionFactory,
+    private readonly attributeValueCompletionFactory: AttributeValueCompletionFactory,
+    private readonly bindingCompletionFactory: BindingCompletionFactory,
+    private readonly emmetCompletionFactory: EmmetCompletionFactory,
+    private readonly viewModelVariablesCompletionFactory: ViewModelVariablesCompletionFactory,
+    private readonly viewModelViewAttributesCompletionFactory: ViewModelViewAttributesCompletionFactory,
+    private readonly parser: HTMLDocumentParser) { }
 
   public async create(
     triggerCharacter: string,
@@ -32,15 +32,15 @@ export default class CompletionItemFactory {
     text: string,
     positionNumber: number,
     uri: any,
-    aureliaApplication: AureliaApplication): Promise<Array<CompletionItem>> {
+    aureliaApplication: AureliaApplication): Promise<CompletionItem[]> {
 
-    let nodes = await this.parser.parse(text);
+    const nodes = await this.parser.parse(text);
     let insideTag: TagDefinition = null;
     let lastIdx = 0;
 
     // get insidetag and last index of tag
     for (let i = 0; i < nodes.length; i++) {
-      let node = nodes[i];
+      const node = nodes[i];
       if (!insideTag && positionNumber >= node.startOffset && positionNumber <= node.endOffset) {
         insideTag = node;
       }
@@ -51,13 +51,13 @@ export default class CompletionItemFactory {
     }
 
     // get open parent tag
-    let tags = this.getOpenHtmlTags(nodes, lastIdx);
-    let parentTag = tags[tags.length - 1];
+    const tags = this.getOpenHtmlTags(nodes, lastIdx);
+    const parentTag = tags[tags.length - 1];
 
     // auto complete inside a tag
     if (insideTag) {
 
-      let elementString = text.substring(insideTag.startOffset, positionNumber);
+      const elementString = text.substring(insideTag.startOffset, positionNumber);
       if (this.notInAttributeValue(elementString)) {
 
         if (triggerCharacter === ' ') {
@@ -90,7 +90,7 @@ export default class CompletionItemFactory {
 
   private notInAttributeValue(tagText: string) {
     let single = 0, double = 0;
-    for (let char of tagText) {
+    for (const char of tagText) {
       if (char === '"') double += 1;
       if (char === '\'') single += 1;
     }
@@ -101,13 +101,13 @@ export default class CompletionItemFactory {
     return !/([^a-zA-Z]|\.(bind|one-way|two-way|one-time|from-view|to-view|delegate|trigger|call|capture|ref))\.$/g.test(elementString);
   }
 
-  private getOpenHtmlTags(nodes: Array<TagDefinition>, lastIdx: number) {
-    let tags: Array<string> = [];
+  private getOpenHtmlTags(nodes: TagDefinition[], lastIdx: number) {
+    const tags: string[] = [];
     for (let i = 0; i < lastIdx; i++) {
       if (nodes[i].startTag) {
         tags.push(nodes[i].name);
       } else {
-        var index = tags.indexOf(nodes[i].name);
+        const index = tags.indexOf(nodes[i].name);
         if (index >= 0) {
           tags.splice(index, 1);
         }
@@ -117,17 +117,17 @@ export default class CompletionItemFactory {
   }
 
   private createValueCompletion(tag: TagDefinition, text: string, position: number, uri: Uri) {
-    let nextCharacter = text.substring(position, position + 1);
+    const nextCharacter = text.substring(position, position + 1);
     if (/['"]/.test(nextCharacter)) {
       let attribute;
-      let elementText = text.substring(tag.startOffset, tag.endOffset);
-      let tagPosition = position - tag.startOffset;
+      const elementText = text.substring(tag.startOffset, tag.endOffset);
+      const tagPosition = position - tag.startOffset;
       const attributeRegex = /([\w-]+)\.?\w*\=['"]/g;
       let matches;
       while (matches = attributeRegex.exec(elementText)) {
         if (tagPosition >= matches.index && (tagPosition <= matches.index + matches[0].length)) {
-          let foundText = matches[1];
-          let attributes = tag.attributes.filter(a => a && a.name == foundText);
+          const foundText = matches[1];
+          const attributes = tag.attributes.filter(a => a && a.name == foundText);
           if (attributes.length) {
             attribute = attributes[0];
             break;
@@ -143,25 +143,25 @@ export default class CompletionItemFactory {
 
   private createEmmetCompletion(text: string, position: number) {
     const emmetRegex = /^([^<]*?>)*?([\w|-]*)\[$/gm;
-    let matches = emmetRegex.exec(text.substring(0, position));
+    const matches = emmetRegex.exec(text.substring(0, position));
     if (!matches) {
       return [];
     }
-    let elementName = matches[2];
+    const elementName = matches[2];
     return this.emmetCompletionFactory.create(elementName);
   }
 
   private createBindingCompletion(tag: TagDefinition, text: string, position: number) {
     let attribute;
-    let elementText = text.substring(tag.startOffset, tag.endOffset);
-    let tagPosition = position - tag.startOffset;
+    const elementText = text.substring(tag.startOffset, tag.endOffset);
+    const tagPosition = position - tag.startOffset;
     const attributeRegex = /([\w\.-]+)(\=['"](.*?)["'])?/g;
     let matches;
     let foundText = '';
     while (matches = attributeRegex.exec(elementText)) {
       if (tagPosition >= matches.index && (tagPosition <= matches.index + matches[1].length)) {
         foundText = matches[1];
-        let attributes = tag.attributes.filter(a => a.name + (a.binding !== undefined ? '.' : '') == foundText);
+        const attributes = tag.attributes.filter(a => a.name + (a.binding !== undefined ? '.' : '') == foundText);
         if (attributes.length) {
           attribute = attributes[0];
           break;
