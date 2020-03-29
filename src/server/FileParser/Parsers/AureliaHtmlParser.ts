@@ -34,7 +34,9 @@ export class AureliaHtmlParser {
 
   private getBindableValuesFrom(templateTag: TagDefinition) {
     const bindableAttribute = templateTag.attributes.find(attribute => attribute.name === 'bindable');
-    if (bindableAttribute?.value !== '') {
+    // Optional chaining does not kick in here
+    // if (bindableAttribute?.value !== '') {
+    if ((typeof bindableAttribute !== 'undefined') && bindableAttribute.value !== '') {
       return bindableAttribute.value.split(',').map(i => i.trim());
     } else {
       return [];
@@ -74,16 +76,15 @@ export class AureliaHtmlParser {
         continue;
       }
 
-      const bindingAttributes = element.attributes.filter(attr => attr.binding);
-      for (const binding of bindingAttributes) {
-        bindings.push({
-          name: binding.name,
-          value: binding.value,
-          bindingType: binding.binding,
-          bindingData: aureliaParser.parse(binding.value)
+      element?.attributes?.filter(attr => attr.binding)
+        .forEach(binding => {
+          bindings.push({
+            name: binding.name,
+            value: binding.value,
+            bindingType: binding.binding,
+            bindingData: aureliaParser.parse(binding.value)
+          });
         });
-      }
-
     }
     return bindings;
   }

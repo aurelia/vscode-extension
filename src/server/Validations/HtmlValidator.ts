@@ -41,6 +41,7 @@ export class HtmlValidator {
 
     const diagnostics: Diagnostic[] = [];
     for (const element of documentNodes) {
+      if (typeof element.attributes === 'undefined') return;
       for (const attribute of element.attributes) {
         this.attributeValidators
           .filter(validator => validator.match(attribute, element, document))
