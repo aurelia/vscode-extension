@@ -100,7 +100,6 @@ module.exports = {
     }],
     '@typescript-eslint/triple-slash-reference': ['error', { path: 'never', types: 'always', lib: 'never' }],
     '@typescript-eslint/type-annotation-spacing': 'error',
-    'compat/compat': 'warn',
     'import/default': 'error',
     'import/export': 'error',
     'import/extensions': ['error', 'never', { css: 'always', html: 'always', scss: 'always' }],
@@ -251,14 +250,12 @@ module.exports = {
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/restrict-plus-operands': 'off',
       '@typescript-eslint/typedef': 'off',
-      'compat/compat': 'off'
     }
   }, { // Specific overrides for TS files within examples, scripts and tests as some rules don't make sense there.
     files: ['examples/**', 'scripts/**', 'test/**'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-var-requires': 'off',
-      'compat/compat': 'off',
       'import/no-nodejs-modules': 'off'
     }
   }],
