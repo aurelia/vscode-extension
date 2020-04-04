@@ -204,7 +204,7 @@ async function handlefeatureToggles({ featureToggles, extensionSettings }: Aurel
         console.log(aureliaApplication.components.length);
       };
 
-      const configPath = ts.findConfigFile(
+      let configPath = ts.findConfigFile(
         /* searchPath */ "./",
         ts.sys.fileExists,
         "tsconfig.json"
