@@ -169,7 +169,7 @@ function processClassDeclaration(node: Node) {
 
           let isBindable = false;
           if (member.decorators) {
-            isBindable = member.decorators[0].getText() === '@bindable';
+            isBindable = member.decorators[0].getText().includes('@bindable');
           }
 
           properties.push({
