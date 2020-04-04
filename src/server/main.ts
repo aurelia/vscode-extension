@@ -209,6 +209,10 @@ async function handlefeatureToggles({ featureToggles, extensionSettings }: Aurel
         ts.sys.fileExists,
         "tsconfig.json"
       );
+      
+      if (configPath === undefined) {
+        configPath = '../../tsconfig.json' // use config file from the extension as default
+      }
 
       // Skip watcher if no tsconfig found
       const createWatchProgram = configPath !== undefined;
