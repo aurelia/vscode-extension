@@ -143,7 +143,7 @@ connection.onCompletion(async (textDocumentPosition: CompletionParams): Promise<
 });
 
 connection.onRequest('aurelia-view-information', (filePath: string) => {
-  return aureliaApplication.components.find(doc => doc.paths.includes(normalizePath(filePath)));
+  return aureliaApplication.components.find(component => component.paths.includes(normalizePath(filePath)));
 });
 
 connection.onRequest('aurelia-definition-provide', () => {
