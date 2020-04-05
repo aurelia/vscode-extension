@@ -151,15 +151,14 @@ function processClassDeclaration(classDeclarationNode: ClassDeclaration): IProce
   let lineStart: number;
   let startPos: number;
   let endPos: number;
-  if (classDeclaration === undefined) {
+  if (classDeclarationNode === undefined) {
     return { properties, methods };
   }
 
-  // const declaration = (node as ClassDeclaration);
-  const srcFile = classDeclaration.getSourceFile();
+  const srcFile = classDeclarationNode.getSourceFile();
 
-  if (classDeclaration.members !== undefined) {
-    for (const member of classDeclaration.members) {
+  if (classDeclarationNode.members !== undefined) {
+    for (const member of classDeclarationNode.members) {
       // Property handling
       if (ts.isPropertyDeclaration(member)) {
         let propertyModifiers;
@@ -243,12 +242,12 @@ function processClassDeclaration(classDeclarationNode: ClassDeclaration): IProce
   }
 
   let classModifiers = [];
-  if (classDeclaration.modifiers !== undefined) {
-    classModifiers = classDeclaration.modifiers.map(m => m.getText());
+  if (classDeclarationNode.modifiers !== undefined) {
+    classModifiers = classDeclarationNode.modifiers.map(m => m.getText());
   }
 
   return {
-    name: classDeclaration.name.getText(),
+    name: classDeclarationNode.name.getText(),
     properties,
     methods,
     modifiers: classModifiers
