@@ -1,30 +1,38 @@
-import { Range, Position } from 'vscode-languageserver';
+import { Range, Position, createConnection, IConnection } from 'vscode-languageserver';
 import * as Path from 'path';
-import * as FileSystem from 'fs';
-import { Parser, AccessScope } from 'aurelia-binding';
 import {
-  Node, SyntaxKind, SourceFile, createSourceFile, ScriptTarget, ScriptKind,
-  forEachChild, ClassDeclaration, PropertyDeclaration, MethodDeclaration, ParameterDeclaration, sys
+  Node, SourceFile, createSourceFile, ScriptTarget, ScriptKind,
+  forEachChild, ClassDeclaration, sys
 } from "typescript";
-import { HtmlTemplateDocument } from './Model/HtmlTemplateDocument';
+import * as ts from "typescript";
 
 import { WebComponent } from './Model/WebComponent';
 
 import { AureliaHtmlParser } from './Parsers/AureliaHtmlParser';
 import { Methods, Properties, ViewModelDocument } from './Model/ViewModelDocument';
 
-import { HTMLDocumentParser, TagDefinition, AttributeDefinition } from './HTMLDocumentParser';
 import { normalizePath } from "../Util/NormalizePath";
 import { AureliaSettingsNS } from '../AureliaSettings';
 
+const connection: IConnection = createConnection();
+const logger = connection.console;
+
+interface IProcessedClassDeclaration {
+  properties: Properties;
+  methods: Methods;
+  name?: string;
+  modifiers?: string[];
+}
+
 export default class ProcessFiles {
 
-  public components = Array<WebComponent>();
+  public components: WebComponent[] = [];
 
   public async processPath(extensionSettings: AureliaSettingsNS.IExtensionSettings): Promise<void> {
 
     const sourceDirectory = sys.getCurrentDirectory();
     const paths = sys.readDirectory(sourceDirectory, ['ts', 'js', 'html'], ['node_modules', 'aurelia_project'], extensionSettings.pathToAureliaProject);
+    const aureliaParser = new AureliaHtmlParser();
 
     for (let path of paths) {
       path = normalizePath(path);
@@ -32,7 +40,7 @@ export default class ProcessFiles {
       try {
         if (name.endsWith('.spec')) continue;
 
-        const component = this.findOrCreateWebComponentBy(name);
+        const component = this.findOrCreateWebComponentByName(name);
 
         if (!component.paths.includes(path)) {
           component.paths.push(path);
@@ -40,14 +48,14 @@ export default class ProcessFiles {
 
         switch (Path.extname(path)) {
           case '.js':
-          case '.ts':
+          case '.ts': {
             const fileContent: string = sys.readFile(path, 'utf8');
             const result = processSourceFile(path, fileContent, 'typescript');
             component.viewModel = new ViewModelDocument();
             component.viewModel.type = "typescript";
-            if (result?.result.length) {
-              const defaultExport = result.result.find(cl => cl.modifiers && cl.modifiers.indexOf('default') > -1);
-              if (defaultExport) {
+            if (result?.result.length > 0) {
+              const defaultExport = result.result.find(cl => cl.modifiers?.includes('default'));
+              if (defaultExport !== undefined) {
                 component.viewModel.properties = defaultExport.properties;
                 component.viewModel.methods = defaultExport.methods;
               } else {
@@ -60,7 +68,7 @@ export default class ProcessFiles {
                   continue;
                 }
 
-                if (classDef.modifiers && classDef.modifiers.indexOf('export') > -1) {
+                if (classDef.modifiers?.includes('export')) {
                   component.classes.push({
                     name: classDef.name,
                     methods: classDef.methods
@@ -70,10 +78,18 @@ export default class ProcessFiles {
             }
 
             break;
-          case '.html':
-            const htmlTemplate = await new AureliaHtmlParser().processFile(path);
-            component.document = htmlTemplate;
+          }
+          case '.html': {
+            try {
+              // eslint-disable-next-line require-atomic-updates, no-await-in-loop
+              component.document = await aureliaParser.processFile(path);
+            } catch (err) {
+              logger.log(`Error when parsing html template for path '${path}'. Component still added to web component list.`);
+              const reason = err.message !== undefined ? err.message as string : "Unknown";
+              logger.log(`Reason: ${reason}`);
+            }
             break;
+          }
         }
 
         // replace it
@@ -85,16 +101,16 @@ export default class ProcessFiles {
         }
 
       } catch (ex) {
-        console.log(`failed to parse path ${path}`);
-        console.log(JSON.stringify(ex.message));
-        console.log(JSON.stringify(ex.stack));
+        logger.log(`failed to parse path ${path}`);
+        logger.log(JSON.stringify(ex.message));
+        logger.log(JSON.stringify(ex.stack));
       }
     }
   }
 
-  private findOrCreateWebComponentBy(name) {
+  private findOrCreateWebComponentByName(name: string) {
     let component = this.components.find(c => c.name === name);
-    if (!component) {
+    if (component === undefined) {
       component = new WebComponent(name);
     }
     return component;
@@ -115,12 +131,11 @@ export function processSourceFile(fileName: string, content: string, type: strin
   };
 }
 
-function processFile(sourceFile: SourceFile) {
-
+function processFile(sourceFile: SourceFile): IProcessedClassDeclaration[] {
   const getCodeInformation = (node: Node) => {
-    const classes = [];
+    const classes: IProcessedClassDeclaration[] = [];
     forEachChild(node, n => {
-      if (n.kind === SyntaxKind.ClassDeclaration) {
+      if (ts.isClassDeclaration(n)) {
         classes.push(processClassDeclaration(n));
       }
     });
@@ -129,112 +144,110 @@ function processFile(sourceFile: SourceFile) {
   return getCodeInformation(sourceFile);
 }
 
-function processClassDeclaration(node: Node) {
+function processClassDeclaration(classDeclarationNode: ClassDeclaration): IProcessedClassDeclaration {
   const properties: Properties = [];
   const methods: Methods = [];
   let lineNumber: number;
   let lineStart: number;
   let startPos: number;
   let endPos: number;
-  if (!node) {
+  if (classDeclarationNode === undefined) {
     return { properties, methods };
   }
 
-  const declaration = (node as ClassDeclaration);
-  const srcFile = node.getSourceFile();
+  const srcFile = classDeclarationNode.getSourceFile();
 
-  if (declaration.members) {
-    for (const member of declaration.members) {
-      switch (member.kind) {
-        case SyntaxKind.PropertyDeclaration:
-          const property = member as PropertyDeclaration;
-          let propertyModifiers;
-          if (property.modifiers) {
-            propertyModifiers = property.modifiers.map(i => i.getText());
-            if (propertyModifiers.indexOf("private") > -1) {
-              continue;
-            }
+  if (classDeclarationNode.members !== undefined) {
+    for (const member of classDeclarationNode.members) {
+      // Property handling
+      if (ts.isPropertyDeclaration(member)) {
+        let propertyModifiers;
+        if (member.modifiers !== undefined) {
+          propertyModifiers = member.modifiers.map(i => i.getText());
+          if (propertyModifiers.indexOf("private") > -1) {
+            continue;
           }
-          const propertyName = property.name.getText();
-          let propertyType;
-          if (property.type) {
-            propertyType = property.type.getText();
+        }
+        const propertyName = member.name.getText();
+        let propertyType;
+        if (member.type !== undefined) {
+          propertyType = member.type.getText();
+        }
+
+        lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.end).line;
+        lineStart = srcFile.getLineStarts()[lineNumber];
+        startPos = member.name.pos - lineStart + 1;
+        endPos = srcFile.getLineEndOfPosition(lineNumber);
+
+        let isBindable = false;
+        if (member.decorators !== undefined) {
+          isBindable = member.decorators[0].getText().includes('@bindable');
+        }
+
+        properties.push({
+          name: propertyName,
+          modifiers: propertyModifiers,
+          isBindable,
+          type: propertyType,
+          range: Range.create(
+            Position.create(lineNumber, startPos),
+            Position.create(lineNumber, endPos)
+          )
+        });
+      }
+
+      // Method handling
+      if (ts.isMethodDeclaration(member)) {
+        // Extract modifiers
+        let memberModifiers: string[] = [];
+        if (member.modifiers !== undefined) {
+          memberModifiers = member.modifiers.map(i => i.getText());
+          // If the method has a private modifier we skip the handling of the method
+          if (memberModifiers.includes("private")) {
+            continue;
           }
+        }
 
-          // getSourceFile
-          lineNumber = srcFile.getLineAndCharacterOfPosition(property.name.end).line;
-          lineStart = srcFile.getLineStarts()[lineNumber];
-          startPos = property.name.pos - lineStart + 1;
-          endPos = srcFile.getLineEndOfPosition(lineNumber);
+        const memberName = member.name.getText();
+        let memberReturnType;
+        if (member.type !== undefined) {
+          memberReturnType = member.type.getText();
+        }
 
-          let isBindable = false;
-          if (member.decorators) {
-            isBindable = member.decorators[0].getText().includes('@bindable');
+        const params = [];
+        if (member.parameters !== undefined) {
+          for (const param of member.parameters) {
+            const p = param;
+            params.push(p.name.getText());
           }
+        }
 
-          properties.push({
-            name: propertyName,
-            modifiers: propertyModifiers,
-            isBindable,
-            type: propertyType,
-            range: Range.create(
-              Position.create(lineNumber, startPos),
-              Position.create(lineNumber, endPos)
-            )
-          });
-          break;
-        case SyntaxKind.GetAccessor:
-          break;
-        case SyntaxKind.MethodDeclaration:
-          const memberDeclaration = member as MethodDeclaration;
-          let memberModifiers;
-          if (memberDeclaration.modifiers) {
-            memberModifiers = memberDeclaration.modifiers.map(i => i.getText());
-            if (memberModifiers.indexOf("private") > -1) {
-              continue;
-            }
-          }
-          const memberName = memberDeclaration.name.getText();
-          let memberReturnType;
-          if (memberDeclaration.type) {
-            memberReturnType = memberDeclaration.type.getText();
-          }
+        lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.end).line;
+        lineStart = srcFile.getLineStarts()[lineNumber];
+        startPos = member.name.pos - lineStart + 1;
+        endPos = srcFile.getLineEndOfPosition(lineNumber);
 
-          const params = [];
-          if (memberDeclaration.parameters) {
-            for (const param of memberDeclaration.parameters) {
-              const p = param;
-              params.push(p.name.getText());
-            }
-          }
-
-          lineNumber = srcFile.getLineAndCharacterOfPosition(member.name.end).line;
-          lineStart = srcFile.getLineStarts()[lineNumber];
-          startPos = memberDeclaration.name.pos - lineStart + 1;
-          endPos = srcFile.getLineEndOfPosition(lineNumber);
-
-          methods.push({
-            name: memberName,
-            returnType: memberReturnType,
-            modifiers: memberModifiers,
-            parameters: params,
-            range: Range.create(
-              Position.create(lineNumber, startPos),
-              Position.create(lineNumber, endPos),
-            )
-          });
-          break;
+        methods.push({
+          name: memberName,
+          returnType: memberReturnType,
+          modifiers: memberModifiers,
+          parameters: params,
+          range: Range.create(
+            Position.create(lineNumber, startPos),
+            Position.create(lineNumber, endPos),
+          )
+        });
       }
     }
   }
 
   let classModifiers = [];
-  if (declaration.modifiers) {
-    classModifiers = declaration.modifiers.map(m => m.getText());
+  if (classDeclarationNode.modifiers !== undefined) {
+    classModifiers = classDeclarationNode.modifiers.map(m => m.getText());
   }
 
   return {
-    name: declaration.name.getText(),
+    name: classDeclarationNode.name.getText(),
     properties,
     methods,
     modifiers: classModifiers
