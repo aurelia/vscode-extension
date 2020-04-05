@@ -28,9 +28,10 @@ export default class CustomElementCompletionFactory {
     // Map documentation to file paths if found
     const fileClassDocumentation: {[fileName: string]: string} = {};
 
-    if (aureliaApplication.getProgram() !== undefined) {
-      const checker = aureliaApplication.getProgram().getTypeChecker();
-      for (const sourceFile of aureliaApplication.getProgram().getSourceFiles()) {
+    const program = aureliaApplication.getProgram();
+    if (program !== undefined) {
+      const checker = program.getTypeChecker();
+      for (const sourceFile of program.getSourceFiles()) {
         if (!sourceFile.isDeclarationFile) {
           sourceFile.forEachChild((node) => {
             if (ts.isClassDeclaration(node)) {
@@ -50,7 +51,7 @@ export default class CustomElementCompletionFactory {
 
       // Check if there's documentation for the file. If yes use it, otherwise fallback to documentation.
       customElement.paths.forEach((path) => {
-        if (path.endsWith('.ts') && fileClassDocumentation[path] !== "" && fileClassDocumentation[path] !== undefined) {
+        if (path.endsWith('.ts') === true && fileClassDocumentation[path] !== "" && fileClassDocumentation[path] !== undefined) {
             documentation = fileClassDocumentation[path];
         }
       });
