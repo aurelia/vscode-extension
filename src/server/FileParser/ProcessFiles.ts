@@ -144,7 +144,7 @@ function processFile(sourceFile: SourceFile): IProcessedClassDeclaration[] {
   return getCodeInformation(sourceFile);
 }
 
-function processClassDeclaration(classDeclaration: ClassDeclaration): IProcessedClassDeclaration {
+function processClassDeclaration(classDeclarationNode: ClassDeclaration): IProcessedClassDeclaration {
   const properties: Properties = [];
   const methods: Methods = [];
   let lineNumber: number;
