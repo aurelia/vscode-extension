@@ -8,31 +8,22 @@ interface IViewCompletionParam {
   triggerCharacter: string;
 }
 
+// We need to import this to include reflect functionality
+// eslint-disable-next-line import/no-unassigned-import
 import 'reflect-metadata';
+
 import {
   createConnection,
   IConnection,
   TextDocuments,
   InitializeParams,
   InitializeResult,
-  Hover,
   CompletionList,
-  InitializedParams,
   TextDocumentPositionParams,
   Definition,
-  DocumentLinkParams,
-  DocumentLink,
-  CodeLensParams,
-  CodeLens,
-  ReferenceParams,
-  Location,
-  DefinitionLink,
-  LocationLink,
-  Range,
   CompletionParams,
- MarkedString, Position, TextDocument } from 'vscode-languageserver';
+  Command } from 'vscode-languageserver';
 
-import { camelCase } from 'aurelia-binding';
 import { Container } from 'aurelia-dependency-injection';
 import CompletionItemFactory from './CompletionItemFactory';
 import ElementLibrary from './Completions/Library/_elementLibrary';
@@ -46,13 +37,16 @@ import { OneWayBindingDeprecatedCodeAction } from './CodeActions/OneWayBindingDe
 
 import * as ts from 'typescript';
 import * as vscode from 'vscode';
-import { Uri } from 'vscode';
 import { AureliaApplication } from './FileParser/Model/AureliaApplication';
 import { normalizePath } from './Util/NormalizePath';
-import { connect } from 'net';
-import { AureliaConfigProperties } from '../client/Model/AureliaConfigProperties';
 import { exposeAureliaDefinitions } from './ExposeAureliaDefinitions';
 import { sys } from 'typescript';
+
+interface IConsole {
+  log: (logArg: number | string | object) => void;
+  error: (errorLogArg: number | string | object) => void;
+}
+declare let console: IConsole;
 
 // Bind console.log & error to the Aurelia output
 const connection: IConnection = createConnection();
@@ -69,19 +63,19 @@ const aureliaApplication = globalContainer.get(AureliaApplication);
 const settings = globalContainer.get(AureliaSettings);
 
 // Register characters to lisen for
-connection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
+connection.onInitialize(async (_: InitializeParams): Promise<InitializeResult> => {
 
   // TODO: find better way/place to init this
-  const dummy = globalContainer.get(ElementLibrary);
+  globalContainer.get(ElementLibrary);
 
-  return {
+  return Promise.resolve({
     capabilities: {
       completionProvider: { resolveProvider: false, triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<'] },
       codeActionProvider: true,
       definitionProvider: true,
       textDocumentSync: documents.syncKind,
     },
-  };
+  });
 });
 
 const codeActions = [
@@ -91,18 +85,19 @@ const codeActions = [
 connection.onCodeAction(async codeActionParams => {
   const diagnostics = codeActionParams.context.diagnostics;
   const document = documents.get(codeActionParams.textDocument.uri);
-  const commands = [];
+  const commandPromises: Promise<Command>[] = [];
   for (const diagnostic of diagnostics) {
-    const action = codeActions.find(i => i.name == diagnostic.code);
-    if (action) {
-      commands.push(await action.commands(diagnostic, document));
+    const action = codeActions.find(i => i.name === diagnostic.code);
+    if (action !== undefined) {
+      commandPromises.push(action.commands(diagnostic, document));
     }
   }
-  return commands;
+
+  return Promise.all(commandPromises);
 });
 
 // Register and get changes to Aurelia settings
-connection.onDidChangeConfiguration(async (change) => {
+connection.onDidChangeConfiguration((change) => {
   settings.quote = change.settings.aurelia.autocomplete.quotes === 'single' ? '\'' : '"';
   settings.validation = change.settings.aurelia.validation;
   settings.bindings.data = change.settings.aurelia.autocomplete.bindings.data;
@@ -115,7 +110,9 @@ connection.onDidChangeConfiguration(async (change) => {
     ...change.settings.aurelia.extensionSettings
   };
 
-  await handlefeatureToggles(settings);
+  handlefeatureToggles(settings).catch((err) => {
+    console.error(`Failed to handle feature toggle: ${JSON.stringify(err)}`);
+  });
 });
 
 // Setup Validation
@@ -128,7 +125,7 @@ documents.onDidChangeContent(async change => {
 // Lisen for completion requests
 connection.onRequest('aurelia-view-completion', async (params: IViewCompletionParam) => {
   const {
-    document, position, token, context, text, offset, triggerCharacter,
+    document, position, text, offset, triggerCharacter,
   } = params;
   const completionResult = await completionItemFactory.create(triggerCharacter, position, text, offset, document.uri, aureliaApplication);
   return CompletionList.create(completionResult, false);
@@ -145,18 +142,12 @@ connection.onCompletion(async (textDocumentPosition: CompletionParams): Promise<
   return CompletionList.create(completionItem, false);
 });
 
-connection.onRequest('aurelia-view-information', async (filePath: string) => {
-  // let fileProcessor = new ProcessFiles();
-  // await fileProcessor.processPath();
-  // aureliaApplication.components = fileProcessor.components;
-
+connection.onRequest('aurelia-view-information', (filePath: string) => {
   return aureliaApplication.components.find(doc => doc.paths.includes(normalizePath(filePath)));
 });
 
 connection.onRequest('aurelia-definition-provide', () => {
   const { definitionsInfo, definitionsAttributesInfo } = exposeAureliaDefinitions(aureliaApplication);
-  definitionsInfo;
-  definitionsAttributesInfo;
   return { definitionsInfo, definitionsAttributesInfo };
 });
 
@@ -169,7 +160,7 @@ connection.onRequest('aurelia-smart-autocomplete-goto', () => {
   return aureliaApplication.components;
 });
 
-connection.onDefinition((position: TextDocumentPositionParams): Definition => {
+connection.onDefinition((_: TextDocumentPositionParams): Definition => {
   /**
    * Need to have this onDefinition here, else we get following error in the console
    * Request textDocument/definition failed.
@@ -209,9 +200,9 @@ async function handlefeatureToggles({ featureToggles, extensionSettings }: Aurel
         ts.sys.fileExists,
         "tsconfig.json"
       );
-      
+
       if (configPath === undefined) {
-        configPath = '../../tsconfig.json' // use config file from the extension as default
+        configPath = '../../tsconfig.json'; // use config file from the extension as default
       }
 
       // Skip watcher if no tsconfig found
@@ -234,7 +225,9 @@ async function handlefeatureToggles({ featureToggles, extensionSettings }: Aurel
         const origCreateProgram = host.createProgram;
         host.createProgram = (rootNames: readonly string[], options, programHost, oldProgram) => {
           // Call update on AureliaComponents to ensure that the custom components are in sync
-          updateAureliaComponents();
+          updateAureliaComponents().catch((err) => {
+            console.error(`Failed to update aurelia components ${JSON.stringify(err)}`);
+          });
           return origCreateProgram(rootNames, options, programHost, oldProgram);
         };
 
