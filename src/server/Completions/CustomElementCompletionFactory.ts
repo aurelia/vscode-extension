@@ -51,7 +51,7 @@ export default class CustomElementCompletionFactory {
 
       // Check if there's documentation for the file. If yes use it, otherwise fallback to documentation.
       customElement.paths.forEach((path) => {
-        if (path.endsWith('.ts') && fileClassDocumentation[path] !== "" && fileClassDocumentation[path] !== undefined) {
+        if (path.endsWith('.ts') === true && fileClassDocumentation[path] !== "" && fileClassDocumentation[path] !== undefined) {
             documentation = fileClassDocumentation[path];
         }
       });
