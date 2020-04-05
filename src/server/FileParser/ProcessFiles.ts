@@ -17,6 +17,13 @@ import { AureliaSettingsNS } from '../AureliaSettings';
 const connection: IConnection = createConnection();
 const logger = connection.console;
 
+interface IProcessedClassDeclaration {
+  properties: Properties;
+  methods: Methods;
+  name?: string;
+  modifiers?: string[];
+}
+
 export default class ProcessFiles {
 
   public components: WebComponent[] = [];
@@ -135,13 +142,6 @@ function processFile(sourceFile: SourceFile): IProcessedClassDeclaration[] {
     return classes;
   };
   return getCodeInformation(sourceFile);
-}
-
-interface IProcessedClassDeclaration {
-  properties: Properties;
-  methods: Methods;
-  name?: string;
-  modifiers?: string[];
 }
 
 function processClassDeclaration(classDeclaration: ClassDeclaration): IProcessedClassDeclaration {
