@@ -117,7 +117,7 @@ module.exports = {
       peerDependencies: false
     }],
     'import/no-mutable-exports': 'error',
-    'import/no-nodejs-modules': "off",
+    'import/no-nodejs-modules': 0,
     'import/no-self-import': 'error',
     'import/no-unassigned-import': 'error',
     'import/no-useless-path-segments': ['error'],
