@@ -73,8 +73,14 @@ export default class ProcessFiles {
             break;
           }
           case '.html': {
-            // eslint-disable-next-line require-atomic-updates, no-await-in-loop
-            component.document = await aureliaParser.processFile(path);
+            try {
+              // eslint-disable-next-line require-atomic-updates, no-await-in-loop
+              component.document = await aureliaParser.processFile(path);
+            } catch (err) {
+              logger.log(`Error when parsing html template for path '${path}'. Component still added to web component list.`);
+              const reason = err.message !== undefined ? err.message as string : "Unknown";
+              logger.log(`Reason: ${reason}`);
+            }
             break;
           }
         }
