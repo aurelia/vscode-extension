@@ -57,10 +57,11 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
     if (program !== undefined) {
       const checker = program.getTypeChecker();
       for (const sourceFile of program.getSourceFiles()) {
-        const elementNameCandidate = Path.basename(sourceFile.fileName).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
-        if (!sourceFile.isDeclarationFile && elementNameCandidate === elementName) {
+        // Fetch name of source file and see if it matches the custom component
+        if (!sourceFile.isDeclarationFile && this.getElementNameFromSourceFile(sourceFile) === elementName) {
           sourceFile.forEachChild((node) => {
-            if (ts.isClassDeclaration(node) && node.name.getText().split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-') === elementName) {
+            // Check whether it's a class declaration and that the class name matches the custom component
+            if (ts.isClassDeclaration(node) && this.getElementNameFromClassDeclaration(node) === elementName) {
               node.members.forEach(member => {
                 if (ts.isPropertyDeclaration(member) && this.propertyIsBindable(member)) {
                   const propertyName = member.name?.getText();
@@ -109,5 +110,23 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
    */
   private propertyIsBindable(propertyDeclaration: ts.PropertyDeclaration): boolean {
     return propertyDeclaration.decorators?.some(decorator => { return decorator.getText().includes("@bindable"); });
+  }
+
+  /**
+   * Fetches the equivalent component name based on the given ts.SourceFile
+   *
+   * @param sourceFile - The source file to map a component name to
+   */
+  private getElementNameFromSourceFile(sourceFile: ts.SourceFile): string {
+    return Path.basename(sourceFile.fileName).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
+  }
+
+  /**
+   * Fetches the equivalent component name based on the source file name
+   *
+   * @param sourceFile - The source file to map a component name to
+   */
+  private getElementNameFromClassDeclaration(classDeclaration: ts.ClassDeclaration): string {
+    return classDeclaration.name.getText().split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
   }
 }
