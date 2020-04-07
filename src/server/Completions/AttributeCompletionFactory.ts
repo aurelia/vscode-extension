@@ -65,7 +65,10 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
               node.members.forEach(member => {
                 if (ts.isPropertyDeclaration(member) && this.propertyIsBindable(member)) {
                   const propertyName = member.name?.getText();
-                  const bindableType = `Bindable type: \`${member.type?.getText() !== undefined ? member.type?.getText() : "unknown" }\``;
+
+                  // Get bindable type. If bindable type is undefined, we set it to be "unknown".
+                  const bindableType = member.type?.getText() !== undefined ? member.type?.getText() : "unknown";
+                  const bindableTypeText = `Bindable type: \`${bindableType}\``;
 
                   // Add comment documentation if available
                   const symbol = checker.getSymbolAtLocation(member.name);
@@ -73,14 +76,15 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
                     symbol.getDocumentationComment(checker)
                   );
 
-                  // Add default values
-                  const defaultValue = `Default value: \`${member.initializer?.getText()}\``;
+                  // Add default values. The value can be undefined, but that is correct in most cases.
+                  const defaultValue = member.initializer?.getText();
+                  const defaultValueText = `Default value: \`${defaultValue}\``;
 
                   // Concatenate documentation parts with spacing
-                  const documentation = `${commentDoc}\n\n${bindableType}\n\n${defaultValue}`;
+                  const documentation = `${commentDoc}\n\n${bindableTypeText}\n\n${defaultValueText}`;
 
                   const quote = this.settings.quote;
-                  const varAsKebabCase = propertyName.split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
+                  const varAsKebabCase = this.stringAsKebabCase(propertyName);
                   result.push({
                     documentation: {
                       kind: MarkupKind.Markdown,
@@ -115,18 +119,36 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
   /**
    * Fetches the equivalent component name based on the given ts.SourceFile
    *
-   * @param sourceFile - The source file to map a component name to
+   * @param sourceFile - The source file to map a component name from
    */
   private getElementNameFromSourceFile(sourceFile: ts.SourceFile): string {
-    return Path.basename(sourceFile.fileName).replace(/\.(ts|js|html)$/, '').split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
+    // Get basename and strip valid extensions
+    const pathName = Path.basename(sourceFile.fileName)
+      .replace(/\.(ts|js|html)$/, '');
+
+    return this.stringAsKebabCase(pathName);
   }
 
   /**
-   * Fetches the equivalent component name based on the source file name
+   * Fetches the equivalent component name based on the given class declaration
    *
-   * @param sourceFile - The source file to map a component name to
+   * @param sourceFile - The class declaration to map a component name from
    */
   private getElementNameFromClassDeclaration(classDeclaration: ts.ClassDeclaration): string {
-    return classDeclaration.name.getText().split(/(?=[A-Z])/).map(s => s.toLowerCase()).join('-');
+    return this.stringAsKebabCase(classDeclaration.name?.getText());
+  }
+
+  /**
+   * stringAsKebabCase converts a string to kebab case. This is useful when trying to get element name from strings.
+   *
+   * Ex: HelloWorld => hello-world
+   *
+   * @param candidate - The string to be converted to kebab case
+   */
+  private stringAsKebabCase(candidate: string): string {
+    return candidate
+      .split(/(?=[A-Z])/)
+      .map(s => s.toLowerCase())
+      .join('-');
   }
 }
