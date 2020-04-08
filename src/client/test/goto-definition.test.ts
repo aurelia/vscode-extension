@@ -2,16 +2,18 @@ import * as vscode from 'vscode';
 import * as assert from 'assert';
 import * as path from 'path';
 import { getDocUri, activate } from './helper';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { suite, test } from 'mocha';
 
 interface IExpectedResult {
   expectedLocation: number[];
   expectedFileName: string;
 }
 
-describe('Go To Definition', () => {
+suite('Go To Definition', () => {
   const docUri = getDocUri('src/aurelia-components/compo-user.html');
 
-  it('(xhdu5mWv) Should open`my-compo.ts` at eg. `public message: string;', async () => {
+  test('(xhdu5mWv) Should open`my-compo.ts` at eg. `public message: string;', async () => {
     const position = new vscode.Position(26, 34);
     await testCompletion(docUri, position, {
       expectedLocation: [8, 9, 8, 54],
@@ -19,7 +21,7 @@ describe('Go To Definition', () => {
     });
   });
 
-  it('(hEePRI08) Should open view model `compo-user.ts` at `class CompoUserCustomElement`', async () => {
+  test('(hEePRI08) Should open view model `compo-user.ts` at `class CompoUserCustomElement`', async () => {
     const position = new vscode.Position(30, 28);
     await testCompletion(docUri, position, {
       expectedLocation: [5, 12, 5, 54],
@@ -27,7 +29,7 @@ describe('Go To Definition', () => {
     });
   });
 
-  it('(uOE33Pqm) Should open view model of `my-compo.ts`', async () => {
+  test('(uOE33Pqm) Should open view model of `my-compo.ts`', async () => {
     const position = new vscode.Position(7, 29);
     await testCompletion(docUri, position, {
       expectedLocation: [0, 0, 0, 6],
@@ -35,7 +37,7 @@ describe('Go To Definition', () => {
     });
   });
 
-  it('(EUmcjqaIO) Should open view model of `my-compo.ts`', async () => {
+  test('(EUmcjqaIO) Should open view model of `my-compo.ts`', async () => {
     const position = new vscode.Position(19, 14);
     await testCompletion(docUri, position, {
       expectedLocation: [0, 0, 0, 6],
