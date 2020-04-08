@@ -1,13 +1,13 @@
+/* eslint-disable no-console */
+import { WebComponent } from "../server/FileParser/Model/WebComponent";
 import * as path from 'path';
 import {
   ExtensionContext,
   OutputChannel,
   window,
   languages,
-  SnippetString,
   commands,
   TextEdit,
-  LocationLink,
   Uri,
   DefinitionProvider,
   TextDocument,
@@ -19,28 +19,24 @@ import {
   CompletionContext,
   CompletionItem,
 } from 'vscode';
-import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import AureliaCliCommands from './aureliaCLICommands';
 import { RelatedFiles } from './relatedFiles';
 import { registerPreview } from './Preview/Register';
-import { TextDocumentContentProvider } from './Preview/TextDocumentContentProvider';
-import { WebComponent } from '../server/FileParser/Model/WebComponent';
-import { getFileNameAsKebabCase } from '../Util/GetFileNameAsKebabCase';
 
 let outputChannel: OutputChannel;
 
 class SearchDefinitionInViewV2 implements DefinitionProvider {
-  client: LanguageClient;
+  public client: LanguageClient;
 
-  constructor(client: LanguageClient) {
+  public constructor(client: LanguageClient) {
     this.client = client;
   }
 
   public async provideDefinition(
     document: TextDocument,
     position: Position): Promise<DefinitionLink[]> {
-    const { definitionsInfo, definitionsAttributesInfo } = await this.client.sendRequest('aurelia-definition-provide');
+    const { definitionsInfo } = await this.client.sendRequest('aurelia-definition-provide');
 
     const goToSourceWordRange = document.getWordRangeAtPosition(position);
     const goToSourceWord = document.getText(goToSourceWordRange);
@@ -55,7 +51,7 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
       const isViewModelVariable = getFileName(foundDef.targetUri) === currentFileName; // eg. `.bind="viewModelVariable"`
       const isBindingAttribute = definitionsInfo[goToSourceWord];
 
-      return isCustomElement || isViewModelVariable || isBindingAttribute;
+      return isCustomElement || isViewModelVariable || isBindingAttribute !== undefined;
     });
 
     let targetDef;
@@ -78,7 +74,7 @@ class SearchDefinitionInViewV2 implements DefinitionProvider {
 }
 
 class CompletionItemProviderInView implements CompletionItemProvider {
-  constructor(private readonly client: LanguageClient) { }
+  public constructor(private readonly client: LanguageClient) { }
 
   public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[] | CompletionList> {
     const text = document.getText();
@@ -103,16 +99,25 @@ export function activate(context: ExtensionContext) {
   // Register Code Actions
   const edit = (uri: string, documentVersion: number, edits: TextEdit[]) => {
     const textEditor = window.activeTextEditor;
-    if (textEditor && textEditor.document.uri.toString() === uri) {
-      textEditor.edit(mutator => {
-        for (const edit of edits) {
-          mutator.replace(client.protocol2CodeConverter.asRange(edit.range), edit.newText);
+    if (textEditor !== undefined && textEditor.document.uri?.toString() === uri) {
+        textEditor.edit(mutator => {
+        for (const textEditorEdit of edits) {
+          mutator.replace(client.protocol2CodeConverter.asRange(textEditorEdit.range), textEditorEdit.newText);
         }
       }).then((success) => {
-        window.activeTextEditor.document.save();
+        window.activeTextEditor.document.save().then(()=> {
+          return true;
+        }, reject => {
+          // eslint-disable-next-line no-undef
+          console.error(`Failed to save document ${JSON.stringify(reject)}`);
+        });
         if (!success) {
-          window.showErrorMessage('Failed to apply Aurelia code fixes to the document. Please consider opening an issue with steps to reproduce.');
+          // eslint-disable-next-line no-undef
+          console.error('Failed to apply Aurelia code fixes to the document. Please consider opening an issue with steps to reproduce.');
         }
+      }, (reject) => {
+        // eslint-disable-next-line no-undef
+        console.error(`Failed to run text edit ${JSON.stringify(reject)}`);
       });
     }
   };
@@ -150,9 +155,10 @@ export function activate(context: ExtensionContext) {
     ),
   );
 
-  context.subscriptions.push(vscode.commands.registerCommand('aurelia.getAureliaComponents', async () => {
-    const components = await client.sendRequest('aurelia-get-components');
-    console.log("TCL: activate -> components", components);
+  context.subscriptions.push(commands.registerCommand('aurelia.getAureliaComponents', async () => {
+    const components = await client.sendRequest<WebComponent[]>('aurelia-get-components');
+    // eslint-disable-next-line no-undef
+    console.log(`TCL: activate -> components: ${ components.map(component => { return component.name;}).join(",")}`);
   }));
   const disposable = client.start();
 
