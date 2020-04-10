@@ -61,11 +61,11 @@ export default class CustomElementCompletionFactory {
           kind: MarkupKind.Markdown,
           value: documentation,
         },
-        detail: `Au Custom Element`,
+        detail: `${customElement.name}`,
         insertText: `${customElement.name}$2>$1</${customElement.name}>$0`,
         insertTextFormat: InsertTextFormat.Snippet,
         kind: CompletionItemKind.Property,
-        label: `Au Custom Element: ${customElement.name}`,
+        label: `${customElement.name} (Au Custom Element)`,
       });
     });
 
