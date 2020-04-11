@@ -7,9 +7,28 @@ import * as ts from 'typescript';
 import { autoinject } from 'aurelia-dependency-injection';
 import { AureliaApplication } from "../FileParser/Model/AureliaApplication";
 import ElementLibrary from './Library/_elementLibrary';
+import { WebComponent } from '../FileParser/Model/WebComponent';
+import { kebabCase } from '../../Util/kebabCase';
 
 const connection: IConnection = createConnection();
 const logger = connection.console;
+
+/**
+ * <custo-ele
+ *   bind1.bind=
+ *   bind2.bind=
+ * ></custo-ele
+ */
+function createBindableInsertion(customElement: WebComponent): string {
+  const bindablesString = customElement.viewModel.properties.map((property, index) => {
+    if (!property.isBindable) return '';
+    return `  ${kebabCase(property.name)}.bind=$${index + 1}`;
+  });
+  // No "<" at the start, because we assume "<" is the triggerCharacter
+  const insertStringStart: string = `${customElement.name}\n`;
+  const insertStringEnd: string = `></${customElement.name}>$${bindablesString.length}`;
+  return `${insertStringStart}${bindablesString.join('\n')}\n${insertStringEnd}`;
+}
 
 /**
  * Get all the Custom elements from (based on aureliaApplication), and provide completion
@@ -26,7 +45,7 @@ export default class CustomElementCompletionFactory {
     const customElements = aureliaApplication.components.filter(component => component.paths.length >= 2);
 
     // Map documentation to file paths if found
-    const fileClassDocumentation: {[fileName: string]: string} = {};
+    const fileClassDocumentation: { [fileName: string]: string } = {};
 
     const program = aureliaApplication.getProgram();
     if (program !== undefined) {
@@ -52,7 +71,7 @@ export default class CustomElementCompletionFactory {
       // Check if there's documentation for the file. If yes use it, otherwise fallback to documentation.
       customElement.paths.forEach((path) => {
         if ((path.endsWith(".ts") === true || path.endsWith(".js") === true) && fileClassDocumentation[path] !== "" && fileClassDocumentation[path] !== undefined) {
-            documentation = fileClassDocumentation[path];
+          documentation = fileClassDocumentation[path];
         }
       });
 
@@ -62,7 +81,7 @@ export default class CustomElementCompletionFactory {
           value: documentation,
         },
         detail: `${customElement.name}`,
-        insertText: `${customElement.name}$2>$1</${customElement.name}>$0`,
+        insertText: createBindableInsertion(customElement),
         insertTextFormat: InsertTextFormat.Snippet,
         kind: CompletionItemKind.Property,
         label: `${customElement.name} (Au Custom Element)`,
