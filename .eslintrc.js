@@ -124,7 +124,7 @@ module.exports = {
     'import/order': ['error', { 'groups': [], 'newlines-between': 'ignore' }],
     'import/no-deprecated': 'off', // this rule is extremely slow (takes 95% of the time of the full lint operation) so we disable it for that reason only
     'jsdoc/check-alignment': 'error',
-    'jsdoc/check-indentation': 0,
+    'jsdoc/check-indentation': 'error',
     'jsdoc/check-tag-names': ['error', {
       definedTags: [
         'chainable',
