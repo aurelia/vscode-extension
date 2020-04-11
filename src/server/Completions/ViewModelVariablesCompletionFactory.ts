@@ -1,7 +1,5 @@
 import {
   CompletionItem,
-  CompletionItemKind,
-  InsertTextFormat
 } from 'vscode-languageserver';
 import { autoinject } from 'aurelia-dependency-injection';
 import ElementLibrary from './Library/_elementLibrary';
@@ -9,7 +7,6 @@ import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 import { includeCodeAutoComplete } from './AttributeValueCompletionFactory';
 import { AureliaApplication } from "../FileParser/Model/AureliaApplication";
 import AureliaSettings from '../AureliaSettings';
-import { settings } from 'cluster';
 import { fileUriToPath } from "../Util/FileUriToPath";
 import { normalizePath } from "../Util/NormalizePath";
 import { Uri } from 'vscode';
@@ -26,7 +23,7 @@ import { Uri } from 'vscode';
  * }
  */
 export default class ViewModelVariablesCompletionFactory extends BaseAttributeCompletionFactory {
-  constructor(
+  public constructor(
     library: ElementLibrary,
     private readonly application: AureliaApplication,
     private readonly settings: AureliaSettings) { super(library); }
