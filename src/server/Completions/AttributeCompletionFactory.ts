@@ -12,6 +12,7 @@ import ElementLibrary from './Library/_elementLibrary';
 import { GlobalAttributes } from './Library/_elementStructure';
 import BaseAttributeCompletionFactory from './BaseAttributeCompletionFactory';
 import AureliaSettings from "../AureliaSettings";
+import { kebabCase } from '@aurelia/kernel';
 import * as ts from 'typescript';
 import * as Path from 'path';
 
@@ -84,7 +85,7 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
                   const documentation = `${commentDoc}\n\n${bindableTypeText}\n\n${defaultValueText}`;
 
                   const quote = this.settings.quote;
-                  const varAsKebabCase = this.stringAsKebabCase(propertyName);
+                  const varAsKebabCase = kebabCase(propertyName);
                   result.push({
                     documentation: {
                       kind: MarkupKind.Markdown,
@@ -126,7 +127,7 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
     const pathName = Path.basename(sourceFile.fileName)
       .replace(/\.(ts|js|html)$/, '');
 
-    return this.stringAsKebabCase(pathName);
+    return kebabCase(pathName);
   }
 
   /**
@@ -135,20 +136,6 @@ export default class AureliaAttributeCompletionFactory extends BaseAttributeComp
    * @param sourceFile - The class declaration to map a component name from
    */
   private getElementNameFromClassDeclaration(classDeclaration: ts.ClassDeclaration): string {
-    return this.stringAsKebabCase(classDeclaration.name?.getText());
-  }
-
-  /**
-   * stringAsKebabCase converts a string to kebab case. This is useful when trying to get element name from strings.
-   *
-   * Ex: HelloWorld => hello-world
-   *
-   * @param candidate - The string to be converted to kebab case
-   */
-  private stringAsKebabCase(candidate: string): string {
-    return candidate
-      .split(/(?=[A-Z])/)
-      .map(s => s.toLowerCase())
-      .join('-');
+    return kebabCase(classDeclaration.name?.getText());
   }
 }

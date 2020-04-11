@@ -315,6 +315,7 @@
     "vscode-textmate": "^4.2.2"
   },
   "dependencies": {
+    "@aurelia/kernel": "^0.6.0",
     "aurelia-binding": "^2.3.1",
     "aurelia-cli": "^1.0.2",
     "aurelia-dependency-injection": "^1.4.2",
