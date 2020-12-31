@@ -1,5 +1,5 @@
 'use strict';
-import { commands, Disposable, TextEditor, TextEditorEdit, Uri, workspace } from 'vscode';
+import { commands, Disposable, TextEditor, TextEditorEdit, Uri, ViewColumn, workspace } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -64,7 +64,7 @@ export class RelatedFiles implements Disposable {
     }
 
     if (relatedFile) {
-      commands.executeCommand('vscode.open', Uri.file(relatedFile), editor.viewColumn);
+      commands.executeCommand('vscode.open', Uri.file(relatedFile), ViewColumn.Active);
     }
   }
 
@@ -88,7 +88,7 @@ export class RelatedFiles implements Disposable {
       const extension = path.extname(fileName).toLowerCase();
       const relatedFile = this.relatedFileExists(fileName, switchToExtensions);
       if (relatedFile) {
-        commands.executeCommand('vscode.open', Uri.file(relatedFile), editor.viewColumn);
+        commands.executeCommand('vscode.open', Uri.file(relatedFile), ViewColumn.Active);
       }
     };
   }
