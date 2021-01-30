@@ -1,3 +1,26 @@
+<a name="1.0.7"></a>
+## [1.0.7](https://github.com/aurelia/vscode-extension/compare/1.0.6...1.0.7) (2021-01-30)
+
+
+### Bug Fixes
+
+* **parsing:** also include `[@bindable](https://github.com/bindable)(...` ([#124](https://github.com/aurelia/vscode-extension/issues/124)) ([2500259](https://github.com/aurelia/vscode-extension/commit/2500259))
+* **relatedFiles:** changes to opening related files ([#139](https://github.com/aurelia/vscode-extension/issues/139)) ([bf470ca](https://github.com/aurelia/vscode-extension/commit/bf470ca))
+
+
+### Features
+
+* **file-watching:** add documentation and refresh of web components ([#122](https://github.com/aurelia/vscode-extension/issues/122)) ([8a32c96](https://github.com/aurelia/vscode-extension/commit/8a32c96))
+
+
+
+<a name="1.0.7"></a>
+## [1.0.7](https://github.com/aurelia/vscode-extension/compare/1.0.6...1.0.7) (2021-01-30)
+
+### Fixes
+- **Related Files**
+  Related files now open in the Active Column again [#139](https://github.com/aurelia/vscode-extension/pull/139)
+
 <a name="1.0.6"></a>
 ## [1.0.6](https://github.com/aurelia/vscode-extension/compare/1.0.5...1.0.6) (2020-03-29)
 
