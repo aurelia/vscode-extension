@@ -1,0 +1,61 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "[A] 4.2 EO - Definitions",
+  "steps": [
+    {
+      "file": "server/src/server.ts",
+      "description": " ",
+      "line": 271,
+      "selection": {
+        "start": {
+          "line": 271,
+          "character": 1
+        },
+        "end": {
+          "line": 272,
+          "character": 1
+        }
+      },
+      "title": "'get-virtual-definition',"
+    },
+    {
+      "file": "server/src/server.ts",
+      "description": " ",
+      "line": 304,
+      "selection": {
+        "start": {
+          "line": 304,
+          "character": 9
+        },
+        "end": {
+          "line": 304,
+          "character": 42
+        }
+      },
+      "title": "definitions = await doDefinition("
+    },
+    {
+      "file": "server/src/feature/embeddedLanguages/modes/getCustomElementMode.ts",
+      "description": " ",
+      "line": 37,
+      "selection": {
+        "start": {
+          "line": 37,
+          "character": 5
+        },
+        "end": {
+          "line": 37,
+          "character": 24
+        }
+      },
+      "title": "async doDefinition("
+    },
+    {
+      "file": "server/src/feature/embeddedLanguages/modes/getCustomElementMode.ts",
+      "description": " ",
+      "line": 52,
+      "title": "return {"
+    }
+  ],
+  "ref": "b7f272baf8555d14606dea663fa15c1ae18f9388"
+}

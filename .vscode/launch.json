@@ -1,0 +1,65 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "extensionHost",
+      "request": "launch",
+      "name": "Launch Client",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}",
+        "--disable-extensions"
+      ],
+      "outFiles": ["${workspaceRoot}/client/out/**/*.js"],
+      "preLaunchTask": {
+        "type": "npm",
+        "script": "watch"
+      }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Server",
+      "port": 6009,
+      "restart": true,
+      "outFiles": ["${workspaceRoot}/server/out/**/*.js"]
+    },
+    {
+      "name": "Language Server E2E Test",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}",
+        "--extensionTestsPath=${workspaceRoot}/client/out/client/src/test/index",
+        "${workspaceRoot}/client/testFixture"
+      ],
+      "outFiles": ["${workspaceRoot}/client/out/client/src/test/**/*.js"]
+    },
+    // https://www.hossambarakat.net/2017/06/01/running-mocha-with-typescript/
+    {
+      "name": "Run mocha",
+      "type": "node",
+      "request": "launch",
+      "env": {
+        "TS_NODE_PROJECT": "./tsconfig.json"
+      },
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "stopOnEntry": false,
+      "args": [
+        "--require",
+        "ts-node/register",
+        "'${workspaceRoot}/tests/unit/**/*.spec.ts'"
+      ],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Client + Server",
+      "configurations": ["Launch Client", "Attach to Server"]
+    }
+  ]
+}

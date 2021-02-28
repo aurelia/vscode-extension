@@ -1,0 +1,25 @@
+{
+	"name": "aurelia",
+	"description": "A VSCode extension for Aurelia",
+	"author": "AureliaEffect",
+	"license": "MIT",
+	"version": "2.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aurelia/vscode-extension"
+  },
+	"engines": {
+		"node": "*"
+	},
+	"dependencies": {
+		"lodash": "^4.17.20",
+		"parse5": "^6.0.1",
+		"parse5-sax-parser": "^6.0.1"
+	},
+	"scripts": {},
+	"devDependencies": {
+		"@types/lodash": "^4.14.168",
+		"@types/parse5": "^5.0.3",
+		"@types/parse5-sax-parser": "^5.0.1"
+	}
+}

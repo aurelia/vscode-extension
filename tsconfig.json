@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es6",
+		"outDir": "out",
+		"rootDir": "src",
+		"sourceMap": true,
+		"strictPropertyInitialization": false,
+		"declaration": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"experimentalDecorators": true
+	},
+	"include": [
+		"src"
+	],
+	"exclude": [
+		"node_modules",
+		".vscode-test",
+		"_code-dep"
+	],
+	"references": [
+		{ "path": "./client" },
+		{ "path": "./server" }
+	]
+}

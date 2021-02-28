@@ -1,0 +1,45 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "[A] 1.1.2 Class Members Declarations",
+  "steps": [
+    {
+      "file": "server/src/viewModel/getAureliaComponentList.ts",
+      "description": " ",
+      "line": 30,
+      "title": "export function getAureliaComponentInfoFromClassDeclaration("
+    },
+    {
+      "file": "server/src/viewModel/getAureliaComponentList.ts",
+      "description": " ",
+      "line": 82,
+      "selection": {
+        "start": {
+          "line": 82,
+          "character": 7
+        },
+        "end": {
+          "line": 82,
+          "character": 66
+        }
+      },
+      "title": "const resultClassMembers = getAureliaViewModelClassMembers("
+    },
+    {
+      "file": "server/src/viewModel/getAureliaComponentList.ts",
+      "description": " ",
+      "line": 145,
+      "selection": {
+        "start": {
+          "line": 145,
+          "character": 1
+        },
+        "end": {
+          "line": 145,
+          "character": 49
+        }
+      },
+      "title": "export function getAureliaViewModelClassMembers("
+    }
+  ],
+  "ref": "b7f272baf8555d14606dea663fa15c1ae18f9388"
+}

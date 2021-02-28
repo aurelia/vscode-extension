@@ -1,0 +1,62 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - run:
+          name: npm install
+          command: npm install
+      - run:
+          name: pre-publish
+          command: npm run vscode:prepublish
+  test:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - run:
+          name: npm install
+          command: npm install
+      - run:
+          name: build
+          command: npm run build
+      - run:
+          name: Test
+          command: npm run test:unit:ci
+  publish:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run:
+          name: install VS Code Extension Manager
+          command: npm i vsce
+      - run:
+          name: publish to marketplace
+          command: npx vsce publish -p ${VSTOKEN}
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+      - test:
+          requires:
+            - build
+      - publish:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/

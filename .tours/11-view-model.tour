@@ -1,0 +1,43 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "[A] 1.1 View Model",
+  "steps": [
+    {
+      "file": "server/src/viewModel/createAureliaWatchProgram.ts",
+      "description": " ",
+      "line": 13,
+      "title": "aureliaProgram.initComponentList();"
+    },
+    {
+      "file": "server/src/viewModel/AureliaProgram.ts",
+      "description": " ",
+      "line": 89,
+      "title": "public initComponentList(): IComponentList[] | undefined {"
+    },
+    {
+      "file": "server/src/viewModel/AureliaProgram.ts",
+      "description": " ",
+      "line": 114,
+      "title": "const componentInfo = getAureliaComponentInfoFromClassDeclaration("
+    },
+    {
+      "file": "server/src/viewModel/getAureliaComponentList.ts",
+      "description": " ",
+      "line": 30,
+      "title": "export function getAureliaComponentInfoFromClassDeclaration("
+    },
+    {
+      "file": "server/src/viewModel/getAureliaComponentList.ts",
+      "description": " ",
+      "line": 39,
+      "title": "ts.isClassDeclaration(node) &&"
+    },
+    {
+      "file": "server/src/viewModel/getAureliaComponentList.ts",
+      "description": " ",
+      "line": 87,
+      "title": "result = {"
+    }
+  ],
+  "ref": "b7f272baf8555d14606dea663fa15c1ae18f9388"
+}
