@@ -10,7 +10,7 @@ Quick Navigation:
 - [Parsing](#parsing)
 
 <details>
-<summary>Table of contents</summary>
+<summary>Table of contents (expand)</summary>
 <p>
 
 
@@ -110,7 +110,7 @@ Quick Navigation:
 ## 5. Architecture.png
 
 <details>
-<summary>Architecture.png</summary>
+<summary>Architecture.png (expand)</summary>
 <p>
 
 ![architecture.png](../images/architecture.png)
