@@ -9,25 +9,25 @@
 		"url": "https://github.com/aurelia/vscode-extension"
 	},
 	"publisher": "AureliaEffect",
-  "categories": [
-    "Programming Languages",
-    "Themes",
-    "Snippets"
-  ],
-  "icon": "images/logo.png",
+	"categories": [
+		"Programming Languages",
+		"Themes",
+		"Snippets"
+	],
+	"icon": "images/logo.png",
 	"keywords": [
 		"aurelia",
 		"vscode",
 		"extension"
 	],
-  "homepage": "http://aurelia.io",
-  "bugs": {
-    "url": "https://github.com/aurelia/vscode-extension/issues"
-  },
-  "galleryBanner": {
-    "color": "#5c2d91",
-    "theme": "dark"
-  },
+	"homepage": "http://aurelia.io",
+	"bugs": {
+		"url": "https://github.com/aurelia/vscode-extension/issues"
+	},
+	"galleryBanner": {
+		"color": "#5c2d91",
+		"theme": "dark"
+	},
 	"engines": {
 		"vscode": "^1.51.1"
 	},
