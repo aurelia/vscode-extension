@@ -35,6 +35,9 @@ export function createAureliaWatchProgram(
   // 1. Define/default path/to/tsconfig.json
   const targetSourceDirectory =
     projectOptions?.sourceDirectory ?? ts.sys.getCurrentDirectory();
+
+  console.log('The Extension is based on this directly: ', targetSourceDirectory)
+
   let configPath = ts.findConfigFile(
     // /* searchPath */ "./",
     /* searchPath */ targetSourceDirectory,
@@ -69,7 +72,7 @@ export function createAureliaWatchProgram(
       programHost,
       oldProgram
     ) => {
-      console.log('-------------- Custom Action ---------------------');
+      // console.log('-------------- Custom Action ---------------------');
       return origCreateProgram(rootNames, options, programHost, oldProgram);
     };
     // 2.2 We also overwrite afterProgramCreate to avoid actually running a compile towards the file system
@@ -82,7 +85,10 @@ export function createAureliaWatchProgram(
     ts.createWatchProgram(host);
   } else {
     console.log(
-      'Not tsconfig file found. The watcher needs a working tsconfig file to'
+      'Not tsconfig file found. The watcher needs a working tsconfig file'
+    );
+    console.log(
+      'Check out the tsconfig.json for our tests: https://github.com/aurelia/vscode-extension/blob/0cded48f49bebf4564ebc947298cf5033681362d/tests%2Ftsconfig.json'
     );
   }
 

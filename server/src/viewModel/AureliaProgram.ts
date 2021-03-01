@@ -85,7 +85,7 @@ export class AureliaProgram {
         case '.ts': {
           const sourceFile = program.getSourceFile(path);
           if (sourceFile === undefined) {
-            console.log('Watcher program did not find file: ', path);
+            console.log('These source files are ignored by the extension: ', path);
             return;
           }
 
