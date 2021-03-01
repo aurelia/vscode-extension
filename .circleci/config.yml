@@ -1,16 +1,21 @@
 version: 2
+
+references:
+  npm_install_update: &npm_install_update
+    run:
+      name: npm-update-and-install
+      command: |
+        sudo npm install -g npm@latest
+        npm install
+        npm run postinstall
+
 jobs:
   build:
     docker:
       - image: circleci/node:latest
     steps:
       - checkout
-      - run:
-          name: update-npm
-          command: 'sudo npm install -g npm@latest'
-      - run:
-          name: npm install
-          command: npm install
+      - *npm_install_update
       - run:
           name: pre-publish
           command: npm run vscode:prepublish
@@ -19,12 +24,7 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
-      - run:
-          name: update-npm
-          command: 'sudo npm install -g npm@latest'
-      - run:
-          name: npm install
-          command: npm install
+      - *npm_install_update
       - run:
           name: build
           command: npm run build
@@ -36,6 +36,7 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
+      - *npm_install_update
       - run:
           name: install VS Code Extension Manager
           command: npm i vsce
