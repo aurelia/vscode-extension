@@ -40,7 +40,7 @@
 		"onCommand:extension.auOpenRelatedView",
 		"onLanguage:plaintext"
 	],
-	"main": "./client/out/client/src/extension",
+	"main": "./client/out/extension",
 	"contributes": {
 		"commands": [
 			{
