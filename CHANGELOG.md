@@ -1,3 +1,8 @@
+## [2.0.2](https://github.com/aurelia/vscode-extension/compare/2.0.1...2.0.2) (2021-03-01)
+
+## Chore
+- fix main entry in package.json
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/aurelia/vscode-extension/compare/2.0.0...2.0.1) (2021-03-01)
 
