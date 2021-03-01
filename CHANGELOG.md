@@ -1,5 +1,11 @@
-<a name="2.0.0-alpha.1"></a>
-## [2.0.0-alpha.1](https://github.com/aurelia/vscode-extension/compare/1.0.7...2.0.0-alpha.1) (2021-03-01)
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/aurelia/vscode-extension/compare/2.0.0...2.0.1) (2021-03-01)
+
+## Chore
+- fix package.json Marketplace related fields
+
+<a name="2.0.0"></a>
+## [2.0.0](https://github.com/aurelia/vscode-extension/compare/1.0.7...2.0.0) (2021-03-01)
 
 ## Table of contents
 
