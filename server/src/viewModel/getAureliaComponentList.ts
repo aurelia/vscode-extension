@@ -18,8 +18,15 @@ interface DecoratorInfo {
 import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 import * as ts from 'typescript';
 import * as Path from 'path';
+import * as fs from 'fs';
 import { getElementNameFromClassDeclaration } from '../common/className';
-import { AureliaClassTypes, AureliaDecorator, AureliaViewModel, VALUE_CONVERTER_SUFFIX } from '../common/constants';
+import {
+  AureliaClassTypes,
+  AureliaDecorator,
+  AureliaViewModel,
+  VALUE_CONVERTER_SUFFIX,
+} from '../common/constants';
+import { kebabCase } from 'lodash';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,
@@ -71,10 +78,19 @@ export function getAureliaComponentInfoFromClassDeclaration(
         targetClassDeclaration
       );
 
-      const templateImportPath = getTemplateImportPathFromCustomElementDecorator(
-        targetClassDeclaration,
-        sourceFile
-      );
+      let viewFilePath: string = '';
+
+      const { fileName } = targetClassDeclaration.getSourceFile();
+      const conventionViewFilePath = fileName.replace(/.[jt]s$/, '.html');
+      if (fs.existsSync(conventionViewFilePath)) {
+        viewFilePath = conventionViewFilePath;
+        console.log('TCL: conventionViewFilePath', conventionViewFilePath);
+      } else {
+        viewFilePath = getTemplateImportPathFromCustomElementDecorator(
+          targetClassDeclaration,
+          sourceFile
+        ) ?? '';
+      }
 
       //
       const resultClassMembers = getAureliaViewModelClassMembers(
@@ -88,7 +104,7 @@ export function getAureliaComponentInfoFromClassDeclaration(
         componentName: viewModelName,
         baseViewModelFileName: Path.parse(sourceFile.fileName).name,
         viewModelFilePath: sourceFile.fileName,
-        viewFilePath: templateImportPath,
+        viewFilePath,
         type: AureliaClassTypes.CUSTOM_ELEMENT,
         classMembers: resultClassMembers,
         sourceFile,
@@ -96,6 +112,7 @@ export function getAureliaComponentInfoFromClassDeclaration(
     }
   });
 
+  result; /* ? */
   return result;
 }
 
@@ -234,11 +251,20 @@ export function hasCustomElementNamingConvention(
       return result;
     }) ?? false;
 
+  const className = classDeclaration.name?.getText();
   const hasCustomElementNamingConvention = Boolean(
-    classDeclaration.name?.getText().includes(AureliaClassTypes.CUSTOM_ELEMENT)
+    className?.includes(AureliaClassTypes.CUSTOM_ELEMENT)
   );
 
-  return hasCustomElementDecorator || hasCustomElementNamingConvention;
+  const { fileName } = classDeclaration.getSourceFile(); /* ? */
+  const baseName = Path.parse(fileName).name; /* ? */
+  const isCorrectFileAndClassConvention = baseName === kebabCase(className);
+
+  return (
+    hasCustomElementDecorator ||
+    hasCustomElementNamingConvention ||
+    isCorrectFileAndClassConvention
+  );
 }
 
 /**
