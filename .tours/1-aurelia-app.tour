@@ -1,0 +1,42 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "[A] 1. Aurelia App",
+  "steps": [
+    {
+      "file": "server/src/server.ts",
+      "description": "1. createAureliaWatchProgram(aureliaProgram);",
+      "line": 120,
+      "selection": {
+        "start": {
+          "line": 120,
+          "character": 5
+        },
+        "end": {
+          "line": 120,
+          "character": 47
+        }
+      },
+      "title": "createAureliaWatchProgram(aureliaProgram);"
+    },
+    {
+      "file": "server/src/viewModel/createAureliaWatchProgram.ts",
+      "description": "2.\n",
+      "line": 80,
+      "title": "updateAureliaComponents(aureliaProgram, projectOptions);"
+    },
+    {
+      "file": "server/src/viewModel/createAureliaWatchProgram.ts",
+      "description": "3.",
+      "line": 13,
+      "title": "aureliaProgram.initComponentList();"
+    },
+    {
+      "file": "server/src/viewModel/createAureliaWatchProgram.ts",
+      "description": "4.",
+      "line": 17,
+      "title": "aureliaProgram.setComponentList(componentList);"
+    }
+  ],
+  "ref": "b7f272baf8555d14606dea663fa15c1ae18f9388",
+  "isPrimary": true
+}

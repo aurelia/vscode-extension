@@ -1,9 +1,5 @@
+out
 node_modules
-.idea
-.DS_STORE
-*.swp
-npm-debug.log*
-.test
-dist/doc-temp
-dist/test
-dist
+client/server
+.vscode-test
+client/testFixture/src/gitignore

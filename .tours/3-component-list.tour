@@ -1,0 +1,37 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "[A] 3 Component List",
+  "steps": [
+    {
+      "file": "server/src/viewModel/AureliaProgram.ts",
+      "description": "export interface IComponentList {",
+      "line": 39,
+      "selection": {
+        "start": {
+          "line": 39,
+          "character": 1
+        },
+        "end": {
+          "line": 39,
+          "character": 34
+        }
+      }
+    },
+    {
+      "file": "server/src/viewModel/AureliaProgram.ts",
+      "description": "public initComponentList(): IComponentList[] | undefined {",
+      "line": 89,
+      "selection": {
+        "start": {
+          "line": 89,
+          "character": 3
+        },
+        "end": {
+          "line": 89,
+          "character": 61
+        }
+      }
+    }
+  ],
+  "ref": "b7f272baf8555d14606dea663fa15c1ae18f9388"
+}

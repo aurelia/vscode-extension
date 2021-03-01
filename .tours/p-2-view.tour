@@ -1,0 +1,63 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "[P] 2. View",
+  "steps": [
+    {
+      "file": "server/src/feature/embeddedLanguages/embeddedSupport.ts",
+      "description": " ",
+      "line": 94,
+      "title": "export function parseDocumentRegions<RegionDataType = any>("
+    },
+    {
+      "file": "server/src/feature/embeddedLanguages/modes/getValueConverterMode.ts",
+      "description": " ",
+      "line": 21,
+      "selection": {
+        "start": {
+          "line": 21,
+          "character": 25
+        },
+        "end": {
+          "line": 21,
+          "character": 45
+        }
+      }
+    },
+    {
+      "file": "server/src/feature/embeddedLanguages/languageModes.ts",
+      "description": " ",
+      "line": 103
+    },
+    {
+      "file": "server/src/feature/completions/completions.ts",
+      "description": " ",
+      "line": 30,
+      "selection": {
+        "start": {
+          "line": 30,
+          "character": 25
+        },
+        "end": {
+          "line": 30,
+          "character": 45
+        }
+      }
+    },
+    {
+      "file": "server/src/feature/embeddedLanguages/embeddedSupport.ts",
+      "description": " ",
+      "line": 415,
+      "selection": {
+        "start": {
+          "line": 420,
+          "character": 21
+        },
+        "end": {
+          "line": 420,
+          "character": 41
+        }
+      }
+    }
+  ],
+  "ref": "0658b770805d5924c79702c182602087a3bc17b6"
+}
