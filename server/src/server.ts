@@ -139,14 +139,9 @@ documents.onDidClose((e) => {
   documentSettings.settingsMap.delete(e.document.uri);
 });
 
-documents.onDidSave((event) => {
-  console.log('TCL: event', event);
-});
-
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(async (change) => {
-  console.log('TCL: change', change);
   console.log('[server.ts] (re-)get Language Modes');
   languageModes = await getLanguageModes();
 });
