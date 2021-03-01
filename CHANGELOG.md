@@ -10,7 +10,7 @@
 
 This is a complete rewrite. You are more than welcome to try it out.
 We would be happy about feedback!
-v1.0.7 is the previous stable version.
+_v1.0.7 is the previous stable version._
 
 ## 1. Usage
 - Have a tsconfig.json in the root
