@@ -1,12 +1,19 @@
-# Aurelia VSC Extension
+# Aurelia VSCode Extension
 
 🚧🚧🚧 Early Alpha 🚧🚧🚧
 
-This is a complete rewrite. You are more than welcome to try it out.
-We would be happy about feedback!
-v1.0.7 is the previous stable version.
+## Table of contents
 
-## Usage
+- [1. Usage](#1-usage)
+- [2. Why rewrite?](#2-why-rewrite)
+- [3. Anyway, here is what's new (and what's missing)](#3-anyway-here-is-whats-new-and-whats-missing)
+- [4. More Info](#4-more-info)
+
+This is a complete rewrite. You are more than welcome to try it out.
+We would be happy about your feedback!
+*v1.0.7 is the previous stable version.*
+
+## 1. Usage
 - Have a tsconfig.json in the root
 - Rest should be automatic
   - Debugging: In the VSCode Output Panel look for `Aurelia v2`, there you should see how many components where picked up
@@ -15,7 +22,7 @@ v1.0.7 is the previous stable version.
 
 
 
-## Why rewrite?
+## 2. Why rewrite?
 The main objective was to get completions for objects in your Aureila View/Template.
 
 <details>
@@ -29,7 +36,7 @@ The main objective was to get completions for objects in your Aureila View/Templ
 
 Eventually, all the work was continued in the rewrite, because new is always shiny.
 
-## Anyway, here is what's new (and what's missing)
+## 3. Anyway, here is what's new (and what's missing)
 
 ### New
 - Aurelia v2 compatible
@@ -67,7 +74,7 @@ Eventually, all the work was continued in the rewrite, because new is always shi
 - .js support. (You would need a tsconfig.json file in the root, which would work then.)
 
 
-## More Info
+## 4. More Info
 Check out the [Architecture document](docs/architechture.md#5-architecturepng) for a skeleton overview (expand for flowchart)
 
 
