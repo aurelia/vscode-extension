@@ -1,3 +1,8 @@
+## [2.0.3](https://github.com/aurelia/vscode-extension/compare/2.0.2...2.0.3) (2021-03-01)
+
+## Chore
+- fix typescript dependency
+
 ## [2.0.2](https://github.com/aurelia/vscode-extension/compare/2.0.1...2.0.2) (2021-03-01)
 
 ## Chore
