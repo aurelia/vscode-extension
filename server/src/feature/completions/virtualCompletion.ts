@@ -283,20 +283,21 @@ function enhanceCompletionItemDocumentation(
 
   /** ${1: argName1}, ${2: argName2} */
   function createArgCompletion(entryDetail: EntryDetailsMapData) {
-    return customizeEnhanceDocumentation.customEnhanceMethodArguments(
+    const result = customizeEnhanceDocumentation.customEnhanceMethodArguments(
       entryDetail.methodArguments
     );
+    return result;
   }
 
   const result = virtualCompletions.map((tsCompletion) => {
     const entryDetail = entryDetailsMap[tsCompletion.name];
-    const isMethod = entryDetail.kind === CompletionItemKind.Method;
+    const isMethod =
+      entryDetail.kind === CompletionItemKind.Method ||
+      entryDetail.displayParts?.includes('() => '); // If variable has function type, treat as method
     /** Default value is just the method name */
     let insertMethodTextWithArguments = tsCompletion.name;
     if (isMethod) {
-      if (
-        customizeEnhanceDocumentation?.omitMethodNameAndBrackets !== undefined
-      ) {
+      if (customizeEnhanceDocumentation?.omitMethodNameAndBrackets === true) {
         insertMethodTextWithArguments = createArgCompletion(entryDetail);
       } else {
         insertMethodTextWithArguments = `${
