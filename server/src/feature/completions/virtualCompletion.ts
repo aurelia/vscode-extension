@@ -77,7 +77,7 @@ export function getVirtualCompletion(
       undefined,
       undefined,
       undefined
-    ); /* ? */
+    );
   });
 
   return { virtualCompletions, virtualCompletionEntryDetails };

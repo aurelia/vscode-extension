@@ -82,7 +82,17 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':'],
+        triggerCharacters: [
+          ' ',
+          '.',
+          '[',
+          '"',
+          '\'',
+          '{',
+          '<',
+          ':',
+          '|',
+        ],
       },
       definitionProvider: true,
       hoverProvider: true,
@@ -234,10 +244,20 @@ connection.onHover(() => {
 });
 
 connection.onRequest('aurelia-get-component-list', () => {
-  return aureliaProgram.getComponentList().map(cList => {
-    const {componentName, className, viewFilePath, viewModelFilePath, baseViewModelFileName} = cList;
+  return aureliaProgram.getComponentList().map((cList) => {
+    const {
+      componentName,
+      className,
+      viewFilePath,
+      viewModelFilePath,
+      baseViewModelFileName,
+    } = cList;
     return {
-      componentName, className, viewFilePath, viewModelFilePath, baseViewModelFileName
+      componentName,
+      className,
+      viewFilePath,
+      viewModelFilePath,
+      baseViewModelFileName,
     };
   });
 });

@@ -286,7 +286,7 @@ export function parseDocumentRegions<RegionDataType = any>(
           const [
             initiatorText,
             ...valueConverterRegionsSplit
-          ] = attr.value.split(/[^|]\|[^|]/g);
+          ] = attr.value.split(/(?<!\|)\|(?!\|)/g);
 
           // 6.2. For each value converter
           valueConverterRegionsSplit.forEach(
@@ -326,7 +326,7 @@ export function parseDocumentRegions<RegionDataType = any>(
               const updatedLocation: parse5.Location = {
                 ...attrLocation,
                 startOffset:
-                  attrLocation.startOffset + startValueConverterLength,
+                  attrLocation.startOffset + startValueConverterLength - 1, // [!] Don't include '|', because when we type |, we already want to  get completions
                 startCol: startColAdjust,
                 endOffset: attrLocation.startOffset + endValueConverterLength,
                 endCol: endColAdjust,
