@@ -105,6 +105,8 @@ export const AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST = [
   'two-way',
   'one-time',
   'call',
+  'delegate',
+  'trigger',
 ];
 
 export enum AureliaClassTypes {
