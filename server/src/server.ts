@@ -186,6 +186,7 @@ connection.onCompletion(
     const text = document.getText();
     const offset = document.offsetAt(_textDocumentPosition.position);
     const triggerCharacter = text.substring(offset - 1, offset);
+    let accumulateCompletions: CompletionItem[] = [];
 
     if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {
       const isNotRegion = modeAndRegion.region === undefined;
@@ -195,11 +196,18 @@ connection.onCompletion(
         return atakCompletions;
       }
     } else if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER) {
+      let ataCompletions: CompletionItem[];
       const isNotRegion = modeAndRegion.region === undefined;
       const isInsideTag = await checkInsideTag(document, offset);
-      if (isNotRegion && isInsideTag) {
-        const ataCompletions = createAureliaTemplateAttributeCompletions();
-        return ataCompletions;
+
+      if (isInsideTag) {
+        ataCompletions = createAureliaTemplateAttributeCompletions();
+
+        if (isNotRegion) {
+          return ataCompletions;
+        }
+
+        accumulateCompletions = ataCompletions;
       }
     }
 
@@ -214,7 +222,9 @@ connection.onCompletion(
       } catch (error) {
         console.log('TCL: error', error);
       }
-      return completions;
+
+      accumulateCompletions.push(...completions);
+      return accumulateCompletions;
     }
 
     return [];
