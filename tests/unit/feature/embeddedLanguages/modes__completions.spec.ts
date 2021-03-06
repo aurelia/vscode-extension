@@ -11,6 +11,12 @@ const COMPONENT_VIEW_FILE_NAME = `${COMPONENT_NAME}.html`;
 const COMPONENT_VIEW_PATH = `./src/${COMPONENT_NAME}/${COMPONENT_VIEW_FILE_NAME}`;
 // const COMPONENT_VIEW_MODEL_FILE_NAME = `${COMPONENT_NAME}.ts`;
 
+function getNamingsForTest(componentName: string) {
+  const componentViewFileName = `${componentName}.html`;
+  const componentViewPath = `./src/${componentName}/${componentViewFileName}`;
+  return { componentViewPath, componentViewFileName };
+}
+
 describe('embeddedSupport.ts - Modes - Individual - Definitions', () => {
   it('Completions - Custom Element', async () => {
     const testAureliaProgram = getAureliaProgramForTesting();
@@ -22,7 +28,7 @@ describe('embeddedSupport.ts - Modes - Individual - Definitions', () => {
         templatePath: COMPONENT_VIEW_PATH,
         templateContent,
         position,
-        triggerCharacter: '<'
+        triggerCharacter: '<',
       }
     );
 
@@ -91,7 +97,7 @@ describe('embeddedSupport.ts - Modes - Individual - Definitions', () => {
         templatePath: COMPONENT_VIEW_PATH,
         templateContent,
         position,
-        triggerCharacter: '.'
+        triggerCharacter: '.',
       }
     );
 
@@ -107,14 +113,13 @@ describe('embeddedSupport.ts - Modes - Individual - Definitions', () => {
         templatePath: COMPONENT_VIEW_PATH,
         templateContent,
         position,
-        triggerCharacter: ' '
+        triggerCharacter: ' ',
       }
     );
 
     strictEqual(completion[0].detail, 'minimalBindable');
   });
   it.skip('Completions - Aurelia Attribute Keywords', async () => {
-
     const testAureliaProgram = getAureliaProgramForTesting();
     const templateContent = '<div ></div>';
     const position = Position.create(0, 18);
@@ -124,10 +129,61 @@ describe('embeddedSupport.ts - Modes - Individual - Definitions', () => {
         templatePath: COMPONENT_VIEW_PATH,
         templateContent,
         position,
-        triggerCharacter: ' '
+        triggerCharacter: ' ',
       }
     );
 
     strictEqual(completion[0], 'minimalBindable');
+  });
+});
+
+describe('Feature: Completions - correct insertText in View', () => {
+  context('Scenario: Function variable completion', () => {
+    it('Should insert brackets for functionVariable in view', async () => {
+      const componentName = 'view-model-test';
+      const testAureliaProgram = getAureliaProgramForTesting({
+        include: [`src/${componentName}`],
+      });
+      const templateContent = '<div if.bind="f"></div>';
+      const position = Position.create(0, 14);
+      const completions = await TestSetup.createCompletionTest(
+        testAureliaProgram,
+        {
+          templatePath: getNamingsForTest(componentName).componentViewPath,
+          templateContent,
+          position,
+        }
+      );
+
+      const target = completions.find(
+        (completion) => completion.label === 'functionVariable'
+      );
+
+      strictEqual(target?.insertText, 'functionVariable()');
+    });
+  });
+
+  context('Scenario: Function arguments completion', () => {
+    it('Should insert brackets for functionVariable in view', async () => {
+      const componentName = 'view-model-test';
+      const testAureliaProgram = getAureliaProgramForTesting({
+        include: [`src/${componentName}`],
+      });
+      const templateContent = '<div if.bind="m"></div>';
+      const position = Position.create(0, 14);
+      const completions = await TestSetup.createCompletionTest(
+        testAureliaProgram,
+        {
+          templatePath: getNamingsForTest(componentName).componentViewPath,
+          templateContent,
+          position,
+        }
+      );
+      const target = completions.find(
+        (completion) => completion.label === 'methodWithArgs'
+      );
+
+      strictEqual(target?.insertText, 'methodWithArgs(${1:first}, ${2:second})');
+    });
   });
 });
