@@ -319,29 +319,25 @@ export function createVirtualFileWithContent(
   content: string
 ): VirtualSourceFileInfo | undefined {
   // 1. Get original viewmodel file associated with view
-  const aureliaFiles = aureliaProgram.getAureliaSourceFiles();
-  const scriptExtensions = ['.js', '.ts']; // TODO find common place or take from package.json config
-  const viewBaseName = path.parse(documentUri).name;
+  const componentList = aureliaProgram.getComponentList();
 
-  const targetSourceFile = aureliaFiles?.find((aureliaFile) => {
-    return scriptExtensions.find((extension) => {
-      const toViewModelName = `${viewBaseName}${extension}`;
-      const aureliaFileName = path.basename(aureliaFile.fileName);
-      return aureliaFileName === toViewModelName;
-    });
+  const targetComponent = componentList.find((component) => {
+    if (component.viewFilePath === undefined) return false;
+
+    const result = documentUri.includes(component.viewFilePath)
+    return result;
   });
+  const targetSourceFile = targetComponent?.sourceFile;
 
   if (!targetSourceFile) {
     console.log(`No source file found for current view: ${documentUri}`);
     return;
   }
 
-  const componentList = aureliaProgram.getComponentList();
-  const customElementClassName = componentList.find(
-    (component) =>
-      component.baseViewModelFileName ===
-      path.parse(targetSourceFile.fileName).name
-  )?.className;
+  const customElementClassName = componentList.find((component) => {
+    const result = component.viewModelFilePath === targetSourceFile.fileName;
+    return result;
+  })?.className;
 
   if (customElementClassName === undefined) return;
 

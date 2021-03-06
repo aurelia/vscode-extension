@@ -644,7 +644,7 @@ export function getRegionAtPosition(
     return false;
   });
 
-  if (!Object.keys(potentialRegions).length) {
+  if (potentialRegions.length === 0) {
     console.error('embeddedSupport -> getRegionAtPosition -> No Region found');
     return undefined;
   }
