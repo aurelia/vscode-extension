@@ -4,6 +4,7 @@ import {
 } from '../../helpers/test-setup';
 import { Position } from 'vscode-html-languageservice';
 import { strictEqual } from 'assert';
+import { AureliaView } from '../../../../server/src/common/constants';
 
 const COMPONENT_NAME = 'minimal-component';
 // const COMPONENT_NAME = 'my-compo';
@@ -11,7 +12,7 @@ const COMPONENT_VIEW_FILE_NAME = `${COMPONENT_NAME}.html`;
 const COMPONENT_VIEW_PATH = `./src/${COMPONENT_NAME}/${COMPONENT_VIEW_FILE_NAME}`;
 // const COMPONENT_VIEW_MODEL_FILE_NAME = `${COMPONENT_NAME}.ts`;
 
-function getNamingsForTest(componentName: string) {
+function getNamingsForTest(componentName: string = COMPONENT_NAME) {
   const componentViewFileName = `${componentName}.html`;
   const componentViewPath = `./src/${componentName}/${componentViewFileName}`;
   return { componentViewPath, componentViewFileName };
@@ -187,3 +188,31 @@ describe('Feature: Completions - correct insertText in View', () => {
     });
   });
 });
+
+describe('Feature: Completions - Value Converter', () => {
+  context('Scenario: List correct VC completions', () => {
+    it('Should list VCs', async () => {
+      const testAureliaProgram = getAureliaProgramForTesting();
+      const templateContent = '<div if.bind="m |"></div>';
+      const position = Position.create(0, 16);
+      const completions = await TestSetup.createCompletionTest(
+        testAureliaProgram,
+        {
+          templatePath: getNamingsForTest().componentViewPath,
+          templateContent,
+          position,
+          triggerCharacter: AureliaView.VALUE_CONVERTER_OPERATOR
+        }
+      );
+
+      const hasValConvCompletions = completions.length >= 2;
+      strictEqual(hasValConvCompletions, true);
+
+      const sortVC = completions.find(completion => completion.detail === 'sort');
+      strictEqual(sortVC?.detail, 'sort');
+
+      const hasPrefix = sortVC.label.includes('(Au VC)');
+      strictEqual(hasPrefix, true);
+    })
+  });
+})
