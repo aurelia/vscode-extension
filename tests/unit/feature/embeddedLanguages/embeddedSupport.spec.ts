@@ -19,8 +19,12 @@ describe('embeddedSupport.ts', () => {
   });
 
   it('parseDocumentRegions', async () => {
-    const aureliaComponent = testAureliaProgram.getComponentList();
-    const { viewFilePath } = aureliaComponent[0];
+    const aureliaComponentList = testAureliaProgram.getComponentList();
+    const settingsComponent = aureliaComponentList.find(component => component.componentName === 'settings-view');
+
+    if (settingsComponent === undefined) return;
+
+    const { viewFilePath } = settingsComponent;
 
     if (viewFilePath === undefined) return;
 
@@ -49,22 +53,21 @@ describe('embeddedSupport.ts', () => {
 
   it('parseDocumentRegions - set viewRegions to ComponentList', async () => {
     testAureliaProgram.initComponentList();
-    const componentList = testAureliaProgram.getComponentList();
+    const aureliaComponentList = testAureliaProgram.getComponentList();
+    const settingsComponent = aureliaComponentList.find(component => component.componentName === 'settings-view');
 
-    if (componentList.length > 1) return;
+    if (settingsComponent === undefined) return;
 
-    const targetComponent = componentList[0];
-
-    const uri = targetComponent.viewFilePath ?? '';
+    const uri = settingsComponent.viewFilePath ?? '';
     const content = fs.readFileSync(uri, 'utf-8');
     const document = TextDocument.create(uri, 'html', 99, content);
     const regions = await parseDocumentRegions(document, testAureliaProgram);
 
     testAureliaProgram.setViewRegions(
-      targetComponent.componentName ?? '',
+      settingsComponent.componentName ?? '',
       regions
     );
 
-    strictEqual(targetComponent.viewRegions?.length, 8);
+    strictEqual(settingsComponent.viewRegions?.length, 8);
   });
 });
