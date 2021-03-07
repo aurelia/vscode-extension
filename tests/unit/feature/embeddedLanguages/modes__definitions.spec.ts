@@ -12,9 +12,8 @@ import {
 import {
   createTextDocumentForTesting,
   getAureliaProgramForTesting,
+  TestSetup,
 } from '../../helpers/test-setup';
-import { isAureliaCompletionItem } from '../../../../server/src/feature/completions/virtualCompletion';
-import { VIRTUAL_METHOD_NAME } from '../../../../server/src/feature/virtual/virtualSourceFile';
 import { ViewRegionType } from '../../../../server/src/feature/embeddedLanguages/embeddedSupport';
 import { AureliaView } from '../../../../server/src/common/constants';
 
@@ -250,4 +249,28 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
   //   const completionsResults = numOfClassMembers + 1;
   //   strictEqual(complete?.length, completionsResults);
   // });
+});
+
+describe('Feature: Definition - Components with same file names (index.ts/html)', () => {
+  context('Scenario: Find correct View Model', () => {
+    it('Should find correct View Model', async () => {
+      const testAureliaProgram = getAureliaProgramForTesting({
+        include: ['src/realdworld-advanced'],
+      });
+      const position = Position.create(3, 34);
+      const defintions = await TestSetup.createDefinitionTest(
+        testAureliaProgram,
+        {
+          templatePath: 'src/realdworld-advanced/settings/index.html',
+          position,
+          goToSourceWord: 'dirty',
+        }
+      );
+
+      const isCorrectViewModel = defintions.viewModelFilePath?.includes(
+        'src/realdworld-advanced/settings/index.ts'
+      );
+      strictEqual(isCorrectViewModel, true);
+    });
+  });
 });

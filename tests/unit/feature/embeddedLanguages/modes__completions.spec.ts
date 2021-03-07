@@ -1,5 +1,6 @@
 import {
   getAureliaProgramForTesting,
+  getNamingsForTest,
   TestSetup,
 } from '../../helpers/test-setup';
 import { Position } from 'vscode-html-languageservice';
@@ -11,12 +12,6 @@ const COMPONENT_NAME = 'minimal-component';
 const COMPONENT_VIEW_FILE_NAME = `${COMPONENT_NAME}.html`;
 const COMPONENT_VIEW_PATH = `./src/${COMPONENT_NAME}/${COMPONENT_VIEW_FILE_NAME}`;
 // const COMPONENT_VIEW_MODEL_FILE_NAME = `${COMPONENT_NAME}.ts`;
-
-function getNamingsForTest(componentName: string = COMPONENT_NAME) {
-  const componentViewFileName = `${componentName}.html`;
-  const componentViewPath = `./src/${componentName}/${componentViewFileName}`;
-  return { componentViewPath, componentViewFileName };
-}
 
 describe('embeddedSupport.ts - Modes - Individual - Definitions', () => {
   it('Completions - Custom Element', async () => {
