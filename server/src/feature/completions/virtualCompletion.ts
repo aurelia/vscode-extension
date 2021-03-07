@@ -97,15 +97,15 @@ export function createProgram(
     compilerOptions
       ? JSON.stringify(compilerOptions)
       : `{
-	  "compilerOptions": {
-		"target": "es2018",
-		"module": "commonjs",
-		"lib": ["es2018"],
-		"rootDir": ".",
-		"strict": false,
-		"esModuleInterop": true,
-	  }
-	`
+   "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "lib": ["es2018"],
+    "rootDir": ".",
+    "strict": false,
+    "esModuleInterop": true,
+   }
+ `
   );
   const { options, errors } = ts.convertCompilerOptionsFromJson(
     tsConfigJson.config.compilerOptions,
@@ -296,6 +296,7 @@ function enhanceCompletionItemDocumentation(
       entryDetail.displayParts?.includes('() => '); // If variable has function type, treat as method
     /** Default value is just the method name */
     let insertMethodTextWithArguments = tsCompletion.name;
+
     if (isMethod) {
       if (customizeEnhanceDocumentation?.omitMethodNameAndBrackets === true) {
         insertMethodTextWithArguments = createArgCompletion(entryDetail);
@@ -306,13 +307,20 @@ function enhanceCompletionItemDocumentation(
       }
     }
 
+    let insertText: string;
+    if (isMethod) {
+      insertText = insertMethodTextWithArguments;
+    } else {
+      insertText = tsCompletion.name.replace(/^\$/g, '\\$');
+    }
+
     const completionItem: AureliaCompletionItem = {
       documentation: {
         kind: MarkupKind.Markdown,
         value: entryDetail.documentation ?? '',
       },
       detail: entryDetail.displayParts ?? '',
-      insertText: isMethod ? insertMethodTextWithArguments : tsCompletion.name,
+      insertText: insertText,
       insertTextFormat: InsertTextFormat.Snippet,
       kind: entryDetail.kind,
       label: tsCompletion.name,
