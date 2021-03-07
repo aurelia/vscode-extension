@@ -317,15 +317,22 @@ export function createVirtualFileWithContent(
   aureliaProgram: AureliaProgram,
   documentUri: string,
   content: string
-): VirtualSourceFileInfo | undefined {
+  ): VirtualSourceFileInfo | undefined {
   // 1. Get original viewmodel file associated with view
   const componentList = aureliaProgram.getComponentList();
 
   const targetComponent = componentList.find((component) => {
     if (component.viewFilePath === undefined) return false;
 
-    const result = documentUri.includes(component.viewFilePath)
-    return result;
+    const targetView = documentUri.includes(component.viewFilePath)
+    if (targetView) {
+      return targetView;
+    }
+
+    const targetViewModel = documentUri.includes(component.viewModelFilePath);
+    if (targetViewModel) {
+      return targetViewModel;
+    }
   });
   const targetSourceFile = targetComponent?.sourceFile;
 
