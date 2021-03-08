@@ -81,6 +81,7 @@ export class TestSetup {
       document,
       textDocument,
       triggerCharacter ?? '',
+      modeAndRegion.region
     );
 
     if (!isAureliaCompletionItem(completion)) {

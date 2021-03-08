@@ -16,7 +16,7 @@ import {
 import { isAureliaCompletionItem } from '../../../../server/src/feature/completions/virtualCompletion';
 import { VIRTUAL_METHOD_NAME } from '../../../../server/src/feature/virtual/virtualSourceFile';
 
-describe('embeddedSupport.ts', () => {
+describe('languageModes.ts', () => {
   let languageModes: AsyncReturnType<typeof getLanguageModes>;
 
   before('getLanguageModes', async () => {
@@ -31,18 +31,18 @@ describe('embeddedSupport.ts', () => {
       './src/realdworld-advanced/settings/index.html'
     );
     const document = createTextDocumentForTesting(targetViewPath);
-    const position = Position.create(4, 8);
+    const position = Position.create(12, 26);
     const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
       document,
       position
     );
 
     //
-    strictEqual(modeAndRegion?.region?.regionValue, 'dirty');
+    strictEqual(modeAndRegion?.region?.attributeValue, 'local.email');
   });
 });
 
-describe('embeddedSupport.ts - Modes', () => {
+describe('languageModes.ts - Modes', () => {
   let mode: LanguageModeWithRegion['mode'];
   let document: ReturnType<typeof createTextDocumentForTesting>;
   let modeAndRegion: AsyncReturnType<
@@ -110,7 +110,7 @@ describe('embeddedSupport.ts - Modes', () => {
       line: 4,
       character: 13,
     });
-    const complete = await mode.doComplete(document, textDocumentPositionParams, 'dirty');
+    const complete = await mode.doComplete(document, textDocumentPositionParams, 'dirty', region);
 
     if (!isAureliaCompletionItem(complete)) return;
 
