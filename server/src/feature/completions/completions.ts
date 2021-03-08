@@ -13,6 +13,7 @@ import {
   parseDocumentRegions,
   getRegionFromLineAndCharacter,
   ViewRegionType,
+  ViewRegionInfo,
 } from '../embeddedLanguages/embeddedSupport';
 import { Position } from '../embeddedLanguages/languageModes';
 
@@ -94,23 +95,10 @@ export function createComponentCompletionList(
 
 export async function getBindablesCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
-  document: TextDocument
+  document: TextDocument,
+  region?: ViewRegionInfo
 ): Promise<CompletionItem[]> {
-  const { position } = _textDocumentPosition;
-  const adjustedPosition: Position = {
-    character: position.character + 1,
-    line: position.line + 1,
-  };
-  const regions = await parseDocumentRegions<CustomElementRegionData>(document);
-  const customElementRegions = regions.filter(
-    (region) => region.type === ViewRegionType.CustomElement
-  );
-  const targetCustomElementRegion = getRegionFromLineAndCharacter(
-    customElementRegions,
-    adjustedPosition
-  );
-
-  if (!targetCustomElementRegion) return [];
+  if (!region) return [];
 
   const bindableList = aureliaProgram.getBindableList();
   const asCompletionItem = bindableList.map((bindable) => {
@@ -123,7 +111,7 @@ export async function getBindablesCompletion(
 
   return asCompletionItem.filter((bindable) => {
     return (
-      kebabCase(bindable.data.elementName) === targetCustomElementRegion.tagName
+      kebabCase(bindable.data.elementName) === region.tagName
     );
   });
 }

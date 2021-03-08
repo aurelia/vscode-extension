@@ -22,12 +22,14 @@ export function getCustomElementMode(
     async doComplete(
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
-      triggerCharacter: string | undefined
+      triggerCharacter: string | undefined,
+      region?: ViewRegionInfo
     ) {
       if (triggerCharacter === ' ') {
         const bindablesCompletion = await getBindablesCompletion(
           _textDocumentPosition,
-          document
+          document,
+          region
         );
         if (bindablesCompletion.length > 0) return bindablesCompletion;
       }

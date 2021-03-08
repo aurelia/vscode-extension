@@ -217,7 +217,8 @@ connection.onCompletion(
         completions = ((await doComplete(
           document,
           _textDocumentPosition,
-          triggerCharacter
+          triggerCharacter,
+          modeAndRegion.region
         )) as unknown) as CompletionItem[];
       } catch (error) {
         console.log('TCL: error', error);

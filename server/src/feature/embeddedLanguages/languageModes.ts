@@ -17,9 +17,7 @@ import { getValueConverterMode } from './modes/getValueConverterMode';
 import { AureliaCompletionItem } from '../completions/virtualCompletion';
 import {
   HTMLDocumentRegions,
-  parseDocumentRegions,
   ViewRegionInfo,
-  getRegionAtPosition,
   getDocumentRegions,
   ViewRegionType,
 } from './embeddedSupport';
@@ -51,7 +49,8 @@ export interface LanguageMode {
   doComplete?: (
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
-    triggerCharacter?: string
+    triggerCharacter?: string,
+    region?: ViewRegionInfo
   ) => Promise<CompletionList | AureliaCompletionItem[]>;
   doDefinition?: (
     document: TextDocument,
@@ -91,29 +90,6 @@ export interface LanguageModeRange extends Range {
   attributeValue?: boolean;
 }
 
-export function getLanguageModelCacheDocumentRegionAtPosition(
-  position: Position
-): LanguageModelCache<Promise<ViewRegionInfo | undefined>> {
-  const languageModelCacheDocument = getLanguageModelCache<ViewRegionInfo | undefined>(
-    10,
-    60,
-    async (document) => {
-      let regions: ViewRegionInfo[] = [];
-      try {
-        regions = await parseDocumentRegions(document);
-      } catch (err) {
-        console.log('72 TCL: getDocumentRegionAtPosition -> err', err);
-      }
-
-      const reg = getRegionAtPosition(document, regions, position);
-
-      return reg;
-    }
-  );
-
-  return languageModelCacheDocument;
-}
-
 export interface LanguageModeWithRegion {
   mode?: LanguageMode;
   region?: ViewRegionInfo;
@@ -137,7 +113,9 @@ export async function getLanguageModes(): Promise<LanguageModes> {
   modes[ViewRegionType.Html].mode = getAureliaHtmlMode();
 
   modes[ViewRegionType.Attribute] = {};
-  modes[ViewRegionType.Attribute].mode = getAttributeMode(languageModelCacheDocument);
+  modes[ViewRegionType.Attribute].mode = getAttributeMode(
+    languageModelCacheDocument
+  );
 
   modes[ViewRegionType.AttributeInterpolation] = {};
   modes[

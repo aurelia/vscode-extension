@@ -35,7 +35,6 @@ import {
   TextDocument,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import { getLanguageModelCacheDocumentRegionAtPosition } from '../embeddedLanguages/languageModes';
 import { aureliaProgram, AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import {
@@ -44,6 +43,7 @@ import {
   getVirtualLangagueService,
 } from '../virtual/virtualSourceFile';
 import { AsyncReturnType } from '../../common/global';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 
 const PARAMETER_NAME = 'parameterName';
 
@@ -153,13 +153,11 @@ export function isAureliaCompletionItem(
 async function getVirtualViewModelCompletion(
   textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  aureliaProgram: AureliaProgram
+  aureliaProgram: AureliaProgram,
+  region?: ViewRegionInfo
 ): Promise<AureliaCompletionItem[]> {
   // 1. From the region get the part, that should be made virtual.
   const documentUri = textDocumentPosition.textDocument.uri;
-  const region = await getLanguageModelCacheDocumentRegionAtPosition(
-    textDocumentPosition.position
-  ).get(document);
 
   if (!region) return [];
 
@@ -352,7 +350,8 @@ function enhanceMethodArguments(methodArguments: string[]): string {
 
 export async function getAureliaVirtualCompletions(
   _textDocumentPosition: TextDocumentPositionParams,
-  document: TextDocument
+  document: TextDocument,
+  region?: ViewRegionInfo
 ): Promise<AureliaCompletionItem[]> {
   // Virtual file
   let virtualCompletions: AsyncReturnType<
@@ -362,7 +361,8 @@ export async function getAureliaVirtualCompletions(
     virtualCompletions = await getVirtualViewModelCompletion(
       _textDocumentPosition,
       document,
-      aureliaProgram
+      aureliaProgram,
+      region
     );
   } catch (err) {
     console.log('onCompletion 261 TCL: err', err);

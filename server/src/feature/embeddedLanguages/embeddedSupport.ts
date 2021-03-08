@@ -563,7 +563,7 @@ function getLanguageAtPosition(
   });
 
   if (!Object.keys(potentialRegions).length) {
-    console.error('embeddedSupport -> getRegionAtPosition -> No Region found');
+    console.error('embeddedSupport -> getLanguageAtPosition -> No Region found');
     return undefined;
   }
 
