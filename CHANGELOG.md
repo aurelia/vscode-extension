@@ -1,3 +1,26 @@
+## [2.0.4](https://github.com/aurelia/vscode-extension/compare/2.0.3...2.0.4) (2021-03-10)
+
+
+### Bug Fixes
+
+* **completions:** () for function Vars and methods ([b9b5a6f](https://github.com/aurelia/vscode-extension/commit/b9b5a6f84a95c95546f8c56b02dca6994c964e35))
+* **completions:**  resolve(false) for promise in `isInsideTag` ([ed3ee84](https://github.com/aurelia/vscode-extension/commit/ed3ee848d6d8bcd1beb1e05299055f419a1f4d1c)), closes [#143](https://github.com/aurelia/vscode-extension/issues/143)
+* **completions:** [#142](https://github.com/aurelia/vscode-extension/issues/142) $variables ([5f3a131](https://github.com/aurelia/vscode-extension/commit/5f3a131b7b27e540c0843a89e5b04e9ca9b80526))
+* **completions:** show if.bind and co. for CusEle ([e30dc05](https://github.com/aurelia/vscode-extension/commit/e30dc05137b38c0b8697ff418d1051e2a85c9c7e))
+* **completions vc:** upon | should complete with ValConvs ([1f2b9f8](https://github.com/aurelia/vscode-extension/commit/1f2b9f86248c82fa3a46c3ca1abb0ef3e2f621c0))
+* **embedded:** handle components with same file name correctly ([fcc8c9d](https://github.com/aurelia/vscode-extension/commit/fcc8c9d046162a1e3996c68a440c30f52877c340))
+
+
+
+### Features
+
+* **completions:** add delegate and trigger ([fd40d94](https://github.com/aurelia/vscode-extension/commit/fd40d94f4ef3d83947008885e53004b62e884b98))
+* **settings:** custom path to tsconfig.json ([af0d065](https://github.com/aurelia/vscode-extension/commit/af0d0657282e225acbdd04f57ea4360415ed5342)), closes [#149](https://github.com/aurelia/vscode-extension/issues/149)
+* **settings:** customize rootDirectory ([b34d6b5](https://github.com/aurelia/vscode-extension/commit/b34d6b520fcee4e00ea84d4cbdd160f00e2017ba))
+* **settings:** update aurelia program on (vscode)config changes ([8b2c741](https://github.com/aurelia/vscode-extension/commit/8b2c7416ca0cb7a451187c5fdc87c475ecb6202f))
+
+
+
 ## [2.0.3](https://github.com/aurelia/vscode-extension/compare/2.0.2...2.0.3) (2021-03-01)
 
 ## Chore
