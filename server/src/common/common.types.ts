@@ -1,11 +1,11 @@
 export interface IProjectOptions {
   include?: string[];
   exclude?: string[];
-  sourceDirectory?: string;
+  rootDirectory?: string;
 }
 
 export const defaultProjectOptions: IProjectOptions = {
   include: [],
   exclude: [],
-  sourceDirectory: '',
+  rootDirectory: '',
 };

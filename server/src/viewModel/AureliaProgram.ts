@@ -168,9 +168,9 @@ export class AureliaProgram {
   public setProjectFilePaths(
     options: IProjectOptions = defaultProjectOptions
   ): string[] {
-    const { sourceDirectory, exclude, include } = options;
+    const { rootDirectory, exclude, include } = options;
     const targetSourceDirectory =
-      sourceDirectory ?? ts.sys.getCurrentDirectory();
+      rootDirectory ?? ts.sys.getCurrentDirectory();
 
     let finalExcludes: string[] = [];
 

@@ -22,9 +22,9 @@ export async function getAureliaProgramForTesting(
 ): Promise<AureliaProgram> {
   const container: Container = globalContainer;
   const aureliaProgram = container.get(AureliaProgram);
-  const sourceDirectory = path.resolve(__dirname, '../../testFixture');
+  const rootDirectory = path.resolve(__dirname, '../../testFixture');
 
-  projectOptions.sourceDirectory = sourceDirectory;
+  projectOptions.rootDirectory = rootDirectory;
 
   await createAureliaWatchProgram(aureliaProgram, projectOptions);
   return aureliaProgram;

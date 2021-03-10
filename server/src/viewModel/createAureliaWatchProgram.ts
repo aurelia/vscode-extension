@@ -41,7 +41,7 @@ export async function createAureliaWatchProgram(
     targetSourceDirectory = settings.aureliaProject.rootDirectory;
   } else {
     targetSourceDirectory =
-      projectOptions?.sourceDirectory ?? ts.sys.getCurrentDirectory();
+      projectOptions?.rootDirectory ?? ts.sys.getCurrentDirectory();
   }
 
   console.log(
