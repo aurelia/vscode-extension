@@ -33,6 +33,15 @@ export async function createAureliaWatchProgram(
   aureliaProgram: AureliaProgram,
   projectOptions?: IProjectOptions
 ): Promise<void> {
+  if (projectOptions === undefined) {
+    const settings = await documentSettings.getDocumentSettings();
+    projectOptions = {
+      include: settings?.aureliaProject?.include,
+      exclude: settings?.aureliaProject?.exclude,
+      rootDirectory: settings?.aureliaProject?.rootDirectory,
+    }
+  }
+
   const settings = await documentSettings.getDocumentSettings();
 
   let targetSourceDirectory = '';
@@ -49,7 +58,6 @@ export async function createAureliaWatchProgram(
     targetSourceDirectory
   );
 
-  // 1. Define/default path/to/tsconfig.json
   let configPath: string | undefined;
   if (settings?.pathToTsConfig) {
     configPath = settings?.pathToTsConfig;

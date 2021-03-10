@@ -122,13 +122,9 @@ connection.onInitialized(async () => {
       undefined
     );
 
-    const settings = await documentSettings.getDocumentSettings();
 
     console.log('[server.ts] 3. Create Aurelia Watch Program');
-    await createAureliaWatchProgram(aureliaProgram, {
-      include: settings?.aureliaProject?.include,
-      exclude: settings?.aureliaProject?.exclude,
-    });
+    await createAureliaWatchProgram(aureliaProgram);
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
@@ -147,6 +143,8 @@ connection.onDidChangeConfiguration((change) => {
     documentSettings.globalSettings = (change.settings[settingsName] ||
       documentSettings.defaultSettings) as ExtensionSettings;
   }
+
+  void createAureliaWatchProgram(aureliaProgram);
 });
 
 // Only keep settings for open documents
