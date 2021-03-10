@@ -17,16 +17,16 @@ import { AureliaCompletionItem, isAureliaCompletionItem } from '../../../server/
 import { createTextDocumentPositionParams, getLanguageModes } from '../../../server/src/feature/embeddedLanguages/languageModes';
 import { DefinitionResult } from '../../../server/src/feature/definition/getDefinition';
 
-export function getAureliaProgramForTesting(
+export async function getAureliaProgramForTesting(
   projectOptions: IProjectOptions = defaultProjectOptions
-): AureliaProgram {
+): Promise<AureliaProgram> {
   const container: Container = globalContainer;
   const aureliaProgram = container.get(AureliaProgram);
   const sourceDirectory = path.resolve(__dirname, '../../testFixture');
 
   projectOptions.sourceDirectory = sourceDirectory;
 
-  createAureliaWatchProgram(aureliaProgram, projectOptions);
+  await createAureliaWatchProgram(aureliaProgram, projectOptions);
   return aureliaProgram;
 }
 

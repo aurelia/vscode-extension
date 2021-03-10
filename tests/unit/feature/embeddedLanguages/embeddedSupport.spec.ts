@@ -12,8 +12,8 @@ import {
 
 let testAureliaProgram: AureliaProgram;
 describe('embeddedSupport.ts', () => {
-  before(() => {
-    testAureliaProgram = getAureliaProgramForTesting({
+  before(async () => {
+    testAureliaProgram = await getAureliaProgramForTesting({
       include: ['src/realdworld-advanced'],
     });
   });

@@ -8,8 +8,8 @@ import { SyntaxKind } from 'typescript';
 
 let testAureliaProgram: AureliaProgram;
 describe('Aurelia Component List', () => {
-  before(() => {
-    testAureliaProgram = getAureliaProgramForTesting({
+  before(async () => {
+    testAureliaProgram = await getAureliaProgramForTesting({
       include: ['src/realdworld-advanced'],
     });
   });
@@ -48,8 +48,8 @@ describe('Aurelia Component List', () => {
 
 describe('Aurelia Component List - Methods', () => {
 
-  it('#setBindableList #getBindableList', () => {
-    testAureliaProgram = getAureliaProgramForTesting({
+  it('#setBindableList #getBindableList', async () => {
+    testAureliaProgram = await getAureliaProgramForTesting({
       include: ['src/minimal-component/*'],
     });
     testAureliaProgram.initComponentList();

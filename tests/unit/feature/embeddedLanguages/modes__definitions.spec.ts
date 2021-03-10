@@ -31,7 +31,7 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
   >;
 
   before(async () => {
-    const testAup = getAureliaProgramForTesting();
+    const testAup = await getAureliaProgramForTesting();
     // testAup.initComponentList();
     // const componentList = testAup.getComponentList();
     // console.log('TCL: componentList', componentList.length);
@@ -253,7 +253,7 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
 describe('Feature: Definition - Components with same file names (index.ts/html)', () => {
   context('Scenario: Find correct View Model', () => {
     it('Should find correct View Model', async () => {
-      const testAureliaProgram = getAureliaProgramForTesting({
+      const testAureliaProgram = await getAureliaProgramForTesting({
         include: ['src/realdworld-advanced'],
       });
       const position = Position.create(3, 34);
