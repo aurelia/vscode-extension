@@ -40,12 +40,13 @@ export function getTextInterpolationMode(
       goToSourceWord: string,
     ): Promise<DefinitionResult | undefined> {
       const regions = (await languageModelCacheDocument.get(document)).getRegions();
-      return getAccessScopeDefinition(
+      const definition = getAccessScopeDefinition(
         document,
         position,
         goToSourceWord,
         regions
       );
+      return definition;
     },
     async doHover(
       document: TextDocument,

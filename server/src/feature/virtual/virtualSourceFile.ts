@@ -84,7 +84,7 @@ export async function createVirtualLanguageService(
     virtualContent
   )!;
 
-  if (options.startAtBeginningOfMethodInVirtualFile !== undefined) {
+  if (options.startAtBeginningOfMethodInVirtualFile) {
     virtualCursorIndex -= virtualContent.length - 1; // -1 to start at beginning of method name;
   }
 
@@ -317,14 +317,14 @@ export function createVirtualFileWithContent(
   aureliaProgram: AureliaProgram,
   documentUri: string,
   content: string
-  ): VirtualSourceFileInfo | undefined {
+): VirtualSourceFileInfo | undefined {
   // 1. Get original viewmodel file associated with view
   const componentList = aureliaProgram.getComponentList();
 
   const targetComponent = componentList.find((component) => {
     if (component.viewFilePath === undefined) return false;
 
-    const targetView = documentUri.includes(component.viewFilePath)
+    const targetView = documentUri.includes(component.viewFilePath);
     if (targetView) {
       return targetView;
     }
@@ -355,12 +355,18 @@ export function createVirtualFileWithContent(
     99
   );
 
+  const {
+    virtualCursorIndex,
+    virtualSourcefile,
+  } = createVirtualViewModelSourceFile(
+    virtualViewModelSourceFile,
+    content,
+    customElementClassName
+  );
+
   return {
-    ...createVirtualViewModelSourceFile(
-      virtualViewModelSourceFile,
-      content,
-      customElementClassName
-    ),
+    virtualCursorIndex,
+    virtualSourcefile,
     viewModelFilePath: targetSourceFile.fileName,
   };
 }
