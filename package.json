@@ -96,7 +96,11 @@
 							".html"
 						]
 					}
-				}
+				},
+        "aurelia.pathToTsConfig": {
+          "type": "string",
+          "description": "Provide an absolute path to a tsconfig.json"
+        }
 			}
 		},
 		"grammars": [

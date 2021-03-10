@@ -1,6 +1,7 @@
 import * as ts from 'typescript';
 import { AureliaProgram } from './AureliaProgram';
 import { IProjectOptions } from '../common/common.types';
+import { documentSettings } from '../configuration/DocumentSettings';
 
 const updateAureliaComponents = (
   aureliaProgram: AureliaProgram,
@@ -28,22 +29,38 @@ const updateAureliaComponents = (
   }
 };
 
-export function createAureliaWatchProgram(
+export async function createAureliaWatchProgram(
   aureliaProgram: AureliaProgram,
   projectOptions?: IProjectOptions
-): void {
+): Promise<void> {
   // 1. Define/default path/to/tsconfig.json
   const targetSourceDirectory =
     projectOptions?.sourceDirectory ?? ts.sys.getCurrentDirectory();
 
-  console.log('The Extension is based on this directly: ', targetSourceDirectory)
-
-  let configPath = ts.findConfigFile(
-    // /* searchPath */ "./",
-    /* searchPath */ targetSourceDirectory,
-    ts.sys.fileExists,
-    'tsconfig.json'
+  console.log(
+    '[Info] The Extension is based on this directly: ',
+    targetSourceDirectory
   );
+
+  const settings = await documentSettings.getDocumentSettings();
+
+  let configPath: string | undefined;
+  if (settings?.pathToTsConfig) {
+    configPath = settings?.pathToTsConfig;
+
+    console.log('[INFO]: A custom path to tsconfig.json was detected:');
+    console.log(configPath);
+  } else {
+    configPath = ts.findConfigFile(
+      // /* searchPath */ "./",
+      /* searchPath */ targetSourceDirectory,
+      ts.sys.fileExists,
+      'tsconfig.json'
+    );
+    console.log('[INFO]: Path to tsconfig.json detected:');
+    console.log(configPath);
+  }
+
   if (configPath === undefined) {
     configPath = '../../tsconfig.json'; // use config file from the extension as default
   }

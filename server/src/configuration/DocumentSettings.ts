@@ -35,6 +35,7 @@ export interface ExtensionSettings {
     unit: ['.spec.js', '.spec.ts'];
     view: ['.html'];
   };
+  pathToTsConfig?: string;
 }
 
 @singleton()

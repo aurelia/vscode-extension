@@ -112,7 +112,7 @@ connection.onInitialize(async (params: InitializeParams) => {
   return result;
 });
 
-connection.onInitialized(() => {
+connection.onInitialized(async () => {
   console.log('[server.ts] 2. onInitialized');
 
   if (hasConfigurationCapability) {
@@ -123,7 +123,7 @@ connection.onInitialized(() => {
     );
 
     console.log('[server.ts] 3. Create Aurelia Watch Program');
-    createAureliaWatchProgram(aureliaProgram);
+    await createAureliaWatchProgram(aureliaProgram);
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
