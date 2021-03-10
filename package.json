@@ -73,6 +73,24 @@
 			"type": "object",
 			"title": "Aurelia",
 			"properties": {
+				"aurelia.aureliaProject": {
+          "include": {
+            "type": "array",
+            "description": "Includes for your Aurelia Project",
+            "default": ["src"]
+          },
+          "exclude": {
+            "type": "array",
+            "description": "Exlcudes for your Aurelia Project",
+            "default": [
+              "**/node_modules",
+              "aurelia_project",
+              "**/out",
+              "**/build",
+              "**/dist"
+            ]
+          }
+        },
 				"aurelia.relatedFiles": {
 					"type": "object",
 					"description": "Aurelia quick switching between related files",

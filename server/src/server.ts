@@ -122,8 +122,13 @@ connection.onInitialized(async () => {
       undefined
     );
 
+    const settings = await documentSettings.getDocumentSettings();
+
     console.log('[server.ts] 3. Create Aurelia Watch Program');
-    await createAureliaWatchProgram(aureliaProgram);
+    await createAureliaWatchProgram(aureliaProgram, {
+      include: settings?.aureliaProject?.include,
+      exclude: settings?.aureliaProject?.exclude,
+    });
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
