@@ -84,7 +84,6 @@ export function getAureliaComponentInfoFromClassDeclaration(
       const conventionViewFilePath = fileName.replace(/.[jt]s$/, '.html');
       if (fs.existsSync(conventionViewFilePath)) {
         viewFilePath = conventionViewFilePath;
-        console.log('TCL: conventionViewFilePath', conventionViewFilePath);
       } else {
         viewFilePath = getTemplateImportPathFromCustomElementDecorator(
           targetClassDeclaration,
@@ -112,7 +111,6 @@ export function getAureliaComponentInfoFromClassDeclaration(
     }
   });
 
-  result; /* ? */
   return result;
 }
 
@@ -256,8 +254,8 @@ export function hasCustomElementNamingConvention(
     className?.includes(AureliaClassTypes.CUSTOM_ELEMENT)
   );
 
-  const { fileName } = classDeclaration.getSourceFile(); /* ? */
-  const baseName = Path.parse(fileName).name; /* ? */
+  const { fileName } = classDeclaration.getSourceFile();
+  const baseName = Path.parse(fileName).name;
   const isCorrectFileAndClassConvention = baseName === kebabCase(className);
 
   return (

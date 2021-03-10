@@ -82,7 +82,17 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':'],
+        triggerCharacters: [
+          ' ',
+          '.',
+          '[',
+          '"',
+          '\'',
+          '{',
+          '<',
+          ':',
+          '|',
+        ],
       },
       definitionProvider: true,
       hoverProvider: true,
@@ -102,7 +112,7 @@ connection.onInitialize(async (params: InitializeParams) => {
   return result;
 });
 
-connection.onInitialized(() => {
+connection.onInitialized(async () => {
   console.log('[server.ts] 2. onInitialized');
 
   if (hasConfigurationCapability) {
@@ -112,8 +122,9 @@ connection.onInitialized(() => {
       undefined
     );
 
+
     console.log('[server.ts] 3. Create Aurelia Watch Program');
-    createAureliaWatchProgram(aureliaProgram);
+    await createAureliaWatchProgram(aureliaProgram);
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
@@ -132,6 +143,8 @@ connection.onDidChangeConfiguration((change) => {
     documentSettings.globalSettings = (change.settings[settingsName] ||
       documentSettings.defaultSettings) as ExtensionSettings;
   }
+
+  void createAureliaWatchProgram(aureliaProgram);
 });
 
 // Only keep settings for open documents
@@ -176,6 +189,7 @@ connection.onCompletion(
     const text = document.getText();
     const offset = document.offsetAt(_textDocumentPosition.position);
     const triggerCharacter = text.substring(offset - 1, offset);
+    let accumulateCompletions: CompletionItem[] = [];
 
     if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {
       const isNotRegion = modeAndRegion.region === undefined;
@@ -185,11 +199,18 @@ connection.onCompletion(
         return atakCompletions;
       }
     } else if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER) {
+      let ataCompletions: CompletionItem[];
       const isNotRegion = modeAndRegion.region === undefined;
       const isInsideTag = await checkInsideTag(document, offset);
-      if (isNotRegion && isInsideTag) {
-        const ataCompletions = createAureliaTemplateAttributeCompletions();
-        return ataCompletions;
+
+      if (isInsideTag) {
+        ataCompletions = createAureliaTemplateAttributeCompletions();
+
+        if (isNotRegion) {
+          return ataCompletions;
+        }
+
+        accumulateCompletions = ataCompletions;
       }
     }
 
@@ -199,12 +220,15 @@ connection.onCompletion(
         completions = ((await doComplete(
           document,
           _textDocumentPosition,
-          triggerCharacter
+          triggerCharacter,
+          modeAndRegion.region
         )) as unknown) as CompletionItem[];
       } catch (error) {
         console.log('TCL: error', error);
       }
-      return completions;
+
+      accumulateCompletions.push(...completions);
+      return accumulateCompletions;
     }
 
     return [];
@@ -234,10 +258,20 @@ connection.onHover(() => {
 });
 
 connection.onRequest('aurelia-get-component-list', () => {
-  return aureliaProgram.getComponentList().map(cList => {
-    const {componentName, className, viewFilePath, viewModelFilePath, baseViewModelFileName} = cList;
+  return aureliaProgram.getComponentList().map((cList) => {
+    const {
+      componentName,
+      className,
+      viewFilePath,
+      viewModelFilePath,
+      baseViewModelFileName,
+    } = cList;
     return {
-      componentName, className, viewFilePath, viewModelFilePath, baseViewModelFileName
+      componentName,
+      className,
+      viewFilePath,
+      viewModelFilePath,
+      baseViewModelFileName,
     };
   });
 });

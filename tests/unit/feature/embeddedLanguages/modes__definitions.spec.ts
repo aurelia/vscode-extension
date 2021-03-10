@@ -12,9 +12,8 @@ import {
 import {
   createTextDocumentForTesting,
   getAureliaProgramForTesting,
+  TestSetup,
 } from '../../helpers/test-setup';
-import { isAureliaCompletionItem } from '../../../../server/src/feature/completions/virtualCompletion';
-import { VIRTUAL_METHOD_NAME } from '../../../../server/src/feature/virtual/virtualSourceFile';
 import { ViewRegionType } from '../../../../server/src/feature/embeddedLanguages/embeddedSupport';
 import { AureliaView } from '../../../../server/src/common/constants';
 
@@ -32,7 +31,7 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
   >;
 
   before(async () => {
-    const testAup = getAureliaProgramForTesting();
+    const testAup = await getAureliaProgramForTesting();
     // testAup.initComponentList();
     // const componentList = testAup.getComponentList();
     // console.log('TCL: componentList', componentList.length);
@@ -42,7 +41,6 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
     const testPath = path.resolve(__dirname, '../../../testFixture');
     const targetViewPath = path.resolve(testPath, COMPONENT_VIEW_PATH);
     document = createTextDocumentForTesting(targetViewPath);
-    document.getText(); /* ? */
   });
 
   const templateTestCases__Definition: {
@@ -100,6 +98,13 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
       lineAndCharacterOfDef: { line: 26, character: 2 },
     }, // {{ISSUE-8Q6EL3Ui}}
     {
+      position: Position.create(55, 3),
+      type: ViewRegionType.CustomElement,
+      targetWord: 'compo-user',
+      fileNameOfDef: COMPONENT_VIEW_MODEL_FILE_NAME,
+      lineAndCharacterOfDef: { line: 1, character: 1 },
+    },
+    {
       position: Position.create(27, 8),
       type: ViewRegionType.TextInterpolation,
       targetWord: 'grammarRules',
@@ -139,13 +144,6 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
       regionValue: 'message | sort:',
       lineAndCharacterOfDef: { line: 1, character: 1 },
     }, // {{ISSUE-M0pKnxbJ}}
-    {
-      position: Position.create(55, 3),
-      type: ViewRegionType.CustomElement,
-      targetWord: 'compo-user',
-      fileNameOfDef: COMPONENT_VIEW_MODEL_FILE_NAME,
-      lineAndCharacterOfDef: { line: 1, character: 1 },
-    },
   ];
 
   templateTestCases__Definition.forEach(
@@ -158,8 +156,8 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
       attributeName,
       attributeValue,
       regionValue,
-    }) => {
-      it(`Definition - ${type}`, async () => {
+    }, index) => {
+      it(`Definition - ${type} - ${index}`, async () => {
         modeAndRegion = await languageModes.getModeAndRegionAtPosition(
           document,
           position
@@ -250,4 +248,28 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
   //   const completionsResults = numOfClassMembers + 1;
   //   strictEqual(complete?.length, completionsResults);
   // });
+});
+
+describe('Feature: Definition - Components with same file names (index.ts/html)', () => {
+  context('Scenario: Find correct View Model', () => {
+    it('Should find correct View Model', async () => {
+      const testAureliaProgram = await getAureliaProgramForTesting({
+        include: ['src/realdworld-advanced'],
+      });
+      const position = Position.create(3, 34);
+      const defintions = await TestSetup.createDefinitionTest(
+        testAureliaProgram,
+        {
+          templatePath: 'src/realdworld-advanced/settings/index.html',
+          position,
+          goToSourceWord: 'dirty',
+        }
+      );
+
+      const isCorrectViewModel = defintions.viewModelFilePath?.includes(
+        'src/realdworld-advanced/settings/index.ts'
+      );
+      strictEqual(isCorrectViewModel, true);
+    });
+  });
 });

@@ -35,7 +35,6 @@ import {
   TextDocument,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import { getLanguageModelCacheDocumentRegionAtPosition } from '../embeddedLanguages/languageModes';
 import { aureliaProgram, AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import {
@@ -44,6 +43,7 @@ import {
   getVirtualLangagueService,
 } from '../virtual/virtualSourceFile';
 import { AsyncReturnType } from '../../common/global';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 
 const PARAMETER_NAME = 'parameterName';
 
@@ -77,7 +77,7 @@ export function getVirtualCompletion(
       undefined,
       undefined,
       undefined
-    ); /* ? */
+    );
   });
 
   return { virtualCompletions, virtualCompletionEntryDetails };
@@ -97,15 +97,15 @@ export function createProgram(
     compilerOptions
       ? JSON.stringify(compilerOptions)
       : `{
-	  "compilerOptions": {
-		"target": "es2018",
-		"module": "commonjs",
-		"lib": ["es2018"],
-		"rootDir": ".",
-		"strict": false,
-		"esModuleInterop": true,
-	  }
-	`
+   "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "lib": ["es2018"],
+    "rootDir": ".",
+    "strict": false,
+    "esModuleInterop": true,
+   }
+ `
   );
   const { options, errors } = ts.convertCompilerOptionsFromJson(
     tsConfigJson.config.compilerOptions,
@@ -153,13 +153,11 @@ export function isAureliaCompletionItem(
 async function getVirtualViewModelCompletion(
   textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  aureliaProgram: AureliaProgram
+  aureliaProgram: AureliaProgram,
+  region?: ViewRegionInfo
 ): Promise<AureliaCompletionItem[]> {
   // 1. From the region get the part, that should be made virtual.
   const documentUri = textDocumentPosition.textDocument.uri;
-  const region = await getLanguageModelCacheDocumentRegionAtPosition(
-    textDocumentPosition.position
-  ).get(document);
 
   if (!region) return [];
 
@@ -283,20 +281,22 @@ function enhanceCompletionItemDocumentation(
 
   /** ${1: argName1}, ${2: argName2} */
   function createArgCompletion(entryDetail: EntryDetailsMapData) {
-    return customizeEnhanceDocumentation.customEnhanceMethodArguments(
+    const result = customizeEnhanceDocumentation.customEnhanceMethodArguments(
       entryDetail.methodArguments
     );
+    return result;
   }
 
   const result = virtualCompletions.map((tsCompletion) => {
     const entryDetail = entryDetailsMap[tsCompletion.name];
-    const isMethod = entryDetail.kind === CompletionItemKind.Method;
+    const isMethod =
+      entryDetail.kind === CompletionItemKind.Method ||
+      entryDetail.displayParts?.includes('() => '); // If variable has function type, treat as method
     /** Default value is just the method name */
     let insertMethodTextWithArguments = tsCompletion.name;
+
     if (isMethod) {
-      if (
-        customizeEnhanceDocumentation?.omitMethodNameAndBrackets !== undefined
-      ) {
+      if (customizeEnhanceDocumentation?.omitMethodNameAndBrackets === true) {
         insertMethodTextWithArguments = createArgCompletion(entryDetail);
       } else {
         insertMethodTextWithArguments = `${
@@ -305,13 +305,20 @@ function enhanceCompletionItemDocumentation(
       }
     }
 
+    let insertText: string;
+    if (isMethod) {
+      insertText = insertMethodTextWithArguments;
+    } else {
+      insertText = tsCompletion.name.replace(/^\$/g, '\\$');
+    }
+
     const completionItem: AureliaCompletionItem = {
       documentation: {
         kind: MarkupKind.Markdown,
         value: entryDetail.documentation ?? '',
       },
       detail: entryDetail.displayParts ?? '',
-      insertText: isMethod ? insertMethodTextWithArguments : tsCompletion.name,
+      insertText: insertText,
       insertTextFormat: InsertTextFormat.Snippet,
       kind: entryDetail.kind,
       label: tsCompletion.name,
@@ -343,7 +350,8 @@ function enhanceMethodArguments(methodArguments: string[]): string {
 
 export async function getAureliaVirtualCompletions(
   _textDocumentPosition: TextDocumentPositionParams,
-  document: TextDocument
+  document: TextDocument,
+  region?: ViewRegionInfo
 ): Promise<AureliaCompletionItem[]> {
   // Virtual file
   let virtualCompletions: AsyncReturnType<
@@ -353,7 +361,8 @@ export async function getAureliaVirtualCompletions(
     virtualCompletions = await getVirtualViewModelCompletion(
       _textDocumentPosition,
       document,
-      aureliaProgram
+      aureliaProgram,
+      region
     );
   } catch (err) {
     console.log('onCompletion 261 TCL: err', err);

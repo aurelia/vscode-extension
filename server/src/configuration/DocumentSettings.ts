@@ -20,7 +20,9 @@ export const AURELIA_ATTRIBUTES_KEYWORDS = [
 ];
 
 interface IAureliaProject {
-  path: string[];
+  include?: string[];
+  exclude?: string[];
+  rootDirectory?: string;
 }
 
 interface Features {}
@@ -35,6 +37,7 @@ export interface ExtensionSettings {
     unit: ['.spec.js', '.spec.ts'];
     view: ['.html'];
   };
+  pathToTsConfig?: string;
 }
 
 @singleton()

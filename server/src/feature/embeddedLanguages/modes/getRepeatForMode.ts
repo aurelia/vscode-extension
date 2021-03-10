@@ -1,4 +1,4 @@
-import { ViewRegionType } from '../embeddedSupport';
+import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { LanguageMode, Position, TextDocument } from '../languageModes';
@@ -13,11 +13,14 @@ export function getRepeatForMode(): LanguageMode {
     },
     async doComplete(
       document: TextDocument,
-      _textDocumentPosition: TextDocumentPositionParams
+      _textDocumentPosition: TextDocumentPositionParams,
+      triggerCharacter?: string,
+      region?: ViewRegionInfo,
     ) {
       const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
         _textDocumentPosition,
-        document
+        document,
+        region
       );
       if (aureliaVirtualCompletions.length > 0) {
         return aureliaVirtualCompletions;

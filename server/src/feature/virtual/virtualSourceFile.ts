@@ -84,7 +84,7 @@ export async function createVirtualLanguageService(
     virtualContent
   )!;
 
-  if (options.startAtBeginningOfMethodInVirtualFile !== undefined) {
+  if (options.startAtBeginningOfMethodInVirtualFile) {
     virtualCursorIndex -= virtualContent.length - 1; // -1 to start at beginning of method name;
   }
 
@@ -319,29 +319,32 @@ export function createVirtualFileWithContent(
   content: string
 ): VirtualSourceFileInfo | undefined {
   // 1. Get original viewmodel file associated with view
-  const aureliaFiles = aureliaProgram.getAureliaSourceFiles();
-  const scriptExtensions = ['.js', '.ts']; // TODO find common place or take from package.json config
-  const viewBaseName = path.parse(documentUri).name;
+  const componentList = aureliaProgram.getComponentList();
 
-  const targetSourceFile = aureliaFiles?.find((aureliaFile) => {
-    return scriptExtensions.find((extension) => {
-      const toViewModelName = `${viewBaseName}${extension}`;
-      const aureliaFileName = path.basename(aureliaFile.fileName);
-      return aureliaFileName === toViewModelName;
-    });
+  const targetComponent = componentList.find((component) => {
+    if (component.viewFilePath === undefined) return false;
+
+    const targetView = documentUri.includes(component.viewFilePath);
+    if (targetView) {
+      return targetView;
+    }
+
+    const targetViewModel = documentUri.includes(component.viewModelFilePath);
+    if (targetViewModel) {
+      return targetViewModel;
+    }
   });
+  const targetSourceFile = targetComponent?.sourceFile;
 
   if (!targetSourceFile) {
     console.log(`No source file found for current view: ${documentUri}`);
     return;
   }
 
-  const componentList = aureliaProgram.getComponentList();
-  const customElementClassName = componentList.find(
-    (component) =>
-      component.baseViewModelFileName ===
-      path.parse(targetSourceFile.fileName).name
-  )?.className;
+  const customElementClassName = componentList.find((component) => {
+    const result = component.viewModelFilePath === targetSourceFile.fileName;
+    return result;
+  })?.className;
 
   if (customElementClassName === undefined) return;
 
@@ -352,12 +355,18 @@ export function createVirtualFileWithContent(
     99
   );
 
+  const {
+    virtualCursorIndex,
+    virtualSourcefile,
+  } = createVirtualViewModelSourceFile(
+    virtualViewModelSourceFile,
+    content,
+    customElementClassName
+  );
+
   return {
-    ...createVirtualViewModelSourceFile(
-      virtualViewModelSourceFile,
-      content,
-      customElementClassName
-    ),
+    virtualCursorIndex,
+    virtualSourcefile,
     viewModelFilePath: targetSourceFile.fileName,
   };
 }

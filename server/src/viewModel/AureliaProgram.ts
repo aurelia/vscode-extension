@@ -85,7 +85,10 @@ export class AureliaProgram {
         case '.ts': {
           const sourceFile = program.getSourceFile(path);
           if (sourceFile === undefined) {
-            console.log('These source files are ignored by the extension: ', path);
+            console.log(
+              'These source files are ignored by the extension: ',
+              path
+            );
             return;
           }
 
@@ -165,20 +168,24 @@ export class AureliaProgram {
   public setProjectFilePaths(
     options: IProjectOptions = defaultProjectOptions
   ): string[] {
-    const { sourceDirectory, exclude, include } = options;
+    const { rootDirectory, exclude, include } = options;
     const targetSourceDirectory =
-      sourceDirectory ?? ts.sys.getCurrentDirectory();
+      rootDirectory ?? ts.sys.getCurrentDirectory();
 
-    const finalExcludes = [
-      '**/node_modules',
-      'aurelia_project',
-      '**/out',
-      '**/build',
-      '**/dist',
-    ];
-    if (exclude !== undefined) {
-      finalExcludes.push(...exclude);
+    let finalExcludes: string[] = [];
+
+    if (exclude === undefined) {
+      const defaultExcludes = [
+        '**/node_modules',
+        'aurelia_project',
+        '**/out',
+        '**/build',
+        '**/dist',
+      ];
+      finalExcludes.push(...defaultExcludes);
     }
+    console.log('[INFO] Exclude paths globs: ');
+    console.log(finalExcludes.join(', '));
 
     let finalIncludes: string[];
 
@@ -187,6 +194,9 @@ export class AureliaProgram {
     } else {
       finalIncludes = ['src'];
     }
+
+    console.log('[INFO] Include paths globs: ');
+    console.log(finalIncludes.join(', '));
 
     const paths = ts.sys.readDirectory(
       targetSourceDirectory,

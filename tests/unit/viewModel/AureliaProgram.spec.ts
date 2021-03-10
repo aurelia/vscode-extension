@@ -8,8 +8,8 @@ import { SyntaxKind } from 'typescript';
 
 let testAureliaProgram: AureliaProgram;
 describe('Aurelia Component List', () => {
-  before(() => {
-    testAureliaProgram = getAureliaProgramForTesting({
+  before(async () => {
+    testAureliaProgram = await getAureliaProgramForTesting({
       include: ['src/realdworld-advanced'],
     });
   });
@@ -17,15 +17,17 @@ describe('Aurelia Component List', () => {
   it('#initComponentList', () => {
     testAureliaProgram.initComponentList();
 
-    const componentList = testAureliaProgram.getComponentList();
+    const componentList = testAureliaProgram.getComponentList();/*?*/
 
-    strictEqual(componentList.length, 1);
-    strictEqual(componentList[0].className, 'SettingsViewCustomElement');
-    strictEqual(componentList[0].componentName, 'settings-view');
-    strictEqual(componentList[0].baseViewModelFileName, 'index');
-    strictEqual(componentList[0].type, AureliaClassTypes.CUSTOM_ELEMENT);
+    strictEqual(componentList.length, 2);
+
+    const settingsComponent = componentList.find(component => component.componentName === 'settings-view');
+    strictEqual(settingsComponent?.className, 'SettingsViewCustomElement');
+    strictEqual(settingsComponent?.componentName, 'settings-view');
+    strictEqual(settingsComponent?.baseViewModelFileName, 'index');
+    strictEqual(settingsComponent?.type, AureliaClassTypes.CUSTOM_ELEMENT);
     //
-    const { classMembers } = componentList[0];
+    const { classMembers } = settingsComponent;
 
     if (!classMembers) return;
 
@@ -46,8 +48,8 @@ describe('Aurelia Component List', () => {
 
 describe('Aurelia Component List - Methods', () => {
 
-  it('#setBindableList #getBindableList', () => {
-    testAureliaProgram = getAureliaProgramForTesting({
+  it('#setBindableList #getBindableList', async () => {
+    testAureliaProgram = await getAureliaProgramForTesting({
       include: ['src/minimal-component/*'],
     });
     testAureliaProgram.initComponentList();

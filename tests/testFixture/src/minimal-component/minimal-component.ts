@@ -6,7 +6,7 @@ interface MyInter {
 }
 
 @customElement({
-  name: "minimal-com ponent",
+  name: "minimal-component",
   template,
 })
 export class MinimalComponent {

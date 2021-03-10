@@ -32,5 +32,6 @@ export function checkInsideTag(
     });
 
     saxStream.write(document.getText());
+    resolve(false);
   });
 }

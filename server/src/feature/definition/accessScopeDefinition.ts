@@ -62,7 +62,8 @@ export function getAccessScopeDefinition(
   }
 
   // 2.
-  return getAccessScopeViewModelDefinition(document, position, goToSourceWord);
+  const viewModelDefinition = getAccessScopeViewModelDefinition(document, position, goToSourceWord);
+  return viewModelDefinition;
 }
 
 /*

@@ -1,6 +1,7 @@
 import * as ts from 'typescript';
 import { AureliaProgram } from './AureliaProgram';
 import { IProjectOptions } from '../common/common.types';
+import { documentSettings } from '../configuration/DocumentSettings';
 
 const updateAureliaComponents = (
   aureliaProgram: AureliaProgram,
@@ -28,22 +29,52 @@ const updateAureliaComponents = (
   }
 };
 
-export function createAureliaWatchProgram(
+export async function createAureliaWatchProgram(
   aureliaProgram: AureliaProgram,
   projectOptions?: IProjectOptions
-): void {
-  // 1. Define/default path/to/tsconfig.json
-  const targetSourceDirectory =
-    projectOptions?.sourceDirectory ?? ts.sys.getCurrentDirectory();
+): Promise<void> {
+  if (projectOptions === undefined) {
+    const settings = await documentSettings.getDocumentSettings();
+    projectOptions = {
+      include: settings?.aureliaProject?.include,
+      exclude: settings?.aureliaProject?.exclude,
+      rootDirectory: settings?.aureliaProject?.rootDirectory,
+    }
+  }
 
-  console.log('The Extension is based on this directly: ', targetSourceDirectory)
+  const settings = await documentSettings.getDocumentSettings();
 
-  let configPath = ts.findConfigFile(
-    // /* searchPath */ "./",
-    /* searchPath */ targetSourceDirectory,
-    ts.sys.fileExists,
-    'tsconfig.json'
+  let targetSourceDirectory = '';
+
+  if (settings?.aureliaProject?.rootDirectory) {
+    targetSourceDirectory = settings.aureliaProject.rootDirectory;
+  } else {
+    targetSourceDirectory =
+      projectOptions?.rootDirectory ?? ts.sys.getCurrentDirectory();
+  }
+
+  console.log(
+    '[Info] The Extension is based on this directly: ',
+    targetSourceDirectory
   );
+
+  let configPath: string | undefined;
+  if (settings?.pathToTsConfig) {
+    configPath = settings?.pathToTsConfig;
+
+    console.log('[INFO]: A custom path to tsconfig.json was detected:');
+    console.log(configPath);
+  } else {
+    configPath = ts.findConfigFile(
+      // /* searchPath */ "./",
+      /* searchPath */ targetSourceDirectory,
+      ts.sys.fileExists,
+      'tsconfig.json'
+    );
+    console.log('[INFO]: Path to tsconfig.json detected:');
+    console.log(configPath);
+  }
+
   if (configPath === undefined) {
     configPath = '../../tsconfig.json'; // use config file from the extension as default
   }

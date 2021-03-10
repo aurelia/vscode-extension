@@ -73,6 +73,28 @@
 			"type": "object",
 			"title": "Aurelia",
 			"properties": {
+				"aurelia.aureliaProject": {
+          "rootDirectory": {
+            "type": "string",
+            "description": "Provide a custom directory for the root."
+          },
+          "include": {
+            "type": "array",
+            "description": "Includes for your Aurelia Project",
+            "default": ["src"]
+          },
+          "exclude": {
+            "type": "array",
+            "description": "Exlcudes for your Aurelia Project",
+            "default": [
+              "**/node_modules",
+              "aurelia_project",
+              "**/out",
+              "**/build",
+              "**/dist"
+            ]
+          }
+        },
 				"aurelia.relatedFiles": {
 					"type": "object",
 					"description": "Aurelia quick switching between related files",
@@ -96,7 +118,11 @@
 							".html"
 						]
 					}
-				}
+				},
+        "aurelia.pathToTsConfig": {
+          "type": "string",
+          "description": "Provide an absolute path to a tsconfig.json"
+        }
 			}
 		},
 		"grammars": [
