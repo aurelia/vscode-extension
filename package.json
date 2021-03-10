@@ -74,6 +74,10 @@
 			"title": "Aurelia",
 			"properties": {
 				"aurelia.aureliaProject": {
+          "rootDirectory": {
+            "type": "string",
+            "description": "Provide a custom directory for the root."
+          },
           "include": {
             "type": "array",
             "description": "Includes for your Aurelia Project",

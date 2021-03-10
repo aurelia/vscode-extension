@@ -33,17 +33,23 @@ export async function createAureliaWatchProgram(
   aureliaProgram: AureliaProgram,
   projectOptions?: IProjectOptions
 ): Promise<void> {
-  // 1. Define/default path/to/tsconfig.json
-  const targetSourceDirectory =
-    projectOptions?.sourceDirectory ?? ts.sys.getCurrentDirectory();
+  const settings = await documentSettings.getDocumentSettings();
+
+  let targetSourceDirectory = '';
+
+  if (settings?.aureliaProject?.rootDirectory) {
+    targetSourceDirectory = settings.aureliaProject.rootDirectory;
+  } else {
+    targetSourceDirectory =
+      projectOptions?.sourceDirectory ?? ts.sys.getCurrentDirectory();
+  }
 
   console.log(
     '[Info] The Extension is based on this directly: ',
     targetSourceDirectory
   );
 
-  const settings = await documentSettings.getDocumentSettings();
-
+  // 1. Define/default path/to/tsconfig.json
   let configPath: string | undefined;
   if (settings?.pathToTsConfig) {
     configPath = settings?.pathToTsConfig;

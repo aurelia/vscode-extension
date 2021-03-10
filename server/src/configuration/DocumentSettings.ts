@@ -22,6 +22,7 @@ export const AURELIA_ATTRIBUTES_KEYWORDS = [
 interface IAureliaProject {
   include?: string[];
   exclude?: string[];
+  rootDirectory?: string;
 }
 
 interface Features {}
