@@ -1,3 +1,16 @@
+## [2.0.5](https://github.com/aurelia/vscode-extension/compare/2.0.4...2.0.5) (2021-03-12)
+
+### Bug Fixes
+* Don't show warnings when the extension crashed
+Reason: Extension crashed, because it could not find a required tsconfig.json file.
+    If you have trouble setting up the extension, please visit the [Usage section](https://github.com/aurelia/vscode-extension#1-usage).
+    You can check the Output ("Aurelia-v2") for more information on what the extension expcets.
+
+### Feedback wanted
+
+* **setup**: How to show that extension needs configuration? [#152](https://github.com/aurelia/vscode-extension/issues/152)
+
+
 ## [2.0.4](https://github.com/aurelia/vscode-extension/compare/2.0.3...2.0.4) (2021-03-10)
 
 

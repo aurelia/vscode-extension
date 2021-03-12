@@ -3,7 +3,7 @@
 	"description": "A VSCode extension for Aurelia",
 	"author": "AureliaEffect",
 	"license": "MIT",
-	"version": "2.0.4",
+	"version": "2.0.5",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/aurelia/vscode-extension"
@@ -175,6 +175,7 @@
 		]
 	},
 	"scripts": {
+    "publish:addTag": "",
 		"vscode:prepublish": "npm run compile",
 		"build": "tsc -p ./",
 		"changelog": "node ./node_modules/conventional-changelog-cli/cli.js -p angular -i CHANGELOG.md -s",
