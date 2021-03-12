@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 import { AureliaProgram } from './AureliaProgram';
 import { IProjectOptions } from '../common/common.types';
 import { documentSettings } from '../configuration/DocumentSettings';
+// import { createConnection } from 'vscode-languageserver';
 
 const updateAureliaComponents = (
   aureliaProgram: AureliaProgram,
@@ -31,7 +32,8 @@ const updateAureliaComponents = (
 
 export async function createAureliaWatchProgram(
   aureliaProgram: AureliaProgram,
-  projectOptions?: IProjectOptions
+  projectOptions?: IProjectOptions,
+  // connection?: ReturnType<typeof createConnection>
 ): Promise<void> {
   if (projectOptions === undefined) {
     const settings = await documentSettings.getDocumentSettings();
@@ -84,6 +86,12 @@ export async function createAureliaWatchProgram(
     console.log('[INFO] Furthermore, you can control, eg. the root directory, or includes/excludes.')
     console.log('Please check out the documentation to find out more')
     console.log('https://github.com/aurelia/vscode-extension#configuration')
+
+    /** TODO: Figure out, if we want to show by default or not
+     * Might become spam-y, if you are aware, that extension configured wrongly.
+     * ISSUE-VaNcstW0
+     */
+    // connection?.sendRequest('warning:no-tsconfig-found');
     return;
   //   /** TODO: Offer to create a tsconfig file */
   //   const tsConfigJson = ts.parseConfigFileTextToJson(
