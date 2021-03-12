@@ -76,7 +76,32 @@ export async function createAureliaWatchProgram(
   }
 
   if (configPath === undefined) {
-    configPath = '../../tsconfig.json'; // use config file from the extension as default
+    console.log('⚠⚠⚠')
+    console.log('[WARNING] No tsconfig.json file found');
+    console.log('You can manually specify a path to your tsconfig.json file by adding the following configs to your settings.json:');
+    console.log('"aurelia.pathToTsConfig": "<path-to-config>"');
+    console.log('⚠⚠⚠')
+    console.log('[INFO] Furthermore, you can control, eg. the root directory, or includes/excludes.')
+    console.log('Please check out the documentation to find out more')
+    console.log('https://github.com/aurelia/vscode-extension#configuration')
+    return;
+  //   /** TODO: Offer to create a tsconfig file */
+  //   const tsConfigJson = ts.parseConfigFileTextToJson(
+  //     'tsconfig.json',
+  //     `{
+  //       "compilerOptions": {
+  //         "target": "es2018",
+  //         "module": "commonjs",
+  //         "lib": ["es2018"],
+  //         "rootDir": ".",
+  //         "strict": false,
+  //         "esModuleInterop": true
+  //       }
+  //     }`
+  //   );
+  //   const sourceText = JSON.stringify(tsConfigJson);
+  //   const virtualTsConfigFile = ts.createSourceFile('virtualTsConfig.json', sourceText, 0);
+  //   configPath = virtualTsConfigFile.fileName;
   }
 
   // 2. Skip watcher if no tsconfig found
