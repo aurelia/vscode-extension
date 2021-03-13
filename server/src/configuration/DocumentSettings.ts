@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Connection } from 'vscode-languageserver';
-import { Container, singleton } from 'aurelia-dependency-injection';
-const globalContainer = new Container();
+import { singleton } from 'aurelia-dependency-injection';
+import { globalContainer } from '../container';
 
 export const settingsName = 'aurelia';
 

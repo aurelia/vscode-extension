@@ -8,7 +8,6 @@ import 'reflect-metadata';
 
 import {
   AureliaProgram,
-  globalContainer,
 } from '../../../server/src/viewModel/AureliaProgram';
 import { createAureliaWatchProgram } from '../../../server/src/viewModel/createAureliaWatchProgram';
 import { Position, TextDocument } from 'vscode-html-languageservice';
@@ -16,6 +15,7 @@ import { Container } from 'aurelia-dependency-injection';
 import { AureliaCompletionItem, isAureliaCompletionItem } from '../../../server/src/feature/completions/virtualCompletion';
 import { createTextDocumentPositionParams, getLanguageModes } from '../../../server/src/feature/embeddedLanguages/languageModes';
 import { DefinitionResult } from '../../../server/src/feature/definition/getDefinition';
+import { globalContainer } from '../../../server/src/container';
 
 export async function getAureliaProgramForTesting(
   projectOptions: IProjectOptions = defaultProjectOptions

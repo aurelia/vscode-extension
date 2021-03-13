@@ -1,11 +1,11 @@
-import { singleton, Container } from 'aurelia-dependency-injection';
+import { singleton } from 'aurelia-dependency-injection';
 import * as ts from 'typescript';
 import * as Path from 'path';
 import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
 import { AureliaClassTypes } from '../common/constants';
 import { ViewRegionInfo } from '../feature/embeddedLanguages/embeddedSupport';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
-export const globalContainer = new Container();
+import { globalContainer } from '../container';
 
 export interface IAureliaClassMember {
   name: string;
