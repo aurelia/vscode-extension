@@ -118,6 +118,18 @@ Quick Navigation:
 </p>
 </details>
 
+### Dependency graph
+<details>
+<summary>Dependency.png (expand)</summary>
+<p>
+
+![architecture.png](../images/dependencygraph.png)
+
+_Generated via [dependency-cruiser](https://github.com/sverweij/dependency-cruiser)_
+
+</p>
+</details>
+
 ---
 
 # Parsing
