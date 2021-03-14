@@ -12,6 +12,7 @@
 		"node": "*"
 	},
 	"dependencies": {
+		"fast-glob": "^3.2.5",
 		"lodash": "^4.17.20",
 		"parse5": "^6.0.1",
 		"parse5-sax-parser": "^6.0.1"
