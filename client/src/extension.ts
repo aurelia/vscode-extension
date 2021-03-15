@@ -118,7 +118,10 @@ export function activate(context: ExtensionContext) {
   const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
     outputChannelName: 'Aurelia v2',
-    documentSelector: [{ scheme: 'file', language: 'html' }],
+    documentSelector: [
+      { scheme: 'file', language: 'html' },
+      { scheme: 'file', language: 'typescript' },
+    ],
     synchronize: {
       // Notify the server about file changes to '.clientrc files contained in the workspace
       fileEvents: workspace.createFileSystemWatcher('**/.clientrc'),
@@ -166,7 +169,7 @@ export function activate(context: ExtensionContext) {
   // Start the client. This will also launch the server
   client.start();
 
-  /**ISSUE-VaNcstW0 */
+  /** ISSUE-VaNcstW0 */
   // await client.onReady();
   // User Information
   // client.onRequest('warning:no-tsconfig-found', () => {

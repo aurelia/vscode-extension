@@ -1,5 +1,4 @@
 import { AsyncReturnType } from './common/global.d';
-
 import {
   createConnection,
   TextDocuments,
@@ -24,7 +23,6 @@ import {
 import 'reflect-metadata';
 
 import {
-  documentSettings,
   ExtensionSettings,
   settingsName,
 } from './configuration/DocumentSettings';
@@ -42,6 +40,8 @@ import {
   createAureliaTemplateAttributeCompletions,
   createAureliaTemplateAttributeKeywordCompletions,
 } from './feature/completions/createAureliaTemplateAttributeCompletions';
+import { globalContainer } from './container';
+import { onConnectionInitialized } from './aureliaServer';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -82,17 +82,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [
-          ' ',
-          '.',
-          '[',
-          '"',
-          '\'',
-          '{',
-          '<',
-          ':',
-          '|',
-        ],
+        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':', '|'],
       },
       definitionProvider: true,
       hoverProvider: true,
@@ -107,7 +97,7 @@ connection.onInitialize(async (params: InitializeParams) => {
   }
 
   // Injections
-  documentSettings.inject(connection, hasConfigurationCapability);
+  // documentSettings.inject(connection, hasConfigurationCapability);
 
   return result;
 });
@@ -122,9 +112,21 @@ connection.onInitialized(async () => {
       undefined
     );
 
+    const extensionSettings = await connection.workspace.getConfiguration({
+      section: settingsName,
+    });
 
-    console.log('[server.ts] 3. Create Aurelia Watch Program');
-    await createAureliaWatchProgram(aureliaProgram);
+    const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+    if (workspaceFolders === null) return;
+
+    const workspaceRootUri = workspaceFolders[0].uri;
+
+    await onConnectionInitialized(
+      globalContainer,
+      workspaceRootUri,
+      extensionSettings,
+      documents.all()
+    );
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
@@ -136,27 +138,34 @@ connection.onInitialized(async () => {
 connection.onDidChangeConfiguration((change) => {
   console.log('[server.ts] onDidChangeConfiguration');
 
-  if (hasConfigurationCapability) {
-    // Reset all cached document settings
-    documentSettings.settingsMap.clear();
-  } else {
-    documentSettings.globalSettings = (change.settings[settingsName] ||
-      documentSettings.defaultSettings) as ExtensionSettings;
-  }
+  // if (hasConfigurationCapability) {
+  //   // Reset all cached document settings
+  //   documentSettings.settingsMap.clear();
+  // } else {
+  //   documentSettings.globalSettings = (change.settings[settingsName] ||
+  //     documentSettings.defaultSettings) as ExtensionSettings;
+  // }
 
-  void createAureliaWatchProgram(aureliaProgram);
+  // void createAureliaWatchProgram(aureliaProgram);
 });
 
 // Only keep settings for open documents
-documents.onDidClose((e) => {
-  documentSettings.settingsMap.delete(e.document.uri);
-});
+// documents.onDidClose((e) => {
+//   documentSettings.settingsMap.delete(e.document.uri);
+// });
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(async (change) => {
-  console.log('[server.ts] (re-)get Language Modes');
-  languageModes = await getLanguageModes();
+  switch (change.document.languageId) {
+    case 'typescript': {
+      // updateAureliaComponents(aureliaProgram);
+    }
+  }
+
+  // console.log('TCL: change', change)
+  // console.log('[server.ts] (re-)get Language Modes');
+  // languageModes = await getLanguageModes();
 });
 
 connection.onDidChangeWatchedFiles((_change) => {

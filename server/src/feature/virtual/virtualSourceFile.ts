@@ -211,10 +211,31 @@ export function getVirtualLangagueService(
   sourceFile: ts.SourceFile,
   watchProgram?: ts.Program
 ): ts.LanguageService {
-  const compilerSettings = watchProgram?.getCompilerOptions();
+  // const compilerSettings = watchProgram?.getCompilerOptions();
+  const compilerSettings = {
+    // module: 99,
+    // skipLibCheck: true,
+    // types: ['jasmine'],
+    // typeRoots: [
+    //   '/home/hdn/dev/work/repo/labfolder-web/labfolder-eln-v2/node_modules/@types',
+    // ],
+    // removeComments: true,
+    // emitDecoratorMetadata: true,
+    // experimentalDecorators: true,
+    // sourceMap: true,
+    // target: 1,
+    // lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'],
+    // moduleResolution: 2,
+    baseUrl: '/home/hdn/dev/work/repo/labfolder-web/labfolder-eln-v2/src',
+    // resolveJsonModule: true,
+    // allowJs: true,
+    // esModuleInterop: true,
+    // configFilePath:
+    //   '/home/hdn/dev/work/repo/labfolder-web/labfolder-eln-v2/tsconfig.json',
+  };
   const watcherProgram = watchProgram;
   const lSHost: ts.LanguageServiceHost = {
-    getCompilationSettings: () => compilerSettings!,
+    getCompilationSettings: () => compilerSettings,
     getScriptFileNames: () => {
       const finalScriptFileName = [sourceFile.fileName];
       return finalScriptFileName;

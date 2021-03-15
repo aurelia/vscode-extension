@@ -68,7 +68,7 @@ export class AureliaProgram {
   public initComponentList(): IAureliaComponent[] | undefined {
     const componentList: IAureliaComponent[] = [];
 
-    const program = aureliaProgram.getProgram();
+    const program = this.getProgram();
     if (program === undefined) {
       console.log('No Program associated with your Aurelia project.');
       return;
@@ -112,6 +112,7 @@ export class AureliaProgram {
         }
       }
     });
+
 
     if (componentList.length === 0) {
       console.log('Error: No Aurelia class found');
@@ -184,8 +185,6 @@ export class AureliaProgram {
       ];
       finalExcludes.push(...defaultExcludes);
     }
-    console.log('[INFO] Exclude paths globs: ');
-    console.log(finalExcludes.join(', '));
 
     let finalIncludes: string[];
 
@@ -195,17 +194,15 @@ export class AureliaProgram {
       finalIncludes = ['src'];
     }
 
-    console.log('[INFO] Include paths globs: ');
-    console.log(finalIncludes.join(', '));
-
     const paths = ts.sys.readDirectory(
       targetSourceDirectory,
-      ['ts', 'js', 'html'],
+      ['ts'],
+      // ['ts', 'js', 'html'],
       finalExcludes,
       finalIncludes
     );
 
-    this.projectFilePaths = paths;
+    this.projectFilePaths = paths;/*?*/
     return paths;
   }
 

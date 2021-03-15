@@ -19,7 +19,7 @@ export const AURELIA_ATTRIBUTES_KEYWORDS = [
   'ref',
 ];
 
-interface IAureliaProject {
+export interface IAureliaProjectSetting {
   include?: string[];
   exclude?: string[];
   rootDirectory?: string;
@@ -29,7 +29,7 @@ interface Features {}
 
 // The example settings
 export interface ExtensionSettings {
-  aureliaProject?: IAureliaProject;
+  aureliaProject?: IAureliaProjectSetting;
   featureToggles?: Features;
   relatedFiles?: {
     script: ['.js', '.ts'];
@@ -38,9 +38,10 @@ export interface ExtensionSettings {
     view: ['.html'];
   };
   pathToTsConfig?: string;
+  /** Whether all found components should be cached (default true) */
+  cacheComponents?: boolean;
 }
 
-@singleton()
 export class DocumentSettings {
   // The global settings, used when the `workspace/configuration` request is not supported by the client.
   // Please note that this is not the case when using this server with the client provided in this example
@@ -62,11 +63,47 @@ export class DocumentSettings {
 
   public hasConfigurationCapability: boolean = false;
 
-  constructor() {
+  private readonly documentSettings: ExtensionSettings;
+
+  constructor(documentSettings: ExtensionSettings) {
+    this.documentSettings = documentSettings;
     this.globalSettings = this.defaultSettings;
+
+    let exclude = this.documentSettings.aureliaProject?.exclude;
+
+    const finalExcludes: string[] = [];
+
+    if (exclude === undefined) {
+      const defaultExcludes = [
+        '**/node_modules',
+        'aurelia_project',
+        '**/out',
+        '**/build',
+        '**/dist',
+      ];
+      finalExcludes.push(...defaultExcludes);
+    }
+    console.log('[INFO] Exclude paths globs: ');
+    console.log(finalExcludes.join(', '));
+    exclude = finalExcludes;
+
+    const include = this.documentSettings.aureliaProject?.include;
+    console.log('[INFO] Include paths globs: ');
+    if (include?.length) {
+      console.log(include?.join(', '));
+    } else {
+      console.log('No includes provided.');
+    }
   }
 
-  public inject(connection: Connection, hasConfigurationCapability: boolean): void {
+  public getSettings(): ExtensionSettings {
+    return this.documentSettings;
+  }
+
+  public inject(
+    connection: Connection,
+    hasConfigurationCapability: boolean
+  ): void {
     this.connection = connection;
     this.hasConfigurationCapability = hasConfigurationCapability;
   }
@@ -98,4 +135,5 @@ export class DocumentSettings {
   }
 }
 
-export const documentSettings = globalContainer.get(DocumentSettings);
+// export const documentSettings = globalContainer.get(DocumentSettings);
+// export const documentSettings = new DocumentSettings({});
