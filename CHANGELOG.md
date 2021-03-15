@@ -1,3 +1,13 @@
+## [2.0.6](https://github.com/aurelia/vscode-extension/compare/2.0.5...2.0.6) (2021-03-15)
+
+
+### Bug Fixes
+
+* **virtual:** handle empty string correctly ([1d23335](https://github.com/aurelia/vscode-extension/commit/1d233354fbb61b9c83a4af7382e81609e6494351))
+  * Background: Component can have empty viewPath, but we checked
+    `someString.includes('')`, which is always true
+
+
 ## [2.0.5](https://github.com/aurelia/vscode-extension/compare/2.0.4...2.0.5) (2021-03-12)
 
 ### Bug Fixes
