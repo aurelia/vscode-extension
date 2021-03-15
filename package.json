@@ -71,7 +71,7 @@
 		],
 		"configuration": {
 			"type": "object",
-			"title": "Aurelia",
+			"title": "aurelia",
 			"properties": {
 				"aurelia.aureliaProject": {
 					"rootDirectory": {
@@ -81,9 +81,7 @@
 					"include": {
 						"type": "array",
 						"description": "Includes for your Aurelia Project",
-						"default": [
-							"src"
-						]
+						"default": []
 					},
 					"exclude": {
 						"type": "array",
@@ -96,6 +94,19 @@
 							"**/dist"
 						]
 					}
+				},
+				"aurelia.extensionSettings.startIntellisenseCapabilities": {
+					"description": "Control when the extension should start intellisense capabilities.",
+					"type": "string",
+					"default": "onStartup",
+					"enum": [
+						"onStartup",
+						"onAureliaProject"
+					],
+					"enumDescriptions": [
+						"As soon as VSCode opens, start component collection.",
+						"When a file inside an Aurelia project is opened."
+					]
 				},
 				"aurelia.relatedFiles": {
 					"type": "object",
