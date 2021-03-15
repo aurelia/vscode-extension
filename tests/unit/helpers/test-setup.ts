@@ -26,7 +26,7 @@ export async function getAureliaProgramForTesting(
 
   projectOptions.rootDirectory = rootDirectory;
 
-  await createAureliaWatchProgram(aureliaProgram, projectOptions);
+  await createAureliaWatchProgram(aureliaProgram);
   return aureliaProgram;
 }
 
