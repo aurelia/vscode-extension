@@ -324,15 +324,21 @@ export function createVirtualFileWithContent(
   const targetComponent = componentList.find((component) => {
     if (component.viewFilePath === undefined) return false;
 
-    const targetView = documentUri.includes(component.viewFilePath);
-    if (targetView) {
-      return targetView;
+    if (component.viewFilePath.length > 0) {
+      const targetView = documentUri.includes(component.viewFilePath);
+      if (targetView) {
+        return targetView;
+      }
     }
 
-    const targetViewModel = documentUri.includes(component.viewModelFilePath);
-    if (targetViewModel) {
-      return targetViewModel;
+    if (component.viewModelFilePath.length > 0) {
+      const targetViewModel = documentUri.includes(component.viewModelFilePath);
+      if (targetViewModel) {
+        return targetViewModel;
+      }
     }
+
+    return false;
   });
   const targetSourceFile = targetComponent?.sourceFile;
 
