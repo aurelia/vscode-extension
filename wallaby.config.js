@@ -12,7 +12,7 @@ module.exports = function () {
       // 'tests/unit/**/*.spec.ts',
       // 'tests/unit/**/*Map.spec.ts',
       // 'tests/unit/**/*embeddedSupport.spec.ts',
-      'tests/unit/**/AureliaProject.spec.ts',
+      'tests/unit/**/AureliaExtension.spec.ts',
       // "tests/unit/**/languageModes.spec.ts",
       // "tests/unit/feature/embeddedLanguages/modes*.spec.ts",
       // "tests/unit/feature/embeddedLanguages/modes__definitions.spec.ts",
