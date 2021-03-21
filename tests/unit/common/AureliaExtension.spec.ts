@@ -6,29 +6,48 @@ import {
 import { globalContainer } from '../../../server/src/container';
 import { onConnectionInitialized } from '../../../server/src/aureliaServer';
 import { IAureliaProjectSetting } from '../../../server/src/configuration/DocumentSettings';
+import { DocumentUri, TextDocument } from 'vscode-languageserver-textdocument';
+import path = require('path');
 
+const testsDir = path.resolve(__dirname, '../..');
+const monorepoFixtureDir = path.resolve(testsDir, 'testFixture/src/monorepo');
+const rootDirectory = `file:/${monorepoFixtureDir}`;
 
-async function aureliaExtensionE2eSetup(aureliaProject: IAureliaProjectSetting) {
+async function aureliaExtensionE2eSetup(
+  aureliaProject: IAureliaProjectSetting,
+  activeDocuments: TextDocument[] = []
+) {
   await onConnectionInitialized(
     globalContainer,
     aureliaProject.rootDirectory ?? '',
     {
-      aureliaProject
-    }
+      aureliaProject,
+    },
+    activeDocuments
   );
 }
 
-describe('AureliaProject', () => {
-  it('getAureliaProjectPaths', async () => {
+describe('AureliaExtension', () => {
+  it.only('getAureliaProjectPaths', async () => {
     const packageJsonPaths = [
-      '/home/hdn/dev/vscode/aurelia/vscode-extension/tests/testFixture/src/monorepo/package-aurelia/package.json',
-      '/home/hdn/dev/vscode/aurelia/vscode-extension/tests/testFixture/src/monorepo/package-burelia/package.json',
-      '/home/hdn/dev/vscode/aurelia/vscode-extension/tests/testFixture/src/monorepo/package-c/package.json',
+      `${testsDir}/testFixture/src/monorepo/package-aurelia/package.json`,
+      `${testsDir}/testFixture/src/monorepo/package-burelia/package.json`,
+      `${testsDir}/testFixture/src/monorepo/package-c/package.json`,
     ];
+    // prettier-ignore
+    const auPath = path.resolve(monorepoFixtureDir, 'package-aurelia/aurelia/aurelia.ts');
+    const auUri: DocumentUri = `file:${auPath}`;
+    // prettier-ignore
+    const buPath = path.resolve(monorepoFixtureDir, 'package-burelia/burelia/burelia.ts');
+    const buUri: DocumentUri = `file:${buPath}`;
 
-    const aureliaProjectPaths = await getAureliaProjectPaths(packageJsonPaths);
+    const aureliaProjectPaths = await getAureliaProjectPaths(packageJsonPaths, [
+      TextDocument.create(auUri, 'typescrip', 1, ''),
+      TextDocument.create(buUri, 'typescrip', 1, ''),
+    ]);
 
     strictEqual(aureliaProjectPaths.length, 2);
+
     strictEqual(
       aureliaProjectPaths[0].includes(
         '/tests/testFixture/src/monorepo/package-aurelia'
@@ -43,50 +62,72 @@ describe('AureliaProject', () => {
     );
   });
 
-  it.skip('#hydrateAureliaProjectMap - Include', async () => {
-    const rootDirectory = '/home/hdn/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.274/projects/61999828a40b7e5c/instrumented/tests/testFixture/src/monorepo';
-    await aureliaExtensionE2eSetup({
-      include: ['aurelia'],
-      exclude: undefined,
-      rootDirectory
-    },);
+  it('#hydrateAureliaProjectMap - Include', async () => {
+    const auPath = path.resolve(
+      monorepoFixtureDir,
+      'package-aurelia/aurelia/aurelia.ts'
+    );
+    const uri: DocumentUri = `file:${auPath}`;
+
+    await aureliaExtensionE2eSetup(
+      {
+        include: ['aurelia'],
+        exclude: undefined,
+        rootDirectory,
+      },
+      [TextDocument.create(uri, 'typescrip', 1, '')]
+    );
+
     const testAureliaExtension = globalContainer.get(AureliaExtension);
 
-    await testAureliaExtension.hydrateAureliaProjectMap();
-    const auProjectMap = testAureliaExtension.getAureliaProjectMap();
-    strictEqual(auProjectMap.size, 1);
+    await testAureliaExtension.hydrateAureliaProjectList();
+    const auProjectList = testAureliaExtension.getAureliaProjectList();
+    strictEqual(auProjectList.length, 1);
 
-    auProjectMap.forEach((aureliaProgram, key) => {
+    auProjectList.forEach(({ aureliaProgram }) => {
       const compList = aureliaProgram?.getComponentList();
       strictEqual(compList?.length, 1);
       strictEqual(compList[0].componentName, 'aurelia');
-    })
+    });
   });
 
   it('#hydrateAureliaProjectMap - Include', async () => {
-    const rootDirectory = '/home/hdn/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.274/projects/61999828a40b7e5c/instrumented/tests/testFixture/src/monorepo';
-    await aureliaExtensionE2eSetup({
-      include: [],
-      exclude: undefined,
-      rootDirectory
-    },);
+    // prettier-ignore
+    const auPath = path.resolve(monorepoFixtureDir, 'package-aurelia/aurelia/aurelia.ts');
+    const auUri: DocumentUri = `file:${auPath}`;
+    // prettier-ignore
+    const buPath = path.resolve(monorepoFixtureDir, 'package-burelia/burelia/burelia.ts');
+    const buUri: DocumentUri = `file:${buPath}`;
+
+    await aureliaExtensionE2eSetup(
+      {
+        include: ['aurelia', 'burelia'],
+        exclude: undefined,
+        rootDirectory,
+      },
+      [
+        TextDocument.create(auUri, 'typescrip', 1, ''),
+        TextDocument.create(buUri, 'typescrip', 1, ''),
+      ]
+    );
+
     const testAureliaExtension = globalContainer.get(AureliaExtension);
 
-    await testAureliaExtension.hydrateAureliaProjectMap();
-    const auProjectMap = testAureliaExtension.getAureliaProjectMap();
-    strictEqual(auProjectMap.size, 2);
+    await testAureliaExtension.hydrateAureliaProjectList();
+    const auProjectList = testAureliaExtension.getAureliaProjectList();
+    strictEqual(auProjectList.length, 2);
 
-    auProjectMap.forEach((aureliaProgram, key) => {
-
-      if (key.includes('package-aurelia')) {
+    // auProjectList.forEach((aureliaProgram, key) => {
+    auProjectList.forEach(({ aureliaProgram, tsConfigPath }) => {
+      if (tsConfigPath.includes('package-aurelia')) {
         const compList = aureliaProgram?.getComponentList();
         strictEqual(compList?.length, 1);
         strictEqual(compList[0].componentName, 'aurelia');
-      } else if (key.includes('package-burelia')) {
+      } else if (tsConfigPath.includes('package-burelia')) {
         const compList = aureliaProgram?.getComponentList();
         strictEqual(compList?.length, 1);
         strictEqual(compList[0].componentName, 'burelia');
       }
-    })
+    });
   });
 });

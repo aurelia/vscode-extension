@@ -21,16 +21,23 @@ export function initDependencyInjection(
   container.registerInstance(AureliaExtension, new AureliaExtension(settings));
 }
 
+/**
+ * 1. Init DI
+ * 2. Detect Aurelia project
+ * 3. Hydrate Project map
+ */
 export async function onConnectionInitialized(
   container: Container,
   workspaceRootUri: string,
   extensionSettings: ExtensionSettings,
-  activeDocuments: TextDocument[] = [],
-  ) {
+  activeDocuments: TextDocument[] = []
+) {
+  /*  */
   initDependencyInjection(container, extensionSettings);
 
   const aureliaExtension = container.get(AureliaExtension);
 
+  /*  */
   const cwd = fileURLToPath(normalize(workspaceRootUri));
   const packageJsonPaths = await fastGlob('**/package.json', {
     absolute: true,
@@ -38,10 +45,13 @@ export async function onConnectionInitialized(
     cwd,
   });
 
-  await aureliaExtension.setAureliaProjectMap(packageJsonPaths, activeDocuments);
+  await aureliaExtension.setAureliaProjectList(
+    packageJsonPaths,
+    activeDocuments
+  );
 
-  const aureliaProjectMap = aureliaExtension.getAureliaProjectMap();
-  const hasAureliaProject = aureliaProjectMap.size > 0;
+  const aureliaProjectList = aureliaExtension.getAureliaProjectList();
+  const hasAureliaProject = aureliaProjectList.length > 0;
 
   if (!hasAureliaProject) {
     console.log('[INFO][server.ts] No active Aurelia project found.');
@@ -52,13 +62,14 @@ export async function onConnectionInitialized(
   }
 
   console.log(
-    `[INFO][server.ts] Found ${aureliaProjectMap.size} active Aurelia projects in: `
+    `[INFO][server.ts] Found ${aureliaProjectList.length} active Aurelia projects in: `
   );
-  aureliaProjectMap.forEach((value, path) => {
-    console.log(path)
-  })
+  aureliaProjectList.forEach(({ tsConfigPath }) => {
+    console.log(tsConfigPath);
+  });
 
+  /*  */
   console.log('[INFO][server.ts] Parsing Aurelia related data...');
-  await aureliaExtension.hydrateAureliaProjectMap();
-  const auProjectMap = aureliaExtension.getAureliaProjectMap();
+  await aureliaExtension.hydrateAureliaProjectList();
+  const auProjectList = aureliaExtension.getAureliaProjectList();
 }

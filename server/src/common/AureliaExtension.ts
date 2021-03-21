@@ -10,6 +10,11 @@ import { createAureliaWatchProgram } from '../viewModel/createAureliaWatchProgra
 import { IProjectOptions, defaultProjectOptions } from './common.types';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+interface AureliaProject {
+  tsConfigPath: string;
+  aureliaProgram: AureliaProgram | null;
+}
+
 function isAureliaProjectBasedOnPackageJson(packageJsonPath: string) {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
   const dep = packageJson['dependencies'];
@@ -34,10 +39,19 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string) {
   return isAu;
 }
 
+/**
+ * @param packageJsonPaths - All paths, that have a package.json file
+ * @param activeDocuments - Current active documents (eg. on open of Editor)
+ * @returns All project paths, that are an Aurelia project
+ *
+ * 1. Save paths to Aurelia project only.
+ * 1.1 Based on package.json
+ * 1.2 Detect if is Aurelia project
+ */
 export function getAureliaProjectPaths(
   packageJsonPaths: string[],
   activeDocuments: TextDocument[] = []
-) {
+): string[] {
   const aureliaProjectsRaw = packageJsonPaths.filter((packageJsonPath) => {
     const isAu = isAureliaProjectBasedOnPackageJson(packageJsonPath);
     return isAu;
@@ -65,12 +79,12 @@ export function getAureliaProjectPaths(
 
 @inject(DocumentSettings)
 export class AureliaExtension {
-  aureliaProjectMap: Map<string, AureliaProgram | null> = new Map();
+  aureliaProjectList: AureliaProject[] = [];
   // aureliaProjectMap: Map<string, any> = new Map();
 
   public constructor(private readonly documentSettings: DocumentSettings) {}
 
-  public async setAureliaProjectMap(
+  public async setAureliaProjectList(
     packageJsonPaths: string[],
     activeDocuments: TextDocument[] = []
   ) {
@@ -91,12 +105,15 @@ export class AureliaExtension {
         );
         return;
       }
-      this.aureliaProjectMap.set(aureliaProjectPath, null);
+      this.aureliaProjectList.push({
+        tsConfigPath: aureliaProjectPath,
+        aureliaProgram: null,
+      });
     });
   }
 
-  public getAureliaProjectMap(): AureliaExtension['aureliaProjectMap'] {
-    return this.aureliaProjectMap;
+  public getAureliaProjectList(): AureliaExtension['aureliaProjectList'] {
+    return this.aureliaProjectList;
   }
 
   /** Copied from AureliaProgram#~ */
@@ -141,27 +158,27 @@ export class AureliaExtension {
     return paths;
   }
 
-  public async hydrateAureliaProjectMap() {
-    const aureliaProjectMap = this.getAureliaProjectMap();
+  public async hydrateAureliaProjectList() {
+    const aureliaProjectList = this.getAureliaProjectList();
     const settings = await this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
 
     // 1. To each map assign a separate program
-    aureliaProjectMap.forEach(async (value, projectPath) => {
-      if (value !== null) {
+    aureliaProjectList.forEach(async ({ tsConfigPath, aureliaProgram }) => {
+      if (aureliaProgram !== null) {
         console.log('[WARNING] Found a value, but should be null.');
       }
 
-      const aureliaProgram = new AureliaProgram();
+      aureliaProgram = new AureliaProgram();
       const projectOptions = {
         ...aureliaProjectSettings,
-        rootDirectory: projectPath,
+        rootDirectory: tsConfigPath,
       };
 
       // const paths = aureliaProgram.setProjectFilePaths(projectOptions);
       // if (paths.length === 0) {
-      //   console.log(`[INFO][AuExt.ts] Removing path ${projectPath}, because it was excluded or not included`)
-      //   aureliaProjectMap.delete(projectPath)
+      //   console.log(`[INFO][AuExt.ts] Removing path ${tsConfigPath}, because it was excluded or not included`)
+      //   aureliaProjectMap.delete(tsConfigPath)
       //   return;
       // }
       await createAureliaWatchProgram(aureliaProgram, {
@@ -169,7 +186,11 @@ export class AureliaExtension {
         aureliaProject: projectOptions,
       });
 
-      aureliaProjectMap.set(projectPath, aureliaProgram);
+      const targetAureliaProject = aureliaProjectList.find(auP => auP.tsConfigPath === tsConfigPath);
+
+      if (!targetAureliaProject) return;
+
+      targetAureliaProject.aureliaProgram = aureliaProgram
     });
   }
 }
