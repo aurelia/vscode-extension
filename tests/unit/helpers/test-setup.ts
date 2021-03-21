@@ -5,17 +5,29 @@ import {
 import * as path from 'path';
 import * as fs from 'fs';
 import 'reflect-metadata';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  AureliaProgram,
-} from '../../../server/src/viewModel/AureliaProgram';
+import { AureliaProgram } from '../../../server/src/viewModel/AureliaProgram';
 import { createAureliaWatchProgram } from '../../../server/src/viewModel/createAureliaWatchProgram';
-import { Position, TextDocument } from 'vscode-html-languageservice';
+import { Position } from 'vscode-html-languageservice';
 import { Container } from 'aurelia-dependency-injection';
-import { AureliaCompletionItem, isAureliaCompletionItem } from '../../../server/src/feature/completions/virtualCompletion';
-import { createTextDocumentPositionParams, getLanguageModes } from '../../../server/src/feature/embeddedLanguages/languageModes';
+import {
+  AureliaCompletionItem,
+  isAureliaCompletionItem,
+} from '../../../server/src/feature/completions/virtualCompletion';
+import {
+  createTextDocumentPositionParams,
+  getLanguageModes,
+} from '../../../server/src/feature/embeddedLanguages/languageModes';
 import { DefinitionResult } from '../../../server/src/feature/definition/getDefinition';
 import { globalContainer } from '../../../server/src/container';
+import {
+  DocumentSettings,
+  ExtensionSettings,
+  IAureliaProjectSetting,
+} from '../../../server/src/configuration/DocumentSettings';
+import { onConnectionInitialized } from '../../../server/src/aureliaServer';
+import { AureliaExtension } from '../../../server/src/common/AureliaExtension';
 
 export async function getAureliaProgramForTesting(
   projectOptions: IProjectOptions = defaultProjectOptions
@@ -61,12 +73,20 @@ export class TestSetup {
     /** Indicate, that aureliaProgram is needed. */
     void aureliaProgram;
 
-    const { templatePath, templateContent, position, triggerCharacter } = options;
+    const {
+      templatePath,
+      templateContent,
+      position,
+      triggerCharacter,
+    } = options;
 
     const testPath = path.resolve(__dirname, '../../testFixture');
     const targetViewPath = path.resolve(testPath, templatePath);
     const languageModes = await getLanguageModes();
-    const document = createTextDocumentForTesting(targetViewPath, templateContent);
+    const document = createTextDocumentForTesting(
+      targetViewPath,
+      templateContent
+    );
     const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
       document,
       position
@@ -104,28 +124,26 @@ export class TestSetup {
     void aureliaProgram;
 
     const { templatePath, position, goToSourceWord } = options;
-    let {templateContent} = options;
+    let { templateContent } = options;
 
     const testPath = path.resolve(__dirname, '../../testFixture');
     const targetViewPath = path.resolve(testPath, templatePath);
-     targetViewPath/*?*/
     const languageModes = await getLanguageModes();
 
     if (templateContent === undefined) {
       templateContent = fs.readFileSync(targetViewPath, 'utf-8');
     }
 
-    templateContent/*?*/
-
-    const document = createTextDocumentForTesting(targetViewPath, templateContent);
+    const document = createTextDocumentForTesting(
+      targetViewPath,
+      templateContent
+    );
     const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
       document,
       position
     );
     const textDocument = createTextDocumentPositionParams(document, position);
 
-    modeAndRegion?.mode?.getId()/*?*/
-    modeAndRegion?.region/*?*/
     if (modeAndRegion?.mode?.doDefinition === undefined) {
       throw new Error('doDefinition not provded.');
     }
@@ -141,5 +159,108 @@ export class TestSetup {
     }
 
     return definitions;
+  }
+}
+
+const testsDir = path.resolve(__dirname, '../..');
+const monorepoFixtureDir = path.resolve(testsDir, 'testFixture/src/monorepo');
+const rootDirectory = `file:/${monorepoFixtureDir}`;
+
+export class MockServer {
+  private textDocuments: TextDocument[];
+
+  constructor(
+    private readonly container: Container = globalContainer,
+    private readonly workspaceRootUri: string = rootDirectory,
+    private readonly extensionSettings: ExtensionSettings = {},
+    private readonly activeDocuments: TextDocument[] = []
+  ) {}
+
+  log(pluck: (input: MockServer) => any): MockServer {
+    /* prettier-ignore */
+    const logValue = pluck(this);
+    console.log('TCL: MockConnection -> log -> input', logValue);
+    return this;
+  }
+
+  private setTextDocuments(textDocuments: TextDocument[]): void {
+    this.textDocuments = textDocuments;
+  }
+  public getTextDocuments(): TextDocument[] {
+    if (this.textDocuments === undefined) {
+      throw new Error(
+        '[MockConnection]: No TextDocument. Provide one in the constructor, or call mockTextDocuments (fluentApi).'
+      );
+    }
+
+    return this.textDocuments;
+  }
+
+  public getContainer(): Container {
+    return this.container;
+  }
+
+  /**
+   * Just path a string, instead of
+   * ```ts
+   * #getContainer().get(MyClass)
+   * ```
+   */
+  public getContainerDirectly() {
+    return {
+      AureliaExtension: this.container.get(AureliaExtension),
+      AureliaProgram: this.container.get(AureliaProgram),
+      DocumentSettings: this.container.get(DocumentSettings),
+    };
+  }
+
+  mockTextDocuments(
+    fileUris: string[],
+    options: { isUri: boolean; isRelative: boolean } = {
+      isUri: false,
+      isRelative: true,
+    }
+  ): MockServer {
+    if (options.isRelative) {
+      fileUris = fileUris.map((uri) => {
+        const absPaths = path.resolve(this.workspaceRootUri, uri);
+        return absPaths;
+      });
+    }
+    if (!options.isUri) {
+      fileUris = fileUris.map((uri) => {
+        const convertToUri = `file:/${uri}`;
+        return convertToUri;
+      });
+    }
+
+    const textDocuments = fileUris.map((uri) => {
+      const textDocument = TextDocument.create(uri, 'typescript', 1, '');
+      return textDocument;
+    });
+
+    this.setTextDocuments(textDocuments);
+
+    return this;
+  }
+
+  /**
+   * Goal: Can access data, after method called
+   */
+  async onConnectionInitialized(
+    aureliaProject: Partial<IAureliaProjectSetting>
+  ) {
+    await onConnectionInitialized(
+      this.container,
+      aureliaProject.rootDirectory ?? this.workspaceRootUri,
+      {
+        aureliaProject: {
+          exclude: undefined,
+          rootDirectory: this.workspaceRootUri,
+          ...aureliaProject,
+        },
+      },
+      this.textDocuments
+    );
   }
 }

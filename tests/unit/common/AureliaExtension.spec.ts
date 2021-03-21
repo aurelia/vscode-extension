@@ -8,12 +8,13 @@ import { onConnectionInitialized } from '../../../server/src/aureliaServer';
 import { IAureliaProjectSetting } from '../../../server/src/configuration/DocumentSettings';
 import { DocumentUri, TextDocument } from 'vscode-languageserver-textdocument';
 import path = require('path');
+import { MockServer } from '../helpers/test-setup';
 
 const testsDir = path.resolve(__dirname, '../..');
 const monorepoFixtureDir = path.resolve(testsDir, 'testFixture/src/monorepo');
 const rootDirectory = `file:/${monorepoFixtureDir}`;
 
-async function aureliaExtensionE2eSetup(
+export async function aureliaExtensionE2eSetup(
   aureliaProject: IAureliaProjectSetting,
   activeDocuments: TextDocument[] = []
 ) {
@@ -28,7 +29,7 @@ async function aureliaExtensionE2eSetup(
 }
 
 describe('AureliaExtension', () => {
-  it.only('getAureliaProjectPaths', async () => {
+  it('getAureliaProjectPaths', async () => {
     const packageJsonPaths = [
       `${testsDir}/testFixture/src/monorepo/package-aurelia/package.json`,
       `${testsDir}/testFixture/src/monorepo/package-burelia/package.json`,
@@ -63,20 +64,12 @@ describe('AureliaExtension', () => {
   });
 
   it('#hydrateAureliaProjectMap - Include', async () => {
-    const auPath = path.resolve(
-      monorepoFixtureDir,
-      'package-aurelia/aurelia/aurelia.ts'
-    );
-    const uri: DocumentUri = `file:${auPath}`;
+    const auPath = 'package-aurelia/aurelia/aurelia.ts';
+    const mockServer = new MockServer();
 
-    await aureliaExtensionE2eSetup(
-      {
-        include: ['aurelia'],
-        exclude: undefined,
-        rootDirectory,
-      },
-      [TextDocument.create(uri, 'typescrip', 1, '')]
-    );
+    await mockServer.mockTextDocuments([auPath]).onConnectionInitialized({
+      include: ['aurelia'],
+    });
 
     const testAureliaExtension = globalContainer.get(AureliaExtension);
 
@@ -92,24 +85,15 @@ describe('AureliaExtension', () => {
   });
 
   it('#hydrateAureliaProjectMap - Include', async () => {
-    // prettier-ignore
-    const auPath = path.resolve(monorepoFixtureDir, 'package-aurelia/aurelia/aurelia.ts');
-    const auUri: DocumentUri = `file:${auPath}`;
-    // prettier-ignore
-    const buPath = path.resolve(monorepoFixtureDir, 'package-burelia/burelia/burelia.ts');
-    const buUri: DocumentUri = `file:${buPath}`;
+    const auPath = 'package-aurelia/aurelia/aurelia.ts';
+    const buPath = 'package-burelia/burelia/burelia.ts';
+    const mockServer = new MockServer();
 
-    await aureliaExtensionE2eSetup(
-      {
+    await mockServer
+      .mockTextDocuments([auPath, buPath])
+      .onConnectionInitialized({
         include: ['aurelia', 'burelia'],
-        exclude: undefined,
-        rootDirectory,
-      },
-      [
-        TextDocument.create(auUri, 'typescrip', 1, ''),
-        TextDocument.create(buUri, 'typescrip', 1, ''),
-      ]
-    );
+      });
 
     const testAureliaExtension = globalContainer.get(AureliaExtension);
 
