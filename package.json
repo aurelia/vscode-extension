@@ -227,6 +227,7 @@
 	},
 	"dependencies": {
 		"aurelia-dependency-injection": "^1.5.2",
+		"culog": "^0.0.9",
 		"lodash": "^4.17.19",
 		"reflect-metadata": "^0.1.9",
 		"typescript": "^4.1.3",

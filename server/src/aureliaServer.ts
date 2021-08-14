@@ -1,5 +1,6 @@
 import { Container } from 'aurelia-dependency-injection';
 import * as fastGlob from 'fast-glob';
+import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { normalize } from 'path';
 import { AureliaExtension } from './common/AureliaExtension';
@@ -8,6 +9,32 @@ import {
   DocumentSettings,
 } from './configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { TextDocumentChangeEvent } from 'vscode-languageserver';
+import { globalContainer } from './container';
+import { uriToPath } from './common/uriToPath';
+
+export class AureliaServer {
+  constructor(private container: Container) {}
+
+  async onConnectionInitialized(
+    workspaceRootUri: string,
+    extensionSettings: ExtensionSettings,
+    activeDocuments: TextDocument[] = []
+  ): Promise<void> {
+    await onConnectionInitialized(
+      this.container,
+      workspaceRootUri,
+      extensionSettings,
+      activeDocuments
+    );
+  }
+
+  async onConnectionDidChangeContent(
+    change: TextDocumentChangeEvent<TextDocument>
+  ): Promise<void> {
+    await onConnectionDidChangeContent(this.container, change);
+  }
+}
 
 export function initDependencyInjection(
   container: Container,
@@ -45,10 +72,7 @@ export async function onConnectionInitialized(
     cwd,
   });
 
-  await aureliaExtension.setAureliaProjectList(
-    packageJsonPaths,
-    activeDocuments
-  );
+  await aureliaExtension.setAureliaProjectList(packageJsonPaths);
 
   const aureliaProjectList = aureliaExtension.getAureliaProjectList();
   const hasAureliaProject = aureliaProjectList.length > 0;
@@ -62,14 +86,38 @@ export async function onConnectionInitialized(
   }
 
   console.log(
-    `[INFO][server.ts] Found ${aureliaProjectList.length} active Aurelia projects in: `
+    `[INFO][server.ts] Found ${aureliaProjectList.length} Aurelia projects in: `
   );
   aureliaProjectList.forEach(({ tsConfigPath }) => {
     console.log(tsConfigPath);
   });
 
+  const activeDocumentPaths = activeDocuments.map((activeDocument) => {
+    const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
+    return documentPath;
+  });
+  activeDocumentPaths; /* ? */
+
   /*  */
   console.log('[INFO][server.ts] Parsing Aurelia related data...');
-  await aureliaExtension.hydrateAureliaProjectList();
-  const auProjectList = aureliaExtension.getAureliaProjectList();
+  await aureliaExtension.hydrateAureliaProjectList(activeDocumentPaths);
+}
+
+export async function onConnectionDidChangeContent(
+  container: Container,
+  change: TextDocumentChangeEvent<TextDocument>
+) {
+  switch (change.document.languageId) {
+    case 'typescript': {
+      const aureliaExtension = container.get(AureliaExtension);
+      const documentPaths = uriToPath([change.document]);
+      aureliaExtension.hydrateAureliaProjectList(documentPaths);
+
+      // updateAureliaComponents(aureliaProgram);
+    }
+  }
+
+  // console.log('TCL: change', change)
+  // console.log('[server.ts] (re-)get Language Modes');
+  // languageModes = await getLanguageModes();
 }

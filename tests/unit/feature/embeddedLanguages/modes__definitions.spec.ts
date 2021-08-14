@@ -252,7 +252,7 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
 
 describe('Feature: Definition - Components with same file names (index.ts/html)', () => {
   context('Scenario: Find correct View Model', () => {
-    it('Should find correct View Model', async () => {
+    it.only('Should find correct View Model', async () => {
       const testAureliaProgram = await getAureliaProgramForTesting({
         include: ['src/realdworld-advanced'],
       });

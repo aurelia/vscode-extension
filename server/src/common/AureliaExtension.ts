@@ -49,30 +49,30 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string) {
  * 1.2 Detect if is Aurelia project
  */
 export function getAureliaProjectPaths(
-  packageJsonPaths: string[],
-  activeDocuments: TextDocument[] = []
+  packageJsonPaths: string[]
+  // activeDocuments: TextDocument[] = []
 ): string[] {
   const aureliaProjectsRaw = packageJsonPaths.filter((packageJsonPath) => {
     const isAu = isAureliaProjectBasedOnPackageJson(packageJsonPath);
     return isAu;
   });
 
-  const activeDocumentPaths = activeDocuments.map((activeDocument) => {
-    const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
-    return documentPath;
-  });
+  // const activeDocumentPaths = activeDocuments.map((activeDocument) => {
+  //   const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
+  //   return documentPath;
+  // });
 
-  let aureliaProjectPaths = aureliaProjectsRaw.map((aureliaProject) => {
+  const aureliaProjectPaths = aureliaProjectsRaw.map((aureliaProject) => {
     const dirName = path.dirname(aureliaProject);
     return dirName;
   });
-  aureliaProjectPaths = aureliaProjectPaths.filter((aureliaProjectPath) => {
-    const isOpen = activeDocumentPaths.some((activeDocumentPath) => {
-      const isProject = activeDocumentPath.includes(aureliaProjectPath);
-      return isProject;
-    });
-    return isOpen;
-  });
+  // aureliaProjectPaths = aureliaProjectPaths.filter((aureliaProjectPath) => {
+  //   const isOpen = activeDocumentPaths.some((activeDocumentPath) => {
+  //     const isProject = activeDocumentPath.includes(aureliaProjectPath);
+  //     return isProject;
+  //   });
+  //   return isOpen;
+  // });
 
   return aureliaProjectPaths;
 }
@@ -84,14 +84,10 @@ export class AureliaExtension {
 
   public constructor(private readonly documentSettings: DocumentSettings) {}
 
-  public async setAureliaProjectList(
-    packageJsonPaths: string[],
-    activeDocuments: TextDocument[] = []
-  ) {
-    const aureliaProjectPaths = getAureliaProjectPaths(
-      packageJsonPaths,
-      activeDocuments
-    );
+  public async gatherProjectInfo() {}
+
+  public async setAureliaProjectList(packageJsonPaths: string[]) {
+    const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
       const filePaths = this.getProjectFilePaths({
@@ -158,13 +154,27 @@ export class AureliaExtension {
     return paths;
   }
 
-  public async hydrateAureliaProjectList() {
+  public async hydrateAureliaProjectList(documentsPaths: string[]) {
+    /** TODO: Makes esnse? */
+    if (documentsPaths.length === 0) return;
+
     const aureliaProjectList = this.getAureliaProjectList();
+    aureliaProjectList; /* ? */
     const settings = await this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
 
     // 1. To each map assign a separate program
+    /** TODO rename: tsConfigPath -> projectPath (or sth else) */
+    documentsPaths; /* ? */
     aureliaProjectList.forEach(async ({ tsConfigPath, aureliaProgram }) => {
+      tsConfigPath; /* ? */
+      const shouldActive = documentsPaths.some((docPath) => {
+        const result = docPath.includes(tsConfigPath);
+        return result;
+      });
+      if (!shouldActive) return;
+
+      /* prettier-ignore */ console.log('TCL: AureliaExtension -> hydrateAureliaProjectList -> tsConfigPath', tsConfigPath);
       if (aureliaProgram !== null) {
         console.log('[WARNING] Found a value, but should be null.');
       }
@@ -186,11 +196,16 @@ export class AureliaExtension {
         aureliaProject: projectOptions,
       });
 
-      const targetAureliaProject = aureliaProjectList.find(auP => auP.tsConfigPath === tsConfigPath);
+      const targetAureliaProject = aureliaProjectList.find(
+        (auP) => auP.tsConfigPath === tsConfigPath
+      );
 
       if (!targetAureliaProject) return;
 
-      targetAureliaProject.aureliaProgram = aureliaProgram
+      targetAureliaProject.aureliaProgram = aureliaProgram;
     });
+
+    const aureliaProjectList1 = this.getAureliaProjectList();
+    aureliaProjectList1; /* ? */
   }
 }

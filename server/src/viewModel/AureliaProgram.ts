@@ -202,7 +202,7 @@ export class AureliaProgram {
       finalIncludes
     );
 
-    this.projectFilePaths = paths;/*?*/
+    this.projectFilePaths = paths;
     return paths;
   }
 

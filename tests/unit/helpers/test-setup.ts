@@ -1,40 +1,45 @@
 import {
   defaultProjectOptions,
   IProjectOptions,
-} from '../../../server/src/common/common.types';
-import * as path from 'path';
-import * as fs from 'fs';
-import 'reflect-metadata';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+} from "../../../server/src/common/common.types";
+import * as path from "path";
+import * as fs from "fs";
+import "reflect-metadata";
+import { TextDocument } from "vscode-languageserver-textdocument";
 
-import { AureliaProgram } from '../../../server/src/viewModel/AureliaProgram';
-import { createAureliaWatchProgram } from '../../../server/src/viewModel/createAureliaWatchProgram';
-import { Position } from 'vscode-html-languageservice';
-import { Container } from 'aurelia-dependency-injection';
+import { AureliaProgram } from "../../../server/src/viewModel/AureliaProgram";
+import { createAureliaWatchProgram } from "../../../server/src/viewModel/createAureliaWatchProgram";
+import { Position } from "vscode-html-languageservice";
+import { Container } from "aurelia-dependency-injection";
 import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
-} from '../../../server/src/feature/completions/virtualCompletion';
+} from "../../../server/src/feature/completions/virtualCompletion";
 import {
   createTextDocumentPositionParams,
   getLanguageModes,
-} from '../../../server/src/feature/embeddedLanguages/languageModes';
-import { DefinitionResult } from '../../../server/src/feature/definition/getDefinition';
-import { globalContainer } from '../../../server/src/container';
+} from "../../../server/src/feature/embeddedLanguages/languageModes";
+import { DefinitionResult } from "../../../server/src/feature/definition/getDefinition";
+import { globalContainer } from "../../../server/src/container";
 import {
   DocumentSettings,
   ExtensionSettings,
   IAureliaProjectSetting,
-} from '../../../server/src/configuration/DocumentSettings';
-import { onConnectionInitialized } from '../../../server/src/aureliaServer';
-import { AureliaExtension } from '../../../server/src/common/AureliaExtension';
+} from "../../../server/src/configuration/DocumentSettings";
+import {
+  AureliaServer,
+  onConnectionDidChangeContent,
+  onConnectionInitialized,
+} from "../../../server/src/aureliaServer";
+import { AureliaExtension } from "../../../server/src/common/AureliaExtension";
+import { TextDocumentChangeEvent } from "vscode-languageserver";
 
 export async function getAureliaProgramForTesting(
   projectOptions: IProjectOptions = defaultProjectOptions
 ): Promise<AureliaProgram> {
   const container: Container = globalContainer;
   const aureliaProgram = container.get(AureliaProgram);
-  const rootDirectory = path.resolve(__dirname, '../../testFixture');
+  const rootDirectory = path.resolve(__dirname, "../../testFixture");
 
   projectOptions.rootDirectory = rootDirectory;
 
@@ -47,12 +52,12 @@ export function createTextDocumentForTesting(
   content?: string
 ): TextDocument {
   const uri = filePath;
-  content = content ?? fs.readFileSync(uri, 'utf-8');
-  const document = TextDocument.create(uri, 'html', 99, content);
+  content = content ?? fs.readFileSync(uri, "utf-8");
+  const document = TextDocument.create(uri, "html", 99, content);
   return document;
 }
 
-const COMPONENT_NAME = 'minimal-component';
+const COMPONENT_NAME = "minimal-component";
 
 export function getNamingsForTest(componentName: string = COMPONENT_NAME) {
   const componentViewFileName = `${componentName}.html`;
@@ -80,7 +85,7 @@ export class TestSetup {
       triggerCharacter,
     } = options;
 
-    const testPath = path.resolve(__dirname, '../../testFixture');
+    const testPath = path.resolve(__dirname, "../../testFixture");
     const targetViewPath = path.resolve(testPath, templatePath);
     const languageModes = await getLanguageModes();
     const document = createTextDocumentForTesting(
@@ -94,18 +99,18 @@ export class TestSetup {
     const textDocument = createTextDocumentPositionParams(document, position);
 
     if (modeAndRegion?.mode?.doComplete === undefined) {
-      throw new Error('doComplete not provded.');
+      throw new Error("doComplete not provded.");
     }
 
     const completion = await modeAndRegion?.mode?.doComplete(
       document,
       textDocument,
-      triggerCharacter ?? '',
+      triggerCharacter ?? "",
       modeAndRegion.region
     );
 
     if (!isAureliaCompletionItem(completion)) {
-      throw new Error('Not AureliaCompletionItem[]');
+      throw new Error("Not AureliaCompletionItem[]");
     }
 
     return completion;
@@ -126,12 +131,12 @@ export class TestSetup {
     const { templatePath, position, goToSourceWord } = options;
     let { templateContent } = options;
 
-    const testPath = path.resolve(__dirname, '../../testFixture');
+    const testPath = path.resolve(__dirname, "../../testFixture");
     const targetViewPath = path.resolve(testPath, templatePath);
     const languageModes = await getLanguageModes();
 
     if (templateContent === undefined) {
-      templateContent = fs.readFileSync(targetViewPath, 'utf-8');
+      templateContent = fs.readFileSync(targetViewPath, "utf-8");
     }
 
     const document = createTextDocumentForTesting(
@@ -145,7 +150,7 @@ export class TestSetup {
     const textDocument = createTextDocumentPositionParams(document, position);
 
     if (modeAndRegion?.mode?.doDefinition === undefined) {
-      throw new Error('doDefinition not provded.');
+      throw new Error("doDefinition not provded.");
     }
 
     const definitions = await modeAndRegion?.mode?.doDefinition(
@@ -155,31 +160,34 @@ export class TestSetup {
     );
 
     if (definitions === undefined) {
-      throw 'No Definitions';
+      throw "No Definitions";
     }
 
     return definitions;
   }
 }
 
-const testsDir = path.resolve(__dirname, '../..');
-const monorepoFixtureDir = path.resolve(testsDir, 'testFixture/src/monorepo');
+const testsDir = path.resolve(__dirname, "../..");
+const monorepoFixtureDir = path.resolve(testsDir, "testFixture/src/monorepo");
 const rootDirectory = `file:/${monorepoFixtureDir}`;
 
 export class MockServer {
   private textDocuments: TextDocument[];
+  aureliaServer: AureliaServer;
 
   constructor(
     private readonly container: Container = globalContainer,
     private readonly workspaceRootUri: string = rootDirectory,
     private readonly extensionSettings: ExtensionSettings = {},
     private readonly activeDocuments: TextDocument[] = []
-  ) {}
+  ) {
+    this.aureliaServer = new AureliaServer(this.container);
+  }
 
   log(pluck: (input: MockServer) => any): MockServer {
     /* prettier-ignore */
     const logValue = pluck(this);
-    console.log('TCL: MockConnection -> log -> input', logValue);
+    console.log("TCL: MockConnection -> log -> input", logValue);
     return this;
   }
 
@@ -189,7 +197,7 @@ export class MockServer {
   public getTextDocuments(): TextDocument[] {
     if (this.textDocuments === undefined) {
       throw new Error(
-        '[MockConnection]: No TextDocument. Provide one in the constructor, or call mockTextDocuments (fluentApi).'
+        "[MockConnection]: No TextDocument. Provide one in the constructor, or call mockTextDocuments (fluentApi)."
       );
     }
 
@@ -214,8 +222,8 @@ export class MockServer {
     };
   }
 
-  mockTextDocuments(
-    fileUris: string[],
+  mockTextDocuments<T extends string>(
+    fileUris: T[],
     options: { isUri: boolean; isRelative: boolean } = {
       isUri: false,
       isRelative: true,
@@ -235,7 +243,7 @@ export class MockServer {
     }
 
     const textDocuments = fileUris.map((uri) => {
-      const textDocument = TextDocument.create(uri, 'typescript', 1, '');
+      const textDocument = TextDocument.create(uri, "typescript", 1, "");
       return textDocument;
     });
 
@@ -250,8 +258,8 @@ export class MockServer {
   async onConnectionInitialized(
     aureliaProject: Partial<IAureliaProjectSetting>
   ) {
-    await onConnectionInitialized(
-      this.container,
+
+    await this.aureliaServer.onConnectionInitialized(
       aureliaProject.rootDirectory ?? this.workspaceRootUri,
       {
         aureliaProject: {
@@ -262,5 +270,16 @@ export class MockServer {
       },
       this.textDocuments
     );
+  }
+
+  /**
+   * 1. Check if document is inside aurelia project
+   * 2. Init AureliaProject
+   * 3. Hydrate AureliaProject
+   */
+  async onConnectionDidChangeContent(
+    change: TextDocumentChangeEvent<TextDocument>
+  ) {
+    await this.aureliaServer.onConnectionDidChangeContent(change);
   }
 }

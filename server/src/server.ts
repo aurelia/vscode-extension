@@ -11,6 +11,7 @@ import {
   InitializeResult,
   CompletionList,
   Definition,
+  TextDocumentChangeEvent,
 } from 'vscode-languageserver';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -41,7 +42,10 @@ import {
   createAureliaTemplateAttributeKeywordCompletions,
 } from './feature/completions/createAureliaTemplateAttributeCompletions';
 import { globalContainer } from './container';
-import { onConnectionInitialized } from './aureliaServer';
+import {
+  onConnectionDidChangeContent,
+  onConnectionInitialized,
+} from './aureliaServer';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -149,6 +153,11 @@ connection.onDidChangeConfiguration((change) => {
   // void createAureliaWatchProgram(aureliaProgram);
 });
 
+connection.onDidOpenTextDocument((param) => {
+  param;
+  /* prettier-ignore */ console.log('TCL: param', param);
+});
+
 // Only keep settings for open documents
 // documents.onDidClose((e) => {
 //   documentSettings.settingsMap.delete(e.document.uri);
@@ -156,17 +165,11 @@ connection.onDidChangeConfiguration((change) => {
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent(async (change) => {
-  switch (change.document.languageId) {
-    case 'typescript': {
-      // updateAureliaComponents(aureliaProgram);
-    }
+documents.onDidChangeContent(
+  async (change: TextDocumentChangeEvent<TextDocument>) => {
+    await onConnectionDidChangeContent(change);
   }
-
-  // console.log('TCL: change', change)
-  // console.log('[server.ts] (re-)get Language Modes');
-  // languageModes = await getLanguageModes();
-});
+);
 
 connection.onDidChangeWatchedFiles((_change) => {
   // Monitored files have change in VSCode
