@@ -1,12 +1,12 @@
-import { customElement } from "aurelia";
-import template from "./view-model-test.html";
+import { customElement } from 'aurelia';
+import template from './view-model-test.html';
 
 @customElement({
-  name: "view-model-test",
+  name: 'view-model-test',
   template,
 })
 export class ViewModelTest {
-  functionVariable: () => Promise<void>
+  functionVariable: () => Promise<void>;
 
   methodWithArgs(first: string, second: number) {}
 }

@@ -1,4 +1,1 @@
-
-export class BureliaCustomElement {
-
-}
+export class BureliaCustomElement {}

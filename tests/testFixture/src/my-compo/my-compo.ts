@@ -1,4 +1,4 @@
-import { bindable } from "aurelia-framework";
+import { bindable } from 'aurelia-framework';
 
 interface More {
   alright: number;
@@ -23,19 +23,19 @@ export class MyCompoCustomElement {
   /**
    * A bindable for strings
    */
-  @bindable public stringBindable: string = "foo";
+  @bindable public stringBindable: string = 'foo';
 
   @bindable public interBindable: ICompoInter = {
-    stringInter: "stringInter",
+    stringInter: 'stringInter',
   };
 
   constructor() {
-    this.oneOtherMethod(3322, { stringInter: "hi" });
+    this.oneOtherMethod(3322, { stringInter: 'hi' });
   }
 
-  private stringArray: string[] = ["hello", "world"];
+  private stringArray: string[] = ['hello', 'world'];
 
-  public what = "helo";
+  public what = 'helo';
 
   /**
    * Here doc it
@@ -45,6 +45,6 @@ export class MyCompoCustomElement {
       return this.stringArray;
     }
 
-    return [""];
+    return [''];
   }
 }

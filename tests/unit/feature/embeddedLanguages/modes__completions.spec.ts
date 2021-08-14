@@ -179,7 +179,10 @@ describe('Feature: Completions - correct insertText in View', () => {
         (completion) => completion.label === 'methodWithArgs'
       );
 
-      strictEqual(target?.insertText, 'methodWithArgs(${1:first}, ${2:second})');
+      strictEqual(
+        target?.insertText,
+        'methodWithArgs(${1:first}, ${2:second})'
+      );
     });
   });
 });
@@ -196,18 +199,20 @@ describe('Feature: Completions - Value Converter', () => {
           templatePath: getNamingsForTest().componentViewPath,
           templateContent,
           position,
-          triggerCharacter: AureliaView.VALUE_CONVERTER_OPERATOR
+          triggerCharacter: AureliaView.VALUE_CONVERTER_OPERATOR,
         }
       );
 
       const hasValConvCompletions = completions.length >= 2;
       strictEqual(hasValConvCompletions, true);
 
-      const sortVC = completions.find(completion => completion.detail === 'sort');
+      const sortVC = completions.find(
+        (completion) => completion.detail === 'sort'
+      );
       strictEqual(sortVC?.detail, 'sort');
 
       const hasPrefix = sortVC.label.includes('(Au VC)');
       strictEqual(hasPrefix, true);
-    })
+    });
   });
-})
+});

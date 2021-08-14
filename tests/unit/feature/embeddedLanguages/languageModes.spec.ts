@@ -106,11 +106,19 @@ describe('languageModes.ts - Modes', () => {
     const region = modeAndRegion?.region;
     if (region === undefined) return;
 
-    const textDocumentPositionParams = createTextDocumentPositionParams(document, {
-      line: 4,
-      character: 13,
-    });
-    const complete = await mode.doComplete(document, textDocumentPositionParams, 'dirty', region);
+    const textDocumentPositionParams = createTextDocumentPositionParams(
+      document,
+      {
+        line: 4,
+        character: 13,
+      }
+    );
+    const complete = await mode.doComplete(
+      document,
+      textDocumentPositionParams,
+      'dirty',
+      region
+    );
 
     if (!isAureliaCompletionItem(complete)) return;
 

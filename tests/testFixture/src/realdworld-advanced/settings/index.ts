@@ -1,6 +1,12 @@
 import template from './index.html';
 
-import { customElement, IRouter, IRouteViewModel, IPlatform, watch } from 'aurelia';
+import {
+  customElement,
+  IRouter,
+  IRouteViewModel,
+  IPlatform,
+  watch,
+} from 'aurelia';
 import { AuthHandler, IUserState } from '../state';
 import { User } from '../api';
 
@@ -8,22 +14,24 @@ import { User } from '../api';
 export class SettingsViewCustomElement implements IRouteViewModel {
   local: User;
   dirty = false;
-  get busy(): boolean { return this.$user.updatePending; }
+  get busy(): boolean {
+    return this.$user.updatePending;
+  }
 
   constructor(
     @IPlatform readonly p: IPlatform,
     @IUserState readonly $user: IUserState,
-    @IRouter readonly router: IRouter,
+    @IRouter readonly router: IRouter
   ) {
     this.local = $user.current.clone();
   }
 
-  @watch<SettingsViewCustomElement>(x => x.$user.current)
+  @watch<SettingsViewCustomElement>((x) => x.$user.current)
   sync(): void {
     this.local = this.$user.current.clone();
   }
 
-  @watch<SettingsViewCustomElement>(x => !x.local.equals(x.$user.current))
+  @watch<SettingsViewCustomElement>((x) => !x.local.equals(x.$user.current))
   setDirty(dirty: boolean): void {
     this.dirty = dirty;
   }

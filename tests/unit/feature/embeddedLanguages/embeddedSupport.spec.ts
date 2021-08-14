@@ -20,7 +20,9 @@ describe('embeddedSupport.ts', () => {
 
   it('parseDocumentRegions', async () => {
     const aureliaComponentList = testAureliaProgram.getComponentList();
-    const settingsComponent = aureliaComponentList.find(component => component.componentName === 'settings-view');
+    const settingsComponent = aureliaComponentList.find(
+      (component) => component.componentName === 'settings-view'
+    );
 
     if (settingsComponent === undefined) return;
 
@@ -54,7 +56,9 @@ describe('embeddedSupport.ts', () => {
   it('parseDocumentRegions - set viewRegions to ComponentList', async () => {
     testAureliaProgram.initComponentList();
     const aureliaComponentList = testAureliaProgram.getComponentList();
-    const settingsComponent = aureliaComponentList.find(component => component.componentName === 'settings-view');
+    const settingsComponent = aureliaComponentList.find(
+      (component) => component.componentName === 'settings-view'
+    );
 
     if (settingsComponent === undefined) return;
 

@@ -1,10 +1,39 @@
-import { DI, ILifecycleHooks, ILogger, IRouteViewModel, lifecycleHooks, NavigationInstruction, Params, RouteNode } from 'aurelia';
-import { Article, ArticleListResponse, ArticleResponse, Comment, ErrorRecordResponse, IApiService, IJwtService, ArticleQueryParams, User, UserLogin, UserRegistration, UserResponse, UserUpdate, ArticleListQueryParams, Profile, ProfileResponse, ErrorList } from './api';
+import {
+  DI,
+  ILifecycleHooks,
+  ILogger,
+  IRouteViewModel,
+  lifecycleHooks,
+  NavigationInstruction,
+  Params,
+  RouteNode,
+} from 'aurelia';
+import {
+  Article,
+  ArticleListResponse,
+  ArticleResponse,
+  Comment,
+  ErrorRecordResponse,
+  IApiService,
+  IJwtService,
+  ArticleQueryParams,
+  User,
+  UserLogin,
+  UserRegistration,
+  UserResponse,
+  UserUpdate,
+  ArticleListQueryParams,
+  Profile,
+  ProfileResponse,
+  ErrorList,
+} from './api';
 
 /**
  * Singleton `User` state that represents the currently logged-in user.
  */
-export const IUserState = DI.createInterface<IUserState>('IUserState', x => x.singleton(UserState));
+export const IUserState = DI.createInterface<IUserState>('IUserState', (x) =>
+  x.singleton(UserState)
+);
 export interface IUserState extends UserState {}
 export class UserState {
   errors: ErrorList = [];
@@ -13,7 +42,7 @@ export class UserState {
 
   constructor(
     @IJwtService private readonly jwt: IJwtService,
-    @IApiService private readonly api: IApiService,
+    @IApiService private readonly api: IApiService
   ) {}
 
   loadPending = false;
@@ -94,14 +123,15 @@ export class UserState {
 /**
  * Singleton `Profile` state that represents the profile currently routed to.
  */
-export const IProfileState = DI.createInterface<IProfileState>('IProfileState', x => x.singleton(ProfileState));
+export const IProfileState = DI.createInterface<IProfileState>(
+  'IProfileState',
+  (x) => x.singleton(ProfileState)
+);
 export interface IProfileState extends ProfileState {}
 export class ProfileState {
   current = Profile.NONE;
 
-  constructor(
-    @IApiService private readonly api: IApiService,
-  ) {}
+  constructor(@IApiService private readonly api: IApiService) {}
 
   toggleFollowPending = false;
   async toggleFollow(): Promise<void> {
@@ -132,30 +162,31 @@ export class ProfileState {
     }
 
     this.nextUsername = username;
-    return this.loadPromise = (async () => {
+    return (this.loadPromise = (async () => {
       this.loadPending = true;
       const resp = await this.api.getProfile(username);
       this.loadPending = false;
       this.loadPromise = null;
 
       this.current = resp.profile;
-    })();
+    })());
   }
 }
 
 /**
  * Singleton `Article` state that represents the article currently routed to.
  */
-export const IArticleState = DI.createInterface<IArticleState>('IArticleState', x => x.singleton(ArticleState));
+export const IArticleState = DI.createInterface<IArticleState>(
+  'IArticleState',
+  (x) => x.singleton(ArticleState)
+);
 export interface IArticleState extends ArticleState {}
 export class ArticleState {
   errors: ErrorList = [];
   current: Article = Article.NONE;
   comments: Comment[] = [];
 
-  constructor(
-    @IApiService private readonly api: IApiService,
-  ) {}
+  constructor(@IApiService private readonly api: IApiService) {}
 
   toggleFollowPending = false;
   async toggleFollow(): Promise<void> {
@@ -203,7 +234,7 @@ export class ArticleState {
     this.comments = [];
 
     if (slug) {
-      return this.loadPromise = (async () => {
+      return (this.loadPromise = (async () => {
         this.loadPending = true;
         // TODO: handle 404 and other errors gracefully
         const resp = await this.api.getArticle(slug);
@@ -212,7 +243,7 @@ export class ArticleState {
           this.loadPromise = null;
           this.current = resp.article;
         }
-      })();
+      })());
     }
   }
 
@@ -226,7 +257,7 @@ export class ArticleState {
 
     this.nextCommentsSlug = slug;
 
-    return this.loadCommentsPromise = (async () => {
+    return (this.loadCommentsPromise = (async () => {
       this.loadCommentsPending = true;
       // TODO: handle 404 and other errors gracefully
       const resp = await this.api.getCommentsFromArticle(slug);
@@ -235,7 +266,7 @@ export class ArticleState {
         this.loadCommentsPromise = null;
         this.comments = resp.comments;
       }
-    })();
+    })());
   }
 
   savePending = false;
@@ -255,7 +286,7 @@ export class ArticleState {
       this.errors = resp.toErrorList();
       return false;
     }
-    this.current = resp.article
+    this.current = resp.article;
     return true;
   }
 
@@ -300,7 +331,7 @@ export class ArticleState {
     await this.api.deleteCommentFromArticle(article.slug, commentId);
     this.deleteCommentPending = false;
 
-    const idx = this.comments.findIndex(x => x.id === commentId);
+    const idx = this.comments.findIndex((x) => x.id === commentId);
     this.comments.splice(idx, 1);
   }
 }
@@ -308,22 +339,26 @@ export class ArticleState {
 /**
  * Singleton `Article` list state that represents the list of articles (and the query params that narrow them down) currently being viewed.
  */
-export const IArticleListState = DI.createInterface<IArticleListState>('IArticleListState', x => x.singleton(ArticleListState));
+export const IArticleListState = DI.createInterface<IArticleListState>(
+  'IArticleListState',
+  (x) => x.singleton(ArticleListState)
+);
 export interface IArticleListState extends ArticleListState {}
 export class ArticleListState {
   items: Article[] = [];
   itemsCount = 0;
   currentPage = 0;
   pages: number[] = [];
-  params: ArticleQueryParams = ArticleListQueryParams.create({ limit: 20, offset: 0 });
+  params: ArticleQueryParams = ArticleListQueryParams.create({
+    limit: 20,
+    offset: 0,
+  });
 
-  constructor(
-    @IApiService private readonly api: IApiService,
-  ) {}
+  constructor(@IApiService private readonly api: IApiService) {}
 
   toggleFavoritePending = {} as Record<string, boolean>;
   async toggleFavorite(slug: string): Promise<void> {
-    const idx = this.items.findIndex(x => x.slug === slug);
+    const idx = this.items.findIndex((x) => x.slug === slug);
     const article = this.items[idx];
     let resp: ArticleResponse;
 
@@ -354,21 +389,24 @@ export class ArticleListState {
     this.items = resp.articles;
     this.itemsCount = resp.articlesCount;
     this.currentPage = (params.offset + this.items.length) / params.limit;
-    this.pages = Array.from(Array(Math.ceil(resp.articlesCount / params.limit)), (_, i) => i + 1);
+    this.pages = Array.from(
+      Array(Math.ceil(resp.articlesCount / params.limit)),
+      (_, i) => i + 1
+    );
   }
 }
 
 /**
  * Singleton tags state that represents all global tags.
  */
-export const ITagsState = DI.createInterface<ITagsState>('ITagsState', x => x.singleton(TagsState));
+export const ITagsState = DI.createInterface<ITagsState>('ITagsState', (x) =>
+  x.singleton(TagsState)
+);
 export interface ITagsState extends TagsState {}
 export class TagsState {
   items: string[] = [];
 
-  constructor(
-    @IApiService private readonly api: IApiService,
-  ) {}
+  constructor(@IApiService private readonly api: IApiService) {}
 
   loadPending = false;
   async load(): Promise<void> {
@@ -381,17 +419,26 @@ export class TagsState {
 }
 
 @lifecycleHooks()
-export class AuthHandler implements ILifecycleHooks<IRouteViewModel, 'canLoad'> {
+export class AuthHandler
+  implements ILifecycleHooks<IRouteViewModel, 'canLoad'> {
   constructor(
     @IUserState readonly auth: IUserState,
-    @ILogger readonly logger: ILogger,
+    @ILogger readonly logger: ILogger
   ) {
-    this.logger = logger.scopeTo('AuthHandler')
+    this.logger = logger.scopeTo('AuthHandler');
   }
 
-  canLoad(vm: IRouteViewModel, params: Params, next: RouteNode): boolean | NavigationInstruction {
+  canLoad(
+    vm: IRouteViewModel,
+    params: Params,
+    next: RouteNode
+  ): boolean | NavigationInstruction {
     if (!this.auth.isAuth) {
-      this.logger.trace(`canLoad() - redirecting to login page`, next, this.auth);
+      this.logger.trace(
+        `canLoad() - redirecting to login page`,
+        next,
+        this.auth
+      );
       return 'login';
     }
     this.logger.trace(`canLoad() - proceeding`, next, this.auth);

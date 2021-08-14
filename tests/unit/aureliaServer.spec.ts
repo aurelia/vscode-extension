@@ -4,7 +4,7 @@ import { MONOREPO } from './helpers/file-path-mocks';
 import { MockServer } from './helpers/test-setup';
 import { Logger } from 'culog';
 
-const logger = new Logger({scope: 'auServer'});
+const logger = new Logger({ scope: 'auServer' });
 
 describe('Aurelia Server', () => {
   it.skip('onConnectionInitialized - With active Aurelia projects', async () => {
@@ -41,12 +41,6 @@ describe('Aurelia Server', () => {
     await mockServer.onConnectionInitialized({
       include: ['aurelia', 'burelia'],
     });
-
-    // logger.setLogOptions({focusedLogging: true})
-    // logger.debug(['hi'])
-
-
-    // TODO: Addd culog <<<<<<<
 
     const testAureliaExtension = mockServer.getContainerDirectly()
       .AureliaExtension;

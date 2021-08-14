@@ -17,11 +17,13 @@ describe('Aurelia Component List', () => {
   it('#initComponentList', () => {
     testAureliaProgram.initComponentList();
 
-    const componentList = testAureliaProgram.getComponentList();/*?*/
+    const componentList = testAureliaProgram.getComponentList(); /*?*/
 
     strictEqual(componentList.length, 2);
 
-    const settingsComponent = componentList.find(component => component.componentName === 'settings-view');
+    const settingsComponent = componentList.find(
+      (component) => component.componentName === 'settings-view'
+    );
     strictEqual(settingsComponent?.className, 'SettingsViewCustomElement');
     strictEqual(settingsComponent?.componentName, 'settings-view');
     strictEqual(settingsComponent?.baseViewModelFileName, 'index');
@@ -43,11 +45,9 @@ describe('Aurelia Component List', () => {
     );
     strictEqual(methods.length, 5);
   });
-
 });
 
 describe('Aurelia Component List - Methods', () => {
-
   it('#setBindableList #getBindableList', async () => {
     testAureliaProgram = await getAureliaProgramForTesting({
       include: ['src/minimal-component/*'],

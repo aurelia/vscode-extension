@@ -1,4 +1,1 @@
-
-export class AureliaCustomElement {
-
-}
+export class AureliaCustomElement {}

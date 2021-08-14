@@ -2,7 +2,9 @@ import { IWindow } from '@aurelia/runtime-html';
 import { DI, IHttpClient, ILogger } from 'aurelia';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-type FuncPropNames<T> = { [K in keyof T]: T[K] extends Function ? K : never; }[keyof T];
+type FuncPropNames<T> = {
+  [K in keyof T]: T[K] extends Function ? K : never;
+}[keyof T];
 /**
  * Omit all function properties from the type.
  *
@@ -28,17 +30,11 @@ export class User {
     public token: string,
     public username: string,
     public bio: string,
-    public image: string,
+    public image: string
   ) {}
 
   static create(obj: OmitFuncProps<User>): User {
-    return new User(
-      obj.email,
-      obj.token,
-      obj.username,
-      obj.bio,
-      obj.image,
-    );
+    return new User(obj.email, obj.token, obj.username, obj.bio, obj.image);
   }
 
   clone(): User {
@@ -57,9 +53,7 @@ export class User {
 }
 
 export class UserResponse {
-  private constructor(
-    public user: User,
-  ) {}
+  private constructor(public user: User) {}
 
   static create(obj: OmitFuncProps<UserResponse>): UserResponse {
     return new UserResponse(User.create(obj.user));
@@ -80,16 +74,11 @@ export class Profile {
     public username: string,
     public bio: string,
     public image: string,
-    public following: boolean,
+    public following: boolean
   ) {}
 
   static create(obj: OmitFuncProps<Profile>): Profile {
-    return new Profile(
-      obj.username,
-      obj.bio,
-      obj.image,
-      obj.following,
-    );
+    return new Profile(obj.username, obj.bio, obj.image, obj.following);
   }
 
   clone(): Profile {
@@ -107,9 +96,7 @@ export class Profile {
 }
 
 export class ProfileResponse {
-  private constructor(
-    public profile: Profile,
-  ) {}
+  private constructor(public profile: Profile) {}
 
   static create(obj: OmitFuncProps<ProfileResponse>): ProfileResponse {
     return new ProfileResponse(Profile.create(obj.profile));
@@ -141,7 +128,7 @@ export class Article {
     public updatedAt: string,
     public favorited: boolean,
     public favoritesCount: 0,
-    public author: Profile,
+    public author: Profile
   ) {}
 
   static create(obj: OmitFuncProps<Article>): Article {
@@ -155,7 +142,7 @@ export class Article {
       obj.updatedAt,
       obj.favorited,
       obj.favoritesCount,
-      Profile.create(obj.author),
+      Profile.create(obj.author)
     );
   }
 
@@ -175,9 +162,7 @@ export class Article {
 }
 
 export class ArticleResponse {
-  private constructor(
-    public article: Article,
-  ) {}
+  private constructor(public article: Article) {}
 
   static create(obj: OmitFuncProps<ArticleResponse>): ArticleResponse {
     return new ArticleResponse(Article.create(obj.article));
@@ -187,12 +172,15 @@ export class ArticleResponse {
 export class ArticleListResponse {
   private constructor(
     public articles: Article[],
-    public articlesCount: number,
+    public articlesCount: number
   ) {}
 
   static create(obj: OmitFuncProps<ArticleListResponse>): ArticleListResponse {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    return new ArticleListResponse(obj.articles.map(Article.create), obj.articlesCount);
+    return new ArticleListResponse(
+      obj.articles.map(Article.create),
+      obj.articlesCount
+    );
   }
 }
 
@@ -202,7 +190,7 @@ export class Comment {
     public body: string,
     public createdAt: string,
     public updatedAt: string,
-    public author: Profile,
+    public author: Profile
   ) {}
 
   static create(obj: OmitFuncProps<Comment>): Comment {
@@ -211,7 +199,7 @@ export class Comment {
       obj.body,
       obj.createdAt,
       obj.updatedAt,
-      Profile.create(obj.author),
+      Profile.create(obj.author)
     );
   }
 
@@ -221,9 +209,7 @@ export class Comment {
 }
 
 export class CommentResponse {
-  private constructor(
-    public comment: Comment,
-  ) {}
+  private constructor(public comment: Comment) {}
 
   static create(obj: OmitFuncProps<CommentResponse>): CommentResponse {
     return new CommentResponse(Comment.create(obj.comment));
@@ -231,9 +217,7 @@ export class CommentResponse {
 }
 
 export class CommentListResponse {
-  private constructor(
-    public comments: Comment[],
-  ) {}
+  private constructor(public comments: Comment[]) {}
 
   static create(obj: OmitFuncProps<CommentListResponse>): CommentListResponse {
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -242,9 +226,7 @@ export class CommentListResponse {
 }
 
 export class TagListResponse {
-  private constructor(
-    public tags: string[],
-  ) {}
+  private constructor(public tags: string[]) {}
 
   static create(obj: OmitFuncProps<TagListResponse>): TagListResponse {
     return new TagListResponse(obj.tags);
@@ -254,19 +236,19 @@ export class TagListResponse {
 export type ErrorList = [string, string[]][];
 export type ErrorRecord = Record<string, string[]>;
 export class ErrorRecordResponse {
-  private constructor(
-    public errors: ErrorRecord,
-  ) {}
+  private constructor(public errors: ErrorRecord) {}
 
   static create(obj: OmitFuncProps<ErrorRecordResponse>): ErrorRecordResponse {
-    return new ErrorRecordResponse(Object.keys(obj.errors).reduce((errors, key) => {
-      errors[key] = obj.errors[key].slice();
-      return errors;
-    }, {} as ErrorRecord));
+    return new ErrorRecordResponse(
+      Object.keys(obj.errors).reduce((errors, key) => {
+        errors[key] = obj.errors[key].slice();
+        return errors;
+      }, {} as ErrorRecord)
+    );
   }
 
   toErrorList(): ErrorList {
-    return Object.keys(this.errors).map(key => [key, this.errors[key]]);
+    return Object.keys(this.errors).map((key) => [key, this.errors[key]]);
   }
 }
 
@@ -275,10 +257,7 @@ export class ErrorRecordResponse {
 // #region Request objects
 
 export class UserLogin {
-  private constructor(
-    public email: string,
-    public password: string,
-  ) {}
+  private constructor(public email: string, public password: string) {}
 
   static create(input: OmitFuncProps<UserLogin>): UserLogin {
     return new UserLogin(input.email, input.password);
@@ -286,9 +265,7 @@ export class UserLogin {
 }
 
 export class UserLoginRequest {
-  private constructor(
-    public user: UserLogin,
-  ) {}
+  private constructor(public user: UserLogin) {}
 
   static create(input: OmitFuncProps<UserLogin>): UserLoginRequest {
     return new UserLoginRequest(UserLogin.create(input));
@@ -299,7 +276,7 @@ export class UserRegistration {
   private constructor(
     public username: string,
     public email: string,
-    public password: string,
+    public password: string
   ) {}
 
   static create(input: OmitFuncProps<UserRegistration>): UserRegistration {
@@ -308,11 +285,11 @@ export class UserRegistration {
 }
 
 export class UserRegistrationRequest {
-  private constructor(
-    public user: UserRegistration,
-  ) {}
+  private constructor(public user: UserRegistration) {}
 
-  static create(input: OmitFuncProps<UserRegistration>): UserRegistrationRequest {
+  static create(
+    input: OmitFuncProps<UserRegistration>
+  ): UserRegistrationRequest {
     return new UserRegistrationRequest(UserRegistration.create(input));
   }
 }
@@ -323,7 +300,7 @@ export class UserUpdate {
     public token?: string,
     public username?: string,
     public bio?: string,
-    public image?: string,
+    public image?: string
   ) {}
 
   static create(input: OmitFuncProps<UserUpdate>): UserUpdate {
@@ -332,15 +309,13 @@ export class UserUpdate {
       input.token,
       input.username,
       input.bio,
-      input.image,
+      input.image
     );
   }
 }
 
 export class UserUpdateRequest {
-  private constructor(
-    public user: UserUpdate,
-  ) {}
+  private constructor(public user: UserUpdate) {}
 
   static create(input: OmitFuncProps<UserUpdate>): UserUpdateRequest {
     return new UserUpdateRequest(UserUpdate.create(input));
@@ -350,23 +325,27 @@ export class UserUpdateRequest {
 type PurifyQueryParams<T> = Omit<T, 'type' | FuncPropNames<T>>;
 
 export class ArticleListQueryParams {
-  get type(): 'all' { return 'all'; }
+  get type(): 'all' {
+    return 'all';
+  }
 
   private constructor(
     public limit: number,
     public offset: number,
     public tag?: string,
     public author?: string,
-    public favorited?: string,
+    public favorited?: string
   ) {}
 
-  static create(input: PurifyQueryParams<ArticleListQueryParams>): ArticleListQueryParams {
+  static create(
+    input: PurifyQueryParams<ArticleListQueryParams>
+  ): ArticleListQueryParams {
     return new ArticleListQueryParams(
       input.limit,
       input.offset,
       input.tag,
       input.author,
-      input.favorited,
+      input.favorited
     );
   }
 
@@ -381,7 +360,9 @@ export class ArticleListQueryParams {
     );
   }
 
-  clone(overwrites: Partial<PurifyQueryParams<ArticleListQueryParams>> = {}): ArticleListQueryParams {
+  clone(
+    overwrites: Partial<PurifyQueryParams<ArticleListQueryParams>> = {}
+  ): ArticleListQueryParams {
     return ArticleListQueryParams.create({ ...this, ...overwrites });
   }
 
@@ -391,14 +372,15 @@ export class ArticleListQueryParams {
 }
 
 export class FeedArticleListQueryParams {
-  get type(): 'feed' { return 'feed'; }
+  get type(): 'feed' {
+    return 'feed';
+  }
 
-  private constructor(
-    public limit: number,
-    public offset: number,
-  ) {}
+  private constructor(public limit: number, public offset: number) {}
 
-  static create(input: PurifyQueryParams<FeedArticleListQueryParams>): FeedArticleListQueryParams {
+  static create(
+    input: PurifyQueryParams<FeedArticleListQueryParams>
+  ): FeedArticleListQueryParams {
     return new FeedArticleListQueryParams(input.limit, input.offset);
   }
 
@@ -410,7 +392,9 @@ export class FeedArticleListQueryParams {
     );
   }
 
-  clone(overwrites: Partial<PurifyQueryParams<FeedArticleListQueryParams>> = {}): FeedArticleListQueryParams {
+  clone(
+    overwrites: Partial<PurifyQueryParams<FeedArticleListQueryParams>> = {}
+  ): FeedArticleListQueryParams {
     return FeedArticleListQueryParams.create({ ...this, ...overwrites });
   }
 
@@ -419,13 +403,14 @@ export class FeedArticleListQueryParams {
   }
 }
 
-export type ArticleQueryParams = (
-  ArticleListQueryParams |
-  FeedArticleListQueryParams
-);
+export type ArticleQueryParams =
+  | ArticleListQueryParams
+  | FeedArticleListQueryParams;
 
 function toQueryString(obj: PurifyQueryParams<ArticleQueryParams>): string {
-  const keys = Object.keys(obj) as (keyof PurifyQueryParams<ArticleQueryParams>)[];
+  const keys = Object.keys(
+    obj
+  ) as (keyof PurifyQueryParams<ArticleQueryParams>)[];
   const pairs: string[] = [];
   for (const key of keys) {
     const value = obj[key];
@@ -441,18 +426,21 @@ export class ArticleCreate {
     public title: string,
     public description: string,
     public body: string,
-    public tagList: string[],
+    public tagList: string[]
   ) {}
 
   static create(input: OmitFuncProps<ArticleCreate>): ArticleCreate {
-    return new ArticleCreate(input.title, input.description, input.body, input.tagList.slice());
+    return new ArticleCreate(
+      input.title,
+      input.description,
+      input.body,
+      input.tagList.slice()
+    );
   }
 }
 
 export class ArticleCreateRequest {
-  private constructor(
-    public article: ArticleCreate,
-  ) {}
+  private constructor(public article: ArticleCreate) {}
 
   static create(input: OmitFuncProps<ArticleCreate>): ArticleCreateRequest {
     return new ArticleCreateRequest(ArticleCreate.create(input));
@@ -464,18 +452,21 @@ export class ArticleUpdate {
     public title?: string,
     public description?: string,
     public body?: string,
-    public tagList?: string[],
+    public tagList?: string[]
   ) {}
 
   static create(input: OmitFuncProps<ArticleUpdate>): ArticleUpdate {
-    return new ArticleUpdate(input.title, input.description, input.body, input.tagList?.slice());
+    return new ArticleUpdate(
+      input.title,
+      input.description,
+      input.body,
+      input.tagList?.slice()
+    );
   }
 }
 
 export class ArticleUpdateRequest {
-  private constructor(
-    public article: ArticleUpdate,
-  ) {}
+  private constructor(public article: ArticleUpdate) {}
 
   static create(input: OmitFuncProps<ArticleUpdate>): ArticleUpdateRequest {
     return new ArticleUpdateRequest(ArticleUpdate.create(input));
@@ -483,9 +474,7 @@ export class ArticleUpdateRequest {
 }
 
 export class CommentCreate {
-  private constructor(
-    public body: string,
-  ) {}
+  private constructor(public body: string) {}
 
   static create(input: OmitFuncProps<CommentCreate>): CommentCreate {
     return new CommentCreate(input.body);
@@ -493,9 +482,7 @@ export class CommentCreate {
 }
 
 export class CommentCreateRequest {
-  private constructor(
-    public comment: CommentCreate,
-  ) {}
+  private constructor(public comment: CommentCreate) {}
 
   static create(input: OmitFuncProps<CommentCreate>): CommentCreateRequest {
     return new CommentCreateRequest(CommentCreate.create(input));
@@ -506,12 +493,12 @@ export class CommentCreateRequest {
 
 // #region Api service
 
-export const IJwtService = DI.createInterface<IJwtService>('IJwtService', x => x.singleton(JwtService));
+export const IJwtService = DI.createInterface<IJwtService>('IJwtService', (x) =>
+  x.singleton(JwtService)
+);
 export interface IJwtService extends JwtService {}
 export class JwtService {
-  constructor(
-    @IWindow readonly w: IWindow,
-  ) {}
+  constructor(@IWindow readonly w: IWindow) {}
 
   getToken(): string | null {
     return this.w.localStorage.getItem('jwtToken');
@@ -541,45 +528,64 @@ export class JwtService {
 
 type CreateArg<T> = T extends { create(arg: infer A): any } ? A : never;
 
-export const IApiService = DI.createInterface<IApiService>('IApiService', x => x.singleton(ApiService));
+export const IApiService = DI.createInterface<IApiService>('IApiService', (x) =>
+  x.singleton(ApiService)
+);
 export interface IApiService extends ApiService {}
 export class ApiService {
   constructor(
     @ILogger private readonly logger: ILogger,
     @IHttpClient private readonly http: IHttpClient,
-    @IJwtService private readonly jwt: IJwtService,
+    @IJwtService private readonly jwt: IJwtService
   ) {
     this.logger = logger.scopeTo('ApiService');
 
-    http.configure(x => x
-      .withBaseUrl('https://conduit.productionready.io/api')
-      .withDefaults({
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-      }).withInterceptor({
-        request(request) {
-          if (!request.headers.has('Authorization') && jwt.isTokenValid()) {
-            logger.debug(`request(${request.method} ${request.url}) - adding auth header`);
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            request.headers.append('Authorization', jwt.getAuthorizationHeader()!);
-          } else {
-            logger.debug(`request(${request.method} ${request.url}) - skipping auth header`);
-          }
-          return request;
-        },
-      })
+    http.configure((x) =>
+      x
+        .withBaseUrl('https://conduit.productionready.io/api')
+        .withDefaults({
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        })
+        .withInterceptor({
+          request(request) {
+            if (!request.headers.has('Authorization') && jwt.isTokenValid()) {
+              logger.debug(
+                `request(${request.method} ${request.url}) - adding auth header`
+              );
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              request.headers.append(
+                'Authorization',
+                jwt.getAuthorizationHeader()!
+              );
+            } else {
+              logger.debug(
+                `request(${request.method} ${request.url}) - skipping auth header`
+              );
+            }
+            return request;
+          },
+        })
     );
   }
 
-  loginUser(login: CreateArg<typeof UserLogin>): Promise<UserResponse | ErrorRecordResponse> {
+  loginUser(
+    login: CreateArg<typeof UserLogin>
+  ): Promise<UserResponse | ErrorRecordResponse> {
     const body = JSON.stringify(UserLoginRequest.create(login));
     this.logger.trace(`loginUser(body:${body})`);
-    return this.handle(this.http.post(`/users/login`, body), UserResponse, true);
+    return this.handle(
+      this.http.post(`/users/login`, body),
+      UserResponse,
+      true
+    );
   }
 
-  registerUser(registration: CreateArg<typeof UserRegistration>): Promise<UserResponse | ErrorRecordResponse> {
+  registerUser(
+    registration: CreateArg<typeof UserRegistration>
+  ): Promise<UserResponse | ErrorRecordResponse> {
     const body = JSON.stringify(UserRegistrationRequest.create(registration));
     this.logger.trace(`registerUser(body:${body})`);
     return this.handle(this.http.post(`/users`, body), UserResponse, true);
@@ -603,24 +609,37 @@ export class ApiService {
 
   followUser(username: string): Promise<ProfileResponse> {
     this.logger.trace(`followUser(username:'${username}')`);
-    return this.handle(this.http.post(`/profiles/${username}/follow`), ProfileResponse);
+    return this.handle(
+      this.http.post(`/profiles/${username}/follow`),
+      ProfileResponse
+    );
   }
 
   unfollowUser(username: string): Promise<ProfileResponse> {
     this.logger.trace(`unfollowUser(username:'${username}')`);
-    return this.handle(this.http.delete(`/profiles/${username}/follow`), ProfileResponse);
+    return this.handle(
+      this.http.delete(`/profiles/${username}/follow`),
+      ProfileResponse
+    );
   }
 
-  getArticles(params: CreateArg<typeof ArticleListQueryParams>): Promise<ArticleListResponse> {
+  getArticles(
+    params: CreateArg<typeof ArticleListQueryParams>
+  ): Promise<ArticleListResponse> {
     const query = ArticleListQueryParams.create(params).toQueryString();
     this.logger.trace(`getArticles(query:'${query}')`);
     return this.handle(this.http.get(`/articles${query}`), ArticleListResponse);
   }
 
-  getFeedArticles(params: CreateArg<typeof FeedArticleListQueryParams>): Promise<ArticleListResponse> {
+  getFeedArticles(
+    params: CreateArg<typeof FeedArticleListQueryParams>
+  ): Promise<ArticleListResponse> {
     const query = FeedArticleListQueryParams.create(params).toQueryString();
     this.logger.trace(`getFeedArticles(query:'${query}')`);
-    return this.handle(this.http.get(`/articles/feed${query}`), ArticleListResponse);
+    return this.handle(
+      this.http.get(`/articles/feed${query}`),
+      ArticleListResponse
+    );
   }
 
   getArticle(slug: string): Promise<ArticleResponse> {
@@ -628,16 +647,29 @@ export class ApiService {
     return this.handle(this.http.get(`/articles/${slug}`), ArticleResponse);
   }
 
-  createArticle(article: CreateArg<typeof ArticleCreate>): Promise<ArticleResponse | ErrorRecordResponse> {
+  createArticle(
+    article: CreateArg<typeof ArticleCreate>
+  ): Promise<ArticleResponse | ErrorRecordResponse> {
     const body = JSON.stringify(ArticleCreateRequest.create(article));
     this.logger.trace(`createArticle(body:${body})`);
-    return this.handle(this.http.post(`/articles`, body), ArticleResponse, true);
+    return this.handle(
+      this.http.post(`/articles`, body),
+      ArticleResponse,
+      true
+    );
   }
 
-  updateArticle(slug: string, article: CreateArg<typeof ArticleUpdate>): Promise<ArticleResponse | ErrorRecordResponse> {
+  updateArticle(
+    slug: string,
+    article: CreateArg<typeof ArticleUpdate>
+  ): Promise<ArticleResponse | ErrorRecordResponse> {
     const body = JSON.stringify(ArticleUpdateRequest.create(article));
     this.logger.trace(`updateArticle(slug:'${slug}',body:${body})`);
-    return this.handle(this.http.put(`/articles/${slug}`, body), ArticleResponse, true);
+    return this.handle(
+      this.http.put(`/articles/${slug}`, body),
+      ArticleResponse,
+      true
+    );
   }
 
   deleteArticle(slug: string): Promise<void> {
@@ -645,15 +677,25 @@ export class ApiService {
     return this.handle(this.http.delete(`/articles/${slug}`));
   }
 
-  addCommentToArticle(slug: string, comment: CreateArg<typeof CommentCreate>): Promise<CommentResponse | ErrorRecordResponse> {
+  addCommentToArticle(
+    slug: string,
+    comment: CreateArg<typeof CommentCreate>
+  ): Promise<CommentResponse | ErrorRecordResponse> {
     const body = JSON.stringify(CommentCreateRequest.create(comment));
     this.logger.trace(`addCommentToArticle(slug:'${slug}',body:${body})`);
-    return this.handle(this.http.post(`/articles/${slug}/comments`, body), CommentResponse, true);
+    return this.handle(
+      this.http.post(`/articles/${slug}/comments`, body),
+      CommentResponse,
+      true
+    );
   }
 
   getCommentsFromArticle(slug: string): Promise<CommentListResponse> {
     this.logger.trace(`getCommentsFromArticle(slug:'${slug}')`);
-    return this.handle(this.http.get(`/articles/${slug}/comments`), CommentListResponse);
+    return this.handle(
+      this.http.get(`/articles/${slug}/comments`),
+      CommentListResponse
+    );
   }
 
   deleteCommentFromArticle(slug: string, id: number): Promise<void> {
@@ -663,12 +705,18 @@ export class ApiService {
 
   favoriteArticle(slug: string): Promise<ArticleResponse> {
     this.logger.trace(`favoriteArticle(slug:'${slug}')`);
-    return this.handle(this.http.post(`/articles/${slug}/favorite`), ArticleResponse);
+    return this.handle(
+      this.http.post(`/articles/${slug}/favorite`),
+      ArticleResponse
+    );
   }
 
   unfavoriteArticle(slug: string): Promise<ArticleResponse> {
     this.logger.trace(`unfavoriteArticle(slug:'${slug}')`);
-    return this.handle(this.http.delete(`/articles/${slug}/favorite`), ArticleResponse);
+    return this.handle(
+      this.http.delete(`/articles/${slug}/favorite`),
+      ArticleResponse
+    );
   }
 
   getTags(): Promise<TagListResponse> {
@@ -676,17 +724,31 @@ export class ApiService {
     return this.handle(this.http.get(`/tags`), TagListResponse);
   }
 
-  private async handle<T extends ResponseConstructor>(p: Promise<Response>, Type: T, handleValidationErrors: true): Promise<ReturnType<T['create']> | ErrorRecordResponse>;
-  private async handle<T extends ResponseConstructor>(p: Promise<Response>, Type: T): Promise<ReturnType<T['create']>>;
+  private async handle<T extends ResponseConstructor>(
+    p: Promise<Response>,
+    Type: T,
+    handleValidationErrors: true
+  ): Promise<ReturnType<T['create']> | ErrorRecordResponse>;
+  private async handle<T extends ResponseConstructor>(
+    p: Promise<Response>,
+    Type: T
+  ): Promise<ReturnType<T['create']>>;
   private async handle(p: Promise<Response>): Promise<void>;
-  private async handle<T extends ResponseConstructor>(p: Promise<Response>, Type?: T, handleValidationErrors?: true): Promise<ReturnType<T['create']> | ErrorRecordResponse | void> {
+  private async handle<T extends ResponseConstructor>(
+    p: Promise<Response>,
+    Type?: T,
+    handleValidationErrors?: true
+  ): Promise<ReturnType<T['create']> | ErrorRecordResponse | void> {
     const response = await p;
     if (response.status >= 200 && response.status < 400) {
       if (Type === undefined) {
         this.logger.trace(`handle() - ignoring response body`, response);
         return;
       } else {
-        this.logger.trace(`handle() - retrieving normal response body`, response);
+        this.logger.trace(
+          `handle() - retrieving normal response body`,
+          response
+        );
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const json = await response.json();
         this.logger.trace(`handle() - done`, json);
@@ -697,7 +759,7 @@ export class ApiService {
     // https://github.com/gothinkster/realworld/tree/master/api#errors-and-status-codes
     if (response.status === 422 && handleValidationErrors) {
       this.logger.trace(`handle() - retrieving error response body`, response);
-      const json = await response.json() as ErrorRecordResponse;
+      const json = (await response.json()) as ErrorRecordResponse;
       this.logger.trace(`handle() - done`, json);
       return ErrorRecordResponse.create(json);
     }
@@ -706,15 +768,14 @@ export class ApiService {
   }
 }
 
-type ResponseConstructor = (
-  typeof UserResponse |
-  typeof ProfileResponse |
-  typeof ArticleResponse |
-  typeof ArticleListResponse |
-  typeof CommentResponse |
-  typeof CommentListResponse |
-  typeof TagListResponse
-);
+type ResponseConstructor =
+  | typeof UserResponse
+  | typeof ProfileResponse
+  | typeof ArticleResponse
+  | typeof ArticleListResponse
+  | typeof CommentResponse
+  | typeof CommentListResponse
+  | typeof TagListResponse;
 
 export class HttpError extends Error {
   constructor(public readonly response: Response) {

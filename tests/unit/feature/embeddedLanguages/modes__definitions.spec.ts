@@ -147,16 +147,19 @@ describe('embeddedSupport.ts - Modes - Individual', () => {
   ];
 
   templateTestCases__Definition.forEach(
-    ({
-      position,
-      type,
-      targetWord,
-      lineAndCharacterOfDef,
-      fileNameOfDef = COMPONENT_VIEW_MODEL_FILE_NAME,
-      attributeName,
-      attributeValue,
-      regionValue,
-    }, index) => {
+    (
+      {
+        position,
+        type,
+        targetWord,
+        lineAndCharacterOfDef,
+        fileNameOfDef = COMPONENT_VIEW_MODEL_FILE_NAME,
+        attributeName,
+        attributeValue,
+        regionValue,
+      },
+      index
+    ) => {
       it(`Definition - ${type} - ${index}`, async () => {
         modeAndRegion = await languageModes.getModeAndRegionAtPosition(
           document,

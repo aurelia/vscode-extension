@@ -1,4 +1,4 @@
-import { bindable, customElement } from "aurelia-framework";
+import { bindable, customElement } from 'aurelia-framework';
 
 interface Alliteration {
   wait: string;
@@ -10,11 +10,11 @@ interface Grammar {
   alliteration: Alliteration;
 }
 
-@customElement("compo-user")
+@customElement('compo-user')
 export class CompoUser {
-  @bindable thisIsMe: string = "hello";
+  @bindable thisIsMe: string = 'hello';
 
-  message: string = "compo user";
+  message: string = 'compo user';
 
   counter: number = 0;
 

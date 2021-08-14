@@ -2,11 +2,17 @@ import template from './index.html';
 
 import { customElement, IRouteViewModel, IPlatform } from 'aurelia';
 import { IArticleListState, ITagsState, IUserState } from '../state';
-import { Article, ArticleListQueryParams, FeedArticleListQueryParams } from '../api';
+import {
+  Article,
+  ArticleListQueryParams,
+  FeedArticleListQueryParams,
+} from '../api';
 
 @customElement({ name: 'home-view', template })
 export class HomeViewCustomElement implements IRouteViewModel {
-  get articles(): Article[] { return this.$articleList.items; }
+  get articles(): Article[] {
+    return this.$articleList.items;
+  }
 
   tag: string | undefined = undefined;
   mode: 'all' | 'feed' = 'all';
@@ -15,7 +21,7 @@ export class HomeViewCustomElement implements IRouteViewModel {
     @IPlatform readonly p: IPlatform,
     @IArticleListState readonly $articleList: IArticleListState,
     @ITagsState readonly $tags: ITagsState,
-    @IUserState readonly $user: IUserState,
+    @IUserState readonly $user: IUserState
   ) {}
 
   attaching(): void {
@@ -27,7 +33,10 @@ export class HomeViewCustomElement implements IRouteViewModel {
       this.mode = mode;
       this.tag = undefined;
       const { limit, offset } = this.$articleList.params;
-      const params = (mode === 'all' ? ArticleListQueryParams : FeedArticleListQueryParams).create({ limit, offset });
+      const params = (mode === 'all'
+        ? ArticleListQueryParams
+        : FeedArticleListQueryParams
+      ).create({ limit, offset });
       await this.$articleList.load(params);
     });
   }
