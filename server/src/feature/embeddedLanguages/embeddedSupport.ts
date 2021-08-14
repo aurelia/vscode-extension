@@ -108,9 +108,10 @@ export function parseDocumentRegions<RegionDataType = any>(
     const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
     let hasImportTemplateTag = false;
 
-    const aureliaCustomElementNames = aureliaProgram
-      .getComponentList()
-      .map((component) => component.componentName);
+    const componentList = aureliaProgram.getComponentList();
+    if (componentList === undefined) resolve([]);
+
+    const aureliaCustomElementNames = componentList.map((component) => component.componentName);
 
     // 0. Check if template was imported to ViewModel
     const fileName = document.uri;
@@ -446,8 +447,8 @@ function createRegion<RegionDataType = any>({
   regionValue,
 }: {
   sourceCodeLocation:
-    | SaxStream.StartTagToken['sourceCodeLocation']
-    | parse5.AttributesLocation[string];
+  | SaxStream.StartTagToken['sourceCodeLocation']
+  | parse5.AttributesLocation[string];
   type: ViewRegionType;
   regionValue?: string;
   attribute?: parse5.Attribute;
