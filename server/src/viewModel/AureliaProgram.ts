@@ -113,7 +113,6 @@ export class AureliaProgram {
       }
     });
 
-
     if (componentList.length === 0) {
       console.log('Error: No Aurelia class found');
     }
@@ -170,8 +169,7 @@ export class AureliaProgram {
     options: IProjectOptions = defaultProjectOptions
   ): string[] {
     const { rootDirectory, exclude, include } = options;
-    const targetSourceDirectory =
-      rootDirectory ?? ts.sys.getCurrentDirectory();
+    const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
 
     let finalExcludes: string[] = [];
 

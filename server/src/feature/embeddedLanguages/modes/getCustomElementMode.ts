@@ -1,7 +1,4 @@
-import {
-  ViewRegionInfo,
-  ViewRegionType,
-} from '../embeddedSupport';
+import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import * as path from 'path';
 
 import { TextDocumentPositionParams } from 'vscode-languageserver';
@@ -13,8 +10,7 @@ import { DefinitionResult } from '../../definition/getDefinition';
 import { camelCase } from 'lodash';
 import { getVirtualDefinition } from '../../definition/virtualDefinition';
 
-export function getCustomElementMode(
-): LanguageMode {
+export function getCustomElementMode(): LanguageMode {
   return {
     getId() {
       return ViewRegionType.CustomElement;
@@ -66,9 +62,7 @@ export function getCustomElementMode(
       const targetAureliaFileDifferentViewModel = aureliaSourceFiles?.find(
         (sourceFile) => {
           const filePathName = path.parse(sourceFile.fileName).name;
-          return (
-            filePathName === customElementRegion?.tagName
-          );
+          return filePathName === customElementRegion?.tagName;
         }
       );
 

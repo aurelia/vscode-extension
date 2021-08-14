@@ -62,7 +62,11 @@ export function getAccessScopeDefinition(
   }
 
   // 2.
-  const viewModelDefinition = getAccessScopeViewModelDefinition(document, position, goToSourceWord);
+  const viewModelDefinition = getAccessScopeViewModelDefinition(
+    document,
+    position,
+    goToSourceWord
+  );
   return viewModelDefinition;
 }
 

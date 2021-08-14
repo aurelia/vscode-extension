@@ -111,7 +111,9 @@ export function parseDocumentRegions<RegionDataType = any>(
     const componentList = aureliaProgram.getComponentList();
     if (componentList === undefined) resolve([]);
 
-    const aureliaCustomElementNames = componentList.map((component) => component.componentName);
+    const aureliaCustomElementNames = componentList.map(
+      (component) => component.componentName
+    );
 
     // 0. Check if template was imported to ViewModel
     const fileName = document.uri;
@@ -447,8 +449,8 @@ function createRegion<RegionDataType = any>({
   regionValue,
 }: {
   sourceCodeLocation:
-  | SaxStream.StartTagToken['sourceCodeLocation']
-  | parse5.AttributesLocation[string];
+    | SaxStream.StartTagToken['sourceCodeLocation']
+    | parse5.AttributesLocation[string];
   type: ViewRegionType;
   regionValue?: string;
   attribute?: parse5.Attribute;
@@ -564,7 +566,9 @@ function getLanguageAtPosition(
   });
 
   if (!Object.keys(potentialRegions).length) {
-    console.error('embeddedSupport -> getLanguageAtPosition -> No Region found');
+    console.error(
+      'embeddedSupport -> getLanguageAtPosition -> No Region found'
+    );
     return undefined;
   }
 

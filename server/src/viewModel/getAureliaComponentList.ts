@@ -85,10 +85,11 @@ export function getAureliaComponentInfoFromClassDeclaration(
       if (fs.existsSync(conventionViewFilePath)) {
         viewFilePath = conventionViewFilePath;
       } else {
-        viewFilePath = getTemplateImportPathFromCustomElementDecorator(
-          targetClassDeclaration,
-          sourceFile
-        ) ?? '';
+        viewFilePath =
+          getTemplateImportPathFromCustomElementDecorator(
+            targetClassDeclaration,
+            sourceFile
+          ) ?? '';
       }
 
       //

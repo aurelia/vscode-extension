@@ -300,8 +300,9 @@ function enhanceCompletionItemDocumentation(
       if (customizeEnhanceDocumentation?.omitMethodNameAndBrackets === true) {
         insertMethodTextWithArguments = createArgCompletion(entryDetail);
       } else {
-        insertMethodTextWithArguments = `${tsCompletion.name
-          }(${createArgCompletion(entryDetail)})`;
+        insertMethodTextWithArguments = `${
+          tsCompletion.name
+        }(${createArgCompletion(entryDetail)})`;
       }
     }
 

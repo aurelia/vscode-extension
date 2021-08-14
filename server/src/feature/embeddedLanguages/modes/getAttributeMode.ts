@@ -1,4 +1,8 @@
-import { ViewRegionInfo, ViewRegionType , HTMLDocumentRegions } from '../embeddedSupport';
+import {
+  ViewRegionInfo,
+  ViewRegionType,
+  HTMLDocumentRegions,
+} from '../embeddedSupport';
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { LanguageModelCache } from '../languageModelCache';
@@ -20,7 +24,7 @@ export function getAttributeMode(
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter?: string,
-      region?: ViewRegionInfo,
+      region?: ViewRegionInfo
     ) {
       const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
         _textDocumentPosition,
@@ -38,7 +42,9 @@ export function getAttributeMode(
       position: Position,
       goToSourceWord: string
     ): Promise<DefinitionResult | undefined> {
-      const regions = (await languageModelCacheDocument.get(document)).getRegions();
+      const regions = (
+        await languageModelCacheDocument.get(document)
+      ).getRegions();
       return getAccessScopeDefinition(
         document,
         position,

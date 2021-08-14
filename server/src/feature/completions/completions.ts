@@ -110,9 +110,7 @@ export async function getBindablesCompletion(
   });
 
   return asCompletionItem.filter((bindable) => {
-    return (
-      kebabCase(bindable.data.elementName) === region.tagName
-    );
+    return kebabCase(bindable.data.elementName) === region.tagName;
   });
 }
 

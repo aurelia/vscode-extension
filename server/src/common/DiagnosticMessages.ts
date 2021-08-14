@@ -1,4 +1,4 @@
-import {diagnosticMessagesData} from './diagnosticMessagesData';
+import { diagnosticMessagesData } from './diagnosticMessagesData';
 
 export class DiagnosticMessages {
   private readonly aureliaCode = 'auvsc';
@@ -12,10 +12,7 @@ export class DiagnosticMessages {
 
   public log(): void {
     const targetMessage = diagnosticMessagesData[this.message];
-    const consoleMessage =
-      `[${targetMessage.category}] ${
-      this.message
-      } ${this.diagnosticCodeForMessage}`;
+    const consoleMessage = `[${targetMessage.category}] ${this.message} ${this.diagnosticCodeForMessage}`;
 
     console.log(consoleMessage);
   }
