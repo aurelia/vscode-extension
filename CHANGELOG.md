@@ -1,3 +1,13 @@
+## [2.0.7](https://github.com/aurelia/vscode-extension/compare/2.0.6...2.0.7) (2021-08-14)
+
+
+### Bug Fixes
+
+* **completions:** add missing arg ([ab9045a](https://github.com/aurelia/vscode-extension/commit/ab9045aeb5f4d37c9a13907ea1db121864cee94f))
+* **embedded:** add guard ([d7c1e0c](https://github.com/aurelia/vscode-extension/commit/d7c1e0c60ba3f80ac84748baac8d593e5bf9d5b1))
+  Attempts to fix output issue. (`.map of undefined`)
+
+
 ## [2.0.6](https://github.com/aurelia/vscode-extension/compare/2.0.5...2.0.6) (2021-03-15)
 
 
