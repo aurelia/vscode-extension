@@ -1,4 +1,7 @@
-/// <reference types="cypress" />
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
 //
@@ -12,11 +15,46 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-/**
- * @type {Cypress.PluginConfig}
- */
-// eslint-disable-next-line no-unused-vars
+const wp = require('@cypress/webpack-preprocessor');
+
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-}
+  require('@cypress/code-coverage/task')(on, config);
+
+  const options = {
+    webpackOptions: {
+      resolve: {
+        extensions: ['.ts', '.tsx', '.js'],
+      },
+      module: {
+        rules: [
+          {
+            test: /\.tsx?$/,
+            use: [
+              {
+                loader: '@jsdevtools/coverage-istanbul-loader',
+              },
+              {
+                loader: 'ts-loader',
+                options: { transpileOnly: true },
+              },
+            ],
+          },
+          {
+            test: /\.feature$/,
+            use: [
+              {
+                loader: '@badeball/cypress-cucumber-preprocessor/lib/loader',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  };
+
+  on('file:preprocessor', wp(options));
+
+  // IMPORTANT to return the config object
+  // with the any changed environment variables
+  return config;
+};

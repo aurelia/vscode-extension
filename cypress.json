@@ -1,1 +1,11 @@
-{}
+{
+  "testFiles": "**/*.feature",
+  "spec": "cypress/**/!(dev)-*.feature",
+  "fixturesFolder": "cypress/fixtures",
+  "integrationFolder": "cypress/integration",
+  "pluginsFile": "cypress/plugins/index.js",
+  "supportFile": "cypress/support/index.js",
+  "reporter": "junit",
+  "pageLoadTimeout": 120000,
+  "numTestsKeptInMemory": 0
+}

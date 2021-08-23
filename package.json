@@ -206,8 +206,11 @@
     "start:depCruise": "depcruise --include-only '^server/src' --output-type dot server/src | dot -T svg > dependencygraph.svg"
   },
   "devDependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^5.1.0",
+    "@badeball/cypress-cucumber-preprocessor": "^3.0.0",
     "@code-dependency/cli": "^0.5.0",
+    "@cypress/code-coverage": "^3.8.1",
+    "@cypress/webpack-preprocessor": "^5.6.0",
+    "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@types/assert": "^1.5.4",
     "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.30",
@@ -225,7 +228,9 @@
     "mocha": "^8.3.0",
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
-    "ts-node": "^9.1.1"
+    "ts-loader": "^6.2.1",
+    "ts-node": "^9.1.1",
+    "webpack": "^4.46.0"
   },
   "dependencies": {
     "aurelia-dependency-injection": "^1.5.2",
