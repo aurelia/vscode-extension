@@ -4,7 +4,7 @@ import {
   getAureliaProjectPaths,
 } from '../../../server/src/common/AureliaExtension';
 import { globalContainer } from '../../../server/src/container';
-import { onConnectionInitialized } from '../../../server/src/aureliaServer';
+import { onConnectionInitialized } from '../../../server/src/core/aureliaServer';
 import { IAureliaProjectSetting } from '../../../server/src/configuration/DocumentSettings';
 import { DocumentUri, TextDocument } from 'vscode-languageserver-textdocument';
 import path = require('path');

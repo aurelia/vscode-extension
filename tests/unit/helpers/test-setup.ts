@@ -30,7 +30,7 @@ import {
   AureliaServer,
   onConnectionDidChangeContent,
   onConnectionInitialized,
-} from '../../../server/src/aureliaServer';
+} from '../../../server/src/core/aureliaServer';
 import { AureliaExtension } from '../../../server/src/common/AureliaExtension';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 
@@ -222,8 +222,8 @@ export class MockServer {
     };
   }
 
-  mockTextDocuments<T extends string>(
-    fileUris: T[],
+  mockTextDocuments(
+    fileUris: string[],
     options: { isUri: boolean; isRelative: boolean } = {
       isUri: false,
       isRelative: true,

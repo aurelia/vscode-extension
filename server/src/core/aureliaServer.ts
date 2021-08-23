@@ -1,17 +1,16 @@
-import { Container } from 'aurelia-dependency-injection';
 import * as fastGlob from 'fast-glob';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { normalize } from 'path';
-import { AureliaExtension } from './common/AureliaExtension';
+import { AureliaExtension } from '../common/AureliaExtension';
 import {
   ExtensionSettings,
   DocumentSettings,
-} from './configuration/DocumentSettings';
+} from '../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
-import { globalContainer } from './container';
-import { uriToPath } from './common/uriToPath';
+import { Container, globalContainer } from '../container';
+import { uriToPath } from '../common/uriToPath';
 
 export class AureliaServer {
   constructor(private container: Container) {}
@@ -34,6 +33,70 @@ export class AureliaServer {
   ): Promise<void> {
     await onConnectionDidChangeContent(this.container, change);
   }
+
+  listen() {}
+  onRequest() {}
+  sendRequest() {}
+  onNotification() {}
+  sendNotification() {}
+  // onProgress() {}
+  sendProgress() {}
+  onInitialize() {}
+  onInitialized() {}
+  onShutdown() {}
+  onExit() {}
+  onDidChangeConfiguration() {}
+  onDidChangeWatchedFiles() {}
+  onDidOpenTextDocument() {}
+  onDidChangeTextDocument() {}
+  onDidCloseTextDocument() {}
+  onWillSaveTextDocument() {}
+  onWillSaveTextDocumentWaitUntil() {}
+  onDidSaveTextDocument() {}
+  sendDiagnostics() {}
+  onHover() {}
+  onCompletion() {}
+  onCompletionResolve() {}
+  onSignatureHelp() {}
+  onDeclaration() {}
+  onDefinition() {}
+  onTypeDefinition() {}
+  onImplementation() {}
+  onReferences() {}
+  onDocumentHighlight() {}
+  onDocumentSymbol() {}
+  onWorkspaceSymbol() {}
+  onCodeAction() {}
+  onCodeLens() {}
+  onCodeLensResolve() {}
+  onDocumentFormatting() {}
+  onDocumentRangeFormatting() {}
+  onDocumentOnTypeFormatting() {}
+  onRenameRequest() {}
+  onPrepareRename() {}
+  onDocumentLinks() {}
+  onDocumentLinkResolve() {}
+  onDocumentColor() {}
+  onColorPresentation() {}
+  onFoldingRanges() {}
+  onSelectionRanges() {}
+  onExecuteCommand() {}
+  dispose() {}
+
+  // console: RemoteConsole & PConsole;
+  // tracer: Tracer & PTracer;
+  // telemetry: Telemetry & PTelemetry;
+  // client: RemoteClient & PClient;
+  // window: RemoteWindow & PWindow;
+  // workspace: RemoteWorkspace & PWorkspace;
+  // languages: Languages & PLanguages;
+  // console;
+  // tracer;
+  // telemetry;
+  // client;
+  // window;
+  // workspace;
+  // languages;
 }
 
 export function initDependencyInjection(
