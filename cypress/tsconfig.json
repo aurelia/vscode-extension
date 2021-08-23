@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": "../node_modules",
+    "target": "es5",
+    "lib": ["es2020", "dom"],
+    "types": ["cypress", "cypress-wait-until"]
+  },
+  "include": [
+    "**/*.ts",
+    "./support",
+    "./integration",
+    "./fixtures",
+    "./plugins"
+  ]
+}
