@@ -1,8 +1,8 @@
 import { strictEqual } from 'assert';
 import {
-  AureliaExtension,
+  AureliaProjectFiles,
   getAureliaProjectPaths,
-} from '../../../server/src/common/AureliaExtension';
+} from '../../../server/src/common/AureliaProjectFiles';
 import { globalContainer } from '../../../server/src/container';
 import { onConnectionInitialized } from '../../../server/src/core/aureliaServer';
 import { IAureliaProjectSetting } from '../../../server/src/configuration/DocumentSettings';
@@ -71,10 +71,10 @@ describe('AureliaExtension', () => {
       include: ['aurelia'],
     });
 
-    const testAureliaExtension = globalContainer.get(AureliaExtension);
+    const testAureliaExtension = globalContainer.get(AureliaProjectFiles);
 
     await testAureliaExtension.hydrateAureliaProjectList();
-    const auProjectList = testAureliaExtension.getAureliaProjectList();
+    const auProjectList = testAureliaExtension.getAureliaProjects();
     strictEqual(auProjectList.length, 1);
 
     auProjectList.forEach(({ aureliaProgram }) => {
@@ -95,10 +95,10 @@ describe('AureliaExtension', () => {
         include: ['aurelia', 'burelia'],
       });
 
-    const testAureliaExtension = globalContainer.get(AureliaExtension);
+    const testAureliaExtension = globalContainer.get(AureliaProjectFiles);
 
     await testAureliaExtension.hydrateAureliaProjectList();
-    const auProjectList = testAureliaExtension.getAureliaProjectList();
+    const auProjectList = testAureliaExtension.getAureliaProjects();
     strictEqual(auProjectList.length, 2);
 
     // auProjectList.forEach((aureliaProgram, key) => {

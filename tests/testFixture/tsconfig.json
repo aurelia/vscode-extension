@@ -4,9 +4,9 @@
     "module": "commonjs",
     "target": "es6",
     "outDir": "out",
-    "rootDir": "src",
+    "rootDir": "cli-generated/src",
     "sourceMap": true
   },
-  "include": ["src"],
+  "include": ["cli-generated/src"],
   "exclude": ["node_modules", ".vscode-test"]
 }

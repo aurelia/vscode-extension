@@ -15,7 +15,7 @@ describe('Aurelia Server', () => {
     });
 
     const testAureliaExtension = mockServer.getContainerDirectly()
-      .AureliaExtension;
+      .AureliaProjectFiles;
 
     const mockTextDocumentPaths = mockServer
       .mockTextDocuments([
@@ -29,7 +29,7 @@ describe('Aurelia Server', () => {
 
     await testAureliaExtension.hydrateAureliaProjectList(mockTextDocumentPaths);
     // await testAureliaExtension.hydrateAureliaProjectList([]);
-    const auProjectList = testAureliaExtension.getAureliaProjectList();
+    const auProjectList = testAureliaExtension.getAureliaProjects();
     strictEqual(auProjectList.length, 2);
     ok(auProjectList[0].aureliaProgram);
     ok(auProjectList[1].aureliaProgram);
@@ -43,10 +43,10 @@ describe('Aurelia Server', () => {
     });
 
     const testAureliaExtension = mockServer.getContainerDirectly()
-      .AureliaExtension;
+      .AureliaProjectFiles;
 
     await testAureliaExtension.hydrateAureliaProjectList([]);
-    const auProjectList = testAureliaExtension.getAureliaProjectList();
+    const auProjectList = testAureliaExtension.getAureliaProjects();
     // strictEqual(auProjectList.length, 2);
     strictEqual(auProjectList.length, 3);
     strictEqual(auProjectList[0].aureliaProgram, null);
@@ -61,7 +61,7 @@ describe('Aurelia Server', () => {
     });
 
     const testAureliaExtension = mockServer.getContainerDirectly()
-      .AureliaExtension;
+      .AureliaProjectFiles;
 
     const [mockTextDocument] = mockServer
       .mockTextDocuments([MONOREPO['package-aurelia/aurelia/aurelia.ts']])
@@ -70,7 +70,7 @@ describe('Aurelia Server', () => {
       document: mockTextDocument,
     });
 
-    const auProjList = testAureliaExtension.getAureliaProjectList(); /* ? */
+    const auProjList = testAureliaExtension.getAureliaProjects(); /* ? */
 
     strictEqual(auProjList.length, 2);
     ok(auProjList[0].aureliaProgram);

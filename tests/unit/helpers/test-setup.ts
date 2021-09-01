@@ -31,7 +31,7 @@ import {
   onConnectionDidChangeContent,
   onConnectionInitialized,
 } from '../../../server/src/core/aureliaServer';
-import { AureliaExtension } from '../../../server/src/common/AureliaExtension';
+import { AureliaProjectFiles } from '../../../server/src/common/AureliaProjectFiles';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 
 export async function getAureliaProgramForTesting(
@@ -216,7 +216,7 @@ export class MockServer {
    */
   public getContainerDirectly() {
     return {
-      AureliaExtension: this.container.get(AureliaExtension),
+      AureliaProjectFiles: this.container.get(AureliaProjectFiles),
       AureliaProgram: this.container.get(AureliaProgram),
       DocumentSettings: this.container.get(DocumentSettings),
     };
@@ -259,7 +259,6 @@ export class MockServer {
     aureliaProject: Partial<IAureliaProjectSetting>
   ) {
     await this.aureliaServer.onConnectionInitialized(
-      aureliaProject.rootDirectory ?? this.workspaceRootUri,
       {
         aureliaProject: {
           exclude: undefined,
