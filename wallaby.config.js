@@ -4,8 +4,9 @@ module.exports = function () {
       "client/**/*.ts",
       "server/**/*.ts",
       "**/tsconfig.json",
-      "tests/testFixture/src/**/*.{ts,html,json}",
+      "tests/testFixture/**/*.{ts,html,json}",
       "tests/unit/helpers/**/*.ts",
+      "cypress/integration/common/**/*.ts",
     ],
 
     tests: [
@@ -13,7 +14,8 @@ module.exports = function () {
       // 'tests/unit/**/*Map.spec.ts',
       // 'tests/unit/**/*embeddedSupport.spec.ts',
       // 'tests/unit/**/AureliaExtension.spec.ts',
-      'tests/unit/**/aureliaServer.spec.ts',
+      // 'tests/unit/**/aureliaServer.spec.ts',
+      'cypress/integration/initialization/on-initialized/on-initialized.spec.ts'
       // "tests/unit/**/languageModes.spec.ts",
       // "tests/unit/feature/embeddedLanguages/modes*.spec.ts",
       // "tests/unit/feature/embeddedLanguages/modes__definitions.spec.ts",

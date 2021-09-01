@@ -1,7 +1,16 @@
 import 'reflect-metadata';
 import { Connection } from 'vscode-languageserver';
+import { Logger } from 'culog';
 import { singleton } from 'aurelia-dependency-injection';
 import { globalContainer } from '../container';
+
+const logger = new Logger({ scope: 'DocumentSettings' });
+// logger.setLogOptions({ logLevel: 'INFO' });
+logger.overwriteDefaultLogOtpions({
+  logLevel: 'DEBUG',
+  focusedLogging: true,
+  logScope: false,
+});
 
 export const settingsName = 'aurelia';
 
@@ -83,16 +92,17 @@ export class DocumentSettings {
       ];
       finalExcludes.push(...defaultExcludes);
     }
-    console.log('[INFO] Exclude paths globs: ');
-    console.log(finalExcludes.join(', '));
+    logger.debug(['Exclude paths globs: '], { logLevel: 'INFO' });
+    logger.debug([finalExcludes.join(', ')], { logLevel: 'INFO' });
+
     exclude = finalExcludes;
 
     const include = this.documentSettings.aureliaProject?.include;
-    console.log('[INFO] Include paths globs: ');
+    logger.debug(['Include paths globs: '], { logLevel: 'INFO' });
     if (include?.length) {
-      console.log(include?.join(', '));
+      logger.debug([include.join(', ')], { logLevel: 'INFO' });
     } else {
-      console.log('No includes provided.');
+      logger.debug(['No includes provided.'], { logLevel: 'INFO' });
     }
   }
 

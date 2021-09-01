@@ -24,6 +24,7 @@ import {
 import 'reflect-metadata';
 
 import {
+  DocumentSettings,
   ExtensionSettings,
   settingsName,
 } from './configuration/DocumentSettings';
@@ -43,6 +44,7 @@ import {
 } from './feature/completions/createAureliaTemplateAttributeCompletions';
 import { globalContainer } from './container';
 import {
+  AureliaServer,
   onConnectionDidChangeContent,
   onConnectionInitialized,
 } from './core/aureliaServer';
@@ -116,21 +118,26 @@ connection.onInitialized(async () => {
       undefined
     );
 
-    const extensionSettings = await connection.workspace.getConfiguration({
-      section: settingsName,
-    });
-
     const workspaceFolders = await connection.workspace.getWorkspaceFolders();
     if (workspaceFolders === null) return;
 
     const workspaceRootUri = workspaceFolders[0].uri;
+    const extensionSettings = (await connection.workspace.getConfiguration({
+      section: settingsName,
+    })) as ExtensionSettings;
 
-    await onConnectionInitialized(
-      globalContainer,
-      workspaceRootUri,
-      extensionSettings,
-      documents.all()
-    );
+    extensionSettings.aureliaProject = {
+      rootDirectory: workspaceRootUri,
+    };
+
+    const aureliaServer = new AureliaServer(globalContainer);
+    aureliaServer.onConnectionInitialized(extensionSettings, documents.all());
+    // await onConnectionInitialized(
+    //   globalContainer,
+    //   workspaceRootUri,
+    //   extensionSettings,
+    //   documents.all()
+    // );
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {

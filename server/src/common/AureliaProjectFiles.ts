@@ -9,6 +9,9 @@ import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { createAureliaWatchProgram } from '../viewModel/createAureliaWatchProgram';
 import { IProjectOptions, defaultProjectOptions } from './common.types';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { Logger } from 'culog';
+
+const logger = new Logger({ scope: 'AureliaProjectFiles' });
 
 interface AureliaProject {
   tsConfigPath: string;
@@ -77,88 +80,93 @@ export function getAureliaProjectPaths(
   return aureliaProjectPaths;
 }
 
+/** Copied from AureliaProgram#~ */
+function getProjectFilePaths(
+  options: IProjectOptions = defaultProjectOptions
+): string[] {
+  const { rootDirectory, exclude, include } = options;
+  const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
+
+  const finalExcludes: string[] = [];
+
+  if (exclude === undefined) {
+    const defaultExcludes = [
+      '**/node_modules',
+      'aurelia_project',
+      '**/out',
+      '**/build',
+      '**/dist',
+    ];
+    finalExcludes.push(...defaultExcludes);
+  }
+  // console.log('[INFO] Exclude paths globs: ');
+  // console.log(finalExcludes.join(', '));
+
+  let finalIncludes: string[] = [];
+
+  if (include !== undefined) {
+    finalIncludes = include;
+  }
+  finalIncludes/*?*/
+
+  // console.log('[INFO] Include paths globs: ');
+  // console.log(finalIncludes.join(', '));
+
+  const paths = ts.sys.readDirectory(
+    targetSourceDirectory,
+    ['ts'],
+    // ['ts', 'js', 'html'],
+    finalExcludes,
+    finalIncludes
+  );
+
+  return paths;
+}
+
 @inject(DocumentSettings)
-export class AureliaExtension {
-  aureliaProjectList: AureliaProject[] = [];
+export class AureliaProjectFiles {
+  aureliaProjects: AureliaProject[] = [];
   // aureliaProjectMap: Map<string, any> = new Map();
 
-  public constructor(private readonly documentSettings: DocumentSettings) {}
+  public constructor(public readonly documentSettings: DocumentSettings) {}
 
   public async gatherProjectInfo() {}
 
-  public async setAureliaProjectList(packageJsonPaths: string[]) {
+  public async setAureliaProjects(packageJsonPaths: string[]) {
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
-      const filePaths = this.getProjectFilePaths({
+      const filePaths = getProjectFilePaths({
         ...this.documentSettings.getSettings().aureliaProject,
         rootDirectory: aureliaProjectPath,
       });
 
       if (filePaths.length === 0) {
-        console.log(
-          `[INFO][AuExt.ts] Not including path ${aureliaProjectPath}, because it was excluded or not included.`
+        logger.debug(
+          [
+            `Not including path ${aureliaProjectPath}, because it was excluded or not included.`,
+          ],
+          { logLevel: 'INFO', log: true }
         );
         return;
       }
-      this.aureliaProjectList.push({
+
+      this.aureliaProjects.push({
         tsConfigPath: aureliaProjectPath,
         aureliaProgram: null,
       });
     });
   }
 
-  public getAureliaProjectList(): AureliaExtension['aureliaProjectList'] {
-    return this.aureliaProjectList;
-  }
-
-  /** Copied from AureliaProgram#~ */
-  public getProjectFilePaths(
-    options: IProjectOptions = defaultProjectOptions
-  ): string[] {
-    const { rootDirectory, exclude, include } = options;
-    const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
-
-    const finalExcludes: string[] = [];
-
-    if (exclude === undefined) {
-      const defaultExcludes = [
-        '**/node_modules',
-        'aurelia_project',
-        '**/out',
-        '**/build',
-        '**/dist',
-      ];
-      finalExcludes.push(...defaultExcludes);
-    }
-    // console.log('[INFO] Exclude paths globs: ');
-    // console.log(finalExcludes.join(', '));
-
-    let finalIncludes: string[] = [];
-
-    if (include !== undefined) {
-      finalIncludes = include;
-    }
-
-    // console.log('[INFO] Include paths globs: ');
-    // console.log(finalIncludes.join(', '));
-
-    const paths = ts.sys.readDirectory(
-      targetSourceDirectory,
-      ['ts'],
-      // ['ts', 'js', 'html'],
-      finalExcludes,
-      finalIncludes
-    );
-
-    return paths;
+  public getAureliaProjects(): AureliaProjectFiles['aureliaProjects'] {
+    return this.aureliaProjects;
   }
 
   public async hydrateAureliaProjectList(documentsPaths: string[]) {
     /** TODO: Makes esnse? */
     if (documentsPaths.length === 0) return;
 
-    const aureliaProjectList = this.getAureliaProjectList();
+    const aureliaProjectList = this.getAureliaProjects();
     aureliaProjectList; /* ? */
     const settings = await this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
@@ -205,7 +213,7 @@ export class AureliaExtension {
       targetAureliaProject.aureliaProgram = aureliaProgram;
     });
 
-    const aureliaProjectList1 = this.getAureliaProjectList();
+    const aureliaProjectList1 = this.getAureliaProjects();
     aureliaProjectList1; /* ? */
   }
 }

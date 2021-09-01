@@ -2,7 +2,7 @@ import * as fastGlob from 'fast-glob';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { normalize } from 'path';
-import { AureliaExtension } from '../common/AureliaExtension';
+import { AureliaProjectFiles } from '../common/AureliaProjectFiles';
 import {
   ExtensionSettings,
   DocumentSettings,
@@ -11,18 +11,19 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { Container, globalContainer } from '../container';
 import { uriToPath } from '../common/uriToPath';
+import { Logger } from 'culog';
+
+const logger = new Logger({ scope: 'aureliaServer' });
 
 export class AureliaServer {
   constructor(private container: Container) {}
 
   async onConnectionInitialized(
-    workspaceRootUri: string,
     extensionSettings: ExtensionSettings,
     activeDocuments: TextDocument[] = []
   ): Promise<void> {
     await onConnectionInitialized(
       this.container,
-      workspaceRootUri,
       extensionSettings,
       activeDocuments
     );
@@ -108,7 +109,10 @@ export function initDependencyInjection(
     new DocumentSettings(extensionSettings)
   );
   const settings = container.get(DocumentSettings);
-  container.registerInstance(AureliaExtension, new AureliaExtension(settings));
+  container.registerInstance(
+    AureliaProjectFiles,
+    new AureliaProjectFiles(settings)
+  );
 }
 
 /**
@@ -118,52 +122,58 @@ export function initDependencyInjection(
  */
 export async function onConnectionInitialized(
   container: Container,
-  workspaceRootUri: string,
   extensionSettings: ExtensionSettings,
   activeDocuments: TextDocument[] = []
 ) {
   /*  */
   initDependencyInjection(container, extensionSettings);
 
-  const aureliaExtension = container.get(AureliaExtension);
+  const workspaceRootUri =
+    extensionSettings.aureliaProject?.rootDirectory ?? '';
 
   /*  */
   const cwd = fileURLToPath(normalize(workspaceRootUri));
-  const packageJsonPaths = await fastGlob('**/package.json', {
+
+  const packageJsonPaths = fastGlob.sync('**/package.json', {
     absolute: true,
     ignore: ['node_modules'],
     cwd,
   });
 
-  await aureliaExtension.setAureliaProjectList(packageJsonPaths);
+  const aureliaProjectFiles = container.get(AureliaProjectFiles);
+  await aureliaProjectFiles.setAureliaProjects(packageJsonPaths);
 
-  const aureliaProjectList = aureliaExtension.getAureliaProjectList();
-  const hasAureliaProject = aureliaProjectList.length > 0;
+  const aureliaProjects = aureliaProjectFiles.getAureliaProjects();
+  const hasAureliaProject = aureliaProjects.length > 0;
 
   if (!hasAureliaProject) {
-    console.log('[INFO][server.ts] No active Aurelia project found.');
-    console.log(
-      '[INFO][server.ts] Extension will activate, as soon as a file inside an Aurelia project is opened.'
+    logger.debug(['No active Aurelia project found.'], { logLevel: 'INFO' });
+    logger.debug(
+      [
+        'Extension will activate, as soon as a file inside an Aurelia project is opened.',
+      ],
+      { logLevel: 'INFO' }
     );
     return;
   }
 
-  console.log(
-    `[INFO][server.ts] Found ${aureliaProjectList.length} Aurelia projects in: `
-  );
-  aureliaProjectList.forEach(({ tsConfigPath }) => {
-    console.log(tsConfigPath);
+  logger.debug([`Found ${aureliaProjects.length} Aurelia projects in: `], {
+    logLevel: 'INFO',
+  });
+  aureliaProjects.forEach(({ tsConfigPath }) => {
+    logger.debug([tsConfigPath], {
+      logLevel: 'INFO',
+    });
   });
 
   const activeDocumentPaths = activeDocuments.map((activeDocument) => {
     const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
     return documentPath;
   });
-  activeDocumentPaths; /* ? */
 
   /*  */
-  console.log('[INFO][server.ts] Parsing Aurelia related data...');
-  await aureliaExtension.hydrateAureliaProjectList(activeDocumentPaths);
+  logger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO' });
+  await aureliaProjectFiles.hydrateAureliaProjectList(activeDocumentPaths);
 }
 
 export async function onConnectionDidChangeContent(
@@ -172,9 +182,9 @@ export async function onConnectionDidChangeContent(
 ) {
   switch (change.document.languageId) {
     case 'typescript': {
-      const aureliaExtension = container.get(AureliaExtension);
+      const aureliaProjectFiles = container.get(AureliaProjectFiles);
       const documentPaths = uriToPath([change.document]);
-      aureliaExtension.hydrateAureliaProjectList(documentPaths);
+      aureliaProjectFiles.hydrateAureliaProjectList(documentPaths);
 
       // updateAureliaComponents(aureliaProgram);
     }

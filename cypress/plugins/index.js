@@ -25,6 +25,11 @@ module.exports = (on, config) => {
       resolve: {
         extensions: ['.ts', '.tsx', '.js'],
       },
+      node: {
+        child_process: "empty",
+        fs: "empty", // if unable to resolve "fs"
+        path: "empty"
+      },
       module: {
         rules: [
           {
