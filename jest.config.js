@@ -1,7 +1,7 @@
 module.exports = {
   preset: 'ts-jest',
   verbose: true,
-  testRegex: '\.(test|spec)\\.ts$',
+  testRegex: '\.(test|spec|steps)\\.ts$',
   coverageDirectory: ".coverage",
   coverageReporters: ['text', 'text-summary'],
   coverageThreshold: {

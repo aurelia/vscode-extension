@@ -2,26 +2,28 @@ import { Container } from 'aurelia-dependency-injection';
 import path = require('path');
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { AureliaProjectFiles } from '../../../server/src/common/AureliaProjectFiles';
+import { AureliaProjectFiles } from '../../server/src/common/AureliaProjectFiles';
 import {
   ExtensionSettings,
   DocumentSettings,
   IAureliaProjectSetting,
-} from '../../../server/src/configuration/DocumentSettings';
-import { globalContainer } from '../../../server/src/container';
-import { AureliaServer } from '../../../server/src/core/aureliaServer';
-import { AureliaProgram } from '../../../server/src/viewModel/AureliaProgram';
+} from '../../server/src/configuration/DocumentSettings';
+import { globalContainer } from '../../server/src/container';
+import { AureliaServer } from '../../server/src/core/aureliaServer';
+import { AureliaProgram } from '../../server/src/viewModel/AureliaProgram';
 import { findProjectRoot } from './find-project-root';
 
 __dirname; /*?*/
 // const projectRoot = findProjectRoot()
 //  projectRoot/*?*/
 const testsDir = findProjectRoot();
+ testsDir/*?*/
 const monorepoFixtureDir = path.resolve(
   testsDir,
   'tests/testFixture/src/monorepo'
 );
 const rootDirectory = `file:/${monorepoFixtureDir}`;
+ rootDirectory/*?*/
 
 export class MockServer {
   public aureliaServer: AureliaServer;
