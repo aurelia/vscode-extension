@@ -206,10 +206,7 @@
     "start:depCruise": "depcruise --include-only '^server/src' --output-type dot server/src | dot -T svg > dependencygraph.svg"
   },
   "devDependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^3.0.0",
     "@code-dependency/cli": "^0.5.0",
-    "@cypress/code-coverage": "^3.8.1",
-    "@cypress/webpack-preprocessor": "^5.6.0",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@types/assert": "^1.5.4",
     "@types/mocha": "^8.2.1",
@@ -218,13 +215,17 @@
     "@typescript-eslint/parser": "^4.15.1",
     "conventional-changelog-cli": "^2.1.1",
     "core-js": "^3.6.5",
-    "cypress": "^8.3.0",
     "dependency-cruiser": "^9.23.3",
     "eslint": "^7.20.0",
     "eslint-plugin-compat": "^3.8.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsdoc": "^30.7.8",
     "eslint-plugin-mocha": "^8.0.0",
+    "jest": "~25.1.0",
+    "@types/jest": "~25.1.3",
+    "ts-jest": "~25.2.1",
+
+    "fermenter": "^1.8.0",
     "mocha": "^8.3.0",
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
@@ -242,12 +243,5 @@
     "vscode-html-languageservice": "^3.0.3",
     "vscode-languageserver": "^6.1.1",
     "vscode-languageserver-textdocument": "^1.0.1"
-  },
-  "cypress-cucumber-preprocessor": {
-    "integrationFolder": "cypress/integration",
-    "stepDefinitionsFolder": "cypress/integration",
-    "nonGlobalStepDefinitions": true,
-    "stepDefinitions": "cypress/integration",
-    "commonPath": "cypress/integration/common"
   }
 }

@@ -1,6 +1,7 @@
-import { Given } from '@badeball/cypress-cucumber-preprocessor/methods';
-import * as path from 'path';
+import { Feature } from 'fermenter';
+import { sum } from 'lodash';
 import { strictEqual } from 'assert';
+import * as path from 'path';
 import { Container } from 'aurelia-dependency-injection';
 import { findProjectRoot } from '../../common/find-project-root';
 import { MockServer } from '../../common/mock-server';
@@ -17,19 +18,24 @@ const monorepoFixtureDir = path.resolve(
 );
 const workspaceRootUri = `file:/${monorepoFixtureDir}`; /*?*/
 
-it('I have a CLI genrated Aurelia project', async () => {
-  const mockServer = new MockServer(new Container(), workspaceRootUri);
-  mockServer.getAureliaServer().onConnectionInitialized({
-    aureliaProject: {
-      rootDirectory: workspaceRootUri,
-    },
-  });
+Feature('../on-initialized.feature', ({ Scenario }) => {
+  Scenario('Detecting simple CLI generated project').Given(
+    'I have a CLI genrated Aurelia project',
+    async () => {
+      const mockServer = new MockServer(new Container(), workspaceRootUri);
+      mockServer.getAureliaServer().onConnectionInitialized({
+        aureliaProject: {
+          rootDirectory: workspaceRootUri,
+        },
+      });
 
-  const testAureliaExtension = mockServer.getContainerDirectly()
-    .AureliaProjectFiles;
-  await testAureliaExtension.hydrateAureliaProjectList([]);
+      const testAureliaExtension = mockServer.getContainerDirectly()
+        .AureliaProjectFiles;
+      await testAureliaExtension.hydrateAureliaProjectList([]);
 
-  const auProjectList = testAureliaExtension.getAureliaProjects();
-  strictEqual(auProjectList.length, 1);
-  strictEqual(auProjectList[0].aureliaProgram, null);
+      const auProjectList = testAureliaExtension.getAureliaProjects();
+      strictEqual(auProjectList.length, 1);
+      strictEqual(auProjectList[0].aureliaProgram, null);
+    }
+  );
 });

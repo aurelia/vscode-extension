@@ -7,6 +7,7 @@ module.exports = function () {
       "tests/testFixture/**/*.{ts,html,json}",
       "tests/unit/helpers/**/*.ts",
       "cypress/integration/common/**/*.ts",
+      "cypress/integration/**/*.feature",
     ],
 
     tests: [
@@ -23,7 +24,7 @@ module.exports = function () {
       // 'tests/unit/**/AureliaProgram.spec.ts',
     ],
 
-    testFramework: "mocha",
+    testFramework: "jest",
     env: {
       type: "node",
     },
