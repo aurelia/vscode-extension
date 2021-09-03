@@ -1,17 +1,20 @@
+import { Logger } from 'culog';
 import * as fastGlob from 'fast-glob';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { normalize } from 'path';
-import { AureliaProjectFiles } from '../common/AureliaProjectFiles';
+import {
+  AureliaProject,
+  AureliaProjectFiles,
+} from '../common/AureliaProjectFiles';
 import {
   ExtensionSettings,
   DocumentSettings,
 } from '../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
-import { Container, globalContainer } from '../container';
+import { Container } from '../container';
 import { uriToPath } from '../common/uriToPath';
-import { Logger } from 'culog';
 
 const logger = new Logger({ scope: 'aureliaServer' });
 
@@ -128,35 +131,28 @@ export async function onConnectionInitialized(
   /*  */
   initDependencyInjection(container, extensionSettings);
 
-  const workspaceRootUri =
-    extensionSettings.aureliaProject?.rootDirectory ?? '';
-
   /*  */
-  const cwd = fileURLToPath(normalize(workspaceRootUri));
-
-  const packageJsonPaths = fastGlob.sync('**/package.json', {
-    absolute: true,
-    ignore: ['node_modules'],
-    cwd,
-  });
-
+  const packageJsonPaths = getPackageJsonPaths(extensionSettings);
   const aureliaProjectFiles = container.get(AureliaProjectFiles);
   await aureliaProjectFiles.setAureliaProjects(packageJsonPaths);
-
   const aureliaProjects = aureliaProjectFiles.getAureliaProjects();
   const hasAureliaProject = aureliaProjects.length > 0;
-
   if (!hasAureliaProject) {
-    logger.debug(['No active Aurelia project found.'], { logLevel: 'INFO' });
-    logger.debug(
-      [
-        'Extension will activate, as soon as a file inside an Aurelia project is opened.',
-      ],
-      { logLevel: 'INFO' }
-    );
+    logHasNoAureliaProject();
     return;
   }
+  logFoundAureliaProjects(aureliaProjects);
 
+  /*  */
+  logger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO' });
+  const activeDocumentPaths = activeDocuments.map((activeDocument) => {
+    const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
+    return documentPath;
+  });
+  await aureliaProjectFiles.hydrateAureliaProjectList(activeDocumentPaths);
+}
+
+function logFoundAureliaProjects(aureliaProjects: AureliaProject[]) {
   logger.debug([`Found ${aureliaProjects.length} Aurelia projects in: `], {
     logLevel: 'INFO',
   });
@@ -165,15 +161,28 @@ export async function onConnectionInitialized(
       logLevel: 'INFO',
     });
   });
+}
 
-  const activeDocumentPaths = activeDocuments.map((activeDocument) => {
-    const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
-    return documentPath;
+function logHasNoAureliaProject() {
+  logger.debug(['No active Aurelia project found.'], { logLevel: 'INFO' });
+  logger.debug(
+    [
+      'Extension will activate, as soon as a file inside an Aurelia project is opened.',
+    ],
+    { logLevel: 'INFO' }
+  );
+}
+
+function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
+  const workspaceRootUri =
+    extensionSettings.aureliaProject?.rootDirectory ?? '';
+  const cwd = fileURLToPath(normalize(workspaceRootUri));
+  const packageJsonPaths = fastGlob.sync('**/package.json', {
+    absolute: true,
+    ignore: ['node_modules'],
+    cwd,
   });
-
-  /*  */
-  logger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO' });
-  await aureliaProjectFiles.hydrateAureliaProjectList(activeDocumentPaths);
+  return packageJsonPaths;
 }
 
 export async function onConnectionDidChangeContent(

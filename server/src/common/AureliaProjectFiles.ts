@@ -13,7 +13,7 @@ import { Logger } from 'culog';
 
 const logger = new Logger({ scope: 'AureliaProjectFiles' });
 
-interface AureliaProject {
+export interface AureliaProject {
   tsConfigPath: string;
   aureliaProgram: AureliaProgram | null;
 }
@@ -107,7 +107,7 @@ function getProjectFilePaths(
   if (include !== undefined) {
     finalIncludes = include;
   }
-  finalIncludes/*?*/
+  finalIncludes; /*?*/
 
   // console.log('[INFO] Include paths globs: ');
   // console.log(finalIncludes.join(', '));

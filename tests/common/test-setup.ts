@@ -1,26 +1,26 @@
 import {
   defaultProjectOptions,
   IProjectOptions,
-} from '../../../server/src/common/common.types';
+} from '../../server/src/common/common.types';
 import * as path from 'path';
 import * as fs from 'fs';
 import 'reflect-metadata';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaProgram } from '../../../server/src/viewModel/AureliaProgram';
-import { createAureliaWatchProgram } from '../../../server/src/viewModel/createAureliaWatchProgram';
+import { AureliaProgram } from '../../server/src/viewModel/AureliaProgram';
+import { createAureliaWatchProgram } from '../../server/src/viewModel/createAureliaWatchProgram';
 import { Position } from 'vscode-html-languageservice';
 import { Container } from 'aurelia-dependency-injection';
 import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
-} from '../../../server/src/feature/completions/virtualCompletion';
+} from '../../server/src/feature/completions/virtualCompletion';
 import {
   createTextDocumentPositionParams,
   getLanguageModes,
-} from '../../../server/src/feature/embeddedLanguages/languageModes';
-import { DefinitionResult } from '../../../server/src/feature/definition/getDefinition';
-import { globalContainer } from '../../../server/src/container';
+} from '../../server/src/feature/embeddedLanguages/languageModes';
+import { DefinitionResult } from '../../server/src/feature/definition/getDefinition';
+import { globalContainer } from '../../server/src/container';
 
 export async function getAureliaProgramForTesting(
   projectOptions: IProjectOptions = defaultProjectOptions
