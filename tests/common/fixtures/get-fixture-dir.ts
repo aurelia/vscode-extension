@@ -1,7 +1,11 @@
 import { findProjectRoot } from '../find-project-root';
 import * as path from 'path';
 
-export const FIXTURE_NAMES = ['cli-generated', 'monorepo'] as const;
+export const FIXTURE_NAMES = [
+  'cli-generated',
+  'monorepo',
+  'non-aurelia-project',
+] as const;
 export type FixtureNames = typeof FIXTURE_NAMES[number];
 
 export function getFixtureDir(fixtureName: FixtureNames): string {

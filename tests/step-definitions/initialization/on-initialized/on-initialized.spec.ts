@@ -10,6 +10,12 @@ import {
 import { AureliaProjectFiles } from '../../../../server/src/common/AureliaProjectFiles';
 import { testError } from '../../../common/errors/TestErrors';
 
+export const nonAureliaProjectSteps: StepDefinitions = ({ and }) => {
+  and(/^the project is named "(.*)"$/, (projectName: FixtureNames) => {
+    projectName === 'non-aurelia-project'
+  });
+};
+
 export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
   let testAureliaProjectFiles: AureliaProjectFiles;
   let activeDocuments: TextDocument[] = [];
