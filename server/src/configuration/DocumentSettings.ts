@@ -7,8 +7,8 @@ import { globalContainer } from '../container';
 const logger = new Logger({ scope: 'DocumentSettings' });
 // logger.setLogOptions({ logLevel: 'INFO' });
 logger.overwriteDefaultLogOtpions({
-  logLevel: 'DEBUG',
-  focusedLogging: true,
+  logLevel: 'INFO',
+  focusedLogging: false,
   logScope: false,
 });
 

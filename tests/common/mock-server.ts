@@ -36,7 +36,6 @@ export class MockServer {
     private readonly extensionSettings: ExtensionSettings = {},
     private readonly activeDocuments: TextDocument[] = []
   ) {
-    this.container === globalContainer; /*?*/
     this.aureliaServer = new AureliaServer(this.container);
   }
 

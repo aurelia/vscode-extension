@@ -16,7 +16,7 @@ import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { Container } from '../container';
 import { uriToPath } from '../common/uriToPath';
 
-const logger = new Logger({ scope: 'aureliaServer' });
+const logger = new Logger({ scope: 'aureliaServer'});
 
 export class AureliaServer {
   constructor(private container: Container) {}
@@ -137,6 +137,7 @@ export async function onConnectionInitialized(
   await aureliaProjectFiles.setAureliaProjects(packageJsonPaths);
   const aureliaProjects = aureliaProjectFiles.getAureliaProjects();
   const hasAureliaProject = aureliaProjects.length > 0;
+
   if (!hasAureliaProject) {
     logHasNoAureliaProject();
     return;

@@ -10,17 +10,35 @@ import {
 import { AureliaProjectFiles } from '../../../../server/src/common/AureliaProjectFiles';
 import { testError } from '../../../common/errors/TestErrors';
 
-export const nonAureliaProjectSteps: StepDefinitions = ({ and }) => {
+let testAureliaProjectFiles: AureliaProjectFiles;
+let activeDocuments: TextDocument[] = [];
+
+export const nonAureliaProjectSteps: StepDefinitions = ({ and, then }) => {
   and(/^the project is named "(.*)"$/, (projectName: FixtureNames) => {
-    projectName === 'non-aurelia-project'
+    const workspaceRootUri = getFixtureDir(projectName);
+    const mockServer = new MockServer(new Container(), workspaceRootUri);
+    mockServer.getAureliaServer().onConnectionInitialized(
+      {
+        aureliaProject: {
+          rootDirectory: workspaceRootUri,
+        },
+      },
+      activeDocuments
+    );
+
+    testAureliaProjectFiles = mockServer.getContainerDirectly()
+      .AureliaProjectFiles;
+  });
+
+  then('the extension should not activate', () => {
+    const auProjectList = testAureliaProjectFiles.getAureliaProjects();
+    strictEqual(auProjectList.length, 0);
   });
 };
 
 export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
-  let testAureliaProjectFiles: AureliaProjectFiles;
-  let activeDocuments: TextDocument[] = [];
-
   given(/^I open VSCode with no active files$/, () => {
+    activeDocuments = [];
     expect(activeDocuments.length).toBe(0);
   });
 
