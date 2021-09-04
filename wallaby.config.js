@@ -5,9 +5,9 @@ module.exports = function () {
       'server/**/*.ts',
       '**/tsconfig.json',
       'tests/testFixture/**/*.{ts,html,json}',
+      'tests/common/**/*.ts',
       'tests/unit/helpers/**/*.ts',
       'tests/step-definitions/**/*.spec.ts',
-      'tests/common/**/*.ts',
       'tests/**/*.feature',
     ],
 

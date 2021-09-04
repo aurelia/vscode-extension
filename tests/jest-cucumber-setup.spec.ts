@@ -1,10 +1,16 @@
+import { Container } from 'aurelia-dependency-injection';
 import { loadFeatures, autoBindSteps } from 'jest-cucumber';
+import { MockServer } from './common/mock-server';
 import {
   cliGenerateSteps,
-  nonAureliaProjectSteps,
-} from './step-definitions/initialization/on-initialized/on-initialized.spec';
+  commonExtensionSteps,
+} from './step-definitions/initialization/on-initialized/detecting-on-init.spec';
+import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
+
+export const testContainer = new Container();
+testContainer.registerInstance(MockServer, new MockServer(testContainer));
 
 const features = loadFeatures('**/*.feature', {
-  tagFilter: '@focus',
+  // tagFilter: '@focus',
 });
-autoBindSteps(features, [cliGenerateSteps, nonAureliaProjectSteps]);
+autoBindSteps(features, [cliGenerateSteps, commonExtensionSteps, hydrateSteps]);

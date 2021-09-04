@@ -26,11 +26,7 @@ import {
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../../../server/src/configuration/DocumentSettings';
-import {
-  AureliaServer,
-  onConnectionDidChangeContent,
-  onConnectionInitialized,
-} from '../../../server/src/core/aureliaServer';
+import { AureliaServer } from '../../../server/src/core/aureliaServer';
 import { AureliaProjectFiles } from '../../../server/src/common/AureliaProjectFiles';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 

@@ -1,6 +1,9 @@
 import { findProjectRoot } from '../find-project-root';
 import * as path from 'path';
 
+const projectRoot = findProjectRoot();
+const testFixtureDir = path.resolve(projectRoot, 'tests/testFixture');
+
 export const FIXTURE_NAMES = [
   'cli-generated',
   'monorepo',
@@ -9,12 +12,22 @@ export const FIXTURE_NAMES = [
 export type FixtureNames = typeof FIXTURE_NAMES[number];
 
 export function getFixtureDir(fixtureName: FixtureNames): string {
-  const testProjectRoot = findProjectRoot();
   const cliGeneratedFixtureDir = path.resolve(
-    testProjectRoot,
-    `tests/testFixture/${fixtureName}`
+    projectRoot,
+    `${testFixtureDir}/${fixtureName}`
   );
-  const fixtureUri = `file:/${cliGeneratedFixtureDir}`;
+  return cliGeneratedFixtureDir;
+}
+
+export function getFixtureUri(fixtureName: FixtureNames): string {
+  const fixtureUri = `file:/${getFixtureDir(fixtureName)}`;
 
   return fixtureUri;
 }
+
+export const getAbsPathFromFixtureDir = (fixtureName: FixtureNames) => (
+  relPath: string
+): string => {
+  const absPath = path.resolve(testFixtureDir, fixtureName, relPath);
+  return absPath;
+};

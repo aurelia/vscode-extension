@@ -1,8 +1,10 @@
 import * as ts from 'typescript';
+import { Logger } from 'culog';
 import { AureliaProgram } from './AureliaProgram';
 import { IProjectOptions } from '../common/common.types';
 import { ExtensionSettings } from '../configuration/DocumentSettings';
-// import { createConnection } from 'vscode-languageserver';
+
+const logger = new Logger({ scope: 'watcherProgram' });
 
 export const updateAureliaComponents = (
   aureliaProgram: AureliaProgram,
@@ -15,14 +17,18 @@ export const updateAureliaComponents = (
 
   if (componentList.length) {
     aureliaProgram.setComponentList(componentList);
-    console.log(
-      `>>> The extension found this many components: ${componentList.length}`
+    logger.debug(
+      [`>>> The extension found this many components: ${componentList.length}`],
+      { logLevel: 'INFO' }
     );
+
     if (componentList.length < 10) {
-      console.log('List: ');
+      logger.debug(['List: '], { logLevel: 'INFO' });
 
       componentList.forEach((component, index) => {
-        console.log(`${index} - ${component.viewModelFilePath}`);
+        logger.debug([`${index} - ${component.viewModelFilePath}`], {
+          logLevel: 'INFO',
+        });
       });
     }
   } else {
@@ -44,9 +50,9 @@ export async function createAureliaWatchProgram(
       settings?.aureliaProject?.rootDirectory ?? ts.sys.getCurrentDirectory();
   }
 
-  console.log(
-    '[Info] The Extension is based on this directly: ',
-    targetSourceDirectory
+  logger.debug(
+    [`The Extension is based on this directly: ${targetSourceDirectory}`],
+    { logLevel: 'INFO' }
   );
 
   let configPath: string | undefined;
@@ -62,8 +68,8 @@ export async function createAureliaWatchProgram(
       ts.sys.fileExists,
       'tsconfig.json'
     );
-    console.log('[INFO]: Path to tsconfig.json detected:');
-    console.log(configPath);
+    logger.debug(['Path to tsconfig.json detected:'], { logLevel: 'INFO' });
+    logger.debug([configPath ?? ''], { logLevel: 'INFO' });
   }
 
   if (configPath === undefined) {
@@ -108,9 +114,13 @@ export async function createAureliaWatchProgram(
   // 2. Skip watcher if no tsconfig found
   const isCreateWatchProgram = configPath !== undefined;
   if (isCreateWatchProgram) {
-    console.log(
-      '[carw.ts] 3.4 Initiating a watcher for documentation and fetching changes in custom components'
+    logger.debug(
+      [
+        '3.4 Initiating a watcher for documentation and fetching changes in custom components',
+      ],
+      { logLevel: 'INFO' }
     );
+
     const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
 
     const host = ts.createWatchCompilerHost(

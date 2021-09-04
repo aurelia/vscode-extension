@@ -16,7 +16,7 @@ import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { Container } from '../container';
 import { uriToPath } from '../common/uriToPath';
 
-const logger = new Logger({ scope: 'aureliaServer'});
+const logger = new Logger({ scope: 'aureliaServer' });
 
 export class AureliaServer {
   constructor(private container: Container) {}
@@ -116,6 +116,7 @@ export function initDependencyInjection(
     AureliaProjectFiles,
     new AureliaProjectFiles(settings)
   );
+  container.registerInstance(AureliaServer, new AureliaServer(container));
 }
 
 /**

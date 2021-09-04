@@ -13,17 +13,12 @@ import { AureliaServer } from '../../server/src/core/aureliaServer';
 import { AureliaProgram } from '../../server/src/viewModel/AureliaProgram';
 import { findProjectRoot } from './find-project-root';
 
-__dirname; /*?*/
-// const projectRoot = findProjectRoot()
-//  projectRoot/*?*/
 const testsDir = findProjectRoot();
- testsDir/*?*/
 const monorepoFixtureDir = path.resolve(
   testsDir,
   'tests/testFixture/src/monorepo'
 );
 const rootDirectory = `file:/${monorepoFixtureDir}`;
- rootDirectory/*?*/
 
 export class MockServer {
   public aureliaServer: AureliaServer;
@@ -32,7 +27,7 @@ export class MockServer {
 
   constructor(
     private readonly container: Container = globalContainer,
-    private readonly workspaceRootUri: string = rootDirectory,
+    private workspaceRootUri: string = rootDirectory,
     private readonly extensionSettings: ExtensionSettings = {},
     private readonly activeDocuments: TextDocument[] = []
   ) {
@@ -59,6 +54,13 @@ export class MockServer {
     return this.textDocuments;
   }
 
+  public setWorkspaceUri(uri: string): void {
+    this.workspaceRootUri = uri;
+  }
+  public getWorkspaceUri(): string {
+    return this.workspaceRootUri;
+  }
+
   public getContainer(): Container {
     return this.container;
   }
@@ -82,8 +84,8 @@ export class MockServer {
   }
 
   mockTextDocuments(
-    fileUris: string[],
-    options: { isUri: boolean; isRelative: boolean } = {
+    fileUris: string[] = [],
+    options: { isUri?: boolean; isRelative?: boolean } = {
       isUri: false,
       isRelative: true,
     }

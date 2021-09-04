@@ -12,6 +12,6 @@
     "experimentalDecorators": true,
     "strictNullChecks": true
   },
-  "include": ["unit"],
+  "include": [],
   "exclude": ["node_modules"]
 }

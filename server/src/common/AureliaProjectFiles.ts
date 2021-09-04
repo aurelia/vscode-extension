@@ -18,10 +18,12 @@ export interface AureliaProject {
   aureliaProgram: AureliaProgram | null;
 }
 
-function isAureliaProjectBasedOnPackageJson(packageJsonPath: string) {
+function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
   const dep = packageJson['dependencies'];
+  if (!dep) return false;
   const devDep = packageJson['devDependencies'];
+  if (!devDep) return false;
 
   const isAuV1App = dep['aurelia-framework'] !== undefined;
   const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
@@ -167,7 +169,6 @@ export class AureliaProjectFiles {
     if (documentsPaths.length === 0) return;
 
     const aureliaProjectList = this.getAureliaProjects();
-    aureliaProjectList; /* ? */
     const settings = await this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
 
@@ -175,14 +176,12 @@ export class AureliaProjectFiles {
     /** TODO rename: tsConfigPath -> projectPath (or sth else) */
     documentsPaths; /* ? */
     aureliaProjectList.forEach(async ({ tsConfigPath, aureliaProgram }) => {
-      tsConfigPath; /* ? */
       const shouldActive = documentsPaths.some((docPath) => {
         const result = docPath.includes(tsConfigPath);
         return result;
       });
       if (!shouldActive) return;
 
-      /* prettier-ignore */ console.log('TCL: AureliaExtension -> hydrateAureliaProjectList -> tsConfigPath', tsConfigPath);
       if (aureliaProgram !== null) {
         console.log('[WARNING] Found a value, but should be null.');
       }
@@ -212,8 +211,5 @@ export class AureliaProjectFiles {
 
       targetAureliaProject.aureliaProgram = aureliaProgram;
     });
-
-    const aureliaProjectList1 = this.getAureliaProjects();
-    aureliaProjectList1; /* ? */
   }
 }
