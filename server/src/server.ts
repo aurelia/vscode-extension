@@ -24,12 +24,10 @@ import {
 import 'reflect-metadata';
 
 import {
-  DocumentSettings,
   ExtensionSettings,
   settingsName,
 } from './configuration/DocumentSettings';
 import { aureliaProgram } from './viewModel/AureliaProgram';
-import { createAureliaWatchProgram } from './viewModel/createAureliaWatchProgram';
 
 import { DefinitionResult } from './feature/definition/getDefinition';
 import { CustomHover } from './feature/virtual/virtualSourceFile';
@@ -46,7 +44,6 @@ import { globalContainer } from './container';
 import {
   AureliaServer,
   onConnectionDidChangeContent,
-  onConnectionInitialized,
 } from './core/aureliaServer';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
@@ -174,7 +171,7 @@ connection.onDidOpenTextDocument((param) => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(
   async (change: TextDocumentChangeEvent<TextDocument>) => {
-    await onConnectionDidChangeContent(change);
+    await onConnectionDidChangeContent(globalContainer, change);
   }
 );
 

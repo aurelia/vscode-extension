@@ -1,15 +1,13 @@
 import 'reflect-metadata';
 import { Connection } from 'vscode-languageserver';
 import { Logger } from 'culog';
-import { singleton } from 'aurelia-dependency-injection';
-import { globalContainer } from '../container';
 
 const logger = new Logger({ scope: 'DocumentSettings' });
 // logger.setLogOptions({ logLevel: 'INFO' });
 logger.overwriteDefaultLogOtpions({
   logLevel: 'INFO',
   focusedLogging: false,
-  logScope: false,
+  // logScope: false,
 });
 
 export const settingsName = 'aurelia';
