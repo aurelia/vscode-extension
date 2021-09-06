@@ -1,12 +1,10 @@
 Feature: Hydrate on initialization
 
-  @focus
   Scenario: Hydrate cli generated project
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.ts"
     Then the extension should hydrate the Aurelia project
 
-  @focus
   Scenario Outline: Hydrate monorepo project
     Given the project is named "monorepo"
     And I open VSCode with the following file "<FILE_NAME>"

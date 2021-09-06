@@ -1,6 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 import { loadFeatures, autoBindSteps } from 'jest-cucumber';
 import { MockServer } from './common/mock-server';
+import { contentChangeSteps } from './step-definitions/content/content-change.spec';
 import {
   cliGenerateSteps,
   commonExtensionSteps,
@@ -13,4 +14,10 @@ testContainer.registerInstance(MockServer, new MockServer(testContainer));
 const features = loadFeatures('**/*.feature', {
   tagFilter: '@focus',
 });
-autoBindSteps(features, [cliGenerateSteps, commonExtensionSteps, hydrateSteps]);
+autoBindSteps(features, [
+  cliGenerateSteps,
+  commonExtensionSteps,
+  hydrateSteps,
+  // content
+  contentChangeSteps,
+]);

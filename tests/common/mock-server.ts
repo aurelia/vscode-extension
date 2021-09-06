@@ -21,8 +21,7 @@ const monorepoFixtureDir = path.resolve(
 const rootDirectory = `file:/${monorepoFixtureDir}`;
 
 export class MockServer {
-  public aureliaServer: AureliaServer;
-
+  private aureliaServer: AureliaServer;
   private textDocuments: TextDocument[] = [];
 
   constructor(

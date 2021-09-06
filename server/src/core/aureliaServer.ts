@@ -25,54 +25,54 @@ export class AureliaServer {
     await onConnectionDidChangeContent(this.container, change);
   }
 
-  listen() {}
-  onRequest() {}
-  sendRequest() {}
-  onNotification() {}
-  sendNotification() {}
-  // onProgress() {}
-  sendProgress() {}
-  onInitialize() {}
-  onInitialized() {}
-  onShutdown() {}
-  onExit() {}
-  onDidChangeConfiguration() {}
-  onDidChangeWatchedFiles() {}
-  onDidOpenTextDocument() {}
-  onDidChangeTextDocument() {}
-  onDidCloseTextDocument() {}
-  onWillSaveTextDocument() {}
-  onWillSaveTextDocumentWaitUntil() {}
-  onDidSaveTextDocument() {}
-  sendDiagnostics() {}
-  onHover() {}
-  onCompletion() {}
-  onCompletionResolve() {}
-  onSignatureHelp() {}
-  onDeclaration() {}
-  onDefinition() {}
-  onTypeDefinition() {}
-  onImplementation() {}
-  onReferences() {}
-  onDocumentHighlight() {}
-  onDocumentSymbol() {}
-  onWorkspaceSymbol() {}
-  onCodeAction() {}
-  onCodeLens() {}
-  onCodeLensResolve() {}
-  onDocumentFormatting() {}
-  onDocumentRangeFormatting() {}
-  onDocumentOnTypeFormatting() {}
-  onRenameRequest() {}
-  onPrepareRename() {}
-  onDocumentLinks() {}
-  onDocumentLinkResolve() {}
-  onDocumentColor() {}
-  onColorPresentation() {}
-  onFoldingRanges() {}
-  onSelectionRanges() {}
-  onExecuteCommand() {}
-  dispose() {}
+  // listen() {}
+  // onRequest() {}
+  // sendRequest() {}
+  // onNotification() {}
+  // sendNotification() {}
+  // // onProgress() {}
+  // sendProgress() {}
+  // onInitialize() {}
+  // onInitialized() {}
+  // onShutdown() {}
+  // onExit() {}
+  // onDidChangeConfiguration() {}
+  // onDidChangeWatchedFiles() {}
+  // onDidOpenTextDocument() {}
+  // onDidChangeTextDocument() {}
+  // onDidCloseTextDocument() {}
+  // onWillSaveTextDocument() {}
+  // onWillSaveTextDocumentWaitUntil() {}
+  // onDidSaveTextDocument() {}
+  // sendDiagnostics() {}
+  // onHover() {}
+  // onCompletion() {}
+  // onCompletionResolve() {}
+  // onSignatureHelp() {}
+  // onDeclaration() {}
+  // onDefinition() {}
+  // onTypeDefinition() {}
+  // onImplementation() {}
+  // onReferences() {}
+  // onDocumentHighlight() {}
+  // onDocumentSymbol() {}
+  // onWorkspaceSymbol() {}
+  // onCodeAction() {}
+  // onCodeLens() {}
+  // onCodeLensResolve() {}
+  // onDocumentFormatting() {}
+  // onDocumentRangeFormatting() {}
+  // onDocumentOnTypeFormatting() {}
+  // onRenameRequest() {}
+  // onPrepareRename() {}
+  // onDocumentLinks() {}
+  // onDocumentLinkResolve() {}
+  // onDocumentColor() {}
+  // onColorPresentation() {}
+  // onFoldingRanges() {}
+  // onSelectionRanges() {}
+  // onExecuteCommand() {}
+  // dispose() {}
 
   // console: RemoteConsole & PConsole;
   // tracer: Tracer & PTracer;
