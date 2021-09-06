@@ -41,10 +41,8 @@ import {
   createAureliaTemplateAttributeKeywordCompletions,
 } from './feature/completions/createAureliaTemplateAttributeCompletions';
 import { globalContainer } from './container';
-import {
-  AureliaServer,
-  onConnectionDidChangeContent,
-} from './core/aureliaServer';
+import { AureliaServer } from './core/aureliaServer';
+import { onConnectionDidChangeContent } from './core/content/change-content';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -58,6 +56,9 @@ let languageModes: LanguageModes;
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
+
+let hasServerInitialized = false;
+let aureliaServer: AureliaServer;
 
 connection.onInitialize(async (params: InitializeParams) => {
   console.log('[server.ts] 1. onInitialize');
@@ -127,14 +128,18 @@ connection.onInitialized(async () => {
       rootDirectory: workspaceRootUri,
     };
 
-    const aureliaServer = new AureliaServer(globalContainer);
-    aureliaServer.onConnectionInitialized(extensionSettings, documents.all());
+    aureliaServer = new AureliaServer(globalContainer);
+    await aureliaServer.onConnectionInitialized(
+      extensionSettings,
+      documents.all()
+    );
     // await onConnectionInitialized(
     //   globalContainer,
     //   workspaceRootUri,
     //   extensionSettings,
     //   documents.all()
     // );
+    hasServerInitialized = true;
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
@@ -171,7 +176,9 @@ connection.onDidOpenTextDocument((param) => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(
   async (change: TextDocumentChangeEvent<TextDocument>) => {
-    await onConnectionDidChangeContent(globalContainer, change);
+    if (!hasServerInitialized) return;
+    console.log('TCL: onDidChangeContent');
+    await aureliaServer.onConnectionDidChangeContent(change);
   }
 );
 

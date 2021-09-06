@@ -1,4 +1,4 @@
-import { inject } from 'aurelia-dependency-injection';
+import { autoinject, inject } from 'aurelia-dependency-injection';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as ts from 'typescript';
