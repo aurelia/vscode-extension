@@ -127,7 +127,7 @@ function getProjectFilePaths(
 
 @inject(DocumentSettings)
 export class AureliaProjectFiles {
-  aureliaProjects: AureliaProject[] = [];
+  private aureliaProjects: AureliaProject[] = [];
   // aureliaProjectMap: Map<string, any> = new Map();
 
   public constructor(public readonly documentSettings: DocumentSettings) {}
@@ -211,5 +211,16 @@ export class AureliaProjectFiles {
 
       targetAureliaProject.aureliaProgram = aureliaProgram;
     });
+  }
+
+  /**
+   * Check whether a textDocument (via its uri), if it is already included
+   * in the Aurelia project.
+   */
+  public isDocumentIncluded({ uri }: TextDocument): boolean {
+    const isIncluded = this.aureliaProjects.some(({ tsConfigPath }) => {
+      return uri.includes(tsConfigPath);
+    });
+    return isIncluded;
   }
 }
