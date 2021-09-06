@@ -14,17 +14,15 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
     'I open VSCode with the following files:',
     async (table: FileNameStepTable) => {
       const textDocumentPaths = getPathsFromTable(table);
-      const mockTextDocuments = myMockServer
-        .mockTextDocuments(textDocumentPaths)
-        .getTextDocuments();
-      await myMockServer.getAureliaServer().onConnectionInitialized(
-        {
-          aureliaProject: {
-            rootDirectory: myMockServer.getWorkspaceUri(),
-          },
-        },
-        mockTextDocuments
-      );
+      await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
+    }
+  );
+
+  given(
+    /^I open VSCode with the following file "(.*)"$/,
+    async (fileName: string) => {
+      const textDocumentPaths = getPathsFromFileNames([fileName]);
+      await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
     }
   );
 
@@ -34,6 +32,22 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
     expect(aureliaProgram).toBeTruthy();
   });
 };
+
+async function givenIOpenVsCodeWithTheFollowingFiles(
+  textDocumentPaths: string[]
+) {
+  const mockTextDocuments = myMockServer
+    .mockTextDocuments(textDocumentPaths)
+    .getTextDocuments();
+  await myMockServer.getAureliaServer().onConnectionInitialized(
+    {
+      aureliaProject: {
+        rootDirectory: myMockServer.getWorkspaceUri(),
+      },
+    },
+    mockTextDocuments
+  );
+}
 
 function getPathsFromTable(table: FileNameStepTable) {
   const fileNames = getTableValues(table);

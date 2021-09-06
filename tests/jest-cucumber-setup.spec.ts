@@ -11,6 +11,6 @@ export const testContainer = new Container();
 testContainer.registerInstance(MockServer, new MockServer(testContainer));
 
 const features = loadFeatures('**/*.feature', {
-  // tagFilter: '@focus',
+  tagFilter: '@focus',
 });
 autoBindSteps(features, [cliGenerateSteps, commonExtensionSteps, hydrateSteps]);
