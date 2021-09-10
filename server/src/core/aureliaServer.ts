@@ -4,7 +4,31 @@ import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { Container } from '../container';
 import { onConnectionInitialized } from './initialization/initialization';
 import { onConnectionDidChangeContent } from './content/change-content';
+// import {
+//   beforeMethod,
+//   afterMethod,
+//   aroundMethod,
+//   beforeGetter,
+//   Advised,
+//   Metadata,
+// } from 'aspect.js';
 
+// class LoggerAspect {
+//   @aroundMethod({
+//     classNamePattern: /^AureliaServer/,
+//     methodNamePattern: /onConnectionInitialized/,
+//   })
+//   invokeAroundMethod(meta: Metadata) {
+//     meta.method.args; /*?*/
+//     console.log(
+//       `Inside of the logger. Called ${meta.className}.${
+//         meta.method.name
+//       } with args: ${meta.method.args.join(', ')}.`
+//     );
+//   }
+// }
+
+// @Advised()
 export class AureliaServer {
   constructor(private container: Container) {}
 
