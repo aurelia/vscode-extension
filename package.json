@@ -234,6 +234,7 @@
     "webpack": "^4.46.0"
   },
   "dependencies": {
+    "aspect.js": "^0.8.1",
     "aurelia-dependency-injection": "^1.5.2",
     "culog": "^0.0.9",
     "lodash": "^4.17.19",
