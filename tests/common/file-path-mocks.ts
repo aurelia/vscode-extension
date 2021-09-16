@@ -18,6 +18,7 @@ export const MONOREPO = {
   'burelia.ts': getAbsPathInMonorepo('package-burelia/burelia/burelia.ts'),
   'burelia.html': getAbsPathInMonorepo('package-burelia/burelia/burelia.html'),
   'package-c': getAbsPathInMonorepo('package-c'),
+  'tsconfig.json': getAbsPathInMonorepo('tsconfig.json'),
 };
 
 export const CLI_GENERATED = {
@@ -26,4 +27,6 @@ export const CLI_GENERATED = {
   'minimal-component.ts': getAbsPathInCliGenerated(
     'src/minimal-component/minimal-component.ts'
   ),
+  'tsconfig.json': getAbsPathInCliGenerated('tsconfig.json'),
+
 };

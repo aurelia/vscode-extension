@@ -174,7 +174,6 @@ export class AureliaProjectFiles {
 
     // 1. To each map assign a separate program
     /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    documentsPaths; /* ? */
     aureliaProjectList.forEach(async ({ tsConfigPath, aureliaProgram }) => {
       const shouldActive = documentsPaths.some((docPath) => {
         const result = docPath.includes(tsConfigPath);

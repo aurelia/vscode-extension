@@ -31,6 +31,12 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
     const { aureliaProgram } = AureliaProjectFiles.getAureliaProjects()[0];
     expect(aureliaProgram).toBeTruthy();
   });
+
+  then('the extension should rehydrate', () => {
+    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
+    const { aureliaProgram } = AureliaProjectFiles.getAureliaProjects()[0];
+    expect(aureliaProgram).toBeTruthy();
+  });
 };
 
 async function givenIOpenVsCodeWithTheFollowingFiles(
@@ -55,7 +61,10 @@ function getPathsFromTable(table: FileNameStepTable) {
   return paths;
 }
 
-function getPathsFromFileNames(fileNames: string[]) {
+/**
+ * TODO: put somewhere else
+ */
+export function getPathsFromFileNames(fileNames: string[]): string[] | undefined[] {
   return fileNames.map((fileName) => {
     const uri = myMockServer.getWorkspaceUri();
     const pathMock = getPathMocksFromUri(uri);
@@ -63,6 +72,8 @@ function getPathsFromFileNames(fileNames: string[]) {
 
     if (path === undefined) {
       testError.log(`${fileName} does not exist in ${uri}`);
+
+      return undefined;
     }
 
     return path;

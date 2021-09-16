@@ -14,22 +14,43 @@ export async function onConnectionDidChangeContent(
   switch (change.document.languageId) {
     case 'typescript': {
       const aureliaProjectFiles = container.get(AureliaProjectFiles);
-      if (aureliaProjectFiles.isDocumentIncluded(change.document)) {
-        return;
-      } else {
-        logger.todo(
-          `What should happen to document, that is not included?: ${change.document.uri}`
-        );
-      }
+      if (preventHydration(aureliaProjectFiles, change)) return;
 
       const documentPaths = uriToPath([change.document]);
       aureliaProjectFiles.hydrateAureliaProjectList(documentPaths);
-
-      // updateAureliaComponents(aureliaProgram);
     }
   }
+}
 
-  console.log('TCL: change', change);
-  // console.log('[server.ts] (re-)get Language Modes');
-  // languageModes = await getLanguageModes();
+/**
+ * Document changes -> version > 1.
+ */
+function hasDocumentChanged({ version }: TextDocument): boolean {
+  return version > 1;
+}
+
+/**
+ * Prevent when
+ * 1. Project already includes document
+ * 2. Document was just opened
+ */
+function preventHydration(
+  aureliaProjectFiles: AureliaProjectFiles,
+  change: TextDocumentChangeEvent<TextDocument>
+): boolean {
+  // 1.
+  if (!aureliaProjectFiles.isDocumentIncluded(change.document)) {
+    return false;
+  }
+
+  // 2.
+  if (hasDocumentChanged(change.document)) {
+    return false;
+  }
+
+  logger.todo(
+    `What should happen to document, that is not included?: ${change.document.uri}`
+  );
+
+  return true;
 }
