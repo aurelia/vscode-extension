@@ -34,8 +34,12 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
 
   then('the extension should rehydrate', () => {
     const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    const { aureliaProgram } = AureliaProjectFiles.getAureliaProjects()[0];
-    expect(aureliaProgram).toBeTruthy();
+    expect(AureliaProjectFiles.hydrateAureliaProjectList).toBeCalled();
+  });
+
+  then(/^the extension should not rehydrate$/, () => {
+    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
+    expect(AureliaProjectFiles.hydrateAureliaProjectList).not.toBeCalled();
   });
 };
 
@@ -64,7 +68,9 @@ function getPathsFromTable(table: FileNameStepTable) {
 /**
  * TODO: put somewhere else
  */
-export function getPathsFromFileNames(fileNames: string[]): string[] | undefined[] {
+export function getPathsFromFileNames(
+  fileNames: string[]
+): string[] | undefined[] {
   return fileNames.map((fileName) => {
     const uri = myMockServer.getWorkspaceUri();
     const pathMock = getPathMocksFromUri(uri);

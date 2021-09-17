@@ -1,8 +1,17 @@
 Feature: Content change on open
 
-  @focus
+  # @focus
   Scenario: Prevent hydration for file in project, that is already hydrated
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.ts"
     When I open the file "tsconfig.json"
     Then the extension should not rehydrate
+
+  @focus
+  Scenario: Rehydrate on file changed
+    TODO: only update specific file
+
+    Given the project is named "cli-generated"
+    And I open VSCode with the following file "minimal-component.ts"
+    When I change the file "minimal-component.ts"
+    Then the extension should rehydrate

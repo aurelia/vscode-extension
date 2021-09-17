@@ -1,7 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 import path = require('path');
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaProjectFiles } from '../../server/src/common/AureliaProjectFiles';
 import {
   ExtensionSettings,
@@ -24,6 +24,9 @@ export class MockServer {
   private aureliaServer: AureliaServer;
   private textDocuments: TextDocument[] = [];
 
+  private readonly CHANGE = 'changes-';
+  private readonly INITIAL = '0123';
+
   constructor(
     private readonly container: Container = globalContainer,
     private workspaceRootUri: string = rootDirectory,
@@ -43,6 +46,11 @@ export class MockServer {
   private setTextDocuments(textDocuments: TextDocument[]): void {
     this.textDocuments = textDocuments;
   }
+
+  private pushToTextDocuments(textDocument: TextDocument): void {
+    this.textDocuments.push(textDocument);
+  }
+
   public getTextDocuments(): TextDocument[] {
     if (this.textDocuments === undefined) {
       throw new Error(
@@ -83,32 +91,49 @@ export class MockServer {
   }
 
   mockTextDocuments(
-    fileUris: string[] = [],
+    filePaths: string[] = [],
     options: { isUri?: boolean; isRelative?: boolean } = {
       isUri: false,
       isRelative: true,
     }
   ): MockServer {
-    if (options.isRelative) {
-      fileUris = fileUris.map((uri) => {
-        const absPaths = path.resolve(this.workspaceRootUri, uri);
-        return absPaths;
-      });
-    }
-    if (!options.isUri) {
-      fileUris = fileUris.map((uri) => {
-        const convertToUri = `file:/${uri}`;
-        return convertToUri;
-      });
+    const fileUris = this.convertToFileUris(options, filePaths);
+
+    if (this.textDocuments.length === 0) {
+      this.initMockTextDocuments(fileUris);
+      return this;
     }
 
-    const textDocuments = fileUris.map((uri) => {
-      const textDocument = TextDocument.create(uri, 'typescript', 1, '');
-      return textDocument;
+    // Don't add duplicate
+
+    fileUris.forEach((uri) => {
+      const targetDocument = this.textDocuments.find((textDocument) => {
+        return textDocument.uri === uri;
+      });
+
+      if (targetDocument) return;
+
+      console.log('TODO: add');
+      this.pushToTextDocuments(targetDocument);
     });
 
-    this.setTextDocuments(textDocuments);
+    return this;
+  }
 
+  changeTextDocument(
+    documentPath: string,
+    change: string = this.CHANGE
+  ): MockServer {
+    const targetDocument = this.getTextDocuments().find((document) =>
+      document.uri.includes(documentPath)
+    );
+    const startPosition: Position = { line: 0, character: 0 };
+    const endPosition: Position = { line: 0, character: 0 };
+    TextDocument.update(
+      targetDocument,
+      [{ range: { start: startPosition, end: endPosition }, text: change }],
+      targetDocument.version + 1
+    );
     return this;
   }
 
@@ -139,5 +164,48 @@ export class MockServer {
     change: TextDocumentChangeEvent<TextDocument>
   ) {
     await this.aureliaServer.onConnectionDidChangeContent(change);
+  }
+
+  private initMockTextDocuments(fileUris: string[]) {
+    const textDocuments = fileUris.map((uri) => {
+      const textDocument = TextDocument.create(
+        uri,
+        'typescript',
+        1,
+        this.INITIAL
+      );
+      return textDocument;
+    });
+
+    this.setTextDocuments(textDocuments);
+  }
+
+  private convertToFileUris(
+    options: { isUri?: boolean; isRelative?: boolean },
+    fileUris: string[]
+  ): string[] {
+    if (options.isRelative) {
+      fileUris = this.changeToRelative(fileUris);
+    }
+    if (!options.isUri) {
+      fileUris = this.convertToFileUri(fileUris);
+    }
+    return fileUris;
+  }
+
+  private changeToRelative(fileUris: string[]) {
+    fileUris = fileUris.map((uri) => {
+      const absPaths = path.resolve(this.workspaceRootUri, uri);
+      return absPaths;
+    });
+    return fileUris;
+  }
+
+  private convertToFileUri(fileUris: string[]) {
+    fileUris = fileUris.map((uri) => {
+      const convertToUri = `file:/${uri}`;
+      return convertToUri;
+    });
+    return fileUris;
   }
 }

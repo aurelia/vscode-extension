@@ -109,7 +109,6 @@ function getProjectFilePaths(
   if (include !== undefined) {
     finalIncludes = include;
   }
-  finalIncludes; /*?*/
 
   // console.log('[INFO] Include paths globs: ');
   // console.log(finalIncludes.join(', '));
