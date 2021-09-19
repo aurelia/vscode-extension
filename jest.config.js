@@ -1,14 +1,17 @@
 module.exports = {
+  roots: ['<rootDir>'],
+  modulePaths: ['<rootDir>'],
+  moduleDirectories: [
+    'node_modules',
+    '<rootDir>/server/node_modules'
+  ],
   preset: 'ts-jest',
   verbose: true,
-  testRegex: '\.(test|spec|steps)\\.ts$',
-  coverageDirectory: ".coverage",
+  testRegex: '.(test|spec|steps)\\.ts$',
+  coverageDirectory: '.coverage',
   coverageReporters: ['text', 'text-summary'],
   coverageThreshold: {
-    global: { statements: 90, lines: 90, functions: 90 }
+    global: { statements: 90, lines: 90, functions: 90 },
   },
-  testPathIgnorePatterns: [
-    '/build/',
-    '/node_modules/'
-  ]
-}
+  testPathIgnorePatterns: ['/build/', '/node_modules/'],
+};

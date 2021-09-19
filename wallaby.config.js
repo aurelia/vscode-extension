@@ -1,8 +1,10 @@
-module.exports = function () {
+module.exports = function (wallaby) {
   return {
     files: [
       'client/**/*.ts',
       'server/**/*.ts',
+      'server/node_modules/parse5-sax-parser/**/*.{js,json}',
+      'server/node_modules/parse5/**/*.{js,json}',
       '**/tsconfig.json',
       'tests/testFixture/**/*.{ts,html,json}',
       'tests/common/**/*.ts',
