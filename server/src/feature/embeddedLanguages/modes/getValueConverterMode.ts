@@ -10,7 +10,10 @@ import { TextDocumentPositionParams } from 'vscode-languageserver';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getVirtualViewModelCompletionSupplyContent } from '../../completions/virtualCompletion';
 import { createValueConverterCompletion } from '../../completions/completions';
-import { aureliaProgram } from '../../../viewModel/AureliaProgram';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../../viewModel/AureliaProgram';
 import { AureliaClassTypes, AureliaViewModel } from '../../../common/constants';
 import { DefinitionResult } from '../../definition/getDefinition';
 
@@ -31,7 +34,7 @@ async function onValueConverterCompletion(
   // Find value converter sourcefile
   const valueConverterRegion = targetRegion as ViewRegionInfo<ValueConverterRegionData>;
 
-  const targetValueConverterComponent = aureliaProgram
+  const targetValueConverterComponent = importedAureliaProgram
     .getComponentList()
     .filter((component) => component.type === AureliaClassTypes.VALUE_CONVERTER)
     .find(
@@ -43,7 +46,7 @@ async function onValueConverterCompletion(
   if (!targetValueConverterComponent?.sourceFile) return [];
 
   const valueConverterCompletion = getVirtualViewModelCompletionSupplyContent(
-    aureliaProgram,
+    importedAureliaProgram,
     /**
      * Aurelia interface method name, that handles interaction with view
      */
@@ -87,7 +90,8 @@ export function getValueConverterMode(): LanguageMode {
       document: TextDocument,
       position: Position,
       goToSourceWord: string,
-      valueConverterRegion: ViewRegionInfo | undefined
+      valueConverterRegion: ViewRegionInfo | undefined,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const targetRegion = valueConverterRegion as ViewRegionInfo<ValueConverterRegionData>;
       const targetValueConverterComponent = aureliaProgram

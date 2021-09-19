@@ -10,6 +10,9 @@ import {
 } from '../../viewModel/AureliaProgram';
 import { DiagnosticMessages } from '../../common/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
+import { Logger } from 'culog';
+
+const logger = new Logger({ scope: 'embeddedSupport' });
 
 export interface LanguageRange extends Range {
   languageId: string | undefined;
@@ -102,7 +105,8 @@ export function parseDocumentRegions<RegionDataType = any>(
       return;
     }
 
-    console.log('[eb.ts] Starting document parsing');
+    logger.debug(['Start document parsing'], { logLevel: 'INFO' });
+
     const saxStream = new SaxStream({ sourceCodeLocationInfo: true });
     const viewRegions: ViewRegionInfo[] = [];
     const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
@@ -415,11 +419,12 @@ export function parseDocumentRegions<RegionDataType = any>(
 }
 
 export async function getDocumentRegions(
-  document: TextDocument
+  document: TextDocument,
+  aureliaProgram: AureliaProgram = importedAureliaProgram
 ): Promise<HTMLDocumentRegions> {
   let regions: AsyncReturnType<typeof parseDocumentRegions>;
   try {
-    regions = await parseDocumentRegions(document);
+    regions = await parseDocumentRegions(document, aureliaProgram);
   } catch (error) {
     console.log('TCL: error', error);
   }

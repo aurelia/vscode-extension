@@ -26,6 +26,10 @@ import {
   LanguageModelCache,
 } from './languageModelCache';
 import { CustomHover } from '../virtual/virtualSourceFile';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../viewModel/AureliaProgram';
 
 export * from 'vscode-html-languageservice';
 
@@ -56,7 +60,8 @@ export interface LanguageMode {
     document: TextDocument,
     position: Position,
     goToSourceWord: string,
-    region?: ViewRegionInfo
+    region?: ViewRegionInfo,
+    aureliaProgram?: AureliaProgram,
   ) => Promise<DefinitionResult | undefined>;
   doHover?: (
     document: TextDocument,
@@ -97,11 +102,13 @@ export interface LanguageModeWithRegion {
 
 type LanguageModeWithRegionMap = Record<ViewRegionType, LanguageModeWithRegion>;
 
-export async function getLanguageModes(): Promise<LanguageModes> {
+export async function getLanguageModes(
+  aureliaProgram: AureliaProgram = importedAureliaProgram
+): Promise<LanguageModes> {
   const languageModelCacheDocument = getLanguageModelCache<HTMLDocumentRegions>(
     10,
     60,
-    (document) => getDocumentRegions(document)
+    (document) => getDocumentRegions(document, aureliaProgram)
   );
 
   let modelCaches: LanguageModelCache<any>[] = [];

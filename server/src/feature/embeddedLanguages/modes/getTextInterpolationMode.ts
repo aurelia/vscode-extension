@@ -9,7 +9,10 @@ import { LanguageModelCache } from '../languageModelCache';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getAureliaVirtualCompletions } from '../../completions/virtualCompletion';
 import { DefinitionResult } from '../../definition/getDefinition';
-import { aureliaProgram } from '../../../viewModel/AureliaProgram';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../../viewModel/AureliaProgram';
 import { getAccessScopeDefinition } from '../../definition/accessScopeDefinition';
 import { VirtualLanguageService } from '../../virtual/virtualSourceFile';
 import { getAccessScopeHover } from '../../hover/accessScopeHover';
@@ -41,7 +44,9 @@ export function getTextInterpolationMode(
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string
+      goToSourceWord: string,
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const regions = (
         await languageModelCacheDocument.get(document)
@@ -50,7 +55,8 @@ export function getTextInterpolationMode(
         document,
         position,
         goToSourceWord,
-        regions
+        regions,
+        aureliaProgram
       );
       return definition;
     },

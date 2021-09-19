@@ -5,7 +5,10 @@ import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getBindablesCompletion } from '../../completions/completions';
-import { aureliaProgram } from '../../../viewModel/AureliaProgram';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../../viewModel/AureliaProgram';
 import { DefinitionResult } from '../../definition/getDefinition';
 import { camelCase } from 'lodash';
 import { getVirtualDefinition } from '../../definition/virtualDefinition';
@@ -35,7 +38,8 @@ export function getCustomElementMode(): LanguageMode {
       document: TextDocument,
       position: Position,
       goToSourceWord: string,
-      customElementRegion: ViewRegionInfo | undefined
+      customElementRegion: ViewRegionInfo | undefined,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
       const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {

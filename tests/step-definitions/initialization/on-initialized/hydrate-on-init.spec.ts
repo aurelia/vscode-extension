@@ -22,7 +22,6 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
       const textDocumentPaths = getPathsFromFileNames([fileName]);
-      textDocumentPaths; /*?*/
       await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
     }
   );

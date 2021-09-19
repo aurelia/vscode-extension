@@ -17,7 +17,10 @@
 
   <!-- Test: Go to definition [CUSTOM_ELEMENT_BINDABLE] {{ISSUE-8Q6EL3Ui}}-->
   <!-- Custom element region -->
-  <my-compo inter-bindable.bind="increaseCounter()" string-bindable.bind="grammarRules" hello="saht">
+  <my-compo
+            inter-bindable.bind="increaseCounter()"
+            string-bindable.bind="grammarRules"
+            hello="saht">
   </my-compo>
 
   <!-- Text interpolated region {{ISSUE-sCxw9bfm}}-->
@@ -32,12 +35,17 @@
   </div>
 
   <!-- Classes -->
-  <div id="some-long-id-for-line-break" class="${message ? 'message-class' : ''} ${}" if.bind="message === ''"></div>
+  <div
+       id="some-long-id-for-line-break"
+       class="${message ? 'message-class' : ''} ${}"
+       if.bind="message === ''"></div>
 
   <!-- Value converters -->
   <template>
     <!-- Value Converter Region {{ISSUE-M0pKnxbJ}} -->
-    <tr if.bind="message | sort:" repeat.for="repo of repos | sort:column.value:direction.value | take:10">
+    <tr
+        if.bind="message | sort:"
+        repeat.for="repo of repos | sort:column.value:direction.value | take:10">
       ...
     </tr>
   </template>

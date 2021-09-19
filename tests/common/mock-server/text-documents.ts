@@ -1,6 +1,9 @@
 import { Position } from 'vscode-html-languageservice';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import * as path from 'path';
+import * as fs from 'fs';
+
+import { UriUtils } from '../../../server/src/common/view/uri-utils';
 
 export class MockTextDocuments {
   private textDocuments: TextDocument[] = [];
@@ -55,11 +58,13 @@ export class MockTextDocuments {
 
   private initMock(fileUris: string[]) {
     const textDocuments = fileUris.map((uri) => {
+      const path = UriUtils.toPath(uri);
+      const fileContent = fs.readFileSync(path, 'utf-8');
       const textDocument = TextDocument.create(
         uri,
         'typescript',
         1,
-        this.INITIAL
+        fileContent
       );
       return textDocument;
     });

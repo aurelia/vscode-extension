@@ -163,6 +163,10 @@ export class AureliaProjectFiles {
     return this.aureliaProjects;
   }
 
+  public getFirstAureiaProject(): AureliaProject {
+    return this.aureliaProjects[0];
+  }
+
   public async hydrateAureliaProjectList(documentsPaths: string[]) {
     /** TODO: Makes esnse? */
     if (documentsPaths.length === 0) return;

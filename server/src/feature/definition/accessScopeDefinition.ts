@@ -8,7 +8,10 @@ import {
   ViewRegionType,
 } from '../embeddedLanguages/embeddedSupport';
 import { TextDocument } from 'vscode-languageserver';
-import { aureliaProgram } from '../../viewModel/AureliaProgram';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../viewModel/AureliaProgram';
 import { getVirtualDefinition } from './virtualDefinition';
 import { DefinitionResult } from './getDefinition';
 import { Position } from '../embeddedLanguages/languageModes';
@@ -28,7 +31,8 @@ export function getAccessScopeDefinition(
   document: TextDocument,
   position: Position,
   goToSourceWord: string,
-  regions?: ViewRegionInfo[]
+  regions?: ViewRegionInfo[],
+  aureliaProgram: AureliaProgram = importedAureliaProgram
 ): DefinitionResult | undefined {
   // 1.
   const repeatForRegions = regions?.filter(
@@ -65,7 +69,8 @@ export function getAccessScopeDefinition(
   const viewModelDefinition = getAccessScopeViewModelDefinition(
     document,
     position,
-    goToSourceWord
+    goToSourceWord,
+    aureliaProgram
   );
   return viewModelDefinition;
 }
@@ -80,7 +85,8 @@ export function getAccessScopeDefinition(
 export function getAccessScopeViewModelDefinition(
   document: TextDocument,
   position: Position,
-  goToSourceWord: string
+  goToSourceWord: string,
+  aureliaProgram: AureliaProgram = importedAureliaProgram
 ): DefinitionResult | undefined {
   const virtualDefinition = getVirtualDefinition(
     document.uri,

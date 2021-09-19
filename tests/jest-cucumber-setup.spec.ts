@@ -14,6 +14,9 @@ testContainer.registerInstance(MockServer, new MockServer(testContainer));
 
 const features = loadFeatures('**/*.feature', {
   tagFilter: '@focus',
+  scenarioNameTemplate: (vars) => {
+    return `${vars.featureTitle} - ${vars.scenarioTitle}`;
+  },
 });
 autoBindSteps(features, [
   cliGenerateSteps,

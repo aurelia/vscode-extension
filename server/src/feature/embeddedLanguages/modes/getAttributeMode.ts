@@ -12,6 +12,10 @@ import { DefinitionResult } from '../../definition/getDefinition';
 import { getAccessScopeDefinition } from '../../definition/accessScopeDefinition';
 import { VirtualLanguageService } from '../../virtual/virtualSourceFile';
 import { getAccessScopeHover } from '../../hover/accessScopeHover';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../../viewModel/AureliaProgram';
 
 export function getAttributeMode(
   languageModelCacheDocument: LanguageModelCache<Promise<HTMLDocumentRegions>>
@@ -40,7 +44,9 @@ export function getAttributeMode(
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string
+      goToSourceWord: string,
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const regions = (
         await languageModelCacheDocument.get(document)
@@ -49,7 +55,8 @@ export function getAttributeMode(
         document,
         position,
         goToSourceWord,
-        regions
+        regions,
+        aureliaProgram
       );
     },
     async doHover(

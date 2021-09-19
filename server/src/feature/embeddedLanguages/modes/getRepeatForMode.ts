@@ -5,6 +5,10 @@ import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getAureliaVirtualCompletions } from '../../completions/virtualCompletion';
 import { getAccessScopeViewModelDefinition } from '../../definition/accessScopeDefinition';
 import { DefinitionResult } from '../../definition/getDefinition';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../../viewModel/AureliaProgram';
 
 export function getRepeatForMode(): LanguageMode {
   return {
@@ -31,12 +35,15 @@ export function getRepeatForMode(): LanguageMode {
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string
+      goToSourceWord: string,
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       return getAccessScopeViewModelDefinition(
         document,
         position,
-        goToSourceWord
+        goToSourceWord,
+        aureliaProgram
       );
     },
     onDocumentRemoved(_document: TextDocument) {},
