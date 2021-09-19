@@ -1,6 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 import { loadFeatures, autoBindSteps } from 'jest-cucumber';
-import { MockServer } from './common/mock-server';
+import { MockServer } from './common/mock-server/mock-server';
+import { completionSteps } from './step-definitions/capabilities/definitions.spec';
 import { contentChangeSteps } from './step-definitions/content/content-change.spec';
 import {
   cliGenerateSteps,
@@ -20,4 +21,6 @@ autoBindSteps(features, [
   hydrateSteps,
   // content
   contentChangeSteps,
+  // capabilities
+  completionSteps,
 ]);

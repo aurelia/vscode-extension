@@ -1,12 +1,11 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { strictEqual } from 'assert';
-import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   FixtureNames,
   getFixtureUri,
 } from '../../../common/fixtures/get-fixture-dir';
 import { testError } from '../../../common/errors/TestErrors';
-import { MockServer } from '../../../common/mock-server';
+import { MockServer } from '../../../common/mock-server/mock-server';
 import { testContainer } from '../../../jest-cucumber-setup.spec';
 
 export let myMockServer = new MockServer(testContainer);
@@ -29,9 +28,7 @@ export const commonExtensionSteps: StepDefinitions = ({ and, then }) => {
 
 export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
   given(/^I open VSCode with no active files$/, async () => {
-    const mockTextDocuments = myMockServer
-      .mockTextDocuments()
-      .getTextDocuments();
+    const mockTextDocuments = myMockServer.textDocuments.mock().getAll();
     await myMockServer.getAureliaServer().onConnectionInitialized(
       {
         aureliaProject: {

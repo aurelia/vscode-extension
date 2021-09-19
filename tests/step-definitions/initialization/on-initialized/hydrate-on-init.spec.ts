@@ -22,6 +22,7 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
       const textDocumentPaths = getPathsFromFileNames([fileName]);
+      textDocumentPaths; /*?*/
       await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
     }
   );
@@ -46,9 +47,9 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
 async function givenIOpenVsCodeWithTheFollowingFiles(
   textDocumentPaths: string[]
 ) {
-  const mockTextDocuments = myMockServer
-    .mockTextDocuments(textDocumentPaths)
-    .getTextDocuments();
+  const mockTextDocuments = myMockServer.textDocuments
+    .mock(textDocumentPaths)
+    .getAll();
   await myMockServer.getAureliaServer().onConnectionInitialized(
     {
       aureliaProject: {

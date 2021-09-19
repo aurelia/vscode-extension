@@ -11,8 +11,8 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
     spyOn(AureliaProjectFiles, 'hydrateAureliaProjectList');
     const textDocumentPaths = getPathsFromFileNames([fileName]);
     const [document] = myMockServer
-      .mockTextDocuments(textDocumentPaths)
-      .getTextDocuments();
+      .textDocuments.mock(textDocumentPaths)
+      .getAll();
     const aureliaServer = myMockServer.getAureliaServer();
     aureliaServer.onConnectionDidChangeContent({ document });
   });
@@ -24,8 +24,8 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
     spyOn(AureliaProjectFiles, 'hydrateAureliaProjectList');
     const textDocumentPaths = getPathsFromFileNames([fileName]);
     const [document] = myMockServer
-      .changeTextDocument(textDocumentPaths[0])
-      .getTextDocuments();
+      .textDocuments.change(textDocumentPaths[0])
+      .getAll();
     const aureliaServer = myMockServer.getAureliaServer();
     aureliaServer.onConnectionDidChangeContent({ document });
   });

@@ -7,10 +7,8 @@ Feature: Content change on open
     When I open the file "tsconfig.json"
     Then the extension should not rehydrate
 
-  @focus
+  # @focus
   Scenario: Rehydrate on file changed
-    TODO: only update specific file
-
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.ts"
     When I change the file "minimal-component.ts"

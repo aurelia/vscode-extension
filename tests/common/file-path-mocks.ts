@@ -21,12 +21,11 @@ export const MONOREPO = {
   'tsconfig.json': getAbsPathInMonorepo('tsconfig.json'),
 };
 
+// prettier-ignore
 export const CLI_GENERATED = {
   root: getFixtureDir('cli-generated'),
   'minimal-component': getAbsPathInCliGenerated('src/minimal-component'),
-  'minimal-component.ts': getAbsPathInCliGenerated(
-    'src/minimal-component/minimal-component.ts'
-  ),
+  'minimal-component.ts': getAbsPathInCliGenerated('src/minimal-component/minimal-component.ts'),
+  'compo-user.html': getAbsPathInCliGenerated('src/compo-user/compo-user.html'),
   'tsconfig.json': getAbsPathInCliGenerated('tsconfig.json'),
-
 };
