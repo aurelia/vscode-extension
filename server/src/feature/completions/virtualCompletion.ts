@@ -35,12 +35,16 @@ import {
   TextDocument,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import { aureliaProgram, AureliaProgram } from '../../viewModel/AureliaProgram';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../viewModel/AureliaProgram';
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import {
   createVirtualFileWithContent,
   createVirtualViewModelSourceFile,
   getVirtualLangagueService,
+  VIRTUAL_METHOD_NAME,
 } from '../virtual/virtualSourceFile';
 import { AsyncReturnType } from '../../common/global';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
@@ -54,32 +58,40 @@ export function getVirtualCompletion(
   virtualSourcefile: ts.SourceFile,
   positionOfAutocomplete: number
 ) {
-  const program = aureliaProgram.getProgram();
+  const program = importedAureliaProgram.getProgram();
 
   const cls = getVirtualLangagueService(virtualSourcefile, program);
   const virtualSourceFilePath = virtualSourcefile.fileName;
 
-  const virtualCompletions = cls.getCompletionsAtPosition(
-    virtualSourceFilePath,
-    positionOfAutocomplete,
-    undefined
-  )?.entries;
+  const virtualCompletions = cls
+    .getCompletionsAtPosition(
+      virtualSourceFilePath,
+      positionOfAutocomplete,
+      undefined
+    )
+    ?.entries.filter((result) => {
+      return !result?.name.includes(VIRTUAL_METHOD_NAME);
+    });
 
   if (!virtualCompletions) {
     throw new Error('No completions found');
   }
 
-  const virtualCompletionEntryDetails = virtualCompletions.map((completion) => {
-    return cls.getCompletionEntryDetails(
-      virtualSourceFilePath,
-      positionOfAutocomplete,
-      completion.name,
-      undefined,
-      undefined,
-      undefined,
-      undefined
-    );
-  });
+  const virtualCompletionEntryDetails = virtualCompletions
+    .map((completion) => {
+      return cls.getCompletionEntryDetails(
+        virtualSourceFilePath,
+        positionOfAutocomplete,
+        completion.name,
+        undefined,
+        undefined,
+        undefined,
+        undefined
+      );
+    })
+    .filter((result) => {
+      return !result?.name.includes(VIRTUAL_METHOD_NAME);
+    });
 
   return { virtualCompletions, virtualCompletionEntryDetails };
 }
@@ -352,7 +364,8 @@ function enhanceMethodArguments(methodArguments: string[]): string {
 export async function getAureliaVirtualCompletions(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region?: ViewRegionInfo
+  region?: ViewRegionInfo,
+  aureliaProgram: AureliaProgram = importedAureliaProgram
 ): Promise<AureliaCompletionItem[]> {
   // Virtual file
   let virtualCompletions: AsyncReturnType<
