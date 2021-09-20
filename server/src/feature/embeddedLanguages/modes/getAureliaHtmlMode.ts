@@ -1,9 +1,13 @@
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { LanguageMode, TextDocument } from '../languageModes';
-import { aureliaProgram } from '../../../viewModel/AureliaProgram';
 import { AureliaClassTypes } from '../../../common/constants';
 import { createComponentCompletionList } from '../../completions/completions';
+import { ViewRegionInfo } from '../embeddedSupport';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../../../viewModel/AureliaProgram';
 
 export function getAureliaHtmlMode(): LanguageMode {
   return {
@@ -13,7 +17,9 @@ export function getAureliaHtmlMode(): LanguageMode {
     async doComplete(
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
-      triggerCharacter: string | undefined
+      triggerCharacter: string | undefined,
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ) {
       if (triggerCharacter === '<') {
         const aureliaComponents = aureliaProgram

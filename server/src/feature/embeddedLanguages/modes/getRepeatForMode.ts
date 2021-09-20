@@ -19,12 +19,14 @@ export function getRepeatForMode(): LanguageMode {
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter?: string,
-      region?: ViewRegionInfo
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ) {
       const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
         _textDocumentPosition,
         document,
-        region
+        region,
+        aureliaProgram
       );
       if (aureliaVirtualCompletions.length > 0) {
         return aureliaVirtualCompletions;

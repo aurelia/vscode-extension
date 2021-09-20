@@ -24,7 +24,7 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
     spyOn(AureliaProjectFiles, 'hydrateAureliaProjectList');
     const textDocumentPaths = getPathsFromFileNames([fileName]);
     const [document] = myMockServer
-      .textDocuments.change(textDocumentPaths[0])
+      .textDocuments.findAndChange(textDocumentPaths[0])
       .getAll();
     const aureliaServer = myMockServer.getAureliaServer();
     aureliaServer.onConnectionDidChangeContent({ document });

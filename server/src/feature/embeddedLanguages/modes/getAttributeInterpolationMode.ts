@@ -28,12 +28,14 @@ export function getAttributeInterpolationMode(
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter?: string,
-      region?: ViewRegionInfo
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ) {
       const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
         _textDocumentPosition,
         document,
-        region
+        region,
+        aureliaProgram
       );
       if (aureliaVirtualCompletions.length > 0) {
         return aureliaVirtualCompletions;
@@ -48,7 +50,9 @@ export function getAttributeInterpolationMode(
       region?: ViewRegionInfo,
       aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
-      const regions = (await languageModelCacheDocument.get(document)).getRegions();
+      const regions = (
+        await languageModelCacheDocument.get(document)
+      ).getRegions();
       return getAccessScopeDefinition(
         document,
         position,

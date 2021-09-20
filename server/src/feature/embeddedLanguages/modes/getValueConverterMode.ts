@@ -19,7 +19,8 @@ import { DefinitionResult } from '../../definition/getDefinition';
 
 async function onValueConverterCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
-  document: TextDocument
+  document: TextDocument,
+  aureliaProgram: AureliaProgram = importedAureliaProgram
 ) {
   const regions = await parseDocumentRegions(document);
   const targetRegion = getRegionAtPosition(
@@ -34,7 +35,7 @@ async function onValueConverterCompletion(
   // Find value converter sourcefile
   const valueConverterRegion = targetRegion as ViewRegionInfo<ValueConverterRegionData>;
 
-  const targetValueConverterComponent = importedAureliaProgram
+  const targetValueConverterComponent = aureliaProgram
     .getComponentList()
     .filter((component) => component.type === AureliaClassTypes.VALUE_CONVERTER)
     .find(
@@ -73,17 +74,22 @@ export function getValueConverterMode(): LanguageMode {
     async doComplete(
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
-      triggerCharacter: string | undefined
+      triggerCharacter: string | undefined,
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ) {
       if (triggerCharacter === ':') {
         const completions = await onValueConverterCompletion(
           _textDocumentPosition,
-          document
+          document,
+          aureliaProgram
         );
         return completions;
       }
 
-      const valueConverterCompletion = createValueConverterCompletion();
+      const valueConverterCompletion = createValueConverterCompletion(
+        aureliaProgram
+      );
       return valueConverterCompletion;
     },
     async doDefinition(

@@ -39,13 +39,7 @@ export class MockTextDocuments {
     return this.textDocuments[0];
   }
 
-  change(
-    documentPath: string,
-    change: string = this.CHANGE
-  ): MockTextDocuments {
-    const targetDocument = this.textDocuments.find((document) =>
-      document.uri.includes(documentPath)
-    );
+  public change(targetDocument: TextDocument, change: string) {
     const startPosition: Position = { line: 0, character: 0 };
     const endPosition: Position = { line: 0, character: 0 };
     TextDocument.update(
@@ -53,6 +47,22 @@ export class MockTextDocuments {
       [{ range: { start: startPosition, end: endPosition }, text: change }],
       targetDocument.version + 1
     );
+  }
+
+  public changeFirst(change: string = this.CHANGE): MockTextDocuments {
+    const targetDocument = this.textDocuments[0];
+    this.change(targetDocument, change);
+    return this;
+  }
+
+  public findAndChange(
+    documentPath: string,
+    change: string = this.CHANGE
+  ): MockTextDocuments {
+    const targetDocument = this.textDocuments.find((document) =>
+      document.uri.includes(documentPath)
+    );
+    this.change(targetDocument, change);
     return this;
   }
 

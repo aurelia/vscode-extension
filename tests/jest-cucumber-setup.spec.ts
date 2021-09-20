@@ -1,7 +1,10 @@
 import { Container } from 'aurelia-dependency-injection';
 import { loadFeatures, autoBindSteps } from 'jest-cucumber';
 import { MockServer } from './common/mock-server/mock-server';
-import { completionSteps } from './step-definitions/capabilities/definitions.spec';
+import { commonCapabilitiesStep } from './step-definitions/capabilities/common/common-capabilities.spec';
+import { completionSteps } from './step-definitions/capabilities/completions.spec';
+import { completionValueConverterSteps } from './step-definitions/capabilities/completions/completions-value-converters.spec';
+import { definitionSteps } from './step-definitions/capabilities/definitions.spec';
 import { contentChangeSteps } from './step-definitions/content/content-change.spec';
 import {
   cliGenerateSteps,
@@ -14,9 +17,9 @@ testContainer.registerInstance(MockServer, new MockServer(testContainer));
 
 const features = loadFeatures('**/*.feature', {
   tagFilter: '@focus',
-  scenarioNameTemplate: (vars) => {
-    return `${vars.featureTitle} - ${vars.scenarioTitle}`;
-  },
+  // scenarioNameTemplate: (vars) => {
+  // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
+  // },
 });
 autoBindSteps(features, [
   cliGenerateSteps,
@@ -25,5 +28,8 @@ autoBindSteps(features, [
   // content
   contentChangeSteps,
   // capabilities
+  commonCapabilitiesStep,
+  definitionSteps,
   completionSteps,
+  completionValueConverterSteps,
 ]);

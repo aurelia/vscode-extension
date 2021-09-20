@@ -18,7 +18,8 @@ import {
 import { Position } from '../embeddedLanguages/languageModes';
 
 import {
-  aureliaProgram,
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
   IAureliaClassMember,
   IAureliaComponent,
 } from '../../viewModel/AureliaProgram';
@@ -96,10 +97,12 @@ export function createComponentCompletionList(
 export async function getBindablesCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region?: ViewRegionInfo
+  region?: ViewRegionInfo,
+  aureliaProgram: AureliaProgram = importedAureliaProgram
 ): Promise<CompletionItem[]> {
   if (!region) return [];
 
+  aureliaProgram.getComponentList(); /*?*/
   const bindableList = aureliaProgram.getBindableList();
   const asCompletionItem = bindableList.map((bindable) => {
     const result = createCompletionItem(
@@ -114,7 +117,9 @@ export async function getBindablesCompletion(
   });
 }
 
-export function createValueConverterCompletion(): CompletionItem[] {
+export function createValueConverterCompletion(
+  aureliaProgram: AureliaProgram = importedAureliaProgram
+): CompletionItem[] {
   const valueConverterCompletionList = aureliaProgram
     .getComponentList()
     .filter((component) => component.type === AureliaClassTypes.VALUE_CONVERTER)

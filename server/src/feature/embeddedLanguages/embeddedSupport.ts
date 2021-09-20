@@ -643,8 +643,12 @@ export function getRegionAtPosition(
   regions: ViewRegionInfo[],
   position: Position
 ): ViewRegionInfo | undefined {
+  position; /*?*/
   const offset = document.offsetAt(position);
+  document; /*?*/
+  offset; /*?*/
 
+  regions; /*?*/
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {
@@ -653,6 +657,7 @@ export function getRegionAtPosition(
     }
     return false;
   });
+  potentialRegions; /*?*/
 
   if (potentialRegions.length === 0) {
     console.error('embeddedSupport -> getRegionAtPosition -> No Region found');

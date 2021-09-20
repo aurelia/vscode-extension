@@ -9,7 +9,7 @@ module.exports = function (wallaby) {
       'tests/testFixture/**/*.{ts,html,json}',
       'tests/common/**/*.ts',
       'tests/unit/helpers/**/*.ts',
-      'tests/step-definitions/**/*.spec.ts',
+      'tests/step-definitions/**/*.{spec,step}.ts',
       'tests/**/*.feature',
     ],
 

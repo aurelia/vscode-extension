@@ -21,7 +21,7 @@ Feature: Definition in View
       | 32   | `      ${\|rule.id}-${rule.saying}`                     | rule            | compo-user.html  |
 
 
-  @focus
+  # @focus
   Scenario Outline: Value Converter
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition on <TARGET_WORD>

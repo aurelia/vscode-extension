@@ -4,11 +4,31 @@ import * as fs from 'fs';
 
 import { AureliaProgram } from '../../../../server/src/viewModel/AureliaProgram';
 import { CompletionItemKind, TextDocument } from 'vscode-html-languageservice';
-import { getAureliaProgramForTesting } from '../../helpers/test-setup';
 import {
   parseDocumentRegions,
   ViewRegionType,
 } from '../../../../server/src/feature/embeddedLanguages/embeddedSupport';
+import { Container } from 'aurelia-dependency-injection';
+import path from 'path';
+import {
+  IProjectOptions,
+  defaultProjectOptions,
+} from '../../../../server/src/common/common.types';
+import { globalContainer } from '../../../../server/src/container';
+import { createAureliaWatchProgram } from '../../../../server/src/viewModel/createAureliaWatchProgram';
+
+export async function getAureliaProgramForTesting(
+  projectOptions: IProjectOptions = defaultProjectOptions
+): Promise<AureliaProgram> {
+  const container: Container = globalContainer;
+  const aureliaProgram = container.get(AureliaProgram);
+  const rootDirectory = path.resolve(__dirname, '../../testFixture');
+
+  projectOptions.rootDirectory = rootDirectory;
+
+  await createAureliaWatchProgram(aureliaProgram);
+  return aureliaProgram;
+}
 
 let testAureliaProgram: AureliaProgram;
 describe('embeddedSupport.ts', () => {

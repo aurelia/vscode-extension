@@ -26,6 +26,9 @@ export const CLI_GENERATED = {
   root: getFixtureDir('cli-generated'),
   'minimal-component': getAbsPathInCliGenerated('src/minimal-component'),
   'minimal-component.ts': getAbsPathInCliGenerated('src/minimal-component/minimal-component.ts'),
+  'minimal-component.html': getAbsPathInCliGenerated('src/minimal-component/minimal-component.html'),
   'compo-user.html': getAbsPathInCliGenerated('src/compo-user/compo-user.html'),
+  'view-model-test.html': getAbsPathInCliGenerated('src/view-model-test/view-model-test.html'),
+  'realdworld-advanced/settings/index.html': getAbsPathInCliGenerated('src/realdworld-advanced/settings/index.html'),
   'tsconfig.json': getAbsPathInCliGenerated('tsconfig.json'),
 };

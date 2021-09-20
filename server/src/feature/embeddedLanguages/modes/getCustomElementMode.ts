@@ -22,13 +22,15 @@ export function getCustomElementMode(): LanguageMode {
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter: string | undefined,
-      region?: ViewRegionInfo
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
     ) {
       if (triggerCharacter === ' ') {
         const bindablesCompletion = await getBindablesCompletion(
           _textDocumentPosition,
           document,
-          region
+          region,
+          aureliaProgram
         );
         if (bindablesCompletion.length > 0) return bindablesCompletion;
       }

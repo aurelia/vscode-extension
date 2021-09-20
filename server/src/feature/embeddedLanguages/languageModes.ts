@@ -54,7 +54,8 @@ export interface LanguageMode {
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter?: string,
-    region?: ViewRegionInfo
+    region?: ViewRegionInfo,
+    aureliaProgram?: AureliaProgram,
   ) => Promise<CompletionList | AureliaCompletionItem[]>;
   doDefinition?: (
     document: TextDocument,
