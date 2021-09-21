@@ -1,34 +1,19 @@
 import { ExtensionSettings } from '../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { TextDocumentChangeEvent } from 'vscode-languageserver';
+import {
+  TextDocumentChangeEvent,
+  TextDocumentPositionParams,
+} from 'vscode-languageserver';
 import { Container } from '../container';
 import { onConnectionInitialized } from './initialization/initialization';
 import { onConnectionDidChangeContent } from './content/change-content';
-// import {
-//   beforeMethod,
-//   afterMethod,
-//   aroundMethod,
-//   beforeGetter,
-//   Advised,
-//   Metadata,
-// } from 'aspect.js';
+import { LanguageModes } from '../feature/embeddedLanguages/languageModes';
+import { onCompletion } from './completions/on-completions';
+import {
+  AureliaProgram,
+  aureliaProgram as importedAureliaProgram,
+} from '../viewModel/AureliaProgram';
 
-// class LoggerAspect {
-//   @aroundMethod({
-//     classNamePattern: /^AureliaServer/,
-//     methodNamePattern: /onConnectionInitialized/,
-//   })
-//   invokeAroundMethod(meta: Metadata) {
-//     meta.method.args; /*?*/
-//     console.log(
-//       `Inside of the logger. Called ${meta.className}.${
-//         meta.method.name
-//       } with args: ${meta.method.args.join(', ')}.`
-//     );
-//   }
-// }
-
-// @Advised()
 export class AureliaServer {
   constructor(private container: Container) {}
 
@@ -70,7 +55,23 @@ export class AureliaServer {
   // onDidSaveTextDocument() {}
   // sendDiagnostics() {}
   // onHover() {}
-  // onCompletion() {}
+
+  async onCompletion(
+    textDocumentPosition: TextDocumentPositionParams,
+    document: TextDocument,
+    languageModes: LanguageModes,
+    aureliaProgram: AureliaProgram = importedAureliaProgram
+  ) {
+    const completions = onCompletion(
+      textDocumentPosition,
+      document,
+      languageModes,
+      aureliaProgram
+    );
+
+    return completions;
+  }
+
   // onCompletionResolve() {}
   // onSignatureHelp() {}
   // onDeclaration() {}

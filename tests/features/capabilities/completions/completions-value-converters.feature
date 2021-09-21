@@ -7,9 +7,9 @@ Feature: Completions - Value converters
   Scenario Outline: Completions for Value converters
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
-    When I trigger Suggestions with <TRIGGER_CHARACTER>
+    When I trigger Suggestions
     Then I should get the correct suggestions for Value converters
 
     Examples:
-      | LINE | CODE                               | TRIGGER_CHARACTER |
-      | 0    | `<div if.bind="m \|>>\|<<"></div>` | \|                |
+      | LINE | CODE                               |
+      | 0    | `<div if.bind="m \|>>\|<<"></div>` |

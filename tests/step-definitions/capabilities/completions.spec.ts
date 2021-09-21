@@ -6,21 +6,41 @@ import {
 } from '../../../server/src/feature/completions/virtualCompletion';
 import { createTextDocumentPositionParams } from '../../../server/src/feature/embeddedLanguages/languageModes';
 import { myMockServer } from '../initialization/on-initialized/detecting-on-init.spec';
-import { position, modeAndRegion } from './common/common-capabilities.spec';
+import {
+  position,
+  modeAndRegion,
+  languageModes,
+} from './common/common-capabilities.spec';
 
 export let completions: AureliaCompletionItem[] | CompletionList = [];
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
   when('I trigger Suggestions', async () => {
-    completions = await whenITriggerSuggestions();
-  });
-
-  when(
-    /^I trigger Suggestions with (.*)$/,
-    async (triggerCharacter: string) => {
-      completions = await whenITriggerSuggestions(triggerCharacter);
+    if (modeAndRegion?.mode?.doComplete === undefined) {
+      throw new Error('doComplete not provded.');
     }
-  );
+
+    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
+    const { aureliaProgram } = AureliaProjectFiles.getFirstAureiaProject();
+    const document = myMockServer.textDocuments.getFirst();
+    const textDocumentPositionParams = createTextDocumentPositionParams(
+      document,
+      position
+    );
+
+    if (!isAureliaCompletionItem(completions)) {
+      throw new Error('Not AureliaCompletionItem[]');
+    }
+
+    completions = await myMockServer
+      .getAureliaServer()
+      .onCompletion(
+        textDocumentPositionParams,
+        document,
+        languageModes,
+        aureliaProgram
+      );
+  });
 
   then('I should get the correct suggestions', () => {
     if (isAureliaCompletionItem(completions)) {
@@ -56,43 +76,3 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     }
   );
 };
-
-async function whenITriggerSuggestions(triggerCharacter?: string) {
-  if (modeAndRegion?.mode?.doComplete === undefined) {
-    throw new Error('doComplete not provded.');
-  }
-
-  triggerCharacter = getTriggerCharacterFromCode(triggerCharacter);
-  const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-  const { aureliaProgram } = AureliaProjectFiles.getFirstAureiaProject();
-  const document = myMockServer.textDocuments.getFirst();
-  const textDocument = createTextDocumentPositionParams(document, position);
-
-  completions = await modeAndRegion?.mode?.doComplete(
-    document,
-    textDocument,
-    triggerCharacter,
-    modeAndRegion.region,
-    aureliaProgram
-  );
-
-  if (!isAureliaCompletionItem(completions)) {
-    throw new Error('Not AureliaCompletionItem[]');
-  }
-
-  completions; /*?*/
-  return completions;
-}
-
-const SPACE = '<SPACE>';
-
-function getTriggerCharacterFromCode(triggerCharacter: string): string {
-  switch (triggerCharacter) {
-    case SPACE: {
-      return ' ';
-    }
-    default: {
-      return triggerCharacter ?? '';
-    }
-  }
-}
