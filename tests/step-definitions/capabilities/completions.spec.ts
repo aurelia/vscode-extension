@@ -6,20 +6,12 @@ import {
 } from '../../../server/src/feature/completions/virtualCompletion';
 import { createTextDocumentPositionParams } from '../../../server/src/feature/embeddedLanguages/languageModes';
 import { myMockServer } from '../initialization/on-initialized/detecting-on-init.spec';
-import {
-  position,
-  modeAndRegion,
-  languageModes,
-} from './common/common-capabilities.spec';
+import { position, languageModes } from './common/common-capabilities.spec';
 
 export let completions: AureliaCompletionItem[] | CompletionList = [];
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
   when('I trigger Suggestions', async () => {
-    if (modeAndRegion?.mode?.doComplete === undefined) {
-      throw new Error('doComplete not provded.');
-    }
-
     const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
     const { aureliaProgram } = AureliaProjectFiles.getFirstAureiaProject();
     const document = myMockServer.textDocuments.getFirst();
