@@ -1,5 +1,5 @@
 import { StepDefinitions } from 'jest-cucumber';
-import { Position, TextDocument } from 'vscode-html-languageservice';
+import { Position } from 'vscode-html-languageservice';
 import { AsyncReturnType } from '../../../../server/src/common/global';
 import {
   LanguageModes,

@@ -25,6 +25,21 @@ Aurelia specific View syntaxes, but also for syntaxes of other FE framework.
 This goal will also be a nice "force" to design the parser more modular.
 Win-win as I see it.
 
+### Virtual
+To enable a rich "Typescript experience" in the view, we create a "Virtual Typescript Source File" with content from the view, on which we can call the Typescript API.
+
+#### Definition
+For Go To Definition to work
+1. Get the cursor index
+2. Get the source word
+   1. This is the crux.
+   2. Create a virtual source file, that includes the source word
+   3. Perform Go To Definition
+
+##### Assumption
+Each variable or method is declared (eg. on top of your class)
+
+
 
 # Footnotes
 

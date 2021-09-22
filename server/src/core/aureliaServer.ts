@@ -13,6 +13,8 @@ import {
   AureliaProgram,
   aureliaProgram as importedAureliaProgram,
 } from '../viewModel/AureliaProgram';
+import { onDefintion } from './definitions/on-definitions';
+import { Position } from 'vscode-html-languageservice';
 
 export class AureliaServer {
   constructor(private container: Container) {}
@@ -62,7 +64,7 @@ export class AureliaServer {
     languageModes: LanguageModes,
     aureliaProgram: AureliaProgram = importedAureliaProgram
   ) {
-    const completions = onCompletion(
+    const completions = await onCompletion(
       textDocumentPosition,
       document,
       languageModes,
@@ -75,7 +77,24 @@ export class AureliaServer {
   // onCompletionResolve() {}
   // onSignatureHelp() {}
   // onDeclaration() {}
-  // onDefinition() {}
+  async onDefinition(
+    documentContent: string,
+    position: Position,
+    goToSourceWord: string,
+    filePath: string,
+    languageModes: LanguageModes,
+    aureliaProgram: AureliaProgram = importedAureliaProgram
+  ) {
+    const definition = await onDefintion(
+      documentContent,
+      position,
+      goToSourceWord,
+      filePath,
+      languageModes,
+      aureliaProgram
+    );
+    return definition;
+  }
   // onTypeDefinition() {}
   // onImplementation() {}
   // onReferences() {}

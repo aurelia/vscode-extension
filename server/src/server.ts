@@ -247,43 +247,16 @@ connection.onRequest<any, any>(
     goToSourceWord,
     filePath,
   }): Promise<DefinitionResult | undefined> => {
-    const document = TextDocument.create(filePath, 'html', 0, documentContent);
-    const isRefactor = true;
+    const definition = await aureliaServer.onDefinition(
+      documentContent,
+      position,
+      goToSourceWord,
+      filePath,
+      languageModes
+    );
 
-    let modeAndRegion: AsyncReturnType<
-      LanguageModes['getModeAndRegionAtPosition']
-    >;
-    try {
-      modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-        document,
-        position
-      );
-    } catch (error) {
-      console.log('TCL: error', error);
-    }
-
-    if (!modeAndRegion) return;
-    const { mode, region } = modeAndRegion;
-
-    if (!mode) return;
-
-    const doDefinition = mode.doDefinition!;
-
-    if (doDefinition !== undefined && isRefactor) {
-      let definitions: AsyncReturnType<typeof doDefinition>;
-
-      try {
-        definitions = await doDefinition(
-          document,
-          position,
-          goToSourceWord,
-          region
-        );
-      } catch (error) {
-        console.log('TCL: error', error);
-        return;
-      }
-      return definitions;
+    if (definition) {
+      return definition;
     }
 
     console.log('---------------------------------------');

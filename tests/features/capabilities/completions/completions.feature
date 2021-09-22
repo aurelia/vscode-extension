@@ -16,7 +16,7 @@ Feature: Completions
   # | 0    | `<div class="${m\|}"></div>`      |
   # | 0    | `<div css="width: ${m\|}px;"></div>` |
 
-  @focus
+  # @focus
   Scenario Outline: View Model - with Trigger Character
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>

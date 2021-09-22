@@ -1,6 +1,6 @@
 Feature: Content change on open
 
-  @focus
+  # @focus
   Scenario: Prevent hydration for file in project, that is already hydrated
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.ts"

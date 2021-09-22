@@ -643,12 +643,12 @@ export function getRegionAtPosition(
   regions: ViewRegionInfo[],
   position: Position
 ): ViewRegionInfo | undefined {
-  position; /*?*/
+  // position; /*?*/
   const offset = document.offsetAt(position);
-  document; /*?*/
-  offset; /*?*/
+  // document; /*?*/
+  // offset; /*?*/
 
-  regions; /*?*/
+  // regions; /*?*/
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {

@@ -3,7 +3,7 @@ Feature: Definition in View - index.ts
     Given the project is named "cli-generated"
     And I open VSCode with the following file "realdworld-advanced/settings/index.html"
 
-  @focus
+  # @focus
   Scenario Outline: View model of components with index.ts
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition on <TARGET_WORD>
