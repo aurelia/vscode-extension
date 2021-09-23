@@ -5,11 +5,10 @@ import * as fastGlob from 'fast-glob';
 import { fileURLToPath } from 'url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
-  AureliaProjectFiles,
-  AureliaProject,
-} from '../../common/AureliaProjectFiles';
+  AureliaProjects,
+  IAureliaProject,
+} from '../../common/aurelia-projects';
 import { ExtensionSettings } from '../../configuration/DocumentSettings';
-import { initDependencyInjection } from '../depdenceny-injection';
 
 const logger = new Logger({ scope: 'aureliaServer' });
 
@@ -24,37 +23,37 @@ export async function onConnectionInitialized(
   activeDocuments: TextDocument[] = []
 ) {
   // initDependencyInjection(container, extensionSettings);
-  const aureliaProjectFiles = container.get(AureliaProjectFiles);
-  setAndVerifyProjectFiles(extensionSettings, aureliaProjectFiles);
-  await hydrateProjectWithActiveDocuments(activeDocuments, aureliaProjectFiles);
+  const aureliaProjects = container.get(AureliaProjects);
+  setAndVerifyProjectFiles(extensionSettings, aureliaProjects);
+  await hydrateProjectWithActiveDocuments(activeDocuments, aureliaProjects);
 }
 
 async function setAndVerifyProjectFiles(
   extensionSettings: ExtensionSettings,
-  aureliaProjectFiles: AureliaProjectFiles
+  aureliaProjects: AureliaProjects
 ) {
   const packageJsonPaths = getPackageJsonPaths(extensionSettings);
-  await aureliaProjectFiles.setAureliaProjects(packageJsonPaths);
-  const aureliaProjects = aureliaProjectFiles.getAureliaProjects();
-  const hasAureliaProject = aureliaProjects.length > 0;
+  await aureliaProjects.setAureliaProjects(packageJsonPaths);
+  const projects = aureliaProjects.getProjects();
+  const hasAureliaProject = projects.length > 0;
 
   if (!hasAureliaProject) {
     logHasNoAureliaProject();
     return;
   }
-  logFoundAureliaProjects(aureliaProjects);
+  logFoundAureliaProjects(projects);
 }
 
 async function hydrateProjectWithActiveDocuments(
   activeDocuments: TextDocument[],
-  aureliaProjectFiles: AureliaProjectFiles
+  aureliaProjects: AureliaProjects
 ) {
   logger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO' });
   const activeDocumentPaths = activeDocuments.map((activeDocument) => {
     const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
     return documentPath;
   });
-  await aureliaProjectFiles.hydrateAureliaProjectList(activeDocumentPaths);
+  await aureliaProjects.hydrateAureliaProjectList(activeDocumentPaths);
   logger.debug(['Parsing done. Aurelia Extension is ready.'], {
     logLevel: 'INFO',
   });
@@ -72,7 +71,7 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   return packageJsonPaths;
 }
 
-function logFoundAureliaProjects(aureliaProjects: AureliaProject[]) {
+function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
   logger.debug([`Found ${aureliaProjects.length} Aurelia projects in: `], {
     logLevel: 'INFO',
   });

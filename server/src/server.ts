@@ -28,7 +28,7 @@ import {
 
 import { globalContainer } from './container';
 import { AureliaServer } from './core/aureliaServer';
-import { AureliaProjectFiles } from './common/AureliaProjectFiles';
+import { AureliaProjects } from './common/aurelia-projects';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -116,8 +116,8 @@ connection.onInitialized(async () => {
       documents.all()
     );
 
-    const aureliaProjectFiles = globalContainer.get(AureliaProjectFiles);
-    const { aureliaProgram } = aureliaProjectFiles.getAureliaProjects()[0];
+    const aureliaProjects = globalContainer.get(AureliaProjects);
+    const { aureliaProgram } = aureliaProjects.getProjects()[0];
 
     if (aureliaProgram) {
       languageModes = await getLanguageModes(aureliaProgram);
@@ -239,8 +239,8 @@ connection.onHover(
 );
 
 connection.onRequest('aurelia-get-component-list', () => {
-  const aureliaProjectFiles = globalContainer.get(AureliaProjectFiles);
-  const { aureliaProgram } = aureliaProjectFiles.getAureliaProjects()[0];
+  const aureliaProjects = globalContainer.get(AureliaProjects);
+  const { aureliaProgram } = aureliaProjects.getProjects()[0];
   if (!aureliaProgram) return;
 
   return aureliaProgram.getComponentList().map((cList) => {

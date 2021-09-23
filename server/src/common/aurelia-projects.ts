@@ -1,8 +1,7 @@
-import { autoinject, inject } from 'aurelia-dependency-injection';
+import { inject } from 'aurelia-dependency-injection';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as ts from 'typescript';
-import { fileURLToPath } from 'url';
 
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
@@ -13,9 +12,112 @@ import { Logger } from 'culog';
 
 const logger = new Logger({ scope: 'AureliaProjectFiles' });
 
-export interface AureliaProject {
+export interface IAureliaProject {
   tsConfigPath: string;
   aureliaProgram: AureliaProgram | null;
+}
+
+@inject(DocumentSettings)
+export class AureliaProjects {
+  private aureliaProjects: IAureliaProject[] = [];
+  // aureliaProjectMap: Map<string, any> = new Map();
+
+  public constructor(public readonly documentSettings: DocumentSettings) {}
+
+  public async gatherProjectInfo() {}
+
+  public async setAureliaProjects(packageJsonPaths: string[]) {
+    const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
+
+    aureliaProjectPaths.forEach((aureliaProjectPath) => {
+      const filePaths = getProjectFilePaths({
+        ...this.documentSettings.getSettings().aureliaProject,
+        rootDirectory: aureliaProjectPath,
+      });
+
+      if (filePaths.length === 0) {
+        logger.debug(
+          [
+            `Not including path ${aureliaProjectPath}, because it was excluded or not included.`,
+          ],
+          { logLevel: 'INFO', log: true }
+        );
+        return;
+      }
+
+      this.aureliaProjects.push({
+        tsConfigPath: aureliaProjectPath,
+        aureliaProgram: null,
+      });
+    });
+  }
+
+  public getProjects(): AureliaProjects['aureliaProjects'] {
+    return this.aureliaProjects;
+  }
+
+  public getFirstAureiaProject(): IAureliaProject {
+    return this.aureliaProjects[0];
+  }
+
+  public async hydrateAureliaProjectList(documentsPaths: string[]) {
+    /** TODO: Makes esnse? */
+    if (documentsPaths.length === 0) return;
+
+    const aureliaProjectList = this.getProjects();
+    const settings = await this.documentSettings.getSettings();
+    const aureliaProjectSettings = settings?.aureliaProject;
+
+    // 1. To each map assign a separate program
+    /** TODO rename: tsConfigPath -> projectPath (or sth else) */
+    aureliaProjectList.forEach(async ({ tsConfigPath, aureliaProgram }) => {
+      const shouldActive = documentsPaths.some((docPath) => {
+        const result = docPath.includes(tsConfigPath);
+        return result;
+      });
+      if (!shouldActive) return;
+
+      if (aureliaProgram !== null) {
+        console.log('[WARNING] Found a value, but should be null.');
+      }
+
+      aureliaProgram = new AureliaProgram();
+      const projectOptions = {
+        ...aureliaProjectSettings,
+        rootDirectory: tsConfigPath,
+      };
+
+      // const paths = aureliaProgram.setProjectFilePaths(projectOptions);
+      // if (paths.length === 0) {
+      //   console.log(`[INFO][AuExt.ts] Removing path ${tsConfigPath}, because it was excluded or not included`)
+      //   aureliaProjectMap.delete(tsConfigPath)
+      //   return;
+      // }
+      await createAureliaWatchProgram(aureliaProgram, {
+        ...settings,
+        aureliaProject: projectOptions,
+      });
+
+      const targetAureliaProject = aureliaProjectList.find(
+        (auP) => auP.tsConfigPath === tsConfigPath
+      );
+
+      if (!targetAureliaProject) return;
+
+      targetAureliaProject.aureliaProgram = aureliaProgram;
+    });
+  }
+
+  /**
+   * Check whether a textDocument (via its uri), if it is already included
+   * in the Aurelia project.
+   */
+  public isDocumentIncluded({ uri }: TextDocument): boolean {
+    const isIncluded = this.aureliaProjects.some(({ tsConfigPath }) => {
+      return uri.includes(tsConfigPath);
+    });
+    return isIncluded;
+  }
 }
 
 function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
@@ -53,7 +155,7 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
  * 1.1 Based on package.json
  * 1.2 Detect if is Aurelia project
  */
-export function getAureliaProjectPaths(
+function getAureliaProjectPaths(
   packageJsonPaths: string[]
   // activeDocuments: TextDocument[] = []
 ): string[] {
@@ -122,107 +224,4 @@ function getProjectFilePaths(
   );
 
   return paths;
-}
-
-@inject(DocumentSettings)
-export class AureliaProjectFiles {
-  private aureliaProjects: AureliaProject[] = [];
-  // aureliaProjectMap: Map<string, any> = new Map();
-
-  public constructor(public readonly documentSettings: DocumentSettings) {}
-
-  public async gatherProjectInfo() {}
-
-  public async setAureliaProjects(packageJsonPaths: string[]) {
-    const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
-
-    aureliaProjectPaths.forEach((aureliaProjectPath) => {
-      const filePaths = getProjectFilePaths({
-        ...this.documentSettings.getSettings().aureliaProject,
-        rootDirectory: aureliaProjectPath,
-      });
-
-      if (filePaths.length === 0) {
-        logger.debug(
-          [
-            `Not including path ${aureliaProjectPath}, because it was excluded or not included.`,
-          ],
-          { logLevel: 'INFO', log: true }
-        );
-        return;
-      }
-
-      this.aureliaProjects.push({
-        tsConfigPath: aureliaProjectPath,
-        aureliaProgram: null,
-      });
-    });
-  }
-
-  public getAureliaProjects(): AureliaProjectFiles['aureliaProjects'] {
-    return this.aureliaProjects;
-  }
-
-  public getFirstAureiaProject(): AureliaProject {
-    return this.aureliaProjects[0];
-  }
-
-  public async hydrateAureliaProjectList(documentsPaths: string[]) {
-    /** TODO: Makes esnse? */
-    if (documentsPaths.length === 0) return;
-
-    const aureliaProjectList = this.getAureliaProjects();
-    const settings = await this.documentSettings.getSettings();
-    const aureliaProjectSettings = settings?.aureliaProject;
-
-    // 1. To each map assign a separate program
-    /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    aureliaProjectList.forEach(async ({ tsConfigPath, aureliaProgram }) => {
-      const shouldActive = documentsPaths.some((docPath) => {
-        const result = docPath.includes(tsConfigPath);
-        return result;
-      });
-      if (!shouldActive) return;
-
-      if (aureliaProgram !== null) {
-        console.log('[WARNING] Found a value, but should be null.');
-      }
-
-      aureliaProgram = new AureliaProgram();
-      const projectOptions = {
-        ...aureliaProjectSettings,
-        rootDirectory: tsConfigPath,
-      };
-
-      // const paths = aureliaProgram.setProjectFilePaths(projectOptions);
-      // if (paths.length === 0) {
-      //   console.log(`[INFO][AuExt.ts] Removing path ${tsConfigPath}, because it was excluded or not included`)
-      //   aureliaProjectMap.delete(tsConfigPath)
-      //   return;
-      // }
-      await createAureliaWatchProgram(aureliaProgram, {
-        ...settings,
-        aureliaProject: projectOptions,
-      });
-
-      const targetAureliaProject = aureliaProjectList.find(
-        (auP) => auP.tsConfigPath === tsConfigPath
-      );
-
-      if (!targetAureliaProject) return;
-
-      targetAureliaProject.aureliaProgram = aureliaProgram;
-    });
-  }
-
-  /**
-   * Check whether a textDocument (via its uri), if it is already included
-   * in the Aurelia project.
-   */
-  public isDocumentIncluded({ uri }: TextDocument): boolean {
-    const isIncluded = this.aureliaProjects.some(({ tsConfigPath }) => {
-      return uri.includes(tsConfigPath);
-    });
-    return isIncluded;
-  }
 }

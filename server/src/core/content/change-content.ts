@@ -2,7 +2,7 @@ import { Container } from 'aurelia-dependency-injection';
 import { Logger } from 'culog';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { AureliaProjectFiles } from '../../common/AureliaProjectFiles';
+import { AureliaProjects } from '../../common/aurelia-projects';
 import { uriToPath } from '../../common/uriToPath';
 
 const logger = new Logger({ scope: 'change-content' });
@@ -13,11 +13,11 @@ export async function onConnectionDidChangeContent(
 ) {
   switch (change.document.languageId) {
     case 'typescript': {
-      const aureliaProjectFiles = container.get(AureliaProjectFiles);
-      if (preventHydration(aureliaProjectFiles, change)) return;
+      const aureliaProjects = container.get(AureliaProjects);
+      if (preventHydration(aureliaProjects, change)) return;
 
       const documentPaths = uriToPath([change.document]);
-      aureliaProjectFiles.hydrateAureliaProjectList(documentPaths);
+      aureliaProjects.hydrateAureliaProjectList(documentPaths);
     }
   }
 }
@@ -35,7 +35,7 @@ function hasDocumentChanged({ version }: TextDocument): boolean {
  * 2. Document was just opened
  */
 function preventHydration(
-  aureliaProjectFiles: AureliaProjectFiles,
+  aureliaProjectFiles: AureliaProjects,
   change: TextDocumentChangeEvent<TextDocument>
 ): boolean {
   // 1.
