@@ -12,6 +12,7 @@ import {
 import { DefinitionResult } from '../../definition/getDefinition';
 import { camelCase } from 'lodash';
 import { getVirtualDefinition } from '../../definition/virtualDefinition';
+import { findSourceWord } from '../../../common/documens/find-source-word';
 
 export function getCustomElementMode(): LanguageMode {
   return {
@@ -39,10 +40,12 @@ export function getCustomElementMode(): LanguageMode {
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string,
-      customElementRegion: ViewRegionInfo | undefined,
+      customElementRegion: ViewRegionInfo,
       aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
+      const offset = document.offsetAt(position);
+      const goToSourceWord = findSourceWord(customElementRegion, offset);
+
       const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
       const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {
         return path.parse(sourceFile.fileName).name === goToSourceWord;

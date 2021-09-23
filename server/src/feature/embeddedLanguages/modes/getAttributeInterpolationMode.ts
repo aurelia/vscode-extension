@@ -46,8 +46,7 @@ export function getAttributeInterpolationMode(
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string,
-      region?: ViewRegionInfo,
+      region: ViewRegionInfo,
       aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const regions = (
@@ -56,7 +55,7 @@ export function getAttributeInterpolationMode(
       return getAccessScopeDefinition(
         document,
         position,
-        goToSourceWord,
+        region,
         regions,
         aureliaProgram
       );

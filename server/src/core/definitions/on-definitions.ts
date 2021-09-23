@@ -1,5 +1,6 @@
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { AsyncReturnType } from '../../common/global';
+import { DefinitionResult } from '../../feature/definition/getDefinition';
 import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
 import {
   AureliaProgram,
@@ -9,11 +10,10 @@ import {
 export async function onDefintion(
   documentContent: string,
   position: Position,
-  goToSourceWord: string,
   filePath: string,
   languageModes: LanguageModes,
   aureliaProgram: AureliaProgram = importedAureliaProgram
-) {
+): Promise<DefinitionResult | undefined> {
   const document = TextDocument.create(filePath, 'html', 0, documentContent);
   const isRefactor = true;
 
@@ -33,8 +33,10 @@ export async function onDefintion(
   const { mode, region } = modeAndRegion;
 
   if (!mode) return;
+  if (!region) return;
+  region.type; /*?*/
 
-  const doDefinition = mode.doDefinition!;
+  const doDefinition = mode.doDefinition;
 
   if (doDefinition !== undefined && isRefactor) {
     let definitions: AsyncReturnType<typeof doDefinition>;
@@ -43,7 +45,6 @@ export async function onDefintion(
       definitions = await doDefinition(
         document,
         position,
-        goToSourceWord,
         region,
         aureliaProgram
       );

@@ -138,3 +138,8 @@ export enum AureliaLSP {
   /** [c]ompletion [i]tem [d]ata [t]ype -> cidt */
   AureliaCompletionItemDataType = 'AURELIA_CIDT',
 }
+
+export const WORD_SEPARATORS = '`~!@#%^&*()=+[{]}|;:\'",.<>/?'; // removed -,$
+export const WORD_SEPARATORS_REGEX_STRING =
+  '\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\|\\;\\:\'\\"\\,\\.\\<\\>\\/\\?';
+export const whiteSpaceRegex = /[\s\r\n\t]/;

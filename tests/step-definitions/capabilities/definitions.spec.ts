@@ -7,7 +7,7 @@ import { languageModes, position } from './common/common-capabilities.spec';
 export const definitionSteps: StepDefinitions = ({ when, then }) => {
   let definition: DefinitionResult;
 
-  when(/^I execute Go To Definition on (.*)$/, async (targetWord: string) => {
+  when(/^I execute Go To Definition$/, async () => {
     const document = myMockServer.textDocuments.getFirst();
     const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
     const { aureliaProgram } = AureliaProjectFiles.getFirstAureiaProject();
@@ -17,17 +17,13 @@ export const definitionSteps: StepDefinitions = ({ when, then }) => {
       .onDefinition(
         document.getText(),
         position,
-        targetWord,
         UriUtils.toPath(document.uri),
         languageModes,
         aureliaProgram
       );
   });
 
-  then(
-    /^I should land in the view model (.*)$/,
-    (viewModelFileName: string) => {
-      expect(definition.viewModelFilePath).toContain(viewModelFileName);
-    }
-  );
+  then(/^I should land in the file (.*)$/, (viewModelFileName: string) => {
+    expect(definition.viewModelFilePath).toContain(viewModelFileName);
+  });
 };

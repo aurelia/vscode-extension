@@ -95,7 +95,6 @@ export function getValueConverterMode(): LanguageMode {
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string,
       valueConverterRegion: ViewRegionInfo | undefined,
       aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {

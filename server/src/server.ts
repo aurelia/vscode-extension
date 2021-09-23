@@ -250,7 +250,6 @@ connection.onRequest<any, any>(
     const definition = await aureliaServer.onDefinition(
       documentContent,
       position,
-      goToSourceWord,
       filePath,
       languageModes
     );

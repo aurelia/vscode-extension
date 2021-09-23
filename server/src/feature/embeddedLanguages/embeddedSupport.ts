@@ -8,7 +8,7 @@ import {
   AureliaProgram,
   aureliaProgram as importedAureliaProgram,
 } from '../../viewModel/AureliaProgram';
-import { DiagnosticMessages } from '../../common/DiagnosticMessages';
+import { DiagnosticMessages } from '../../common/diagnostic-messages/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from 'culog';
 
@@ -657,7 +657,7 @@ export function getRegionAtPosition(
     }
     return false;
   });
-  potentialRegions; /*?*/
+  // potentialRegions; /*?*/
 
   if (potentialRegions.length === 0) {
     console.error('embeddedSupport -> getRegionAtPosition -> No Region found');

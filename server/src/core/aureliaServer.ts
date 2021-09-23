@@ -80,7 +80,6 @@ export class AureliaServer {
   async onDefinition(
     documentContent: string,
     position: Position,
-    goToSourceWord: string,
     filePath: string,
     languageModes: LanguageModes,
     aureliaProgram: AureliaProgram = importedAureliaProgram
@@ -88,7 +87,6 @@ export class AureliaServer {
     const definition = await onDefintion(
       documentContent,
       position,
-      goToSourceWord,
       filePath,
       languageModes,
       aureliaProgram

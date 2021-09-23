@@ -15,6 +15,7 @@ import {
 import { getVirtualDefinition } from './virtualDefinition';
 import { DefinitionResult } from './getDefinition';
 import { Position } from '../embeddedLanguages/languageModes';
+import { findSourceWord } from '../../common/documens/find-source-word';
 
 /**
  * Priority
@@ -30,13 +31,19 @@ import { Position } from '../embeddedLanguages/languageModes';
 export function getAccessScopeDefinition(
   document: TextDocument,
   position: Position,
-  goToSourceWord: string,
+  region: ViewRegionInfo,
+  /**
+   * All regions to also find definitions inside view itself
+   */
   regions?: ViewRegionInfo[],
   aureliaProgram: AureliaProgram = importedAureliaProgram
 ): DefinitionResult | undefined {
+  const offset = document.offsetAt(position);
+  const goToSourceWord = findSourceWord(region, offset);
+
   // 1.
   const repeatForRegions = regions?.filter(
-    (region) => region.type === ViewRegionType.RepeatFor
+    (_region) => _region.type === ViewRegionType.RepeatFor
   ) as ViewRegionInfo<RepeatForRegionData>[];
   const targetRepeatForRegion = repeatForRegions.find(
     (repeatForRegion) => repeatForRegion.data?.iterator === goToSourceWord
@@ -69,7 +76,7 @@ export function getAccessScopeDefinition(
   const viewModelDefinition = getAccessScopeViewModelDefinition(
     document,
     position,
-    goToSourceWord,
+    region,
     aureliaProgram
   );
   return viewModelDefinition;
@@ -85,9 +92,12 @@ export function getAccessScopeDefinition(
 export function getAccessScopeViewModelDefinition(
   document: TextDocument,
   position: Position,
-  goToSourceWord: string,
+  region: ViewRegionInfo,
   aureliaProgram: AureliaProgram = importedAureliaProgram
 ): DefinitionResult | undefined {
+  const offset = document.offsetAt(position);
+  const goToSourceWord = findSourceWord(region, offset);
+
   const virtualDefinition = getVirtualDefinition(
     document.uri,
     aureliaProgram,

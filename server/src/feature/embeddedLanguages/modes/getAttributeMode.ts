@@ -24,6 +24,7 @@ export function getAttributeMode(
     getId() {
       return ViewRegionType.Attribute;
     },
+
     async doComplete(
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
@@ -37,17 +38,13 @@ export function getAttributeMode(
         region,
         aureliaProgram
       );
-      if (aureliaVirtualCompletions.length > 0) {
-        return aureliaVirtualCompletions;
-      }
-
-      return [];
+      return aureliaVirtualCompletions;
     },
+
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string,
-      region?: ViewRegionInfo,
+      region: ViewRegionInfo,
       aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const regions = (
@@ -56,11 +53,12 @@ export function getAttributeMode(
       return getAccessScopeDefinition(
         document,
         position,
-        goToSourceWord,
+        region,
         regions,
         aureliaProgram
       );
     },
+
     async doHover(
       document: TextDocument,
       position: Position,

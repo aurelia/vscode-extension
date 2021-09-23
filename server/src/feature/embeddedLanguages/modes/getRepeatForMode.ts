@@ -37,14 +37,13 @@ export function getRepeatForMode(): LanguageMode {
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string,
-      region?: ViewRegionInfo,
+      region: ViewRegionInfo,
       aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       return getAccessScopeViewModelDefinition(
         document,
         position,
-        goToSourceWord,
+        region,
         aureliaProgram
       );
     },

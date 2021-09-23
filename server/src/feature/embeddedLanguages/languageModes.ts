@@ -55,14 +55,13 @@ export interface LanguageMode {
     _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter?: string,
     region?: ViewRegionInfo,
-    aureliaProgram?: AureliaProgram,
+    aureliaProgram?: AureliaProgram
   ) => Promise<CompletionList | AureliaCompletionItem[]>;
   doDefinition?: (
     document: TextDocument,
     position: Position,
-    goToSourceWord: string,
-    region?: ViewRegionInfo,
-    aureliaProgram?: AureliaProgram,
+    region: ViewRegionInfo,
+    aureliaProgram?: AureliaProgram
   ) => Promise<DefinitionResult | undefined>;
   doHover?: (
     document: TextDocument,

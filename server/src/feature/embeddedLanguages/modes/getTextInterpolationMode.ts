@@ -16,6 +16,7 @@ import {
 import { getAccessScopeDefinition } from '../../definition/accessScopeDefinition';
 import { VirtualLanguageService } from '../../virtual/virtualSourceFile';
 import { getAccessScopeHover } from '../../hover/accessScopeHover';
+import { findSourceWord } from '../../../common/documens/find-source-word';
 
 export function getTextInterpolationMode(
   languageModelCacheDocument: LanguageModelCache<Promise<HTMLDocumentRegions>>
@@ -43,11 +44,11 @@ export function getTextInterpolationMode(
 
       return [];
     },
+
     async doDefinition(
       document: TextDocument,
       position: Position,
-      goToSourceWord: string,
-      region?: ViewRegionInfo,
+      region: ViewRegionInfo,
       aureliaProgram: AureliaProgram = importedAureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const regions = (
@@ -56,12 +57,13 @@ export function getTextInterpolationMode(
       const definition = getAccessScopeDefinition(
         document,
         position,
-        goToSourceWord,
+        region,
         regions,
         aureliaProgram
       );
       return definition;
     },
+
     async doHover(
       document: TextDocument,
       position: Position,

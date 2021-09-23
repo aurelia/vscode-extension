@@ -20,6 +20,7 @@ module.exports = function (wallaby) {
       // 'tests/unit/**/AureliaExtension.spec.ts',
       // 'tests/unit/**/aureliaServer.spec.ts',
       'tests/jest-cucumber-setup.spec.ts',
+      // 'tests/unit/common/documens/find-source-word.spec.ts',
       // "tests/unit/**/languageModes.spec.ts",
       // "tests/unit/feature/embeddedLanguages/modes*.spec.ts",
       // "tests/unit/feature/embeddedLanguages/modes__definitions.spec.ts",
