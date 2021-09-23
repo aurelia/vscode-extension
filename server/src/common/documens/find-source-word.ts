@@ -8,7 +8,7 @@ export function findSourceWord(region: ViewRegionInfo, offset: number): string {
   const input = region.attributeValue ?? region.regionValue ?? region.tagName;
   if (!input) return '';
 
-  const normalizedOffset = region.startOffset - offset;
+  const normalizedOffset = Math.abs(region.startOffset - offset);
   const word = getWordAtOffset(input, normalizedOffset);
 
   return word;

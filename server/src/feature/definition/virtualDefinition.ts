@@ -20,7 +20,10 @@ export function getVirtualDefinition(
     createVirtualFileWithContent(aureliaProgram, filePath, goToSourceWord) ??
     ({} as VirtualSourceFileInfo);
 
-  const virtualCls = getVirtualLangagueService(virtualSourcefile);
+  const program = aureliaProgram.getProgram();
+  if (!program) return;
+
+  const virtualCls = getVirtualLangagueService(virtualSourcefile, program);
 
   const result = virtualCls.getDefinitionAtPosition(
     virtualSourcefile.fileName,

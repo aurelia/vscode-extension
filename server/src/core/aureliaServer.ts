@@ -12,12 +12,11 @@ import { onConnectionInitialized } from './initialization/initialization';
 import { onConnectionDidChangeContent } from './content/change-content';
 import { LanguageModes } from '../feature/embeddedLanguages/languageModes';
 import { onCompletion } from './completions/on-completions';
-import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { onDefintion } from './definitions/on-definitions';
 import { Position } from 'vscode-html-languageservice';
 import { inject } from 'aurelia-dependency-injection';
-import { AureliaProjectFiles } from '../common/AureliaProjectFiles';
 import { initDependencyInjection } from './depdenceny-injection';
+import { onHover } from './hover/on-hover';
 
 @inject(Container, DocumentSettings)
 export class AureliaServer {
@@ -26,16 +25,6 @@ export class AureliaServer {
     public readonly extensionSettings: ExtensionSettings
   ) {
     initDependencyInjection(container, extensionSettings);
-  }
-
-  public getAureliaProgram(): AureliaProgram {
-    const aureliaProjectFiles = this.container.get(AureliaProjectFiles);
-    const { aureliaProgram } = aureliaProjectFiles.getAureliaProjects()[0];
-    if (!aureliaProgram) {
-      throw new Error('Need Aurelia Program');
-    }
-
-    return aureliaProgram;
   }
 
   async onConnectionInitialized(
@@ -75,7 +64,15 @@ export class AureliaServer {
   // onWillSaveTextDocumentWaitUntil() {}
   // onDidSaveTextDocument() {}
   // sendDiagnostics() {}
-  // onHover() {}
+  async onHover(
+    documentContent: string,
+    position: Position,
+    filePath: string,
+    languageModes: LanguageModes
+  ) {
+    const hovered = onHover(documentContent, position, filePath, languageModes);
+    return hovered;
+  }
 
   async onCompletion(
     textDocumentPosition: TextDocumentPositionParams,
@@ -85,8 +82,7 @@ export class AureliaServer {
     const completions = await onCompletion(
       textDocumentPosition,
       document,
-      languageModes,
-      this.getAureliaProgram()
+      languageModes
     );
 
     return completions;
@@ -95,6 +91,7 @@ export class AureliaServer {
   // onCompletionResolve() {}
   // onSignatureHelp() {}
   // onDeclaration() {}
+
   async onDefinition(
     documentContent: string,
     position: Position,
@@ -105,11 +102,11 @@ export class AureliaServer {
       documentContent,
       position,
       filePath,
-      languageModes,
-      this.getAureliaProgram()
+      languageModes
     );
     return definition;
   }
+
   // onTypeDefinition() {}
   // onImplementation() {}
   // onReferences() {}

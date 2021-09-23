@@ -1,4 +1,3 @@
-import { AsyncReturnType } from './common/global.d';
 import {
   createConnection,
   TextDocuments,
@@ -27,7 +26,6 @@ import {
   settingsName,
 } from './configuration/DocumentSettings';
 
-import { CustomHover } from './feature/virtual/virtualSourceFile';
 import { globalContainer } from './container';
 import { AureliaServer } from './core/aureliaServer';
 import { AureliaProjectFiles } from './common/AureliaProjectFiles';
@@ -86,9 +84,6 @@ connection.onInitialize(async (params: InitializeParams) => {
       },
     };
   }
-
-  // Injections
-  // documentSettings.inject(connection, hasConfigurationCapability);
 
   return result;
 });
@@ -209,7 +204,6 @@ connection.onDefinition(
   async ({ position, textDocument }: TextDocumentPositionParams) => {
     const documentUri = textDocument.uri.toString();
     const document = documents.get(documentUri); // <
-
     if (!document) return null;
 
     const definition = await aureliaServer.onDefinition(
@@ -221,28 +215,28 @@ connection.onDefinition(
 
     if (definition) {
       return definition;
-      // const { line, character } = definition.lineAndCharacter;
-      // const targetPath =
-      //   definition.viewFilePath ?? definition.viewModelFilePath ?? '';
-
-      // return [
-      //   {
-      //     uri: pathToFileURL(targetPath).toString(),
-      //     range: Range.create(
-      //       Position.create(line - 1, character),
-      //       Position.create(line, character)
-      //     ),
-      //   },
-      // ];
     }
 
     return null;
   }
 );
 
-connection.onHover(() => {
-  return null;
-});
+connection.onHover(
+  async ({ position, textDocument }: TextDocumentPositionParams) => {
+    const documentUri = textDocument.uri.toString();
+    const document = documents.get(documentUri); // <
+    if (!document) return null;
+
+    const hovered = await aureliaServer.onHover(
+      document.getText(),
+      position,
+      documentUri,
+      languageModes
+    );
+
+    return hovered;
+  }
+);
 
 connection.onRequest('aurelia-get-component-list', () => {
   const aureliaProjectFiles = globalContainer.get(AureliaProjectFiles);
@@ -266,42 +260,6 @@ connection.onRequest('aurelia-get-component-list', () => {
     };
   });
 });
-
-connection.onRequest<any, any>(
-  'get-virtual-hover',
-  async ({
-    documentContent,
-    position,
-    goToSourceWord,
-    filePath,
-  }): Promise<CustomHover | undefined> => {
-    const document = TextDocument.create(filePath, 'html', 0, documentContent);
-    const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-      document,
-      position
-    );
-
-    if (!modeAndRegion) return;
-    const { mode, region } = modeAndRegion;
-
-    if (!mode) return;
-    if (!region) return;
-
-    const doHover = mode.doHover;
-
-    if (doHover) {
-      let hoverResult: AsyncReturnType<typeof doHover>;
-
-      try {
-        hoverResult = await doHover(document, position, goToSourceWord, region);
-      } catch (error) {
-        console.log('TCL: error', error);
-        return;
-      }
-      return hoverResult;
-    }
-  }
-);
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

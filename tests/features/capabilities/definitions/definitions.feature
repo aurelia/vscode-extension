@@ -3,22 +3,22 @@ Feature: Definition in View
     Given the project is named "cli-generated"
     And I open VSCode with the following file "compo-user.html"
 
-  @focus
+  # @focus
   Scenario Outline: Custom Element
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition
     Then I should land in the file <TARGET_FILE_NAME>
 
     Examples:
-      | DESCRIPTION             | LINE | CODE                                         | TARGET_FILE_NAME |
+      | DESCRIPTION    | LINE | CODE                        | TARGET_FILE_NAME |
       # | Attribute          | 7    | `  <div click.delegate="\|increaseCounter()">`          | compo-user.ts    |
       # | Attribute interpolation | 11   | `  <div css="width: ${\|message}px;"></div>` | compo-user.ts    |
-  | Custom Element     | 15   | `  <\|my-compo></my-compo>`                             | my-compo.ts      |
-  # | Bindable           | 20   | `            \|inter-bindable.bind="increaseCounter()"` | my-compo.ts      |
-  # | Bindable           | 21   | `            \|string-bindable.bind="grammarRules"`     | my-compo.ts      |
+      # | Custom Element | 15   | `  <\|my-compo></my-compo>` | my-compo.ts      |
+  | Attribute           | 20   | `            \|inter-bindable.bind="increaseCounter()"` | my-compo.ts      |
+  # | Attribute           | 21   | `            \|string-bindable.bind="grammarRules"`     | my-compo.ts      |
   # | Text interpolation | 26   | `  ${} ${\|grammarRules.length}`                        | compo-user.ts    |
-  # | DESCRIPTION        | 29   | `    <label repeat.for="\|rule of grammarRules">`       | compo-user.ts    |
-  # | DESCRIPTION        | 29   | `    <label repeat.for="rule of \|grammarRules">`       | compo-user.ts    |
+  # | Attribute        | 29   | `    <label repeat.for="\|rule of grammarRules">`       | compo-user.ts    |
+  # | Attribute        | 29   | `    <label repeat.for="rule of \|grammarRules">`       | compo-user.ts    |
   # | Text interpolation | 32   | `      ${\|rule.id}-${rule.saying}`                     | compo-user.html  |
 
 

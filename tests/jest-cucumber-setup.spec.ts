@@ -5,6 +5,7 @@ import { commonCapabilitiesStep } from './step-definitions/capabilities/common/c
 import { completionSteps } from './step-definitions/capabilities/completions.spec';
 import { completionValueConverterSteps } from './step-definitions/capabilities/completions/completions-value-converters.spec';
 import { definitionSteps } from './step-definitions/capabilities/definitions.spec';
+import { hoverSteps } from './step-definitions/capabilities/hover/hover.spec';
 import { contentChangeSteps } from './step-definitions/content/content-change.spec';
 import {
   cliGenerateSteps,
@@ -32,4 +33,5 @@ autoBindSteps(features, [
   definitionSteps,
   completionSteps,
   completionValueConverterSteps,
+  hoverSteps,
 ]);

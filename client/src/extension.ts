@@ -1,8 +1,6 @@
 import 'reflect-metadata';
 import * as path from 'path';
-import * as vscode from 'vscode';
-import { workspace, ExtensionContext } from 'vscode';
-
+import { commands, workspace, ExtensionContext } from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -12,42 +10,6 @@ import {
 import { RelatedFiles } from './feature/relatedFiles';
 
 let client: LanguageClient;
-
-class HoverInView implements vscode.HoverProvider {
-  public client: LanguageClient;
-
-  public constructor(client: LanguageClient) {
-    this.client = client;
-  }
-
-  public async provideHover(
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): Promise<vscode.Hover> {
-    const goToSourceWordRange = document.getWordRangeAtPosition(position);
-    const goToSourceWord = document.getText(goToSourceWordRange);
-
-    try {
-      const result = await this.client.sendRequest<{
-        contents: { kind: string; value: string };
-        documentation: string;
-      }>('get-virtual-hover', {
-        documentContent: document.getText(),
-        position,
-        goToSourceWord,
-        filePath: document.uri.path,
-      });
-
-      const markdown = new vscode.MarkdownString(result.contents.value, false);
-
-      return {
-        contents: [markdown, result.documentation],
-      };
-    } catch (err) {
-      console.log('TCL: SearchDefinitionInView -> err', err);
-    }
-  }
-}
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
@@ -92,27 +54,17 @@ export function activate(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      'aurelia.getAureliaComponents',
-      async () => {
-        console.log('Getting...');
-        const components = await client.sendRequest<string[]>(
-          'aurelia-get-component-list'
-        );
-        console.log(`Found >${components.length}< components.`);
-        console.log('TCL: activate -> components', components);
-      }
-    )
+    commands.registerCommand('aurelia.getAureliaComponents', async () => {
+      console.log('Getting...');
+      const components = await client.sendRequest<string[]>(
+        'aurelia-get-component-list'
+      );
+      console.log(`Found >${components.length}< components.`);
+      console.log('TCL: activate -> components', components);
+    })
   );
 
   context.subscriptions.push(new RelatedFiles());
-
-  context.subscriptions.push(
-    vscode.languages.registerHoverProvider(
-      { scheme: 'file', language: 'html' },
-      new HoverInView(client)
-    )
-  );
 
   // Start the client. This will also launch the server
   client.start();
