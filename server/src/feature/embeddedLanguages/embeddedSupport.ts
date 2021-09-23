@@ -4,10 +4,7 @@ import { Position, Range } from './languageModes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaView } from '../../common/constants';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { DiagnosticMessages } from '../../common/diagnostic-messages/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from 'culog';
@@ -96,7 +93,7 @@ export const aureliaLanguageId = 'aurelia';
 // eslint-disable-next-line max-lines-per-function
 export function parseDocumentRegions<RegionDataType = any>(
   document: TextDocument,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  aureliaProgram: AureliaProgram
 ): Promise<ViewRegionInfo<RegionDataType>[]> {
   // eslint-disable-next-line max-lines-per-function
   return new Promise((resolve) => {
@@ -423,7 +420,7 @@ export function parseDocumentRegions<RegionDataType = any>(
 
 export async function getDocumentRegions(
   document: TextDocument,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  aureliaProgram: AureliaProgram
 ): Promise<HTMLDocumentRegions> {
   let regions: AsyncReturnType<typeof parseDocumentRegions> = [];
   try {

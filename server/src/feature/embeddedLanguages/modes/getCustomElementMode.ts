@@ -5,16 +5,15 @@ import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getBindablesCompletion } from '../../completions/completions';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 import { DefinitionResult } from '../../definition/getDefinition';
 import { camelCase } from 'lodash';
 import { getVirtualDefinition } from '../../definition/virtualDefinition';
 import { findSourceWord } from '../../../common/documens/find-source-word';
 
-export function getCustomElementMode(): LanguageMode {
+export function getCustomElementMode(
+  aureliaProgram: AureliaProgram
+): LanguageMode {
   return {
     getId() {
       return ViewRegionType.CustomElement;
@@ -23,15 +22,14 @@ export function getCustomElementMode(): LanguageMode {
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter: string | undefined,
-      region?: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
+      region?: ViewRegionInfo
     ) {
       if (triggerCharacter === ' ') {
         const bindablesCompletion = await getBindablesCompletion(
+          aureliaProgram,
           _textDocumentPosition,
           document,
-          region,
-          aureliaProgram
+          region
         );
         if (bindablesCompletion.length > 0) return bindablesCompletion;
       }
@@ -40,8 +38,7 @@ export function getCustomElementMode(): LanguageMode {
     async doDefinition(
       document: TextDocument,
       position: Position,
-      customElementRegion: ViewRegionInfo,
-      aureliaProgram: AureliaProgram
+      customElementRegion: ViewRegionInfo
     ): Promise<DefinitionResult | undefined> {
       const offset = document.offsetAt(position);
       const goToSourceWord = findSourceWord(customElementRegion, offset);

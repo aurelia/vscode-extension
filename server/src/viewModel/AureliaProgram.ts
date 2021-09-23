@@ -5,7 +5,6 @@ import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
 import { AureliaClassTypes } from '../common/constants';
 import { ViewRegionInfo } from '../feature/embeddedLanguages/embeddedSupport';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
-import { globalContainer } from '../container';
 
 export interface IAureliaClassMember {
   name: string;
@@ -255,5 +254,3 @@ export class AureliaProgram {
     return this.aureliaSourceFiles;
   }
 }
-
-export const aureliaProgram = globalContainer.get(AureliaProgram);

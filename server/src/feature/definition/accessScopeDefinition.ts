@@ -8,10 +8,7 @@ import {
   ViewRegionType,
 } from '../embeddedLanguages/embeddedSupport';
 import { TextDocument } from 'vscode-languageserver';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { getVirtualDefinition } from './virtualDefinition';
 import { DefinitionResult } from './getDefinition';
 import { Position } from '../embeddedLanguages/languageModes';
@@ -29,14 +26,14 @@ import { findSourceWord } from '../../common/documens/find-source-word';
  *  2.3 ${grammarRules.length}
  */
 export function getAccessScopeDefinition(
+  aureliaProgram: AureliaProgram,
   document: TextDocument,
   position: Position,
   region: ViewRegionInfo,
   /**
    * All regions to also find definitions inside view itself
    */
-  regions?: ViewRegionInfo[],
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  regions?: ViewRegionInfo[]
 ): DefinitionResult | undefined {
   const offset = document.offsetAt(position);
   const goToSourceWord = findSourceWord(region, offset);
@@ -93,7 +90,7 @@ export function getAccessScopeViewModelDefinition(
   document: TextDocument,
   position: Position,
   region: ViewRegionInfo,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  aureliaProgram: AureliaProgram
 ): DefinitionResult | undefined {
   const offset = document.offsetAt(position);
   const goToSourceWord = findSourceWord(region, offset);

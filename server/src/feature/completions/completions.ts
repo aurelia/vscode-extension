@@ -8,18 +8,10 @@ import {
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
 import { AureliaClassTypes } from '../../common/constants';
-import {
-  CustomElementRegionData,
-  parseDocumentRegions,
-  getRegionFromLineAndCharacter,
-  ViewRegionType,
-  ViewRegionInfo,
-} from '../embeddedLanguages/embeddedSupport';
-import { Position } from '../embeddedLanguages/languageModes';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 
 import {
   AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
   IAureliaClassMember,
   IAureliaComponent,
 } from '../../viewModel/AureliaProgram';
@@ -95,10 +87,10 @@ export function createComponentCompletionList(
 }
 
 export async function getBindablesCompletion(
+  aureliaProgram: AureliaProgram,
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region?: ViewRegionInfo,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  region?: ViewRegionInfo
 ): Promise<CompletionItem[]> {
   if (!region) return [];
 
@@ -118,7 +110,7 @@ export async function getBindablesCompletion(
 }
 
 export function createValueConverterCompletion(
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  aureliaProgram: AureliaProgram
 ): CompletionItem[] {
   const valueConverterCompletionList = aureliaProgram
     .getComponentList()

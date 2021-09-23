@@ -35,10 +35,7 @@ import {
   TextDocument,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import {
   createVirtualFileWithContent,
@@ -55,10 +52,14 @@ const PARAMETER_NAME = 'parameterName';
  * Returns the virtual competion. (to be used as real completions)
  */
 export function getVirtualCompletion(
+  aureliaProgram: AureliaProgram,
   virtualSourcefile: ts.SourceFile,
   positionOfAutocomplete: number
 ) {
-  const program = importedAureliaProgram.getProgram();
+  const program = aureliaProgram.getProgram();
+  if (!program) {
+    throw new Error('Need program');
+  }
 
   const cls = getVirtualLangagueService(virtualSourcefile, program);
   const virtualSourceFilePath = virtualSourcefile.fileName;
@@ -164,9 +165,9 @@ export function isAureliaCompletionItem(
 }
 
 async function getVirtualViewModelCompletion(
+  aureliaProgram: AureliaProgram,
   textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  aureliaProgram: AureliaProgram,
   region?: ViewRegionInfo
 ): Promise<AureliaCompletionItem[]> {
   // 1. From the region get the part, that should be made virtual.
@@ -191,7 +192,11 @@ async function getVirtualViewModelCompletion(
   const {
     virtualCompletions,
     virtualCompletionEntryDetails,
-  } = getVirtualCompletion(virtualSourcefile, virtualCursorIndex);
+  } = getVirtualCompletion(
+    aureliaProgram,
+    virtualSourcefile,
+    virtualCursorIndex
+  );
 
   const entryDetailsMap: EntryDetailsMap = {};
 
@@ -249,7 +254,11 @@ export function getVirtualViewModelCompletionSupplyContent(
   const {
     virtualCompletions,
     virtualCompletionEntryDetails,
-  } = getVirtualCompletion(virtualSourcefile, virtualCursorIndex);
+  } = getVirtualCompletion(
+    aureliaProgram,
+    virtualSourcefile,
+    virtualCursorIndex
+  );
 
   const entryDetailsMap: EntryDetailsMap = {};
 
@@ -364,8 +373,8 @@ function enhanceMethodArguments(methodArguments: string[]): string {
 export async function getAureliaVirtualCompletions(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region?: ViewRegionInfo,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  region: ViewRegionInfo,
+  aureliaProgram: AureliaProgram
 ): Promise<AureliaCompletionItem[]> {
   // Virtual file
   let virtualCompletions: AsyncReturnType<
@@ -373,9 +382,9 @@ export async function getAureliaVirtualCompletions(
   > = [];
   try {
     virtualCompletions = await getVirtualViewModelCompletion(
+      aureliaProgram,
       _textDocumentPosition,
       document,
-      aureliaProgram,
       region
     );
   } catch (err) {

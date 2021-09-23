@@ -31,7 +31,7 @@ export async function onCompletion(
 
   if (!mode) return [];
 
-  const doComplete = mode.doComplete!;
+  const doComplete = mode.doComplete;
   const text = document.getText();
   const offset = document.offsetAt(_textDocumentPosition.position);
   const triggerCharacter = text.substring(offset - 1, offset);

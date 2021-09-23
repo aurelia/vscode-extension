@@ -4,14 +4,17 @@ import {
 } from '../virtual/virtualSourceFile';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 import { Position, TextDocument } from '../embeddedLanguages/languageModes';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
 export async function getAccessScopeHover(
+  aureliaProgram: AureliaProgram,
   document: TextDocument,
   position: Position,
   goToSourceWord: string,
   attributeRegion: ViewRegionInfo
 ): Promise<CustomHover | undefined> {
   const virtualLanguageService = await createVirtualLanguageService(
+    aureliaProgram,
     position,
     document,
     {

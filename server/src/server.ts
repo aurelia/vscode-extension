@@ -26,7 +26,6 @@ import {
   ExtensionSettings,
   settingsName,
 } from './configuration/DocumentSettings';
-import { aureliaProgram } from './viewModel/AureliaProgram';
 
 import { CustomHover } from './feature/virtual/virtualSourceFile';
 import { globalContainer } from './container';
@@ -246,6 +245,10 @@ connection.onHover(() => {
 });
 
 connection.onRequest('aurelia-get-component-list', () => {
+  const aureliaProjectFiles = globalContainer.get(AureliaProjectFiles);
+  const { aureliaProgram } = aureliaProjectFiles.getAureliaProjects()[0];
+  if (!aureliaProgram) return;
+
   return aureliaProgram.getComponentList().map((cList) => {
     const {
       componentName,

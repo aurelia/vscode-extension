@@ -1,7 +1,6 @@
 import * as ts from 'typescript';
-import * as path from 'path';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
-import { aureliaProgram, AureliaProgram } from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
 
@@ -55,6 +54,7 @@ export interface VirtualLanguageService {
 }
 
 export async function createVirtualLanguageService(
+  aureliaProgram: AureliaProgram,
   position: Position,
   document: TextDocument,
   options: VirtualLanguageServiceOptions = DEFAULT_VIRTUAL_LANGUAGE_SERVICE_OPTIONS
@@ -88,7 +88,10 @@ export async function createVirtualLanguageService(
     virtualCursorIndex -= virtualContent.length - 1; // -1 to start at beginning of method name;
   }
 
-  const languageService = getVirtualLangagueService(virtualSourcefile);
+  const program = aureliaProgram.getProgram();
+  if (!program) return;
+
+  const languageService = getVirtualLangagueService(virtualSourcefile, program);
 
   return {
     getCompletionsAtPosition: () => getCompletionsAtPosition(),
@@ -209,7 +212,7 @@ function getQuickInfoAtPosition(
 
 export function getVirtualLangagueService(
   sourceFile: ts.SourceFile,
-  watchProgram?: ts.Program
+  watchProgram: ts.Program
 ): ts.LanguageService {
   // const compilerSettings = watchProgram?.getCompilerOptions();
   const compilerSettings = {

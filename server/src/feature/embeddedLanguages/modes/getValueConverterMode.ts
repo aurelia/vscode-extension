@@ -10,14 +10,13 @@ import { TextDocumentPositionParams } from 'vscode-languageserver';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getVirtualViewModelCompletionSupplyContent } from '../../completions/virtualCompletion';
 import { createValueConverterCompletion } from '../../completions/completions';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 import { AureliaClassTypes, AureliaViewModel } from '../../../common/constants';
 import { DefinitionResult } from '../../definition/getDefinition';
 
-export function getValueConverterMode(): LanguageMode {
+export function getValueConverterMode(
+  aureliaProgram: AureliaProgram
+): LanguageMode {
   return {
     getId() {
       return ViewRegionType.ValueConverter;
@@ -26,8 +25,7 @@ export function getValueConverterMode(): LanguageMode {
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter: string | undefined,
-      region?: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
+      region?: ViewRegionInfo
     ) {
       if (triggerCharacter === ':') {
         const completions = await onValueConverterCompletion(
@@ -46,8 +44,7 @@ export function getValueConverterMode(): LanguageMode {
     async doDefinition(
       document: TextDocument,
       position: Position,
-      valueConverterRegion: ViewRegionInfo | undefined,
-      aureliaProgram: AureliaProgram
+      valueConverterRegion: ViewRegionInfo | undefined
     ): Promise<DefinitionResult | undefined> {
       const targetRegion = valueConverterRegion as ViewRegionInfo<ValueConverterRegionData>;
       const targetValueConverterComponent = aureliaProgram
@@ -77,9 +74,9 @@ export function getValueConverterMode(): LanguageMode {
 async function onValueConverterCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  aureliaProgram: AureliaProgram
 ) {
-  const regions = await parseDocumentRegions(document);
+  const regions = await parseDocumentRegions(document, aureliaProgram);
   const targetRegion = getRegionAtPosition(
     document,
     regions,
@@ -104,7 +101,7 @@ async function onValueConverterCompletion(
   if (!targetValueConverterComponent?.sourceFile) return [];
 
   const valueConverterCompletion = getVirtualViewModelCompletionSupplyContent(
-    importedAureliaProgram,
+    aureliaProgram,
     /**
      * Aurelia interface method name, that handles interaction with view
      */

@@ -9,16 +9,13 @@ import { LanguageModelCache } from '../languageModelCache';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getAureliaVirtualCompletions } from '../../completions/virtualCompletion';
 import { DefinitionResult } from '../../definition/getDefinition';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 import { getAccessScopeDefinition } from '../../definition/accessScopeDefinition';
 import { VirtualLanguageService } from '../../virtual/virtualSourceFile';
 import { getAccessScopeHover } from '../../hover/accessScopeHover';
-import { findSourceWord } from '../../../common/documens/find-source-word';
 
 export function getTextInterpolationMode(
+  aureliaProgram: AureliaProgram,
   languageModelCacheDocument: LanguageModelCache<Promise<HTMLDocumentRegions>>
 ): LanguageMode {
   return {
@@ -29,9 +26,10 @@ export function getTextInterpolationMode(
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter?: string,
-      region?: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
+      region?: ViewRegionInfo
     ) {
+      if (!region) return [];
+
       const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
         _textDocumentPosition,
         document,
@@ -48,18 +46,17 @@ export function getTextInterpolationMode(
     async doDefinition(
       document: TextDocument,
       position: Position,
-      region: ViewRegionInfo,
-      aureliaProgram: AureliaProgram
+      region: ViewRegionInfo
     ): Promise<DefinitionResult | undefined> {
       const regions = (
         await languageModelCacheDocument.get(document)
       ).getRegions();
       const definition = getAccessScopeDefinition(
+        aureliaProgram,
         document,
         position,
         region,
-        regions,
-        aureliaProgram
+        regions
       );
       return definition;
     },
@@ -71,6 +68,7 @@ export function getTextInterpolationMode(
       attributeRegion: ViewRegionInfo
     ): Promise<ReturnType<VirtualLanguageService['getQuickInfoAtPosition']>> {
       return getAccessScopeHover(
+        aureliaProgram,
         document,
         position,
         goToSourceWord,

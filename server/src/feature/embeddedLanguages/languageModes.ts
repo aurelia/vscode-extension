@@ -57,8 +57,7 @@ export interface LanguageMode {
   doDefinition?: (
     document: TextDocument,
     position: Position,
-    region: ViewRegionInfo,
-    aureliaProgram: AureliaProgram
+    region: ViewRegionInfo
   ) => Promise<DefinitionResult | undefined>;
   doHover?: (
     document: TextDocument,
@@ -114,31 +113,40 @@ export async function getLanguageModes(
   let modes = Object.create(null) as LanguageModeWithRegionMap;
 
   modes[ViewRegionType.Html] = {};
-  modes[ViewRegionType.Html].mode = getAureliaHtmlMode();
+  modes[ViewRegionType.Html].mode = getAureliaHtmlMode(aureliaProgram);
 
   modes[ViewRegionType.Attribute] = {};
   modes[ViewRegionType.Attribute].mode = getAttributeMode(
+    aureliaProgram,
     languageModelCacheDocument
   );
 
   modes[ViewRegionType.AttributeInterpolation] = {};
   modes[
     ViewRegionType.AttributeInterpolation
-  ].mode = getAttributeInterpolationMode(languageModelCacheDocument);
+  ].mode = getAttributeInterpolationMode(
+    aureliaProgram,
+    languageModelCacheDocument
+  );
 
   modes[ViewRegionType.CustomElement] = {};
-  modes[ViewRegionType.CustomElement].mode = getCustomElementMode();
+  modes[ViewRegionType.CustomElement].mode = getCustomElementMode(
+    aureliaProgram
+  );
 
   modes[ViewRegionType.RepeatFor] = {};
-  modes[ViewRegionType.RepeatFor].mode = getRepeatForMode();
+  modes[ViewRegionType.RepeatFor].mode = getRepeatForMode(aureliaProgram);
 
   modes[ViewRegionType.TextInterpolation] = {};
   modes[ViewRegionType.TextInterpolation].mode = getTextInterpolationMode(
+    aureliaProgram,
     languageModelCacheDocument
   );
 
   modes[ViewRegionType.ValueConverter] = {};
-  modes[ViewRegionType.ValueConverter].mode = getValueConverterMode();
+  modes[ViewRegionType.ValueConverter].mode = getValueConverterMode(
+    aureliaProgram
+  );
 
   return {
     async getModeAndRegionAtPosition(

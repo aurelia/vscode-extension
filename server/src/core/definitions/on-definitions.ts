@@ -40,12 +40,7 @@ export async function onDefintion(
     let definition: AsyncReturnType<typeof doDefinition>;
 
     try {
-      definition = await doDefinition(
-        document,
-        position,
-        region,
-        aureliaProgram
-      );
+      definition = await doDefinition(document, position, region);
     } catch (error) {
       console.log('TCL: error', error);
       return;

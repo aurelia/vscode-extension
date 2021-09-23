@@ -32,8 +32,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given }) => {
       ({ position, languageModes } = await givenImOnTheLineAtCharacter(
         codeWithCursor,
         position,
-        Number(line),
-        languageModes
+        Number(line)
       ));
     }
   );
@@ -42,8 +41,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given }) => {
 export async function givenImOnTheLineAtCharacter(
   codeWithCursor: string,
   position: Position,
-  line: number,
-  languageModes: LanguageModes
+  line: number
 ) {
   const character = findCharacterPosition(codeWithCursor);
   position = Position.create(line, character);

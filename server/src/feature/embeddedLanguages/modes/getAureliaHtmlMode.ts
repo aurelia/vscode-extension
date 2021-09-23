@@ -4,12 +4,11 @@ import { LanguageMode, TextDocument } from '../languageModes';
 import { AureliaClassTypes } from '../../../common/constants';
 import { createComponentCompletionList } from '../../completions/completions';
 import { ViewRegionInfo } from '../embeddedSupport';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 
-export function getAureliaHtmlMode(): LanguageMode {
+export function getAureliaHtmlMode(
+  aureliaProgram: AureliaProgram
+): LanguageMode {
   return {
     getId() {
       return 'html';
@@ -18,8 +17,7 @@ export function getAureliaHtmlMode(): LanguageMode {
       document: TextDocument,
       _textDocumentPosition: TextDocumentPositionParams,
       triggerCharacter: string | undefined,
-      region?: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
+      region?: ViewRegionInfo
     ) {
       if (triggerCharacter === '<') {
         const aureliaComponents = aureliaProgram
