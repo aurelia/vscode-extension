@@ -53,7 +53,7 @@ async function hydrateProjectWithActiveDocuments(
     const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
     return documentPath;
   });
-  await aureliaProjects.hydrateAureliaProjectList(activeDocumentPaths);
+  await aureliaProjects.hydrateAureliaProjects(activeDocumentPaths);
   logger.debug(['Parsing done. Aurelia Extension is ready.'], {
     logLevel: 'INFO',
   });

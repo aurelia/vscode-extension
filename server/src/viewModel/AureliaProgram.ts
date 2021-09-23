@@ -164,7 +164,7 @@ export class AureliaProgram {
     targetComponent.viewRegions = newRegions;
   }
 
-  public setProjectFilePaths(
+  public setTheProjectsFilePaths(
     options: IProjectOptions = defaultProjectOptions
   ): string[] {
     const { rootDirectory, exclude, include } = options;

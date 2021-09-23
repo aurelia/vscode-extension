@@ -6,36 +6,6 @@ import { ExtensionSettings } from '../configuration/DocumentSettings';
 
 const logger = new Logger({ scope: 'watcherProgram' });
 
-export const updateAureliaComponents = (
-  aureliaProgram: AureliaProgram,
-  projectOptions?: IProjectOptions
-): void => {
-  aureliaProgram.setProjectFilePaths(projectOptions);
-
-  aureliaProgram.initComponentList();
-  const componentList = aureliaProgram.getComponentList();
-
-  if (componentList.length) {
-    aureliaProgram.setComponentList(componentList);
-    logger.debug(
-      [`>>> The extension found this many components: ${componentList.length}`],
-      { logLevel: 'INFO' }
-    );
-
-    if (componentList.length < 10) {
-      logger.debug(['List: '], { logLevel: 'INFO' });
-
-      componentList.forEach((component, index) => {
-        logger.debug([`${index} - ${component.viewModelFilePath}`], {
-          logLevel: 'INFO',
-        });
-      });
-    }
-  } else {
-    console.log('[WARNING]: No components found');
-  }
-};
-
 export async function createAureliaWatchProgram(
   aureliaProgram: AureliaProgram,
   settings?: ExtensionSettings
@@ -63,7 +33,6 @@ export async function createAureliaWatchProgram(
     console.log(configPath);
   } else {
     configPath = ts.findConfigFile(
-      // /* searchPath */ "./",
       /* searchPath */ targetSourceDirectory,
       ts.sys.fileExists,
       'tsconfig.json'
@@ -73,42 +42,8 @@ export async function createAureliaWatchProgram(
   }
 
   if (configPath === undefined) {
-    console.log('⚠⚠⚠');
-    console.log('[WARNING] No tsconfig.json file found');
-    console.log(
-      'You can manually specify a path to your tsconfig.json file by adding the following configs to your settings.json:'
-    );
-    console.log('"aurelia.pathToTsConfig": "<path-to-config>"');
-    console.log('⚠⚠⚠');
-    console.log(
-      '[INFO] Furthermore, you can control, eg. the root directory, or includes/excludes.'
-    );
-    console.log('Please check out the documentation to find out more');
-    console.log('https://github.com/aurelia/vscode-extension#configuration');
-
-    /** TODO: Figure out, if we want to show by default or not
-     * Might become spam-y, if you are aware, that extension configured wrongly.
-     * ISSUE-VaNcstW0
-     */
-    // connection?.sendRequest('warning:no-tsconfig-found');
+    logNoTsconfigWarning();
     return;
-    //   /** TODO: Offer to create a tsconfig file */
-    //   const tsConfigJson = ts.parseConfigFileTextToJson(
-    //     'tsconfig.json',
-    //     `{
-    //       "compilerOptions": {
-    //         "target": "es2018",
-    //         "module": "commonjs",
-    //         "lib": ["es2018"],
-    //         "rootDir": ".",
-    //         "strict": false,
-    //         "esModuleInterop": true
-    //       }
-    //     }`
-    //   );
-    //   const sourceText = JSON.stringify(tsConfigJson);
-    //   const virtualTsConfigFile = ts.createSourceFile('virtualTsConfig.json', sourceText, 0);
-    //   configPath = virtualTsConfigFile.fileName;
   }
 
   // 2. Skip watcher if no tsconfig found
@@ -139,7 +74,6 @@ export async function createAureliaWatchProgram(
       programHost,
       oldProgram
     ) => {
-      // console.log('-------------- Custom Action ---------------------');
       return origCreateProgram(rootNames, options, programHost, oldProgram);
     };
     // 2.2 We also overwrite afterProgramCreate to avoid actually running a compile towards the file system
@@ -159,11 +93,59 @@ export async function createAureliaWatchProgram(
     );
   }
 
-  /** init call */
-  // updateAureliaComponents(aureliaProgram);
-
   // 3 .To avoid an extra call to the AureliaComponents mapping we check whether the host has been created
   if (!isCreateWatchProgram) {
     updateAureliaComponents(aureliaProgram);
   }
+}
+
+export const updateAureliaComponents = (
+  aureliaProgram: AureliaProgram,
+  projectOptions?: IProjectOptions
+): void => {
+  aureliaProgram.setTheProjectsFilePaths(projectOptions);
+
+  aureliaProgram.initComponentList();
+  const componentList = aureliaProgram.getComponentList();
+
+  if (componentList.length) {
+    aureliaProgram.setComponentList(componentList);
+    logger.debug(
+      [`>>> The extension found this many components: ${componentList.length}`],
+      { logLevel: 'INFO' }
+    );
+
+    if (componentList.length < 10) {
+      logger.debug(['List: '], { logLevel: 'INFO' });
+
+      componentList.forEach((component, index) => {
+        logger.debug([`${index} - ${component.viewModelFilePath}`], {
+          logLevel: 'INFO',
+        });
+      });
+    }
+  } else {
+    console.log('[WARNING]: No components found');
+  }
+};
+
+function logNoTsconfigWarning() {
+  console.log('⚠⚠⚠');
+  console.log('[WARNING] No tsconfig.json file found');
+  console.log(
+    'You can manually specify a path to your tsconfig.json file by adding the following configs to your settings.json:'
+  );
+  console.log('"aurelia.pathToTsConfig": "<path-to-config>"');
+  console.log('⚠⚠⚠');
+  console.log(
+    '[INFO] Furthermore, you can control, eg. the root directory, or includes/excludes.'
+  );
+  console.log('Please check out the documentation to find out more');
+  console.log('https://github.com/aurelia/vscode-extension#configuration');
+
+  /** TODO: Figure out, if we want to show by default or not
+   * Might become spam-y, if you are aware, that extension configured wrongly.
+   * ISSUE-VaNcstW0
+   */
+  // connection?.sendRequest('warning:no-tsconfig-found')
 }

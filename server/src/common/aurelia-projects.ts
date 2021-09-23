@@ -60,7 +60,7 @@ export class AureliaProjects {
     return this.aureliaProjects[0];
   }
 
-  public async hydrateAureliaProjectList(documentsPaths: string[]) {
+  public async hydrateAureliaProjects(documentsPaths: string[]) {
     /** TODO: Makes esnse? */
     if (documentsPaths.length === 0) return;
 
