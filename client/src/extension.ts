@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { workspace, ExtensionContext } from 'vscode';
-import * as ts from 'typescript';
 
 import {
   LanguageClient,
@@ -13,50 +12,6 @@ import {
 import { RelatedFiles } from './feature/relatedFiles';
 
 let client: LanguageClient;
-
-class SearchDefinitionInView implements vscode.DefinitionProvider {
-  public client: LanguageClient;
-
-  public constructor(client: LanguageClient) {
-    this.client = client;
-  }
-
-  public async provideDefinition(
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): Promise<vscode.DefinitionLink[]> {
-    const goToSourceWordRange = document.getWordRangeAtPosition(position);
-    const goToSourceWord = document.getText(goToSourceWordRange);
-
-    try {
-      const result = await this.client.sendRequest<{
-        lineAndCharacter: ts.LineAndCharacter;
-        viewModelFilePath: string;
-        viewFilePath: string;
-      }>('get-virtual-definition', {
-        documentContent: document.getText(),
-        position,
-        goToSourceWord,
-        filePath: document.uri.path,
-      });
-
-      const { line, character } = result.lineAndCharacter;
-      const targetPath = result.viewFilePath || result.viewModelFilePath;
-
-      return [
-        {
-          targetUri: vscode.Uri.file(targetPath),
-          targetRange: new vscode.Range(
-            new vscode.Position(line - 1, character),
-            new vscode.Position(line, character)
-          ),
-        },
-      ];
-    } catch (err) {
-      console.log('TCL: SearchDefinitionInView -> err', err);
-    }
-  }
-}
 
 class HoverInView implements vscode.HoverProvider {
   public client: LanguageClient;
@@ -151,13 +106,6 @@ export function activate(context: ExtensionContext) {
   );
 
   context.subscriptions.push(new RelatedFiles());
-
-  context.subscriptions.push(
-    vscode.languages.registerDefinitionProvider(
-      { scheme: 'file', language: 'html' },
-      new SearchDefinitionInView(client)
-    )
-  );
 
   context.subscriptions.push(
     vscode.languages.registerHoverProvider(

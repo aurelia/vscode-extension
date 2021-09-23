@@ -41,7 +41,7 @@ export function getCustomElementMode(): LanguageMode {
       document: TextDocument,
       position: Position,
       customElementRegion: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
+      aureliaProgram: AureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const offset = document.offsetAt(position);
       const goToSourceWord = findSourceWord(customElementRegion, offset);

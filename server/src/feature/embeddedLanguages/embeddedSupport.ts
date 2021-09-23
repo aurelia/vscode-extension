@@ -113,7 +113,10 @@ export function parseDocumentRegions<RegionDataType = any>(
     let hasImportTemplateTag = false;
 
     const componentList = aureliaProgram.getComponentList();
-    if (componentList === undefined) resolve([]);
+    if (componentList === undefined) {
+      resolve([]);
+      return;
+    }
 
     const aureliaCustomElementNames = componentList.map(
       (component) => component.componentName
@@ -422,7 +425,7 @@ export async function getDocumentRegions(
   document: TextDocument,
   aureliaProgram: AureliaProgram = importedAureliaProgram
 ): Promise<HTMLDocumentRegions> {
-  let regions: AsyncReturnType<typeof parseDocumentRegions>;
+  let regions: AsyncReturnType<typeof parseDocumentRegions> = [];
   try {
     regions = await parseDocumentRegions(document, aureliaProgram);
   } catch (error) {

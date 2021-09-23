@@ -45,7 +45,7 @@ export function getAttributeMode(
       document: TextDocument,
       position: Position,
       region: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
+      aureliaProgram: AureliaProgram
     ): Promise<DefinitionResult | undefined> {
       const regions = (
         await languageModelCacheDocument.get(document)

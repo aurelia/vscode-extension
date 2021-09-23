@@ -12,8 +12,6 @@ export let completions: AureliaCompletionItem[] | CompletionList = [];
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
   when('I trigger Suggestions', async () => {
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    const { aureliaProgram } = AureliaProjectFiles.getFirstAureiaProject();
     const document = myMockServer.textDocuments.getFirst();
     const textDocumentPositionParams = createTextDocumentPositionParams(
       document,
@@ -26,12 +24,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
 
     completions = await myMockServer
       .getAureliaServer()
-      .onCompletion(
-        textDocumentPositionParams,
-        document,
-        languageModes,
-        aureliaProgram
-      );
+      .onCompletion(textDocumentPositionParams, document, languageModes);
   });
 
   then('I should get the correct suggestions', () => {

@@ -13,16 +13,13 @@ import {
   createAureliaTemplateAttributeCompletions,
 } from '../../feature/completions/createAureliaTemplateAttributeCompletions';
 import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
 export async function onCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
   languageModes: LanguageModes,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
+  aureliaProgram: AureliaProgram
 ) {
   const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
     document,

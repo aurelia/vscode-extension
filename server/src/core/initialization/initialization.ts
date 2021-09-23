@@ -23,7 +23,7 @@ export async function onConnectionInitialized(
   extensionSettings: ExtensionSettings,
   activeDocuments: TextDocument[] = []
 ) {
-  initDependencyInjection(container, extensionSettings);
+  // initDependencyInjection(container, extensionSettings);
   const aureliaProjectFiles = container.get(AureliaProjectFiles);
   setAndVerifyProjectFiles(extensionSettings, aureliaProjectFiles);
   await hydrateProjectWithActiveDocuments(activeDocuments, aureliaProjectFiles);
@@ -55,6 +55,9 @@ async function hydrateProjectWithActiveDocuments(
     return documentPath;
   });
   await aureliaProjectFiles.hydrateAureliaProjectList(activeDocumentPaths);
+  logger.debug(['Parsing done. Aurelia Extension is ready.'], {
+    logLevel: 'INFO',
+  });
 }
 
 function getPackageJsonPaths(extensionSettings: ExtensionSettings) {

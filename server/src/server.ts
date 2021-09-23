@@ -10,7 +10,6 @@ import {
   TextDocumentSyncKind,
   InitializeResult,
   CompletionList,
-  Definition,
   TextDocumentChangeEvent,
 } from 'vscode-languageserver';
 
@@ -29,10 +28,10 @@ import {
 } from './configuration/DocumentSettings';
 import { aureliaProgram } from './viewModel/AureliaProgram';
 
-import { DefinitionResult } from './feature/definition/getDefinition';
 import { CustomHover } from './feature/virtual/virtualSourceFile';
 import { globalContainer } from './container';
 import { AureliaServer } from './core/aureliaServer';
+import { AureliaProjectFiles } from './common/AureliaProjectFiles';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -54,7 +53,6 @@ connection.onInitialize(async (params: InitializeParams) => {
   console.log('[server.ts] 1. onInitialize');
 
   const capabilities = params.capabilities;
-  languageModes = await getLanguageModes();
 
   // Does the client support the `workspace/configuration` request?
   // If not, we will fall back using global settings
@@ -118,17 +116,19 @@ connection.onInitialized(async () => {
       rootDirectory: workspaceRootUri,
     };
 
-    aureliaServer = new AureliaServer(globalContainer);
+    aureliaServer = new AureliaServer(globalContainer, extensionSettings);
     await aureliaServer.onConnectionInitialized(
       extensionSettings,
       documents.all()
     );
-    // await onConnectionInitialized(
-    //   globalContainer,
-    //   workspaceRootUri,
-    //   extensionSettings,
-    //   documents.all()
-    // );
+
+    const aureliaProjectFiles = globalContainer.get(AureliaProjectFiles);
+    const { aureliaProgram } = aureliaProjectFiles.getAureliaProjects()[0];
+
+    if (aureliaProgram) {
+      languageModes = await getLanguageModes(aureliaProgram);
+    }
+
     hasServerInitialized = true;
   }
   if (hasWorkspaceFolderCapability) {
@@ -206,15 +206,40 @@ connection.onCompletion(
 //   }
 // );
 
-connection.onDefinition((_: TextDocumentPositionParams): Definition | null => {
-  /**
-   * Need to have this onDefinition here, else we get following error in the console
-   * Request textDocument/definition failed.
-   * Message: Unhandled method textDocument/definition
-   * Code: -32601
-   */
-  return null;
-});
+connection.onDefinition(
+  async ({ position, textDocument }: TextDocumentPositionParams) => {
+    const documentUri = textDocument.uri.toString();
+    const document = documents.get(documentUri); // <
+
+    if (!document) return null;
+
+    const definition = await aureliaServer.onDefinition(
+      document.getText(),
+      position,
+      documentUri,
+      languageModes
+    );
+
+    if (definition) {
+      return definition;
+      // const { line, character } = definition.lineAndCharacter;
+      // const targetPath =
+      //   definition.viewFilePath ?? definition.viewModelFilePath ?? '';
+
+      // return [
+      //   {
+      //     uri: pathToFileURL(targetPath).toString(),
+      //     range: Range.create(
+      //       Position.create(line - 1, character),
+      //       Position.create(line, character)
+      //     ),
+      //   },
+      // ];
+    }
+
+    return null;
+  }
+);
 
 connection.onHover(() => {
   return null;
@@ -239,36 +264,6 @@ connection.onRequest('aurelia-get-component-list', () => {
   });
 });
 
-connection.onRequest<any, any>(
-  'get-virtual-definition',
-  async ({
-    documentContent,
-    position,
-    goToSourceWord,
-    filePath,
-  }): Promise<DefinitionResult | undefined> => {
-    const definition = await aureliaServer.onDefinition(
-      documentContent,
-      position,
-      filePath,
-      languageModes
-    );
-
-    if (definition) {
-      return definition;
-    }
-
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('LEGACY DEFINITON');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-  }
-);
 connection.onRequest<any, any>(
   'get-virtual-hover',
   async ({

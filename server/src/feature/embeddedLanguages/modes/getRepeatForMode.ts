@@ -38,7 +38,7 @@ export function getRepeatForMode(): LanguageMode {
       document: TextDocument,
       position: Position,
       region: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
+      aureliaProgram: AureliaProgram
     ): Promise<DefinitionResult | undefined> {
       return getAccessScopeViewModelDefinition(
         document,

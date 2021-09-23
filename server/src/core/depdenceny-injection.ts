@@ -19,5 +19,4 @@ export function initDependencyInjection(
     AureliaProjectFiles,
     new AureliaProjectFiles(settings)
   );
-  container.registerInstance(AureliaServer, new AureliaServer(container));
 }

@@ -32,8 +32,11 @@ export class MockServer {
     private readonly extensionSettings: ExtensionSettings = {},
     private readonly activeDocuments: TextDocument[] = []
   ) {
-    this.aureliaServer = new AureliaServer(this.container);
-    this.textDocuments = new MockTextDocuments(this.workspaceRootUri)
+    this.aureliaServer = new AureliaServer(
+      this.container,
+      this.extensionSettings
+    );
+    this.textDocuments = new MockTextDocuments(this.workspaceRootUri);
   }
 
   log(pluck: (input: MockServer) => any): MockServer {
@@ -100,5 +103,4 @@ export class MockServer {
   ) {
     await this.aureliaServer.onConnectionDidChangeContent(change);
   }
-
 }

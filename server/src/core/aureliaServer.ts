@@ -1,4 +1,7 @@
-import { ExtensionSettings } from '../configuration/DocumentSettings';
+import {
+  DocumentSettings,
+  ExtensionSettings,
+} from '../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   TextDocumentChangeEvent,
@@ -9,15 +12,31 @@ import { onConnectionInitialized } from './initialization/initialization';
 import { onConnectionDidChangeContent } from './content/change-content';
 import { LanguageModes } from '../feature/embeddedLanguages/languageModes';
 import { onCompletion } from './completions/on-completions';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../viewModel/AureliaProgram';
+import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { onDefintion } from './definitions/on-definitions';
 import { Position } from 'vscode-html-languageservice';
+import { inject } from 'aurelia-dependency-injection';
+import { AureliaProjectFiles } from '../common/AureliaProjectFiles';
+import { initDependencyInjection } from './depdenceny-injection';
 
+@inject(Container, DocumentSettings)
 export class AureliaServer {
-  constructor(private container: Container) {}
+  constructor(
+    private container: Container,
+    public readonly extensionSettings: ExtensionSettings
+  ) {
+    initDependencyInjection(container, extensionSettings);
+  }
+
+  public getAureliaProgram(): AureliaProgram {
+    const aureliaProjectFiles = this.container.get(AureliaProjectFiles);
+    const { aureliaProgram } = aureliaProjectFiles.getAureliaProjects()[0];
+    if (!aureliaProgram) {
+      throw new Error('Need Aurelia Program');
+    }
+
+    return aureliaProgram;
+  }
 
   async onConnectionInitialized(
     extensionSettings: ExtensionSettings,
@@ -61,14 +80,13 @@ export class AureliaServer {
   async onCompletion(
     textDocumentPosition: TextDocumentPositionParams,
     document: TextDocument,
-    languageModes: LanguageModes,
-    aureliaProgram: AureliaProgram = importedAureliaProgram
+    languageModes: LanguageModes
   ) {
     const completions = await onCompletion(
       textDocumentPosition,
       document,
       languageModes,
-      aureliaProgram
+      this.getAureliaProgram()
     );
 
     return completions;
@@ -81,15 +99,14 @@ export class AureliaServer {
     documentContent: string,
     position: Position,
     filePath: string,
-    languageModes: LanguageModes,
-    aureliaProgram: AureliaProgram = importedAureliaProgram
+    languageModes: LanguageModes
   ) {
     const definition = await onDefintion(
       documentContent,
       position,
       filePath,
       languageModes,
-      aureliaProgram
+      this.getAureliaProgram()
     );
     return definition;
   }

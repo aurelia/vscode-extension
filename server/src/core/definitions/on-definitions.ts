@@ -1,19 +1,17 @@
+import { pathToFileURL } from 'url';
 import { Position, TextDocument } from 'vscode-html-languageservice';
+import { LocationLink, Range } from 'vscode-languageserver';
 import { AsyncReturnType } from '../../common/global';
-import { DefinitionResult } from '../../feature/definition/getDefinition';
 import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
-import {
-  AureliaProgram,
-  aureliaProgram as importedAureliaProgram,
-} from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
 export async function onDefintion(
   documentContent: string,
   position: Position,
   filePath: string,
   languageModes: LanguageModes,
-  aureliaProgram: AureliaProgram = importedAureliaProgram
-): Promise<DefinitionResult | undefined> {
+  aureliaProgram: AureliaProgram
+): Promise<LocationLink[] | undefined> {
   const document = TextDocument.create(filePath, 'html', 0, documentContent);
   const isRefactor = true;
 
@@ -39,10 +37,10 @@ export async function onDefintion(
   const doDefinition = mode.doDefinition;
 
   if (doDefinition !== undefined && isRefactor) {
-    let definitions: AsyncReturnType<typeof doDefinition>;
+    let definition: AsyncReturnType<typeof doDefinition>;
 
     try {
-      definitions = await doDefinition(
+      definition = await doDefinition(
         document,
         position,
         region,
@@ -52,6 +50,20 @@ export async function onDefintion(
       console.log('TCL: error', error);
       return;
     }
-    return definitions;
+
+    if (!definition) return;
+
+    const { line, character } = definition.lineAndCharacter;
+    const targetPath =
+      definition.viewFilePath ?? definition.viewModelFilePath ?? '';
+
+    const range = Range.create(
+      Position.create(line - 1, character),
+      Position.create(line, character)
+    );
+
+    return [
+      LocationLink.create(pathToFileURL(targetPath).toString(), range, range),
+    ];
   }
 }

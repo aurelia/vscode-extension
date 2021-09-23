@@ -17,6 +17,63 @@ import {
 import { AureliaClassTypes, AureliaViewModel } from '../../../common/constants';
 import { DefinitionResult } from '../../definition/getDefinition';
 
+export function getValueConverterMode(): LanguageMode {
+  return {
+    getId() {
+      return ViewRegionType.ValueConverter;
+    },
+    async doComplete(
+      document: TextDocument,
+      _textDocumentPosition: TextDocumentPositionParams,
+      triggerCharacter: string | undefined,
+      region?: ViewRegionInfo,
+      aureliaProgram: AureliaProgram = importedAureliaProgram
+    ) {
+      if (triggerCharacter === ':') {
+        const completions = await onValueConverterCompletion(
+          _textDocumentPosition,
+          document,
+          aureliaProgram
+        );
+        return completions;
+      }
+
+      const valueConverterCompletion = createValueConverterCompletion(
+        aureliaProgram
+      );
+      return valueConverterCompletion;
+    },
+    async doDefinition(
+      document: TextDocument,
+      position: Position,
+      valueConverterRegion: ViewRegionInfo | undefined,
+      aureliaProgram: AureliaProgram
+    ): Promise<DefinitionResult | undefined> {
+      const targetRegion = valueConverterRegion as ViewRegionInfo<ValueConverterRegionData>;
+      const targetValueConverterComponent = aureliaProgram
+        .getComponentList()
+        .filter(
+          (component) => component.type === AureliaClassTypes.VALUE_CONVERTER
+        )
+        .find(
+          (valueConverterComponent) =>
+            valueConverterComponent.valueConverterName ===
+            targetRegion.data?.valueConverterName
+        );
+
+      return {
+        lineAndCharacter: {
+          line: 1,
+          character: 1,
+        } /** TODO: Find toView() method */,
+        viewModelFilePath: targetValueConverterComponent?.viewModelFilePath,
+      };
+    },
+    onDocumentRemoved(_document: TextDocument) {},
+    dispose() {},
+  };
+}
+
 async function onValueConverterCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
@@ -64,63 +121,6 @@ async function onValueConverterCompletion(
   );
 
   return valueConverterCompletion;
-}
-
-export function getValueConverterMode(): LanguageMode {
-  return {
-    getId() {
-      return ViewRegionType.ValueConverter;
-    },
-    async doComplete(
-      document: TextDocument,
-      _textDocumentPosition: TextDocumentPositionParams,
-      triggerCharacter: string | undefined,
-      region?: ViewRegionInfo,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
-    ) {
-      if (triggerCharacter === ':') {
-        const completions = await onValueConverterCompletion(
-          _textDocumentPosition,
-          document,
-          aureliaProgram
-        );
-        return completions;
-      }
-
-      const valueConverterCompletion = createValueConverterCompletion(
-        aureliaProgram
-      );
-      return valueConverterCompletion;
-    },
-    async doDefinition(
-      document: TextDocument,
-      position: Position,
-      valueConverterRegion: ViewRegionInfo | undefined,
-      aureliaProgram: AureliaProgram = importedAureliaProgram
-    ): Promise<DefinitionResult | undefined> {
-      const targetRegion = valueConverterRegion as ViewRegionInfo<ValueConverterRegionData>;
-      const targetValueConverterComponent = aureliaProgram
-        .getComponentList()
-        .filter(
-          (component) => component.type === AureliaClassTypes.VALUE_CONVERTER
-        )
-        .find(
-          (valueConverterComponent) =>
-            valueConverterComponent.valueConverterName ===
-            targetRegion.data?.valueConverterName
-        );
-
-      return {
-        lineAndCharacter: {
-          line: 1,
-          character: 1,
-        } /** TODO: Find toView() method */,
-        viewModelFilePath: targetValueConverterComponent?.viewModelFilePath,
-      };
-    },
-    onDocumentRemoved(_document: TextDocument) {},
-    dispose() {},
-  };
 }
 
 /**
