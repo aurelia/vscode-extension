@@ -46,8 +46,8 @@ export async function givenImOnTheLineAtCharacter(
   const character = findCharacterPosition(codeWithCursor);
   position = Position.create(line, character);
 
-  const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-  const { aureliaProgram } = AureliaProjectFiles.getFirstAureiaProject();
+  const { AureliaProjects } = myMockServer.getContainerDirectly();
+  const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
   languageModes = await getLanguageModes(aureliaProgram);
   return { position, languageModes };
 }

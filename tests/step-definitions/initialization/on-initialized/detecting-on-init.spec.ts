@@ -20,9 +20,9 @@ export const commonExtensionSteps: StepDefinitions = ({ and, then }) => {
   });
 
   then('the extension should not activate', () => {
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    const auProjectList = AureliaProjectFiles.getAureliaProjects();
-    strictEqual(auProjectList.length, 0);
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    const auProjects = AureliaProjects.getProjects();
+    strictEqual(auProjects.length, 0);
   });
 };
 
@@ -40,15 +40,15 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
   });
 
   then('the extension should detect the Aurelia project', () => {
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    const auProjectList = AureliaProjectFiles.getAureliaProjects();
-    strictEqual(auProjectList.length, 1);
-    strictEqual(auProjectList[0].aureliaProgram, null);
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    const auProjects = AureliaProjects.getProjects();
+    strictEqual(auProjects.length, 1);
+    strictEqual(auProjects[0].aureliaProgram, null);
   });
 
   then('the extension should detect all Aurelia projects', () => {
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    const auProjectList = AureliaProjectFiles.getAureliaProjects();
-    strictEqual(auProjectList.length >= 2, true);
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    const auProjects = AureliaProjects.getProjects();
+    strictEqual(auProjects.length >= 2, true);
   });
 };

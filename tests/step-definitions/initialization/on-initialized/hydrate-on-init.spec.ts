@@ -27,19 +27,19 @@ export const hydrateSteps: StepDefinitions = ({ given, then }) => {
   );
 
   then('the extension should hydrate the Aurelia project', () => {
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    const { aureliaProgram } = AureliaProjectFiles.getAureliaProjects()[0];
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
     expect(aureliaProgram).toBeTruthy();
   });
 
   then('the extension should rehydrate', () => {
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    expect(AureliaProjectFiles.hydrateAureliaProjectList).toBeCalled();
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    expect(AureliaProjects.hydrateAureliaProjects).toBeCalled();
   });
 
   then(/^the extension should not rehydrate$/, () => {
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    expect(AureliaProjectFiles.hydrateAureliaProjectList).not.toBeCalled();
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    expect(AureliaProjects.hydrateAureliaProjects).not.toBeCalled();
   });
 };
 

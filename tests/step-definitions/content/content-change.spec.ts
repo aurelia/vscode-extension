@@ -7,11 +7,11 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
   when(/^I open the file "(.*)"$/, (fileName: string) => {
     testError.verifyFileInProject(fileName);
 
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    spyOn(AureliaProjectFiles, 'hydrateAureliaProjectList');
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    spyOn(AureliaProjects, 'hydrateAureliaProjects');
     const textDocumentPaths = getPathsFromFileNames([fileName]);
-    const [document] = myMockServer
-      .textDocuments.mock(textDocumentPaths)
+    const [document] = myMockServer.textDocuments
+      .mock(textDocumentPaths)
       .getAll();
     const aureliaServer = myMockServer.getAureliaServer();
     aureliaServer.onConnectionDidChangeContent({ document });
@@ -20,11 +20,11 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
   when(/^I change the file "(.*)"$/, (fileName: string) => {
     testError.verifyFileInProject(fileName);
 
-    const { AureliaProjectFiles } = myMockServer.getContainerDirectly();
-    spyOn(AureliaProjectFiles, 'hydrateAureliaProjectList');
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    spyOn(AureliaProjects, 'hydrateAureliaProjects');
     const textDocumentPaths = getPathsFromFileNames([fileName]);
-    const [document] = myMockServer
-      .textDocuments.findAndChange(textDocumentPaths[0])
+    const [document] = myMockServer.textDocuments
+      .findAndChange(textDocumentPaths[0])
       .getAll();
     const aureliaServer = myMockServer.getAureliaServer();
     aureliaServer.onConnectionDidChangeContent({ document });
