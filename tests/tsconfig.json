@@ -12,6 +12,6 @@
     "experimentalDecorators": true,
     "strictNullChecks": true
   },
-  "include": [],
+  "include": ["./common", "./step-definitions", "./unit"],
   "exclude": ["node_modules"]
 }
