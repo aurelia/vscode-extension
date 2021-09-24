@@ -1,8 +1,7 @@
 import { inject } from 'aurelia-dependency-injection';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as ts from 'typescript';
-
+import { ts } from 'ts-morph';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { createAureliaWatchProgram } from '../viewModel/createAureliaWatchProgram';

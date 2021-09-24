@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import { ts } from 'ts-morph';
 import { Logger } from 'culog';
 import { AureliaProgram } from './AureliaProgram';
 import { IProjectOptions } from '../common/common.types';

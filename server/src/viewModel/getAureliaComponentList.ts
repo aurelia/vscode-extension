@@ -16,7 +16,7 @@ interface DecoratorInfo {
 }
 
 import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
-import * as ts from 'typescript';
+import { ts } from 'ts-morph';
 import * as Path from 'path';
 import * as fs from 'fs';
 import { getElementNameFromClassDeclaration } from '../common/className';

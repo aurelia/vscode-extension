@@ -25,7 +25,7 @@ interface EntryDetailsMap {
   [key: string]: EntryDetailsMapData;
 }
 
-import * as ts from 'typescript';
+import { ts } from 'ts-morph';
 import {
   CompletionItem,
   CompletionItemKind,

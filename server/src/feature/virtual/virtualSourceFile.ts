@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import { ts } from 'ts-morph';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { Position, TextDocument } from 'vscode-html-languageservice';

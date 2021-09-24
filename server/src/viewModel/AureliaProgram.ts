@@ -1,5 +1,5 @@
 import { singleton } from 'aurelia-dependency-injection';
-import * as ts from 'typescript';
+import { ts } from 'ts-morph';
 import * as Path from 'path';
 import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
 import { AureliaClassTypes } from '../common/constants';
