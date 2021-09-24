@@ -2,7 +2,7 @@ import { Container } from 'aurelia-dependency-injection';
 import path = require('path');
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { AureliaProjectFiles } from '../../../server/src/common/AureliaProjectFiles';
+import { AureliaProjects } from '../../../server/src/common/aurelia-projects';
 import {
   ExtensionSettings,
   DocumentSettings,
@@ -65,7 +65,7 @@ export class MockServer {
    */
   public getContainerDirectly() {
     return {
-      AureliaProjectFiles: this.container.get(AureliaProjectFiles),
+      AureliaProjects: this.container.get(AureliaProjects),
       AureliaProgram: this.container.get(AureliaProgram),
       DocumentSettings: this.container.get(DocumentSettings),
     };
