@@ -31,6 +31,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);
     }
+    expect(true).toBeFalsy();
   });
 
   then(

@@ -9,6 +9,7 @@ import {
   IAureliaProject,
 } from '../../common/aurelia-projects';
 import { ExtensionSettings } from '../../configuration/DocumentSettings';
+import { initDependencyInjection } from '../depdenceny-injection';
 
 const logger = new Logger({ scope: 'aureliaServer' });
 

@@ -7,6 +7,7 @@ import {
 import { testError } from '../../../common/errors/TestErrors';
 import { MockServer } from '../../../common/mock-server/mock-server';
 import { testContainer } from '../../../jest-cucumber-setup.spec';
+import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 
 export let myMockServer: MockServer;
 
@@ -15,7 +16,7 @@ export const commonExtensionSteps: StepDefinitions = ({ and, then }) => {
     const workspaceRootUri = getFixtureUri(projectName);
     myMockServer = new MockServer(testContainer, workspaceRootUri, {
       aureliaProject: {
-        rootDirectory: workspaceRootUri,
+        rootDirectory: UriUtils.toPath(workspaceRootUri),
       },
     });
     testError.verifyProjectName(projectName);

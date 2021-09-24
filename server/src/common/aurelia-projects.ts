@@ -4,10 +4,10 @@ import * as fs from 'fs';
 import { ts } from 'ts-morph';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
-import { createAureliaWatchProgram } from '../viewModel/createAureliaWatchProgram';
 import { IProjectOptions, defaultProjectOptions } from './common.types';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Logger } from 'culog';
+import { AureliaTsMorph } from './aurelia-ts-morph/aurelia-ts-morph';
 
 const logger = new Logger({ scope: 'AureliaProjectFiles' });
 
@@ -16,12 +16,15 @@ export interface IAureliaProject {
   aureliaProgram: AureliaProgram | null;
 }
 
-@inject(DocumentSettings)
+@inject(AureliaTsMorph, DocumentSettings)
 export class AureliaProjects {
   private aureliaProjects: IAureliaProject[] = [];
   // aureliaProjectMap: Map<string, any> = new Map();
 
-  public constructor(public readonly documentSettings: DocumentSettings) {}
+  public constructor(
+    public readonly aureliaTsMorph: AureliaTsMorph,
+    public readonly documentSettings: DocumentSettings
+  ) {}
 
   public async gatherProjectInfo() {}
 
@@ -55,7 +58,7 @@ export class AureliaProjects {
     return this.aureliaProjects;
   }
 
-  public getFirstAureiaProject(): IAureliaProject {
+  public getFirstAureliaProject(): IAureliaProject {
     return this.aureliaProjects[0];
   }
 
@@ -80,22 +83,16 @@ export class AureliaProjects {
         console.log('[WARNING] Found a value, but should be null.');
       }
 
-      aureliaProgram = new AureliaProgram();
       const projectOptions = {
         ...aureliaProjectSettings,
         rootDirectory: tsConfigPath,
       };
 
-      // const paths = aureliaProgram.setProjectFilePaths(projectOptions);
-      // if (paths.length === 0) {
-      //   console.log(`[INFO][AuExt.ts] Removing path ${tsConfigPath}, because it was excluded or not included`)
-      //   aureliaProjectMap.delete(tsConfigPath)
-      //   return;
-      // }
-      await createAureliaWatchProgram(aureliaProgram, {
-        ...settings,
-        aureliaProject: projectOptions,
-      });
+      aureliaProgram = new AureliaProgram();
+      const program = this.aureliaTsMorph.getTsMorphProject().getProgram()
+        .compilerObject;
+      aureliaProgram.setBuilderProgram(program);
+      aureliaProgram.updateAureliaComponents(projectOptions);
 
       const targetAureliaProject = aureliaProjectList.find(
         (auP) => auP.tsConfigPath === tsConfigPath

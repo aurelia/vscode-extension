@@ -1,5 +1,6 @@
 import { Container } from 'aurelia-dependency-injection';
 import { AureliaProjects } from '../common/aurelia-projects';
+import { AureliaTsMorph } from '../common/aurelia-ts-morph/aurelia-ts-morph';
 import {
   ExtensionSettings,
   DocumentSettings,
@@ -14,5 +15,10 @@ export function initDependencyInjection(
     new DocumentSettings(extensionSettings)
   );
   const settings = container.get(DocumentSettings);
-  container.registerInstance(AureliaProjects, new AureliaProjects(settings));
+  container.registerInstance(AureliaTsMorph, new AureliaTsMorph(settings));
+  const aureliaTsMorph = container.get(AureliaTsMorph);
+  container.registerInstance(
+    AureliaProjects,
+    new AureliaProjects(aureliaTsMorph, settings)
+  );
 }

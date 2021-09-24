@@ -6,6 +6,7 @@ import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
 import { AureliaClassTypes } from '../common/constants';
 import { ViewRegionInfo } from '../feature/embeddedLanguages/embeddedSupport';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
+import { logger } from 'culog';
 
 export interface IAureliaClassMember {
   name: string;
@@ -59,7 +60,7 @@ export interface IAureliaBindable {
  */
 @singleton()
 export class AureliaProgram {
-  public builderProgram: ts.SemanticDiagnosticsBuilderProgram | undefined;
+  public builderProgram: ts.Program;
   public aureliaSourceFiles?: ts.SourceFile[];
   public projectFilePaths: string[];
   private componentList: IAureliaComponent[];
@@ -73,6 +74,10 @@ export class AureliaProgram {
       console.log('No Program associated with your Aurelia project.');
       return;
     }
+    // program
+    //   .getSourceFiles()
+    //   .filter((file) => !file.fileName.includes('node_modules'))
+    //   .map((file) => file.fileName);
     const checker = program.getTypeChecker();
 
     this.projectFilePaths.forEach((path) => {
@@ -129,6 +134,35 @@ export class AureliaProgram {
     return this.componentList;
   }
 
+  public updateAureliaComponents = (projectOptions?: IProjectOptions): void => {
+    this.initTheProjectsFilePaths(projectOptions);
+
+    this.initComponentList();
+    const componentList = this.getComponentList();
+
+    if (componentList.length) {
+      this.setComponentList(componentList);
+      logger.debug(
+        [
+          `>>> The extension found this many components: ${componentList.length}`,
+        ],
+        { logLevel: 'INFO' }
+      );
+
+      if (componentList.length < 10) {
+        logger.debug(['List: '], { logLevel: 'INFO' });
+
+        componentList.forEach((component, index) => {
+          logger.debug([`${index} - ${component.viewModelFilePath}`], {
+            logLevel: 'INFO',
+          });
+        });
+      }
+    } else {
+      console.log('[WARNING]: No components found');
+    }
+  };
+
   public setBindableList(componentList: IAureliaComponent[]): void {
     const bindableList: IAureliaBindable[] = [];
     componentList.forEach((component) => {
@@ -165,7 +199,7 @@ export class AureliaProgram {
     targetComponent.viewRegions = newRegions;
   }
 
-  public setTheProjectsFilePaths(
+  public initTheProjectsFilePaths(
     options: IProjectOptions = defaultProjectOptions
   ): string[] {
     const { rootDirectory, exclude, include } = options;
@@ -216,18 +250,14 @@ export class AureliaProgram {
    * This program can change from each call as the program is fetched
    * from the watcher which will listen to IO changes in the tsconfig.
    */
-  public getProgram(): ts.Program | undefined {
-    if (this.builderProgram !== undefined) {
-      const program = this.builderProgram.getProgram();
-      return program;
-    } else {
-      return undefined;
+  public getProgram(): ts.Program {
+    if (!this.builderProgram) {
+      throw new Error('No Program');
     }
+    return this.builderProgram;
   }
 
-  public setBuilderProgram(
-    builderProgram: ts.SemanticDiagnosticsBuilderProgram
-  ): void {
+  public setBuilderProgram(builderProgram: ts.Program): void {
     this.builderProgram = builderProgram;
     this.updateAureliaSourceFiles(this.builderProgram);
   }
@@ -235,10 +265,9 @@ export class AureliaProgram {
   /**
    * Only update aurelia source files with relevant source files
    */
-  public updateAureliaSourceFiles(
-    builderProgram?: ts.SemanticDiagnosticsBuilderProgram
-  ): void {
-    const sourceFiles = builderProgram?.getSourceFiles();
+  public updateAureliaSourceFiles(builderProgram: ts.Program): void {
+    /* prettier-ignore */ logger.bug('updateAureliaSourceFiles', { index: 2 }); /*?*/
+    const sourceFiles = builderProgram.getSourceFiles();
     this.aureliaSourceFiles = sourceFiles?.filter((sourceFile) => {
       if (sourceFile.fileName.includes('node_modules')) return false;
       return sourceFile;
