@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { singleton } from 'aurelia-dependency-injection';
 import { ts } from 'ts-morph';
 import * as Path from 'path';

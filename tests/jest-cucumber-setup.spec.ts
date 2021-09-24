@@ -14,7 +14,6 @@ import {
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
 
 export const testContainer = new Container();
-testContainer.registerInstance(MockServer, new MockServer(testContainer));
 
 const features = loadFeatures('**/*.feature', {
   tagFilter: '@focus',

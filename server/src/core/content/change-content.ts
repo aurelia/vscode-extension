@@ -17,7 +17,7 @@ export async function onConnectionDidChangeContent(
       if (preventHydration(aureliaProjects, change)) return;
 
       const documentPaths = uriToPath([change.document]);
-      aureliaProjects.hydrateAureliaProjects(documentPaths);
+      await aureliaProjects.hydrateAureliaProjects(documentPaths);
     }
   }
 }

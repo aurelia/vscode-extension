@@ -33,7 +33,6 @@ export async function onCompletion(
   const text = document.getText();
   const offset = document.offsetAt(_textDocumentPosition.position);
   const triggerCharacter = text.substring(offset - 1, offset);
-  triggerCharacter; /*?*/
   let accumulateCompletions: CompletionItem[] = [];
 
   if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {

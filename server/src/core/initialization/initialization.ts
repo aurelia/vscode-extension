@@ -22,7 +22,6 @@ export async function onConnectionInitialized(
   extensionSettings: ExtensionSettings,
   activeDocuments: TextDocument[] = []
 ) {
-  // initDependencyInjection(container, extensionSettings);
   const aureliaProjects = container.get(AureliaProjects);
   setAndVerifyProjectFiles(extensionSettings, aureliaProjects);
   await hydrateProjectWithActiveDocuments(activeDocuments, aureliaProjects);

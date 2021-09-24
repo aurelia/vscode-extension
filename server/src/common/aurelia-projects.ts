@@ -64,7 +64,7 @@ export class AureliaProjects {
     if (documentsPaths.length === 0) return;
 
     const aureliaProjectList = this.getProjects();
-    const settings = await this.documentSettings.getSettings();
+    const settings = this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
 
     // 1. To each map assign a separate program

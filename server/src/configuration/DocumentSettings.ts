@@ -68,15 +68,12 @@ export class DocumentSettings {
 
   public connection!: Connection; // !
 
-  public hasConfigurationCapability: boolean = false;
+  public hasConfigurationCapability: boolean = true;
 
-  private readonly documentSettings: ExtensionSettings;
-
-  constructor(documentSettings: ExtensionSettings) {
-    this.documentSettings = documentSettings;
+  constructor(private extensionSettings: ExtensionSettings) {
     this.globalSettings = this.defaultSettings;
 
-    let exclude = this.documentSettings.aureliaProject?.exclude;
+    let exclude = this.extensionSettings.aureliaProject?.exclude;
 
     const finalExcludes: string[] = [];
 
@@ -95,7 +92,7 @@ export class DocumentSettings {
 
     exclude = finalExcludes;
 
-    const include = this.documentSettings.aureliaProject?.include;
+    const include = this.extensionSettings.aureliaProject?.include;
     logger.debug(['Include paths globs: '], { logLevel: 'INFO' });
     if (include?.length) {
       logger.debug([include.join(', ')], { logLevel: 'INFO' });
@@ -105,7 +102,7 @@ export class DocumentSettings {
   }
 
   public getSettings(): ExtensionSettings {
-    return this.documentSettings;
+    return this.extensionSettings;
   }
 
   public inject(
