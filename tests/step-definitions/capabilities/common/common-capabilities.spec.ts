@@ -1,10 +1,7 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { Position } from 'vscode-html-languageservice';
 import { AsyncReturnType } from '../../../../server/src/common/global';
-import {
-  LanguageModes,
-  getLanguageModes,
-} from '../../../../server/src/feature/embeddedLanguages/languageModes';
+import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguages/languageModes';
 import { myMockServer } from '../../initialization/on-initialized/detecting-on-init.spec';
 
 export const CURSOR_CHARACTER = '|';

@@ -266,7 +266,6 @@ export class AureliaProgram {
    * Only update aurelia source files with relevant source files
    */
   public updateAureliaSourceFiles(builderProgram: ts.Program): void {
-    /* prettier-ignore */ logger.bug('updateAureliaSourceFiles', { index: 2 }); /*?*/
     const sourceFiles = builderProgram.getSourceFiles();
     this.aureliaSourceFiles = sourceFiles?.filter((sourceFile) => {
       if (sourceFile.fileName.includes('node_modules')) return false;

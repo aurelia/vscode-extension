@@ -5,7 +5,7 @@ import {
   getTableValues,
 } from '../../../common/gherkin/gherkin-step-table';
 import { CLI_GENERATED, MONOREPO } from '../../../common/file-path-mocks';
-import { testError } from '../../../common/errors/TestErrors';
+import { TestError, testError } from '../../../common/errors/TestErrors';
 import { FixtureNames } from '../../../common/fixtures/get-fixture-dir';
 import { myMockServer } from './detecting-on-init.spec';
 
@@ -68,18 +68,14 @@ function getPathsFromTable(table: FileNameStepTable) {
 /**
  * TODO: put somewhere else
  */
-export function getPathsFromFileNames(
-  fileNames: string[]
-): string[] | undefined[] {
+export function getPathsFromFileNames(fileNames: string[]) {
   return fileNames.map((fileName) => {
     const uri = myMockServer.getWorkspaceUri();
     const pathMock = getPathMocksFromUri(uri);
     const path = pathMock[fileName];
 
     if (path === undefined) {
-      testError.log(`${fileName} does not exist in ${uri}`);
-
-      return undefined;
+      throw new TestError(`${fileName} does not exist in ${uri}`);
     }
 
     return path;
