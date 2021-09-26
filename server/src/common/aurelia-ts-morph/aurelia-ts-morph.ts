@@ -1,4 +1,3 @@
-import { inject } from 'aurelia-dependency-injection';
 import { Project, ts } from 'ts-morph';
 import { DocumentSettings } from '../../configuration/DocumentSettings';
 
@@ -11,7 +10,6 @@ const AU_TEST_CLASS =
 const tsConfigPath =
   '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/cli-generated/tsconfig.json';
 
-@inject(DocumentSettings)
 export class AureliaTsMorph {
   private tsconfigPath = '';
 

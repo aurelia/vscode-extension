@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { singleton } from 'aurelia-dependency-injection';
 import { ts } from 'ts-morph';
 import * as Path from 'path';
 import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
@@ -58,7 +57,6 @@ export interface IAureliaBindable {
  * The AureliaProgram class represents your whole applicaton
  * (aka. program in typescript terminology)
  */
-@singleton()
 export class AureliaProgram {
   public builderProgram: ts.Program;
   public aureliaSourceFiles?: ts.SourceFile[];

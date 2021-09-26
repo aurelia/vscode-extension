@@ -10,7 +10,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "esModuleInterop": true
   },
   "include": ["./common", "./step-definitions", "./unit"],
   "exclude": ["node_modules"]

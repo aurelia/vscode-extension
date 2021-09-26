@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-html-languageservice';
-import * as SaxStream from 'parse5-sax-parser';
+import SaxStream from 'parse5-sax-parser';
 
 /**
  *

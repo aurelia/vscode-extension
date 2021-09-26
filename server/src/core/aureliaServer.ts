@@ -1,7 +1,4 @@
-import {
-  DocumentSettings,
-  ExtensionSettings,
-} from '../configuration/DocumentSettings';
+import { ExtensionSettings } from '../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   TextDocumentChangeEvent,
@@ -14,11 +11,9 @@ import { LanguageModes } from '../feature/embeddedLanguages/languageModes';
 import { onCompletion } from './completions/on-completions';
 import { onDefintion } from './definitions/on-definitions';
 import { Position } from 'vscode-html-languageservice';
-import { inject } from 'aurelia-dependency-injection';
 import { initDependencyInjection } from './depdenceny-injection';
 import { onHover } from './hover/on-hover';
 
-@inject(Container, DocumentSettings)
 export class AureliaServer {
   constructor(
     private container: Container,

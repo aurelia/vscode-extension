@@ -16,7 +16,6 @@ export interface IAureliaProject {
   aureliaProgram: AureliaProgram | null;
 }
 
-@inject(AureliaTsMorph, DocumentSettings)
 export class AureliaProjects {
   private aureliaProjects: IAureliaProject[] = [];
   // aureliaProjectMap: Map<string, any> = new Map();

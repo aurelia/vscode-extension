@@ -1,5 +1,5 @@
 import * as parse5 from 'parse5';
-import * as SaxStream from 'parse5-sax-parser';
+import SaxStream from 'parse5-sax-parser';
 import { Position, Range } from './languageModes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
