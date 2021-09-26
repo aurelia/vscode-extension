@@ -208,6 +208,7 @@
   "devDependencies": {
     "@code-dependency/cli": "^0.5.0",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
+    "@sucrase/jest-plugin": "^2.1.1",
     "@types/assert": "^1.5.4",
     "@types/jest": "~25.1.3",
     "@types/mocha": "^8.2.1",
@@ -230,6 +231,7 @@
     "mocha": "^8.3.0",
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
+    "sucrase": "^3.20.1",
     "ts-jest": "~25.2.1",
     "ts-loader": "^6.2.1",
     "ts-node": "^9.1.1",
