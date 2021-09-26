@@ -5,6 +5,7 @@ import { Logger } from 'culog';
 const logger = new Logger({ scope: 'DocumentSettings' });
 // logger.setLogOptions({ logLevel: 'INFO' });
 logger.overwriteDefaultLogOtpions({
+  // log: false,
   logLevel: 'INFO',
   focusedLogging: false,
   // logScope: false,

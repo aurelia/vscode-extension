@@ -1,10 +1,7 @@
 module.exports = {
   roots: ['<rootDir>'],
   modulePaths: ['<rootDir>'],
-  moduleDirectories: [
-    'node_modules',
-    '<rootDir>/server/node_modules'
-  ],
+  moduleDirectories: ['node_modules', '<rootDir>/server/node_modules'],
   preset: 'ts-jest',
   verbose: true,
   testRegex: '.(test|spec|steps)\\.ts$',

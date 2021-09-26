@@ -1,6 +1,7 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { Position } from 'vscode-html-languageservice';
 import { AsyncReturnType } from '../../../../server/src/common/global';
+import { Logger } from '../../../../server/src/common/logging/logger';
 import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguages/languageModes';
 import { myMockServer } from '../../initialization/on-initialized/detecting-on-init.spec';
 
@@ -12,18 +13,25 @@ export let position: Position;
 export let codeForCharacter;
 export let code = '';
 
-export const commonCapabilitiesStep: StepDefinitions = ({ given }) => {
+const logger = new Logger('[Test] Common capabilities');
+
+export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
   given(
     /^I'm replacing the file content with (.*)$/,
     (codeWithCursor: string) => {
+      /* prettier-ignore */ logger.log(`/^I'm replacing the file content with (.*)$/`)
+
       code = removeCursorFromCode(codeWithCursor);
       myMockServer.textDocuments.changeFirst(code);
+      /* prettier-ignore */ logger.log(`after`, { logPerf: true });
     }
   );
 
-  given(
+  and(
     /^I'm on the line (\d+) at character (.*)$/,
     async (line: number, codeWithCursor: string) => {
+      /* prettier-ignore */ logger.log(`/^I'm on the line (\d+) at character (.*)$/`,{logPerf: true});
+
       code = removeCursorFromCode(codeWithCursor);
 
       ({ position, languageModes } = await givenImOnTheLineAtCharacter(
@@ -45,11 +53,13 @@ export async function givenImOnTheLineAtCharacter(
 
   const { AureliaProjects } = myMockServer.getContainerDirectly();
   const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
-  languageModes = await getLanguageModes(aureliaProgram);
+  if (aureliaProgram) {
+    languageModes = await getLanguageModes(aureliaProgram);
+  }
   return { position, languageModes };
 }
 
-function removeCursorFromCode(code: string): string {
+export function removeCursorFromCode(code: string): string {
   const [, codeContent] = /^`(.*)`$/.exec(code) ?? [];
 
   if (codeContent.includes(CURSOR_CHARACTER_1)) {
