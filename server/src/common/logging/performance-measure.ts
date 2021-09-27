@@ -1,5 +1,13 @@
 import { performance, PerformanceObserver } from 'perf_hooks';
 
+const CONSIDER_THRESHOLD = false;
+const DUARTION_THRESHOLD = 0;
+// const DUARTION_THRESHOLD = 300;
+
+interface IPerformanceMeasureOptions {
+  reset?: boolean;
+}
+
 export class PerformanceMeasure {
   public performance = performance;
   public measureList: string[] = [];
@@ -37,49 +45,70 @@ export class PerformanceMeasure {
   }
 
   public measure = (startMarker: string, endMarker: string) => {
-    const duration = this.performance.now();
-    this.durationList.push(duration);
-
+    const currentTime = this.performance.now();
+    this.durationList.push(currentTime);
     const durationListLength = this.durationList.length;
-    let durationDiff = duration;
-    if (durationListLength >= 2) {
-      durationDiff =
-        Number(this.durationList[durationListLength - 1]) -
-        Number(this.durationList[durationListLength - 2]);
 
-      const durationFormatted = `${durationDiff / 1000} sec`;
-      const label = `Perf: \n >> ${startMarker} << to \n >> ${endMarker} << \n --`;
-      const message = `${label}: ${durationFormatted}`;
-      console.log(message);
+    let durationDiff = currentTime;
+    let preLabel = '';
+    let startIndex = NaN;
+    let endIndex = NaN;
+
+    switch (durationListLength) {
+      case 1: {
+        console.log('>>>>>>>>>>>');
+        startIndex = -1;
+        endIndex = 0;
+        preLabel = `Time to first measure for`;
+        break;
+      }
+      default: {
+        startIndex = durationListLength - 2;
+        endIndex = durationListLength - 1;
+        const prevTime = Number(this.durationList[startIndex]);
+        const curTime = Number(this.durationList[endIndex]);
+        durationDiff = curTime - prevTime;
+
+        preLabel = 'Perf';
+        break;
+      }
     }
 
-    // this.performance.measure(
-    //   `Perf: \n >> ${startMarker} << to \n >> ${endMarker} << \n --`,
-    //   startMarker,
-    //   endMarker
-    // );
+    if (CONSIDER_THRESHOLD && durationDiff < DUARTION_THRESHOLD) {
+      return;
+    }
+
+    const durationFormatted = `${durationDiff / 1000} sec`;
+    const startIndexLabel = `(${startIndex + 1}.) -`;
+    const endIndexLabel = `(${endIndex + 1}.) -`;
+    const makerNamesLabel = `\n >> ${startIndexLabel} ${startMarker} << \n >> ${endIndexLabel} ${endMarker} << \n >>`;
+    const label = `${preLabel}: ${makerNamesLabel}`;
+    const message = `${label} ${durationFormatted}`;
+    console.log(message);
+    console.log(
+      '-----------------------------------------------------------------------'
+    );
   };
 
   public measureTo = (endMarker: string) => (startMarker: string) => {
     this.measure(startMarker, endMarker);
   };
 
-  public continousMeasuring(message: string): void {
-    // this.performance.mark(message);
+  public continousMeasuring(
+    message: string,
+    options?: IPerformanceMeasureOptions
+  ): void {
+    if (options?.reset) {
+      this.measureList = [];
+      this.durationList = [];
+    }
     this.measureList.push(message);
-    console.log(
-      'TCL: PerformanceMeasure -> this.measureList',
-      this.measureList
-    );
 
     if (this.measureList.length >= 2) {
       const previous = this.measureList[this.measureList.length - 2];
 
       this.measure(previous, message);
     }
-    console.log(
-      '------------------------------------------------------------------------------------------'
-    );
   }
 }
 

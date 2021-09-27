@@ -19,11 +19,11 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
   given(
     /^I'm replacing the file content with (.*)$/,
     (codeWithCursor: string) => {
-      /* prettier-ignore */ logger.log(`/^I'm replacing the file content with (.*)$/`)
+      /* prettier-ignore */ logger.log(`/^I'm replacing the file content with (.*)$/`,{logPerf: true})
 
       code = removeCursorFromCode(codeWithCursor);
       myMockServer.textDocuments.changeFirst(code);
-      /* prettier-ignore */ logger.log(`after`, { logPerf: true });
+      // /* prettier-ignore */ logger.log(`after`, { logPerf: true });
     }
   );
 

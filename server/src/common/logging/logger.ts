@@ -6,31 +6,37 @@ interface ILogOptions {
 
   focusedPerf?: boolean;
   logPerf?: boolean;
+
+  /**
+   * Indicate to, that log can/should perform a reset
+   */
+  reset?: boolean;
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   measurePerf: true,
   focusedPerf: true,
   logPerf: false,
+  reset: false,
 };
 
 const performanceMeasure = new PerformanceMeasure();
 
 export class Logger {
-  private readonly logger: Culogger;
+  public readonly culogger: Culogger;
   private readonly performanceMeasure?: PerformanceMeasure;
 
   constructor(
     scope: string = 'Aurelia',
     private readonly options: ILogOptions = DEFAULT_LOG_OPTIONS
   ) {
-    this.logger = new Culogger({ scope });
+    this.culogger = new Culogger({ scope });
     const isJest = __dirname.includes('vscode-extension/server/');
     const isWallaby =
       __dirname.includes('wallabyjs') && __dirname.includes('instrumented');
     const log = !isJest && !isWallaby;
 
-    this.logger.overwriteDefaultLogOtpions({
+    this.culogger.overwriteDefaultLogOtpions({
       log,
       logLevel: 'INFO',
       focusedLogging: false,
@@ -51,12 +57,16 @@ export class Logger {
     if (localOptions.measurePerf) {
       if (localOptions.focusedPerf) {
         if (localOptions.logPerf) {
-          this.getPerformanceMeasure().performance.mark(message);
-          this.getPerformanceMeasure().continousMeasuring(message);
+          this.getPerformanceMeasure()?.performance.mark(message);
+          this.getPerformanceMeasure()?.continousMeasuring(message, {
+            reset: localOptions.reset,
+          });
         }
       } else {
-        this.getPerformanceMeasure().performance.mark(message);
-        this.getPerformanceMeasure().continousMeasuring(message);
+        this.getPerformanceMeasure()?.performance.mark(message);
+        this.getPerformanceMeasure()?.continousMeasuring(message, {
+          reset: localOptions.reset,
+        });
       }
     }
 
@@ -64,7 +74,7 @@ export class Logger {
      * Wallaby logic.
      * Wallaby does not console.log from external library.
      */
-    const loggedMessage = this.logger.debug([message], { logLevel: 'INFO' });
+    const loggedMessage = this.culogger.debug([message], { logLevel: 'INFO' });
     if (loggedMessage) {
       console.log(loggedMessage[0]);
       if (loggedMessage.length > 1) {
@@ -73,12 +83,12 @@ export class Logger {
     }
 
     return {
-      measureTo: this.getPerformanceMeasure().measureTo(message),
+      measureTo: this.getPerformanceMeasure()?.measureTo(message),
     };
   }
 
   getPerformanceMeasure() {
-    if (this.performanceMeasure === undefined) {
+    if (this.options.measurePerf && this.performanceMeasure === undefined) {
       throw new Error(
         'Performance measuring not active. To acitve set this.optinos.measuerPerf = true.'
       );

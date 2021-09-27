@@ -42,31 +42,31 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     expect(true).toBeFalsy();
   });
 
-  // then(
-  //   /^I should get the correct method (.*) with brackets$/,
-  //   (methodName: string) => {
-  //     if (isAureliaCompletionItem(completions)) {
-  //       const target = completions.find(
-  //         (completion) => completion.label === methodName
-  //       );
+  then(
+    /^I should get the correct method (.*) with brackets$/,
+    (methodName: string) => {
+      if (isAureliaCompletionItem(completions)) {
+        const target = completions.find(
+          (completion) => completion.label === methodName
+        );
 
-  //       expect(target?.insertText).toEqual('functionVariable()');
-  //     }
-  //   }
-  // );
+        expect(target?.insertText).toEqual('functionVariable()');
+      }
+    }
+  );
 
-  // then(
-  //   /^I should get the correct method (.*) with its arguments$/,
-  //   (methodName: string) => {
-  //     if (isAureliaCompletionItem(completions)) {
-  //       const target = completions.find(
-  //         (completion) => completion.label === methodName
-  //       );
+  then(
+    /^I should get the correct method (.*) with its arguments$/,
+    (methodName: string) => {
+      if (isAureliaCompletionItem(completions)) {
+        const target = completions.find(
+          (completion) => completion.label === methodName
+        );
 
-  //       expect(target?.insertText).toEqual(
-  //         'methodWithArgs(${1:first}, ${2:second})'
-  //       );
-  //     }
-  //   }
-  // );
+        expect(target?.insertText).toEqual(
+          'methodWithArgs(${1:first}, ${2:second})'
+        );
+      }
+    }
+  );
 };

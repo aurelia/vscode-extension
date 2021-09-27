@@ -202,6 +202,9 @@
     "test": "sh ./scripts/e2e.sh",
     "test:unit": "TS_NODE_PROJECT='./tsconfig.json' ./node_modules/.bin/_mocha --require ts-node/register 'tests/unit/**/*.spec.ts'",
     "test:unit:ci": "TS_NODE_PROJECT='./tsconfig.json' ./node_modules/.bin/_mocha --require ts-node/register 'tests/unit/**/*.spec.ts' --exit --color",
+    "test:watch": "yarn swc:server && yarn swc:tests",
+    "swc:server": "swc ./server/src --only **/*.ts  -d ./server/out --delete-dir-on-start",
+    "swc:tests": "swc  ./tests/     --only **/*.ts  -d ./testout    --delete-dir-on-start --ignore  -D",
     "start:depTree": "./node_modules/.bin/code-dependency --exclude 'node_modules' --source ./server/src/",
     "start:depCruise": "depcruise --include-only '^server/src' --output-type dot server/src | dot -T svg > dependencygraph.svg"
   },
@@ -209,6 +212,9 @@
     "@code-dependency/cli": "^0.5.0",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@sucrase/jest-plugin": "^2.1.1",
+    "@swc/cli": "^0.1.50",
+    "@swc/core": "^1.2.91",
+    "@swc/jest": "^0.2.4",
     "@types/assert": "^1.5.4",
     "@types/jest": "~25.1.3",
     "@types/mocha": "^8.2.1",
@@ -248,5 +254,10 @@
     "vscode-html-languageservice": "^3.0.3",
     "vscode-languageserver": "^6.1.1",
     "vscode-languageserver-textdocument": "^1.0.1"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-typescript"
+    ]
   }
 }

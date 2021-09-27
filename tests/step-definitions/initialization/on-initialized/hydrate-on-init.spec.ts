@@ -13,42 +13,42 @@ import { Logger } from '../../../../server/src/common/logging/logger';
 const logger = new Logger('[Test] Hydrate on init');
 
 export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
-  // given(
-  //   'I open VSCode with the following files:',
-  //   async (table: FileNameStepTable) => {
-  //     /* prettier-ignore */ logger.log('I open VSCode with the following files:')
-  //     const textDocumentPaths = getPathsFromTable(table);
-  //     await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
-  //   }
-  // );
+  given(
+    'I open VSCode with the following files:',
+    async (table: FileNameStepTable) => {
+      /* prettier-ignore */ logger.log('I open VSCode with the following files:')
+      const textDocumentPaths = getPathsFromTable(table);
+      await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
+    }
+  );
 
   and(
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
-      /* prettier-ignore */ logger.log(`^I open VSCode with the following file "(.*)"$`);
+      /* prettier-ignore */ logger.log(`^I open VSCode with the following file "(.*)"$`,{logPerf: true});
       const textDocumentPaths = getPathsFromFileNames([fileName]);
       await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
     }
   );
 
-  // then('the extension should hydrate the Aurelia project', () => {
-  //   /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project')
-  //   const { AureliaProjects } = myMockServer.getContainerDirectly();
-  //   const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
-  //   expect(aureliaProgram).toBeTruthy();
-  // });
+  then('the extension should hydrate the Aurelia project', () => {
+    /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project')
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
+    expect(aureliaProgram).toBeTruthy();
+  });
 
-  // then('the extension should rehydrate', () => {
-  //   /* prettier-ignore */ logger.log('the extension should rehydrate')
-  //   const { AureliaProjects } = myMockServer.getContainerDirectly();
-  //   expect(AureliaProjects.hydrateAureliaProjects).toBeCalled();
-  // });
+  then('the extension should rehydrate', () => {
+    /* prettier-ignore */ logger.log('the extension should rehydrate')
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    expect(AureliaProjects.hydrateAureliaProjects).toBeCalled();
+  });
 
-  // then(/^the extension should not rehydrate$/, () => {
-  //   /* prettier-ignore */ logger.log('/^the extension should not rehydrate$/')
-  //   const { AureliaProjects } = myMockServer.getContainerDirectly();
-  //   expect(AureliaProjects.hydrateAureliaProjects).not.toBeCalled();
-  // });
+  then(/^the extension should not rehydrate$/, () => {
+    /* prettier-ignore */ logger.log('/^the extension should not rehydrate$/')
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    expect(AureliaProjects.hydrateAureliaProjects).not.toBeCalled();
+  });
 };
 
 export async function givenIOpenVsCodeWithTheFollowingFiles(

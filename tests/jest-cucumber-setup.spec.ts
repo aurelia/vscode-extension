@@ -7,14 +7,20 @@ import { completionValueConverterSteps } from './step-definitions/capabilities/c
 import { definitionSteps } from './step-definitions/capabilities/definitions.spec';
 import { hoverSteps } from './step-definitions/capabilities/hover/hover.spec';
 import { contentChangeSteps } from './step-definitions/content/content-change.spec';
-import // cliGenerateSteps,
-// commonExtensionSteps,
-'./step-definitions/initialization/on-initialized/detecting-on-init.spec';
+import {
+  cliGenerateSteps,
+  commonExtensionSteps,
+} from './step-definitions/initialization/on-initialized/detecting-on-init.spec';
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
 import { performance, PerformanceObserver } from 'perf_hooks';
+import {
+  createFeatureCache,
+  readFeatureCache,
+  resetFeatureCache,
+} from './dev-test-helpers/cache-cucumber-features';
 
 export const testContainer = new Container();
-// const logger = new Logger('[Test] Detecting');
+const logger = new Logger('[Test] Detecting');
 
 // export const perfObs = new PerformanceObserver((items) => {
 //   const entry = items.getEntries()[0];
@@ -25,25 +31,40 @@ export const testContainer = new Container();
 // });
 // perfObs.observe({ entryTypes: ['measure'] });
 
-// performance.mark('before loadfeature');
-// const features = loadFeatures('**/completions.feature', {
-//   tagFilter: '@focus',
-//   // scenarioNameTemplate: (vars) => {
-//   // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
-//   // },
-// });
-// performance.mark('after loadfeature');
-// performance.measure('okay', 'before loadfeature', 'after loadfeature');
-// autoBindSteps(features, [
-//   cliGenerateSteps,
-//   commonExtensionSteps,
-//   hydrateSteps,
-//   // content
-//   contentChangeSteps,
-//   // capabilities
-//   commonCapabilitiesStep,
-//   // definitionSteps,
-//   completionSteps,
-//   // completionValueConverterSteps,
-//   // hoverSteps,
-// ]);
+resetFeatureCache();
+function init() {
+  // performance.mark('before loadfeature');
+  logger.log('before test', { logPerf: true });
+  logger.log('after test', { logPerf: true });
+
+  logger.log('before loadfeature', { logPerf: true });
+  let features = readFeatureCache();
+  if (!features) {
+    features = loadFeatures('**/*.feature', {
+      tagFilter: '@focus',
+      // scenarioNameTemplate: (vars) => {
+      // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
+      // },
+    });
+    createFeatureCache(features);
+    // performance.mark('after loadfeature');
+    // performance.measure('okay', 'before loadfeature', 'after loadfeature');
+  }
+  logger.log('after loadfeature', { logPerf: true });
+
+  autoBindSteps(features, [
+    cliGenerateSteps,
+    commonExtensionSteps,
+    hydrateSteps,
+    // content
+    contentChangeSteps,
+    // capabilities
+    commonCapabilitiesStep,
+    definitionSteps,
+    completionSteps,
+    completionValueConverterSteps,
+    hoverSteps,
+  ]);
+}
+
+init();

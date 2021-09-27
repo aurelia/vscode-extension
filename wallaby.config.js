@@ -10,6 +10,7 @@ module.exports = function (wallaby) {
       'tests/common/**/*.ts',
       'tests/unit/helpers/**/*.ts',
       'tests/step-definitions/**/*.{spec,step}.ts',
+      'tests/dev-test-helpers/**/*.{ts,json}',
       'tests/**/*.feature',
     ],
 
