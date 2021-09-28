@@ -1,5 +1,6 @@
 import { Logger as Culogger } from 'culog';
 import { PerformanceMeasure } from './performance-measure';
+import { blueBright, bgWhite, bold, underline } from 'colorette';
 
 interface ILogOptions {
   measurePerf?: boolean;
@@ -11,6 +12,7 @@ interface ILogOptions {
    * Indicate to, that log can/should perform a reset
    */
   reset?: boolean;
+  highlight?: boolean;
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
@@ -18,6 +20,7 @@ const DEFAULT_LOG_OPTIONS: ILogOptions = {
   focusedPerf: true,
   logPerf: false,
   reset: false,
+  highlight: false,
 };
 
 const performanceMeasure = new PerformanceMeasure();
@@ -35,6 +38,7 @@ export class Logger {
     const isWallaby =
       __dirname.includes('wallabyjs') && __dirname.includes('instrumented');
     const log = !isJest && !isWallaby;
+    // const log = true;
 
     this.culogger.overwriteDefaultLogOtpions({
       log,
@@ -68,6 +72,12 @@ export class Logger {
           reset: localOptions.reset,
         });
       }
+    }
+
+    if (localOptions.highlight) {
+      console.log(
+        bold(blueBright(bgWhite('------------ v HIGHLIGHT v ------------')))
+      );
     }
 
     /**

@@ -46,18 +46,14 @@ export class MockTextDocuments {
 
     const startPosition: Position = { line: 0, character: 0 };
     const endPosition: Position = { line: 0, character: 0 };
-    // /* prettier-ignore */ logger.log(`change`, { logPerf: true });
-    // /* prettier-ignore */ logger.log(`before TD update`, { logPerf: true });
     TextDocument.update(
       targetDocument,
       [{ range: { start: startPosition, end: endPosition }, text: change }],
       targetDocument.version + 1
     );
-    // /* prettier-ignore */ logger.log(`after TD update`, { logPerf: true });
   }
 
   public changeFirst(change: string = this.CHANGE): MockTextDocuments {
-    // /* prettier-ignore */ logger.log(`changeFirst`, { logPerf: true });
     const targetDocument = this.textDocuments[0];
     this.change(targetDocument, change);
     return this;

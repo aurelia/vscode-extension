@@ -1,8 +1,8 @@
 import { performance, PerformanceObserver } from 'perf_hooks';
 
-const CONSIDER_THRESHOLD = false;
-const DUARTION_THRESHOLD = 0;
-// const DUARTION_THRESHOLD = 300;
+const CONSIDER_THRESHOLD = true;
+// const DUARTION_THRESHOLD = 0;
+const DUARTION_THRESHOLD = 100;
 
 interface IPerformanceMeasureOptions {
   reset?: boolean;

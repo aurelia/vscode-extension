@@ -6,10 +6,13 @@ import { DocumentSettings } from '../configuration/DocumentSettings';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { IProjectOptions, defaultProjectOptions } from './common.types';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { Logger } from 'culog';
 import { AureliaTsMorph } from './aurelia-ts-morph/aurelia-ts-morph';
+import { Logger } from './logging/logger';
+import { red } from 'colorette';
 
-const logger = new Logger({ scope: 'AureliaProjectFiles' });
+const logger = new Logger('AureliaProjectFiles');
+
+let compilerObject: ts.Program | undefined;
 
 export interface IAureliaProject {
   tsConfigPath: string;
@@ -64,6 +67,9 @@ export class AureliaProjects {
     return this.aureliaProjects[0];
   }
 
+  /**
+   * [PERF]: 2.5s
+   */
   public async hydrateAureliaProjects(documentsPaths: string[]) {
     /** TODO: Makes esnse? */
     if (documentsPaths.length === 0) return;
@@ -80,10 +86,6 @@ export class AureliaProjects {
         return result;
       });
       if (!shouldActive) return;
-
-      if (aureliaProgram !== null) {
-        console.log('[WARNING] Found a value, but should be null.');
-      }
 
       const projectOptions = {
         ...aureliaProjectSettings,

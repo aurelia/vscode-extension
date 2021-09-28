@@ -5,7 +5,10 @@ import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
 import { AureliaClassTypes } from '../common/constants';
 import { ViewRegionInfo } from '../feature/embeddedLanguages/embeddedSupport';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
-import { logger } from 'culog';
+import { Logger } from '../common/logging/logger';
+import { red } from 'colorette';
+
+const logger = new Logger('AureliaProgram');
 
 export interface IAureliaClassMember {
   name: string;
@@ -140,20 +143,13 @@ export class AureliaProgram {
 
     if (componentList.length) {
       this.setComponentList(componentList);
-      logger.debug(
-        [
-          `>>> The extension found this many components: ${componentList.length}`,
-        ],
-        { logLevel: 'INFO' }
-      );
+      /* prettier-ignore */ logger.culogger.debug( [ `>>> The extension found this many components: ${componentList.length}`, ], { logLevel: 'INFO' });
 
       if (componentList.length < 10) {
-        logger.debug(['List: '], { logLevel: 'INFO' });
+        logger.culogger.debug(['List: '], { logLevel: 'INFO' });
 
         componentList.forEach((component, index) => {
-          logger.debug([`${index} - ${component.viewModelFilePath}`], {
-            logLevel: 'INFO',
-          });
+          /* prettier-ignore */ logger.culogger.debug([`${index} - ${component.viewModelFilePath}`], { logLevel: 'INFO', });
         });
       }
     } else {

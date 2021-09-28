@@ -39,7 +39,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
       expect(completions.length).toBeGreaterThan(0);
     }
 
-    expect(true).toBeFalsy();
+    // expect(true).toBeFalsy();
   });
 
   then(

@@ -33,24 +33,22 @@ const logger = new Logger('[Test] Detecting');
 
 resetFeatureCache();
 function init() {
-  // performance.mark('before loadfeature');
-  logger.log('before test', { logPerf: true });
-  logger.log('after test', { logPerf: true });
+  // logger.log('before test', { logPerf: true });
+  // logger.log('after test', { logPerf: true });
 
-  logger.log('before loadfeature', { logPerf: true });
+  // logger.log('before loadfeature', { logPerf: true });
   let features = readFeatureCache();
   if (!features) {
     features = loadFeatures('**/*.feature', {
-      tagFilter: '@focus',
+      // tagFilter: '@cli_generated and @focus',
+      tagFilter: '@cli_generated',
       // scenarioNameTemplate: (vars) => {
       // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
       // },
     });
     createFeatureCache(features);
-    // performance.mark('after loadfeature');
-    // performance.measure('okay', 'before loadfeature', 'after loadfeature');
   }
-  logger.log('after loadfeature', { logPerf: true });
+  // logger.log('after loadfeature', { logPerf: true });
 
   autoBindSteps(features, [
     cliGenerateSteps,
