@@ -37,12 +37,15 @@ export class AureliaProjects {
       });
 
       if (filePaths.length === 0) {
-        logger.debug(
-          [
-            `Not including path ${aureliaProjectPath}, because it was excluded or not included.`,
-          ],
-          { logLevel: 'INFO', log: true }
-        );
+        /* prettier-ignore */ logger.culogger.debug( [ `Not including path ${aureliaProjectPath}, because it was excluded or not included.`, ], { logLevel: 'INFO', log: true });
+        return;
+      }
+
+      const alreadyHasProject = this.aureliaProjects.find(
+        (project) => project.tsConfigPath === aureliaProjectPath
+      );
+
+      if (alreadyHasProject) {
         return;
       }
 
