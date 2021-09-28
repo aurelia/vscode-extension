@@ -91,9 +91,16 @@ export class AureliaProjects {
       };
 
       aureliaProgram = new AureliaProgram();
-      const program = this.aureliaTsMorph.getTsMorphProject().getProgram()
-        .compilerObject;
-      aureliaProgram.setBuilderProgram(program);
+      const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
+      const program = tsMorphProject.getProgram();
+
+      if (!compilerObject) {
+        // [PERF]: 1.87967675s
+        compilerObject = program.compilerObject;
+      }
+
+      aureliaProgram.setBuilderProgram(compilerObject);
+      // [PERF]: 0.67967675s
       aureliaProgram.updateAureliaComponents(projectOptions);
 
       const targetAureliaProject = aureliaProjectList.find(
