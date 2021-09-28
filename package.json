@@ -246,6 +246,7 @@
   "dependencies": {
     "aspect.js": "^0.8.1",
     "aurelia-dependency-injection": "^1.5.2",
+    "colorette": "^2.0.12",
     "culog": "^0.0.9",
     "lodash": "^4.17.19",
     "reflect-metadata": "^0.1.9",
