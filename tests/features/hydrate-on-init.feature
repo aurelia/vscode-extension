@@ -1,3 +1,4 @@
+@cli_generated
 Feature: Hydrate on initialization
 
   Scenario: Hydrate cli generated project

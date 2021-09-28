@@ -1,3 +1,4 @@
+@cli_generated
 Feature: Content change on open
 
   # @focus

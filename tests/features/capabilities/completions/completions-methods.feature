@@ -1,3 +1,4 @@
+@cli_generated
 Feature: Completions - Methods
   Background:
     Given the project is named "cli-generated"

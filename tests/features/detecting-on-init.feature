@@ -1,3 +1,4 @@
+@cli_generated
 Feature: Detecting an Aurelia project
   Note: This test is actually not valid from the code perspective, as
   the extension only activates, when there is a .ts/.html file active on open.

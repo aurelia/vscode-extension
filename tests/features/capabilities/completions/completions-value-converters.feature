@@ -1,3 +1,4 @@
+@cli_generated
 Feature: Completions - Value converters
   Background:
     Given the project is named "cli-generated"

@@ -1,3 +1,4 @@
+@cli_generated
 Feature: Hover in View
   Background:
     Given the project is named "cli-generated"
