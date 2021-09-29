@@ -1,7 +1,9 @@
-import { Container } from 'aurelia-dependency-injection';
 import path = require('path');
+
+import { Container } from 'aurelia-dependency-injection';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { AureliaProjects } from '../../../server/src/common/aurelia-projects';
 import {
   ExtensionSettings,
@@ -24,10 +26,10 @@ const rootDirectory = `file:/${monorepoFixtureDir}`;
 export class MockServer {
   public textDocuments: MockTextDocuments;
 
-  private aureliaServer: AureliaServer;
-  private AureliaProjects: AureliaProjects;
-  private AureliaProgram: AureliaProgram;
-  private DocumentSettings: DocumentSettings;
+  private readonly aureliaServer: AureliaServer;
+  private readonly AureliaProjects: AureliaProjects;
+  private readonly AureliaProgram: AureliaProgram;
+  private readonly DocumentSettings: DocumentSettings;
 
   constructor(
     private readonly container: Container = globalContainer,

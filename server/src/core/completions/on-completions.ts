@@ -3,6 +3,7 @@ import {
   CompletionItem,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER,
   AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER,

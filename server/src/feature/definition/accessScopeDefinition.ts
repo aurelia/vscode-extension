@@ -2,17 +2,18 @@
  * Defintion[Access Scope]: http://aurelia.io/docs/binding/how-it-works#abstract-syntax-tree
  */
 
+import { TextDocument } from 'vscode-languageserver';
+
+import { findSourceWord } from '../../common/documens/find-source-word';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import {
   RepeatForRegionData,
   ViewRegionInfo,
   ViewRegionType,
 } from '../embeddedLanguages/embeddedSupport';
-import { TextDocument } from 'vscode-languageserver';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { getVirtualDefinition } from './virtualDefinition';
-import { DefinitionResult } from './getDefinition';
 import { Position } from '../embeddedLanguages/languageModes';
-import { findSourceWord } from '../../common/documens/find-source-word';
+import { DefinitionResult } from './getDefinition';
+import { getVirtualDefinition } from './virtualDefinition';
 
 /**
  * Priority

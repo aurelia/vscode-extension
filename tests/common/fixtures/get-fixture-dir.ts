@@ -1,5 +1,6 @@
-import { findProjectRoot } from '../find-project-root';
 import * as path from 'path';
+
+import { findProjectRoot } from '../find-project-root';
 
 const projectRoot = findProjectRoot();
 const testFixtureDir = path.resolve(projectRoot, 'tests/testFixture');

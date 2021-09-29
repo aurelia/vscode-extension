@@ -1,10 +1,10 @@
-import { DefinitionResult } from './getDefinition';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
   getVirtualLangagueService,
   VirtualSourceFileInfo,
 } from '../virtual/virtualSourceFile';
+import { DefinitionResult } from './getDefinition';
 
 /**
  * 1. Create virtual file

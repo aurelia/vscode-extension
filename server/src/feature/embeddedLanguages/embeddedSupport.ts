@@ -1,13 +1,14 @@
 import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
-import { Position, Range } from './languageModes';
-import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../configuration/DocumentSettings';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { AureliaView } from '../../common/constants';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { DiagnosticMessages } from '../../common/diagnostic-messages/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
+import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../configuration/DocumentSettings';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { Position, Range } from './languageModes';
 
 const logger = new Logger('embeddedSupport');
 

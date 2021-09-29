@@ -1,3 +1,10 @@
+import { TextDocumentPositionParams } from 'vscode-languageserver';
+
+import { AureliaClassTypes, AureliaViewModel } from '../../../common/constants';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
+import { createValueConverterCompletion } from '../../completions/completions';
+import { getVirtualViewModelCompletionSupplyContent } from '../../completions/virtualCompletion';
+import { DefinitionResult } from '../../definition/getDefinition';
 import {
   getRegionAtPosition,
   parseDocumentRegions,
@@ -5,14 +12,7 @@ import {
   ViewRegionInfo,
   ViewRegionType,
 } from '../embeddedSupport';
-import { TextDocumentPositionParams } from 'vscode-languageserver';
-
 import { LanguageMode, Position, TextDocument } from '../languageModes';
-import { getVirtualViewModelCompletionSupplyContent } from '../../completions/virtualCompletion';
-import { createValueConverterCompletion } from '../../completions/completions';
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
-import { AureliaClassTypes, AureliaViewModel } from '../../../common/constants';
-import { DefinitionResult } from '../../definition/getDefinition';
 
 export function getValueConverterMode(
   aureliaProgram: AureliaProgram

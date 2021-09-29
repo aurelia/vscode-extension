@@ -1,15 +1,15 @@
-import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import * as path from 'path';
 
+import { camelCase } from 'lodash';
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
-import { LanguageMode, Position, TextDocument } from '../languageModes';
-import { getBindablesCompletion } from '../../completions/completions';
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
-import { DefinitionResult } from '../../definition/getDefinition';
-import { camelCase } from 'lodash';
-import { getVirtualDefinition } from '../../definition/virtualDefinition';
 import { findSourceWord } from '../../../common/documens/find-source-word';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
+import { getBindablesCompletion } from '../../completions/completions';
+import { DefinitionResult } from '../../definition/getDefinition';
+import { getVirtualDefinition } from '../../definition/virtualDefinition';
+import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
+import { LanguageMode, Position, TextDocument } from '../languageModes';
 
 export function getCustomElementMode(
   aureliaProgram: AureliaProgram

@@ -23,7 +23,7 @@ export const MONOREPO = {
 
 // prettier-ignore
 export const CLI_GENERATED = {
-  root: getFixtureDir('cli-generated'),
+  'root': getFixtureDir('cli-generated'),
   'minimal-component': getAbsPathInCliGenerated('src/minimal-component'),
   'minimal-component.ts': getAbsPathInCliGenerated('src/minimal-component/minimal-component.ts'),
   'minimal-component.html': getAbsPathInCliGenerated('src/minimal-component/minimal-component.html'),

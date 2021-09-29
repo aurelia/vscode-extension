@@ -1,4 +1,5 @@
 import { kebabCase } from 'lodash';
+import { SyntaxKind } from 'typescript';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -7,15 +8,14 @@ import {
   TextDocument,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import { AureliaClassTypes } from '../../common/constants';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 
+import { AureliaClassTypes } from '../../common/constants';
 import {
   AureliaProgram,
   IAureliaClassMember,
   IAureliaComponent,
 } from '../../viewModel/AureliaProgram';
-import { SyntaxKind } from 'typescript';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 
 export function createCompletionItem(
   classMember: IAureliaClassMember,
@@ -94,7 +94,7 @@ export async function getBindablesCompletion(
 ): Promise<CompletionItem[]> {
   if (!region) return [];
 
-  aureliaProgram.getComponentList(); /*?*/
+  aureliaProgram.getComponentList(); /* ? */
   const bindableList = aureliaProgram.getBindableList();
   const asCompletionItem = bindableList.map((bindable) => {
     const result = createCompletionItem(

@@ -1,4 +1,5 @@
 import { StepDefinitions } from 'jest-cucumber';
+
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { CustomHover } from '../../../../server/src/feature/virtual/virtualSourceFile';
 import { myMockServer } from '../../initialization/on-initialized/detecting-on-init.spec';
@@ -21,7 +22,7 @@ export const hoverSteps: StepDefinitions = ({ when, then }) => {
   });
 
   then('I should see hover details', () => {
-    hover; /*?*/
+    hover; /* ? */
     if (hover?.contents) {
       expect(hover.contents.value).toBeTruthy();
     }

@@ -1,14 +1,16 @@
-import { Container } from 'aurelia-dependency-injection';
 import * as path from 'path';
-import * as fastGlob from 'fast-glob';
 import { fileURLToPath } from 'url';
+
+import { Container } from 'aurelia-dependency-injection';
+import * as fastGlob from 'fast-glob';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   AureliaProjects,
   IAureliaProject,
 } from '../../common/aurelia-projects';
-import { ExtensionSettings } from '../../configuration/DocumentSettings';
 import { Logger } from '../../common/logging/logger';
+import { ExtensionSettings } from '../../configuration/DocumentSettings';
 
 const logger = new Logger('aureliaServer');
 
@@ -70,7 +72,7 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
 }
 
 function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
-  /* prettier-ignore */ logger.culogger.debug( [`Found ${aureliaProjects.length} Aurelia projects in: `], { logLevel: 'INFO', });
+  /* prettier-ignore */ logger.culogger.debug([`Found ${aureliaProjects.length} Aurelia projects in: `], { logLevel: 'INFO', });
   aureliaProjects.forEach(({ tsConfigPath }) => {
     /* prettier-ignore */ logger.culogger.debug([tsConfigPath], { logLevel: 'INFO', });
   });
@@ -78,5 +80,5 @@ function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
 
 function logHasNoAureliaProject() {
   /* prettier-ignore */ logger.culogger.debug(['No active Aurelia project found.'], { logLevel: 'INFO', });
-  /* prettier-ignore */ logger.culogger.debug( [ 'Extension will activate, as soon as a file inside an Aurelia project is opened.', ], { logLevel: 'INFO' });
+  /* prettier-ignore */ logger.culogger.debug([ 'Extension will activate, as soon as a file inside an Aurelia project is opened.', ], { logLevel: 'INFO' });
 }

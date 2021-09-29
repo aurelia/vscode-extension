@@ -15,10 +15,12 @@ interface DecoratorInfo {
   decoratorArgument: string;
 }
 
-import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
-import { ts } from 'ts-morph';
-import * as Path from 'path';
 import * as fs from 'fs';
+import * as Path from 'path';
+
+import { kebabCase } from 'lodash';
+import { ts } from 'ts-morph';
+
 import { getElementNameFromClassDeclaration } from '../common/className';
 import {
   AureliaClassTypes,
@@ -26,7 +28,7 @@ import {
   AureliaViewModel,
   VALUE_CONVERTER_SUFFIX,
 } from '../common/constants';
-import { kebabCase } from 'lodash';
+import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,

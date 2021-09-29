@@ -1,11 +1,11 @@
-import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
-import { LanguageMode, Position, TextDocument } from '../languageModes';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 import { getAureliaVirtualCompletions } from '../../completions/virtualCompletion';
 import { getAccessScopeViewModelDefinition } from '../../definition/accessScopeDefinition';
 import { DefinitionResult } from '../../definition/getDefinition';
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
+import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
+import { LanguageMode, Position, TextDocument } from '../languageModes';
 
 export function getRepeatForMode(aureliaProgram: AureliaProgram): LanguageMode {
   return {

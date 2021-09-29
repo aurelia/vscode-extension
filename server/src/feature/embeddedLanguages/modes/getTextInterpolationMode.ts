@@ -1,18 +1,18 @@
+import { TextDocumentPositionParams } from 'vscode-languageserver';
+
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
+import { getAureliaVirtualCompletions } from '../../completions/virtualCompletion';
+import { getAccessScopeDefinition } from '../../definition/accessScopeDefinition';
+import { DefinitionResult } from '../../definition/getDefinition';
+import { getAccessScopeHover } from '../../hover/accessScopeHover';
+import { VirtualLanguageService } from '../../virtual/virtualSourceFile';
 import {
   ViewRegionInfo,
   ViewRegionType,
   HTMLDocumentRegions,
 } from '../embeddedSupport';
-import { TextDocumentPositionParams } from 'vscode-languageserver';
-
 import { LanguageModelCache } from '../languageModelCache';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
-import { getAureliaVirtualCompletions } from '../../completions/virtualCompletion';
-import { DefinitionResult } from '../../definition/getDefinition';
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
-import { getAccessScopeDefinition } from '../../definition/accessScopeDefinition';
-import { VirtualLanguageService } from '../../virtual/virtualSourceFile';
-import { getAccessScopeHover } from '../../hover/accessScopeHover';
 
 export function getTextInterpolationMode(
   aureliaProgram: AureliaProgram,

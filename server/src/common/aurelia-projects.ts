@@ -1,14 +1,16 @@
-import { inject } from 'aurelia-dependency-injection';
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
+
+import { inject } from 'aurelia-dependency-injection';
+import { bgBlack } from 'colorette';
 import { ts } from 'ts-morph';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
-import { IProjectOptions, defaultProjectOptions } from './common.types';
-import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaTsMorph } from './aurelia-ts-morph/aurelia-ts-morph';
+import { IProjectOptions, defaultProjectOptions } from './common.types';
 import { Logger } from './logging/logger';
-import { bgBlack } from 'colorette';
 
 const logger = new Logger('AureliaProjectFiles');
 
@@ -20,7 +22,7 @@ export interface IAureliaProject {
 }
 
 export class AureliaProjects {
-  private aureliaProjects: IAureliaProject[] = [];
+  private readonly aureliaProjects: IAureliaProject[] = [];
   // aureliaProjectMap: Map<string, any> = new Map();
 
   public constructor(
@@ -40,7 +42,7 @@ export class AureliaProjects {
       });
 
       if (filePaths.length === 0) {
-        /* prettier-ignore */ logger.culogger.debug( [ `Not including path ${aureliaProjectPath}, because it was excluded or not included.`, ], { logLevel: 'INFO', log: true });
+        /* prettier-ignore */ logger.culogger.debug([ `Not including path ${aureliaProjectPath}, because it was excluded or not included.`, ], { logLevel: 'INFO', log: true });
         return;
       }
 

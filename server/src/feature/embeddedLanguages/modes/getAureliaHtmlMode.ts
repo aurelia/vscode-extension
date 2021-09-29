@@ -1,10 +1,10 @@
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
-import { LanguageMode, TextDocument } from '../languageModes';
 import { AureliaClassTypes } from '../../../common/constants';
+import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 import { createComponentCompletionList } from '../../completions/completions';
 import { ViewRegionInfo } from '../embeddedSupport';
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
+import { LanguageMode, TextDocument } from '../languageModes';
 
 export function getAureliaHtmlMode(
   aureliaProgram: AureliaProgram

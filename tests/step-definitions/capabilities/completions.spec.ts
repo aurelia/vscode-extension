@@ -1,5 +1,7 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { CompletionList } from 'vscode-html-languageservice';
+
+import { Logger } from '../../../server/src/common/logging/logger';
 import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
@@ -7,7 +9,6 @@ import {
 import { createTextDocumentPositionParams } from '../../../server/src/feature/embeddedLanguages/languageModes';
 import { myMockServer } from '../initialization/on-initialized/detecting-on-init.spec';
 import { position, languageModes } from './common/common-capabilities.spec';
-import { Logger } from '../../../server/src/common/logging/logger';
 
 const logger = new Logger('[Test] Completions');
 
@@ -15,7 +16,7 @@ export let completions: AureliaCompletionItem[] | CompletionList = [];
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
   when('I trigger Suggestions', async () => {
-    /* prettier-ignore */ logger.log('I trigger Suggestions',{logPerf:true})
+    /* prettier-ignore */ logger.log('I trigger Suggestions',{logPerf:true});
 
     const document = myMockServer.textDocuments.getFirst();
     const textDocumentPositionParams = createTextDocumentPositionParams(
@@ -33,7 +34,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   });
 
   then('I should get the correct suggestions', () => {
-    /* prettier-ignore */ logger.log('I should get the correct suggestion',{logPerf:true})
+    /* prettier-ignore */ logger.log('I should get the correct suggestion',{logPerf:true});
 
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);

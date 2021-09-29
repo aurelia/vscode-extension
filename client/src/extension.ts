@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import * as path from 'path';
+
 import { commands, workspace, ExtensionContext } from 'vscode';
 import {
   LanguageClient,
@@ -7,6 +8,7 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient';
+
 import { RelatedFiles } from './feature/relatedFiles';
 
 let client: LanguageClient;

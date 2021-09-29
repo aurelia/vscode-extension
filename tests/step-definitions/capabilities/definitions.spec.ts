@@ -1,5 +1,6 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { LocationLink } from 'vscode-languageserver';
+
 import { UriUtils } from '../../../server/src/common/view/uri-utils';
 import { DefinitionResult } from '../../../server/src/feature/definition/getDefinition';
 import { myMockServer } from '../initialization/on-initialized/detecting-on-init.spec';

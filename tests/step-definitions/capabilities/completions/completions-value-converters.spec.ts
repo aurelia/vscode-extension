@@ -1,4 +1,5 @@
 import { StepDefinitions } from 'jest-cucumber';
+
 import { isAureliaCompletionItem } from '../../../../server/src/feature/completions/virtualCompletion';
 import { completions } from '../completions.spec';
 

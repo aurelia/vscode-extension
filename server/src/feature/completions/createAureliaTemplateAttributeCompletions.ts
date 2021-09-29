@@ -1,4 +1,5 @@
 import { CompletionItem, InsertTextFormat } from 'vscode-languageserver';
+
 import {
   AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST,
   AURELIA_WITH_SPECIAL_KEYWORD,

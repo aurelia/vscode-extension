@@ -1,11 +1,13 @@
 import 'reflect-metadata';
-import { ts } from 'ts-morph';
 import * as Path from 'path';
+
+import { ts } from 'ts-morph';
+
 import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
 import { AureliaClassTypes } from '../common/constants';
+import { Logger } from '../common/logging/logger';
 import { ViewRegionInfo } from '../feature/embeddedLanguages/embeddedSupport';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
-import { Logger } from '../common/logging/logger';
 
 const logger = new Logger('AureliaProgram');
 
@@ -139,7 +141,7 @@ export class AureliaProgram {
 
     if (componentList.length) {
       this.setComponentList(componentList);
-      /* prettier-ignore */ logger.culogger.debug( [ `>>> The extension found this many components: ${componentList.length}`, ], { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.culogger.debug([ `>>> The extension found this many components: ${componentList.length}`, ], { logLevel: 'INFO' });
 
       if (componentList.length < 10) {
         logger.culogger.debug(['List: '], { logLevel: 'INFO' });
@@ -195,7 +197,7 @@ export class AureliaProgram {
     const { rootDirectory, exclude, include } = options;
     const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
 
-    let finalExcludes: string[] = [];
+    const finalExcludes: string[] = [];
 
     if (exclude === undefined) {
       const defaultExcludes = [

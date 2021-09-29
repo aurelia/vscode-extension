@@ -1,10 +1,10 @@
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
+import { Position, TextDocument } from '../embeddedLanguages/languageModes';
 import {
   createVirtualLanguageService,
   CustomHover,
 } from '../virtual/virtualSourceFile';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
-import { Position, TextDocument } from '../embeddedLanguages/languageModes';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
 export async function getAccessScopeHover(
   aureliaProgram: AureliaProgram,

@@ -1,5 +1,6 @@
 import { kebabCase } from 'lodash';
 import { ts } from 'ts-morph';
+
 import { getClassDecoratorInfos } from '../viewModel/getAureliaComponentList';
 import { CUSTOM_ELEMENT_SUFFIX } from './constants';
 

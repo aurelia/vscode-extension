@@ -1,5 +1,6 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { Position } from 'vscode-html-languageservice';
+
 import { AsyncReturnType } from '../../../../server/src/common/global';
 import { Logger } from '../../../../server/src/common/logging/logger';
 import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguages/languageModes';
@@ -19,7 +20,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
   given(
     /^I'm replacing the file content with (.*)$/,
     (codeWithCursor: string) => {
-      /* prettier-ignore */ logger.log(`/^I'm replacing the file content with (.*)$/`,{logPerf: true})
+      /* prettier-ignore */ logger.log('/^I\'m replacing the file content with (.*)$/',{logPerf: true});
 
       code = removeCursorFromCode(codeWithCursor);
       myMockServer.textDocuments.changeFirst(code);
@@ -30,7 +31,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
   and(
     /^I'm on the line (\d+) at character (.*)$/,
     async (line: number, codeWithCursor: string) => {
-      /* prettier-ignore */ logger.log(`/^I'm on the line (\d+) at character (.*)$/`,{logPerf: true});
+      /* prettier-ignore */ logger.log('/^I\'m on the line (\d+) at character (.*)$/',{logPerf: true});
 
       code = removeCursorFromCode(codeWithCursor);
 
@@ -72,7 +73,7 @@ export function removeCursorFromCode(code: string): string {
 }
 
 /**
- * @param input Of the form `<div id="|">`, where "|" represents the cursor.
+ * @param input - Of the form `<div id="|">`, where "|" represents the cursor.
  * @returns index of cursor.
  */
 function findCharacterPosition(input: string): number {

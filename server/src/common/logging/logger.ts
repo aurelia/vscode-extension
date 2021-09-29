@@ -1,6 +1,7 @@
-import { Logger as Culogger } from 'culog';
-import { PerformanceMeasure } from './performance-measure';
 import { blueBright, bgWhite, bold, underline } from 'colorette';
+import { Logger as Culogger } from 'culog';
+
+import { PerformanceMeasure } from './performance-measure';
 
 interface ILogOptions {
   measurePerf?: boolean;

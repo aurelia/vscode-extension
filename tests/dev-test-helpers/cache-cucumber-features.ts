@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+
 import { loadFeatures } from 'jest-cucumber';
 
 const TEST_PATH = path.resolve(__dirname, '..');
@@ -23,5 +24,5 @@ export function readFeatureCache(): ParsedFeatures | undefined {
 }
 
 export function resetFeatureCache(): void {
-  fs.writeFileSync(CACHE_FILE_PATH, `{}`);
+  fs.writeFileSync(CACHE_FILE_PATH, '{}');
 }

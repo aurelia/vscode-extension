@@ -1,8 +1,10 @@
 import { ok, strictEqual } from 'assert';
+
 import { Container } from 'aurelia-dependency-injection';
+import { Logger } from 'culog';
+
 import { MONOREPO } from '../common/file-path-mocks';
 import { MockServer } from './helpers/test-setup';
-import { Logger } from 'culog';
 
 const logger = new Logger({ scope: 'auServer' });
 

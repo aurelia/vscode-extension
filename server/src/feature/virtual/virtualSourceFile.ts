@@ -1,8 +1,9 @@
 import { ts } from 'ts-morph';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
+
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 
 export const VIRTUAL_SOURCE_FILENAME = 'virtual.ts';
 export const VIRTUAL_METHOD_NAME = '__vir';

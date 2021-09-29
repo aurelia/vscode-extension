@@ -2,6 +2,7 @@ import { Container } from 'aurelia-dependency-injection';
 import { Logger } from 'culog';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { AureliaProjects } from '../../common/aurelia-projects';
 import { uriToPath } from '../../common/uriToPath';
 

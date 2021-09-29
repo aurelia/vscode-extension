@@ -1,6 +1,6 @@
 
 export class UriUtils {
   static toPath(fileUri: string): string {
-    return fileUri.replace(/^file:\//,'')
+    return fileUri.replace(/^file:\//,'');
   }
 }

@@ -1,9 +1,11 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Position } from 'vscode-html-languageservice';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import * as path from 'path';
-import * as fs from 'fs';
-import { UriUtils } from '../../../server/src/common/view/uri-utils';
+
 import { Logger } from '../../../server/src/common/logging/logger';
+import { UriUtils } from '../../../server/src/common/view/uri-utils';
 
 const logger = new Logger('text-documents');
 
@@ -13,7 +15,7 @@ export class MockTextDocuments {
   private readonly CHANGE = 'changes-';
   private readonly INITIAL = '0123';
 
-  private workspaceRootUri: any;
+  private readonly workspaceRootUri: any;
 
   constructor(workspaceRootUri) {
     this.workspaceRootUri = workspaceRootUri;

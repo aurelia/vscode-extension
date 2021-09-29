@@ -11,8 +11,8 @@ import {
   CompletionList,
   TextDocumentChangeEvent,
 } from 'vscode-languageserver';
-
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   getLanguageModes,
   LanguageModes,
@@ -25,7 +25,6 @@ import {
   ExtensionSettings,
   settingsName,
 } from './configuration/DocumentSettings';
-
 import { globalContainer } from './container';
 import { AureliaServer } from './core/aureliaServer';
 import { AureliaProjects } from './common/aurelia-projects';
@@ -71,7 +70,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
+        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':', '|'],
       },
       definitionProvider: true,
       hoverProvider: true,

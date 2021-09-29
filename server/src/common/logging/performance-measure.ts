@@ -13,7 +13,7 @@ export class PerformanceMeasure {
   public measureList: string[] = [];
 
   private durationList: number[] = [];
-  private perfObs: PerformanceObserver;
+  private readonly perfObs: PerformanceObserver;
 
   constructor() {
     this.initPerfObs();
@@ -59,7 +59,7 @@ export class PerformanceMeasure {
         console.log('>>>>>>>>>>> START <<<<<<<<<<<');
         startIndex = -1;
         endIndex = 0;
-        preLabel = `Time to first measure for`;
+        preLabel = 'Time to first measure for';
         break;
       }
       default: {

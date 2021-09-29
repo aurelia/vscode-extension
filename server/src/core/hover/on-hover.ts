@@ -1,4 +1,5 @@
 import { Position, TextDocument } from 'vscode-languageserver';
+
 import { findSourceWord } from '../../common/documens/find-source-word';
 import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
 

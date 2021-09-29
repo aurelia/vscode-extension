@@ -1,6 +1,14 @@
+import { performance, PerformanceObserver } from 'perf_hooks';
+
 import { Container } from 'aurelia-dependency-injection';
 import { loadFeatures, autoBindSteps } from 'jest-cucumber';
+
 import { Logger } from '../server/src/common/logging/logger';
+import {
+  createFeatureCache,
+  readFeatureCache,
+  resetFeatureCache,
+} from './dev-test-helpers/cache-cucumber-features';
 import { commonCapabilitiesStep } from './step-definitions/capabilities/common/common-capabilities.spec';
 import { completionSteps } from './step-definitions/capabilities/completions.spec';
 import { completionValueConverterSteps } from './step-definitions/capabilities/completions/completions-value-converters.spec';
@@ -12,12 +20,6 @@ import {
   commonExtensionSteps,
 } from './step-definitions/initialization/on-initialized/detecting-on-init.spec';
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
-import { performance, PerformanceObserver } from 'perf_hooks';
-import {
-  createFeatureCache,
-  readFeatureCache,
-  resetFeatureCache,
-} from './dev-test-helpers/cache-cucumber-features';
 
 export const testContainer = new Container();
 const logger = new Logger('[Test] Detecting');

@@ -1,14 +1,16 @@
-import { StepDefinitions } from 'jest-cucumber';
 import { strictEqual } from 'assert';
+
+import { StepDefinitions } from 'jest-cucumber';
+
+import { Logger } from '../../../../server/src/common/logging/logger';
+import { UriUtils } from '../../../../server/src/common/view/uri-utils';
+import { testError } from '../../../common/errors/TestErrors';
 import {
   FixtureNames,
   getFixtureUri,
 } from '../../../common/fixtures/get-fixture-dir';
-import { testError } from '../../../common/errors/TestErrors';
 import { MockServer } from '../../../common/mock-server/mock-server';
 import { testContainer } from '../../../jest-cucumber-setup.spec';
-import { UriUtils } from '../../../../server/src/common/view/uri-utils';
-import { Logger } from '../../../../server/src/common/logging/logger';
 
 const logger = new Logger('[Test] Detecting');
 

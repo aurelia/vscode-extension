@@ -35,17 +35,18 @@ import {
   TextDocument,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
+import { AsyncReturnType } from '../../common/global';
+import { Logger } from '../../common/logging/logger';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 import {
   createVirtualFileWithContent,
   createVirtualViewModelSourceFile,
   getVirtualLangagueService,
   VIRTUAL_METHOD_NAME,
 } from '../virtual/virtualSourceFile';
-import { AsyncReturnType } from '../../common/global';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
-import { Logger } from '../../common/logging/logger';
 
 const logger = new Logger('virtualCompletion');
 

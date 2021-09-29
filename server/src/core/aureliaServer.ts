@@ -1,22 +1,23 @@
-import { ExtensionSettings } from '../configuration/DocumentSettings';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { Position } from 'vscode-html-languageservice';
 import {
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+
+import { ExtensionSettings } from '../configuration/DocumentSettings';
 import { Container } from '../container';
-import { onConnectionInitialized } from './initialization/initialization';
-import { onConnectionDidChangeContent } from './content/change-content';
 import { LanguageModes } from '../feature/embeddedLanguages/languageModes';
 import { onCompletion } from './completions/on-completions';
+import { onConnectionDidChangeContent } from './content/change-content';
 import { onDefintion } from './definitions/on-definitions';
-import { Position } from 'vscode-html-languageservice';
 import { initDependencyInjection } from './depdenceny-injection';
 import { onHover } from './hover/on-hover';
+import { onConnectionInitialized } from './initialization/initialization';
 
 export class AureliaServer {
   constructor(
-    private container: Container,
+    private readonly container: Container,
     public readonly extensionSettings: ExtensionSettings
   ) {
     initDependencyInjection(container, extensionSettings);

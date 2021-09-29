@@ -1,6 +1,8 @@
 import { pathToFileURL } from 'url';
+
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { LocationLink, Range } from 'vscode-languageserver';
+
 import { AsyncReturnType } from '../../common/global';
 import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
 
@@ -30,7 +32,7 @@ export async function onDefintion(
 
   if (!mode) return;
   if (!region) return;
-  region.type; /*?*/
+  region.type; /* ? */
 
   const doDefinition = mode.doDefinition;
 

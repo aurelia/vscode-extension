@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { Connection } from 'vscode-languageserver';
 import { Logger } from 'culog';
+import { Connection } from 'vscode-languageserver';
 
 const logger = new Logger({ scope: 'DocumentSettings' });
 // logger.setLogOptions({ logLevel: 'INFO' });
@@ -71,7 +71,7 @@ export class DocumentSettings {
 
   public hasConfigurationCapability: boolean = true;
 
-  constructor(private extensionSettings: ExtensionSettings) {
+  constructor(private readonly extensionSettings: ExtensionSettings) {
     this.globalSettings = this.defaultSettings;
 
     let exclude = this.extensionSettings.aureliaProject?.exclude;

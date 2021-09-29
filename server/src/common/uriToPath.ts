@@ -1,5 +1,6 @@
-import { fileURLToPath } from 'url';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export function uriToPath(documents: TextDocument[]) {

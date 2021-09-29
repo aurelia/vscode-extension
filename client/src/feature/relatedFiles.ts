@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import {
   commands,
   Disposable,
@@ -6,8 +9,6 @@ import {
   ViewColumn,
   workspace,
 } from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
 
 export class RelatedFiles implements Disposable {
   private readonly disposables: Disposable[] = [];
