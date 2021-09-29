@@ -118,7 +118,23 @@ module.exports = {
     'import/no-mutable-exports': 'error',
     'import/no-self-import': 'error',
     'import/no-useless-path-segments': ['error'],
-    'import/order': ['error', { 'groups': [], 'newlines-between': 'ignore' }],
+    'import/order': [
+      'error',
+      {
+        alphabetize: {
+          order:
+            'asc' /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */,
+          caseInsensitive: true /* ignore case. Options: [true, false] */,
+        },
+        groups: [
+          ['builtin'],
+          ['external'],
+          ['internal'],
+          ['parent', 'sibling', 'index', 'object'],
+        ],
+        'newlines-between': 'always',
+      },
+    ],
     'import/no-deprecated': 'off', // this rule is extremely slow (takes 95% of the time of the full lint operation) so we disable it for that reason only
     'jsdoc/check-alignment': 'error',
     // 'jsdoc/check-indentation': 'error',
