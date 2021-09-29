@@ -6,7 +6,6 @@ import { AureliaClassTypes } from '../common/constants';
 import { ViewRegionInfo } from '../feature/embeddedLanguages/embeddedSupport';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
 import { Logger } from '../common/logging/logger';
-import { red } from 'colorette';
 
 const logger = new Logger('AureliaProgram');
 
@@ -75,10 +74,7 @@ export class AureliaProgram {
       console.log('No Program associated with your Aurelia project.');
       return;
     }
-    // program
-    //   .getSourceFiles()
-    //   .filter((file) => !file.fileName.includes('node_modules'))
-    //   .map((file) => file.fileName);
+    // [PERF]: ~0.6s
     const checker = program.getTypeChecker();
 
     this.projectFilePaths.forEach((path) => {
