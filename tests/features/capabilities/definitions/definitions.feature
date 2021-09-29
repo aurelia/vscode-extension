@@ -4,7 +4,7 @@ Feature: Definition in View
     Given the project is named "cli-generated"
     And I open VSCode with the following file "compo-user.html"
 
-  # @focus
+  #
   Scenario Outline: Custom Element
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition
@@ -23,7 +23,7 @@ Feature: Definition in View
   # | Text interpolation | 32   | `      ${\|rule.id}-${rule.saying}`                     | compo-user.html  |
 
 
-  # @focus
+  #
   Scenario Outline: Value Converter
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition

@@ -17,7 +17,7 @@ Feature: Hydrate on initialization
       | burelia.ts |
 
 
-  # @focus
+  #
   Scenario: Don't hydrate cli generated project
     TODO: Don't activate on .json file
     Extension only activate for .ts/.html, and does not for

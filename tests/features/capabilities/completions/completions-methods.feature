@@ -4,7 +4,7 @@ Feature: Completions - Methods
     Given the project is named "cli-generated"
     And I open VSCode with the following file "view-model-test.html"
 
-  # @focus
+  #
   Scenario Outline: Completions of class methods - empty brackets
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
@@ -15,7 +15,7 @@ Feature: Completions - Methods
       | LINE | CODE                        | METHOD_NAME      |
       | 0    | `<div if.bind="f\|"></div>` | functionVariable |
 
-  # @focus
+  #
   Scenario Outline: Completions of class methods - argument completed
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>

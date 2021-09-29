@@ -4,8 +4,8 @@ Feature: Completions
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.html"
 
-  # @focus
-  Scenario Outline: View Model - without Trigger Character
+  #
+  Scenario Outline: View Model
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
     When I trigger Suggestions
