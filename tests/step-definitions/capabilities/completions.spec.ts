@@ -15,7 +15,7 @@ export let completions: AureliaCompletionItem[] | CompletionList = [];
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
   when('I trigger Suggestions', async () => {
-    /* prettier-ignore */ logger.log('I trigger Suggestions')
+    /* prettier-ignore */ logger.log('I trigger Suggestions',{logPerf:true})
 
     const document = myMockServer.textDocuments.getFirst();
     const textDocumentPositionParams = createTextDocumentPositionParams(
@@ -33,7 +33,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   });
 
   then('I should get the correct suggestions', () => {
-    /* prettier-ignore */ logger.log('I should get the correct suggestion')
+    /* prettier-ignore */ logger.log('I should get the correct suggestion',{logPerf:true})
 
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);

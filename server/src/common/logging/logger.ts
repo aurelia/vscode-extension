@@ -41,9 +41,9 @@ export class Logger {
     // const log = true;
 
     this.culogger.overwriteDefaultLogOtpions({
-      log,
+      // log,
       logLevel: 'INFO',
-      focusedLogging: false,
+      focusedLogging: true,
       // logScope: false,
     });
 

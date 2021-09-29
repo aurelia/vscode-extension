@@ -31,7 +31,7 @@ const logger = new Logger('[Test] Detecting');
 // });
 // perfObs.observe({ entryTypes: ['measure'] });
 
-resetFeatureCache();
+// resetFeatureCache();
 function init() {
   // logger.log('before test', { logPerf: true });
   // logger.log('after test', { logPerf: true });
@@ -40,8 +40,8 @@ function init() {
   let features = readFeatureCache();
   if (!features) {
     features = loadFeatures('**/*.feature', {
-      // tagFilter: '@cli_generated and @focus',
-      tagFilter: '@cli_generated',
+      tagFilter: '@cli_generated and @focus',
+      // tagFilter: '@cli_generated',
       // scenarioNameTemplate: (vars) => {
       // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
       // },

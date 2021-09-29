@@ -7,9 +7,9 @@ import { AureliaView } from '../../common/constants';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { DiagnosticMessages } from '../../common/diagnostic-messages/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
-import { Logger } from 'culog';
+import { Logger } from '../../common/logging/logger';
 
-const logger = new Logger({ scope: 'embeddedSupport' });
+const logger = new Logger('embeddedSupport');
 
 export interface LanguageRange extends Range {
   languageId: string | undefined;
@@ -102,7 +102,7 @@ export function parseDocumentRegions<RegionDataType = any>(
       return;
     }
 
-    logger.debug(['Start document parsing'], { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.culogger.debug(['Start document parsing'], { logLevel: 'INFO' });
 
     const saxStream = new SaxStream({ sourceCodeLocationInfo: true });
     const viewRegions: ViewRegionInfo[] = [];

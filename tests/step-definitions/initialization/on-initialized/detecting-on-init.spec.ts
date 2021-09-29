@@ -29,10 +29,7 @@ describe.skip('single', () => {
 
 export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
   given(/^the project is named "(.*)"$/, async (projectName: FixtureNames) => {
-    logger.log('/^the project is named "(.*)"$/', {
-      logPerf: true,
-      reset: true,
-    });
+    /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', { logPerf: true, reset: true, });
 
     testError.verifyProjectName(projectName);
 

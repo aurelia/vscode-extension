@@ -7,12 +7,15 @@ import {
   AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER,
   AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER,
 } from '../../common/constants';
+import { Logger } from '../../common/logging/logger';
 import { checkInsideTag } from '../../common/view/document-parsing';
 import {
   createAureliaTemplateAttributeKeywordCompletions,
   createAureliaTemplateAttributeCompletions,
 } from '../../feature/completions/createAureliaTemplateAttributeCompletions';
 import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
+
+const logger = new Logger('on-completions');
 
 export async function onCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
