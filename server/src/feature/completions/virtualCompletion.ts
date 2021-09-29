@@ -45,6 +45,9 @@ import {
 } from '../virtual/virtualSourceFile';
 import { AsyncReturnType } from '../../common/global';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
+import { Logger } from '../../common/logging/logger';
+
+const logger = new Logger('virtualCompletion');
 
 const PARAMETER_NAME = 'parameterName';
 
@@ -64,6 +67,7 @@ export function getVirtualCompletion(
   const cls = getVirtualLangagueService(virtualSourcefile, program);
   const virtualSourceFilePath = virtualSourcefile.fileName;
 
+  // [PERF]: ~0.25
   const virtualCompletions = cls
     .getCompletionsAtPosition(
       virtualSourceFilePath,
