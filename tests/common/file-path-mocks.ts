@@ -1,4 +1,8 @@
+import * as path from 'path';
+import { TestError, testError } from './errors/TestErrors';
+
 import {
+  FixtureNames,
   getAbsPathFromFixtureDir,
   getFixtureDir,
 } from './fixtures/get-fixture-dir';
@@ -32,3 +36,36 @@ export const CLI_GENERATED = {
   'realdworld-advanced/settings/index.html': getAbsPathInCliGenerated('src/realdworld-advanced/settings/index.html'),
   'tsconfig.json': getAbsPathInCliGenerated('tsconfig.json'),
 };
+
+/**
+ * TODO: put somewhere else
+ */
+export function getPathsFromFileNames(uri: string, fileNames: string[]) {
+  return fileNames.map((fileName) => {
+    const pathMock = getPathMocksFromUri(uri);
+    const path = pathMock[fileName];
+
+    if (path === undefined) {
+      throw new TestError(`${fileName} does not exist in ${uri}`);
+    }
+
+    return path;
+  });
+}
+
+function getPathMocksFromUri(uri: string): Record<string, string> {
+  const basename = path.basename(uri) as FixtureNames;
+  testError.verifyProjectName(basename);
+
+  switch (basename) {
+    case 'cli-generated': {
+      return CLI_GENERATED;
+    }
+    case 'monorepo': {
+      return MONOREPO;
+    }
+    default: {
+      return {};
+    }
+  }
+}

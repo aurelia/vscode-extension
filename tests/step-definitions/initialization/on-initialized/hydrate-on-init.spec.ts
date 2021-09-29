@@ -1,11 +1,7 @@
-import * as path from 'path';
-
 import { StepDefinitions } from 'jest-cucumber';
 
 import { Logger } from '../../../../server/src/common/logging/logger';
-import { TestError, testError } from '../../../common/errors/TestErrors';
-import { CLI_GENERATED, MONOREPO } from '../../../common/file-path-mocks';
-import { FixtureNames } from '../../../common/fixtures/get-fixture-dir';
+import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import {
   FileNameStepTable,
   getTableValues,
@@ -19,7 +15,8 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     'I open VSCode with the following files:',
     async (table: FileNameStepTable) => {
       /* prettier-ignore */ logger.log('I open VSCode with the following files:');
-      const textDocumentPaths = getPathsFromTable(table);
+      const uri = myMockServer.getWorkspaceUri();
+      const textDocumentPaths = getPathsFromTable(uri, table);
       await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
     }
   );
@@ -28,7 +25,8 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
       /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$',{logPerf: true});
-      const textDocumentPaths = getPathsFromFileNames([fileName]);
+      const uri = myMockServer.getWorkspaceUri();
+      const textDocumentPaths = getPathsFromFileNames(uri, [fileName]);
       await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
     }
   );
@@ -69,42 +67,8 @@ export async function givenIOpenVsCodeWithTheFollowingFiles(
   );
 }
 
-function getPathsFromTable(table: FileNameStepTable) {
+function getPathsFromTable(uri: string, table: FileNameStepTable) {
   const fileNames = getTableValues(table);
-  const paths = getPathsFromFileNames(fileNames);
+  const paths = getPathsFromFileNames(uri, fileNames);
   return paths;
-}
-
-/**
- * TODO: put somewhere else
- */
-export function getPathsFromFileNames(fileNames: string[]) {
-  return fileNames.map((fileName) => {
-    const uri = myMockServer.getWorkspaceUri();
-    const pathMock = getPathMocksFromUri(uri);
-    const path = pathMock[fileName];
-
-    if (path === undefined) {
-      throw new TestError(`${fileName} does not exist in ${uri}`);
-    }
-
-    return path;
-  });
-}
-
-function getPathMocksFromUri(uri: string): Record<string, string> {
-  const basename = path.basename(uri) as FixtureNames;
-  testError.verifyProjectName(basename);
-
-  switch (basename) {
-    case 'cli-generated': {
-      return CLI_GENERATED;
-    }
-    case 'monorepo': {
-      return MONOREPO;
-    }
-    default: {
-      return {};
-    }
-  }
 }

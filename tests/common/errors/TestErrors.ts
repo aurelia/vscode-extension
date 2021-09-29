@@ -1,4 +1,4 @@
-import { getPathsFromFileNames } from '../../step-definitions/initialization/on-initialized/hydrate-on-init.spec';
+import { getPathsFromFileNames } from '../file-path-mocks';
 import { FixtureNames, FIXTURE_NAMES } from '../fixtures/get-fixture-dir';
 
 export class TestError extends Error {
@@ -19,8 +19,8 @@ export class TestError extends Error {
     }
   }
 
-  public verifyFileInProject(fileName: string): void {
-    const paths = getPathsFromFileNames([fileName]);
+  public verifyFileInProject(uri, fileName: string): void {
+    const paths = getPathsFromFileNames(uri, [fileName]);
     const fileDoesNotExist = paths.some((path) => path === undefined);
 
     if (fileDoesNotExist) {
