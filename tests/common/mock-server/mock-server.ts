@@ -25,6 +25,9 @@ export class MockServer {
   public textDocuments: MockTextDocuments;
 
   private aureliaServer: AureliaServer;
+  private AureliaProjects: AureliaProjects;
+  private AureliaProgram: AureliaProgram;
+  private DocumentSettings: DocumentSettings;
 
   constructor(
     private readonly container: Container = globalContainer,
@@ -37,6 +40,10 @@ export class MockServer {
       this.extensionSettings
     );
     this.textDocuments = new MockTextDocuments(this.workspaceRootUri);
+
+    this.AureliaProjects = this.container.get(AureliaProjects);
+    this.AureliaProgram = this.container.get(AureliaProgram);
+    this.DocumentSettings = this.container.get(DocumentSettings);
   }
 
   log(pluck: (input: MockServer) => any): MockServer {
@@ -65,9 +72,9 @@ export class MockServer {
    */
   public getContainerDirectly() {
     return {
-      AureliaProjects: this.container.get(AureliaProjects),
-      AureliaProgram: this.container.get(AureliaProgram),
-      DocumentSettings: this.container.get(DocumentSettings),
+      AureliaProjects: this.AureliaProjects,
+      AureliaProgram: this.AureliaProgram,
+      DocumentSettings: this.DocumentSettings,
     };
   }
 
