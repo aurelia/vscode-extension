@@ -8,7 +8,7 @@ import { IProjectOptions, defaultProjectOptions } from './common.types';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaTsMorph } from './aurelia-ts-morph/aurelia-ts-morph';
 import { Logger } from './logging/logger';
-import { red } from 'colorette';
+import { bgBlack } from 'colorette';
 
 const logger = new Logger('AureliaProjectFiles');
 
@@ -26,7 +26,9 @@ export class AureliaProjects {
   public constructor(
     public readonly aureliaTsMorph: AureliaTsMorph,
     public readonly documentSettings: DocumentSettings
-  ) {}
+  ) {
+    console.log(bgBlack('consturctor'));
+  }
 
   public async gatherProjectInfo() {}
 
@@ -74,13 +76,13 @@ export class AureliaProjects {
     /** TODO: Makes esnse? */
     if (documentsPaths.length === 0) return;
 
-    const aureliaProjectList = this.getProjects();
+    const aureliaProjects = this.getProjects();
     const settings = this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
 
     // 1. To each map assign a separate program
     /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    aureliaProjectList.forEach(async ({ tsConfigPath, aureliaProgram }) => {
+    aureliaProjects.forEach(async ({ tsConfigPath, aureliaProgram }) => {
       const shouldActive = documentsPaths.some((docPath) => {
         const result = docPath.includes(tsConfigPath);
         return result;
@@ -92,11 +94,13 @@ export class AureliaProjects {
         rootDirectory: tsConfigPath,
       };
 
-      aureliaProgram = new AureliaProgram();
-      const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
-      const program = tsMorphProject.getProgram();
+      if (aureliaProgram === null) {
+        aureliaProgram = new AureliaProgram();
+      }
 
       if (!compilerObject) {
+        const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
+        const program = tsMorphProject.getProgram();
         // [PERF]: 1.87967675s
         compilerObject = program.compilerObject;
       }
@@ -105,7 +109,7 @@ export class AureliaProjects {
       // [PERF]: 0.67967675s
       aureliaProgram.updateAureliaComponents(projectOptions);
 
-      const targetAureliaProject = aureliaProjectList.find(
+      const targetAureliaProject = aureliaProjects.find(
         (auP) => auP.tsConfigPath === tsConfigPath
       );
 
