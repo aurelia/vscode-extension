@@ -56,7 +56,7 @@ export class PerformanceMeasure {
 
     switch (durationListLength) {
       case 1: {
-        console.log('>>>>>>>>>>>');
+        console.log('>>>>>>>>>>> START <<<<<<<<<<<');
         startIndex = -1;
         endIndex = 0;
         preLabel = `Time to first measure for`;

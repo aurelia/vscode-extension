@@ -26,9 +26,7 @@ export class AureliaProjects {
   public constructor(
     public readonly aureliaTsMorph: AureliaTsMorph,
     public readonly documentSettings: DocumentSettings
-  ) {
-    console.log(bgBlack('consturctor'));
-  }
+  ) {}
 
   public async gatherProjectInfo() {}
 
