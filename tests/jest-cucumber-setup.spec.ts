@@ -20,6 +20,7 @@ import {
   commonExtensionSteps,
 } from './step-definitions/initialization/on-initialized/detecting-on-init.spec';
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
+import { minimalSteps } from './minimal-jest/minimal.spec';
 
 export const testContainer = new Container();
 const logger = new Logger('[Test] Detecting');
@@ -42,8 +43,9 @@ function init() {
   let features = readFeatureCache();
   if (!features) {
     features = loadFeatures('**/*.feature', {
+      tagFilter: '@focus',
       // tagFilter: '@cli_generated and  @focus',
-      tagFilter: '@cli_generated',
+      // tagFilter: '@cli_generated',
       // scenarioNameTemplate: (vars) => {
       // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
       // },
@@ -53,6 +55,7 @@ function init() {
   // logger.log('after loadfeature', { logPerf: true });
 
   autoBindSteps(features, [
+    minimalSteps,
     cliGenerateSteps,
     commonExtensionSteps,
     hydrateSteps,
