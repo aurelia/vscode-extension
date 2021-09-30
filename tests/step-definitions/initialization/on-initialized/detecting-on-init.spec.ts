@@ -14,24 +14,13 @@ import { testContainer } from '../../../jest-cucumber-setup.spec';
 
 const logger = new Logger('[Test] Detecting');
 
-export const MARK_START = 'MARK_START';
-export const MARK_MIDDLE = 'MARK_MIDDLE';
-export const MARK_END = 'MARK_END';
-
 export let myMockServer: MockServer;
 let _WORKSPACE_URI_CACHE = '';
 
-describe.skip('single', () => {
-  test('easy', (done) => {
-    console.log('hi');
-    // expect(true).toBeFalsy();
-    done();
-  });
-});
-
 export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
   given(/^the project is named "(.*)"$/, async (projectName: FixtureNames) => {
-    /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', { logPerf: true, reset: true, });
+    /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', {  reset: true, });
+    // /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', { logPerf: true, reset: true, });
 
     testError.verifyProjectName(projectName);
 

@@ -679,7 +679,7 @@ export function getRegionAtPosition(
   // document; /*?*/
   offset; /*?*/
 
-  regions; /*?*/
+  // regions; /*?*/
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {

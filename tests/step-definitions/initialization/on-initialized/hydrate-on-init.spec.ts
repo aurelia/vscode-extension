@@ -24,7 +24,7 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
   and(
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
-      /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$',{logPerf: true});
+      /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$');
       const uri = myMockServer.getWorkspaceUri();
       const textDocumentPaths = getPathsFromFileNames(uri, [fileName]);
       await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
