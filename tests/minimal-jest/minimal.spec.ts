@@ -1,6 +1,7 @@
 import { defineFeature, loadFeature, StepDefinitions } from 'jest-cucumber';
+import { getTestDir } from '../common/files/get-test-dir';
 
-const feature = loadFeature('./minimal-jest/minimal.feature');
+const feature = loadFeature(`${getTestDir()}/minimal-jest/minimal.feature`);
 
 defineFeature(feature, (test) => {
   test('Mini Scenario', ({ given, then }) => {

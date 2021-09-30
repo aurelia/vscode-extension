@@ -42,7 +42,7 @@ function init() {
   // logger.log('before loadfeature', { logPerf: true });
   let features = readFeatureCache();
   if (!features) {
-    features = loadFeatures('**/*.feature', {
+    features = loadFeatures('**/features/**/*.feature', {
       tagFilter: '@focus',
       // tagFilter: '@cli_generated and  @focus',
       // tagFilter: '@cli_generated',

@@ -1,5 +1,5 @@
 Feature: Minimal
-  @focus
+  # @focus
   Scenario: Mini Scenario
     Given Minimal
     Then really
