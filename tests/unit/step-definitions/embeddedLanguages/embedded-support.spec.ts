@@ -39,7 +39,6 @@ defineFeature(feature, (test) => {
 
       const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
         textDocument,
-        new AureliaProgram(),
         // @ts-ignore
         [{ componentName: 'custom-element' }]
       );

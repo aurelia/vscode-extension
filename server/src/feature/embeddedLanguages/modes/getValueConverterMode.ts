@@ -76,7 +76,8 @@ async function onValueConverterCompletion(
   document: TextDocument,
   aureliaProgram: AureliaProgram
 ) {
-  const regions = await parseDocumentRegions(document, aureliaProgram);
+  const componentList = aureliaProgram.getComponentList();
+  const regions = await parseDocumentRegions(document, componentList);
   const targetRegion = getRegionAtPosition(
     document,
     regions,

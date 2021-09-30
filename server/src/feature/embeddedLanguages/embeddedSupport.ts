@@ -102,8 +102,7 @@ export const aureliaLanguageId = 'aurelia';
 // eslint-disable-next-line max-lines-per-function
 export function parseDocumentRegions<RegionDataType = any>(
   document: TextDocument,
-  aureliaProgram: AureliaProgram,
-  componentList?: IAureliaComponent[]
+  componentList: IAureliaComponent[]
 ): Promise<ViewRegionInfo<RegionDataType>[]> {
   // eslint-disable-next-line max-lines-per-function
   return new Promise((resolve) => {
@@ -451,11 +450,7 @@ export async function getDocumentRegions(
   let regions: AsyncReturnType<typeof parseDocumentRegions> = [];
   try {
     const componentList = aureliaProgram.getComponentList();
-    regions = await parseDocumentRegions(
-      document,
-      aureliaProgram,
-      componentList
-    );
+    regions = await parseDocumentRegions(document, componentList);
   } catch (error) {
     console.log('TCL: error', error);
   }
