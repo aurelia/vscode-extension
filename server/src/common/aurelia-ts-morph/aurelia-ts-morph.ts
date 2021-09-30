@@ -12,7 +12,7 @@ const tsConfigPath =
   '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/cli-generated/tsconfig.json';
 
 export class AureliaTsMorph {
-  private readonly tsconfigPath = '';
+  private tsconfigPath = '';
 
   public constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();

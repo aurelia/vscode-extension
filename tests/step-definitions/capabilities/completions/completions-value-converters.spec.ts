@@ -11,8 +11,8 @@ export const completionValueConverterSteps: StepDefinitions = ({ then }) => {
         (completion) => completion.detail === valueConverterName
       );
 
-      expect(target.detail).toBe(valueConverterName);
-      expect(target.label).toContain('(Au VC)');
+      expect(target?.detail).toBe(valueConverterName);
+      expect(target?.label).toContain('(Au VC)');
     }
   });
 };

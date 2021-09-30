@@ -5,6 +5,9 @@
     "outDir": "out",
     "rootDir": "..",
     "sourceMap": true,
+    "lib": [
+      "es2019"
+    ],
     "strictPropertyInitialization": false,
     "declaration": true,
     "resolveJsonModule": true,
@@ -13,6 +16,12 @@
     "strictNullChecks": true,
     "esModuleInterop": true
   },
-  "include": ["./common", "./step-definitions", "./unit"],
-  "exclude": ["node_modules"]
+  "include": [
+    "./common",
+    "./step-definitions",
+    "./unit"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

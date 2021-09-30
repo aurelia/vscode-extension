@@ -231,6 +231,7 @@ export async function getLanguageModes(
       modes = {
         Attribute: { mode: undefined, region: undefined },
         AttributeInterpolation: { mode: undefined, region: undefined },
+        BindableAttribute: { mode: undefined, region: undefined },
         html: { mode: undefined, region: undefined },
         RepeatFor: { mode: undefined, region: undefined },
         TextInterpolation: { mode: undefined, region: undefined },
