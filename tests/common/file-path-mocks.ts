@@ -9,6 +9,9 @@ import {
 
 const getAbsPathInMonorepo = getAbsPathFromFixtureDir('monorepo');
 const getAbsPathInCliGenerated = getAbsPathFromFixtureDir('cli-generated');
+const getAbsPathInScopedForTesting = getAbsPathFromFixtureDir(
+  'scoped-for-testing'
+);
 
 // prettier-ignore
 export const MONOREPO = {
@@ -37,6 +40,13 @@ export const CLI_GENERATED = {
   'tsconfig.json': getAbsPathInCliGenerated('tsconfig.json'),
 };
 
+export const SCOPED_FOR_TESTING = {
+  root: getFixtureDir('scoped-for-testing'),
+  'custom-element-user.html': getAbsPathInScopedForTesting(
+    'view/custom-element/custom-element-user.html'
+  ),
+};
+
 /**
  * TODO: put somewhere else
  */
@@ -63,6 +73,9 @@ function getPathMocksFromUri(uri: string): Record<string, string> {
     }
     case 'monorepo': {
       return MONOREPO;
+    }
+    case 'scoped-for-testing': {
+      return SCOPED_FOR_TESTING;
     }
     default: {
       return {};

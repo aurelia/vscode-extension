@@ -107,7 +107,7 @@ export const AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST = [
   'call',
   'delegate',
   'trigger',
-];
+] as const;
 
 export enum AureliaClassTypes {
   CUSTOM_ELEMENT = 'CustomElement',

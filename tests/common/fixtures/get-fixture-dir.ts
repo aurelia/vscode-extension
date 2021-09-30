@@ -4,11 +4,13 @@ import { findProjectRoot } from '../find-project-root';
 
 const projectRoot = findProjectRoot();
 const testFixtureDir = path.resolve(projectRoot, 'tests/testFixture');
+// const testFixtureDir = path.resolve(projectRoot, getTestDir(), 'testFixture');
 
 export const FIXTURE_NAMES = [
   'cli-generated',
   'monorepo',
   'non-aurelia-project',
+  'scoped-for-testing',
 ] as const;
 export type FixtureNames = typeof FIXTURE_NAMES[number];
 

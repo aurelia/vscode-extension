@@ -2,12 +2,19 @@ import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaView } from '../../common/constants';
+import {
+  AureliaView,
+  AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST,
+} from '../../common/constants';
 import { DiagnosticMessages } from '../../common/diagnostic-messages/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
+import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../configuration/DocumentSettings';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import {
+  AureliaProgram,
+  IAureliaComponent,
+} from '../../viewModel/AureliaProgram';
 import { Position, Range } from './languageModes';
 
 const logger = new Logger('embeddedSupport');
@@ -35,10 +42,11 @@ export const CSS_STYLE_RULE = '__';
 export enum ViewRegionType {
   Attribute = 'Attribute',
   AttributeInterpolation = 'AttributeInterpolation',
+  BindableAttribute = 'BindableAttribute',
+  CustomElement = 'CustomElement',
   Html = 'html',
   RepeatFor = 'RepeatFor',
   TextInterpolation = 'TextInterpolation',
-  CustomElement = 'CustomElement',
   ValueConverter = 'ValueConverter',
 }
 
@@ -94,7 +102,8 @@ export const aureliaLanguageId = 'aurelia';
 // eslint-disable-next-line max-lines-per-function
 export function parseDocumentRegions<RegionDataType = any>(
   document: TextDocument,
-  aureliaProgram: AureliaProgram
+  aureliaProgram: AureliaProgram,
+  componentList?: IAureliaComponent[]
 ): Promise<ViewRegionInfo<RegionDataType>[]> {
   // eslint-disable-next-line max-lines-per-function
   return new Promise((resolve) => {
@@ -110,7 +119,7 @@ export function parseDocumentRegions<RegionDataType = any>(
     const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
     let hasImportTemplateTag = false;
 
-    const componentList = aureliaProgram.getComponentList();
+    // const componentList = aureliaProgram.getComponentList();
     if (componentList === undefined) {
       resolve([]);
       return;
@@ -122,16 +131,14 @@ export function parseDocumentRegions<RegionDataType = any>(
 
     // 0. Check if template was imported to ViewModel
     const fileName = document.uri;
-    const targetComponent = aureliaProgram
-      .getComponentList()
-      .find((component) => {
-        const { viewFilePath } = component;
-        /** Account for "file://" */
-        if (viewFilePath === undefined) return false;
+    const targetComponent = componentList.find((component) => {
+      const { viewFilePath } = component;
+      /** Account for "file://" */
+      if (viewFilePath === undefined) return false;
 
-        const isSameFilePath = fileName.includes(viewFilePath);
-        return isSameFilePath;
-      });
+      const isSameFilePath = fileName.includes(viewFilePath);
+      return isSameFilePath;
+    });
 
     hasImportTemplateTag = targetComponent !== undefined;
 
@@ -145,10 +152,12 @@ export function parseDocumentRegions<RegionDataType = any>(
      * 4. Custom element
      * 5. repeat.for=""
      * 6. Value converter region (value | take:10)
+     * 7. BindableAttribute
      */
     // eslint-disable-next-line max-lines-per-function
     saxStream.on('startTag', (startTag) => {
       const customElementAttributeRegions: ViewRegionInfo[] = [];
+      const customElementBindableAttributeRegions: ViewRegionInfo[] = [];
       const { tagName } = startTag;
       const isTemplateTag = tagName === AureliaView.TEMPLATE_TAG_NAME;
       // 1. Template tag
@@ -177,26 +186,37 @@ export function parseDocumentRegions<RegionDataType = any>(
 
           if (!attrLocation) return;
           /** Eg. >click.delegate="<increaseCounter()" */
-          const startInterpolationLength =
+          const attrNameLength =
             attr.name.length + // click.delegate
             2; // ="
 
           /** Eg. click.delegate="increaseCounter()>"< */
-          const endInterpolationLength = attrLocation.endOffset - 1;
+          const lastCharIndex = attrLocation.endOffset - 1;
 
           const updatedLocation: parse5.Location = {
             ...attrLocation,
-            startOffset: attrLocation.startOffset + startInterpolationLength,
-            endOffset: endInterpolationLength,
+            startOffset: attrLocation.startOffset + attrNameLength,
+            endOffset: lastCharIndex,
           };
           const viewRegion = createRegion({
             attribute: attr,
             attributeName: attr.name,
             sourceCodeLocation: updatedLocation,
             type: ViewRegionType.Attribute,
+            tagName,
+            regionValue: attr.value,
           });
           viewRegions.push(viewRegion);
           customElementAttributeRegions.push(viewRegion);
+
+          // 7. BindableAttribute
+          const bindableAttributeRegion = createBindableAttributeRegion(
+            attr,
+            attrLocation,
+            tagName,
+            document
+          );
+          customElementBindableAttributeRegions.push(bindableAttributeRegion);
         } else if (isRepeatFor) {
           // 5. Repeat for
           const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
@@ -362,12 +382,17 @@ export function parseDocumentRegions<RegionDataType = any>(
 
       // 4. Custom elements
       const isCustomElement = aureliaCustomElementNames.includes(tagName);
+
       if (isCustomElement) {
+        const data = [
+          ...customElementAttributeRegions,
+          ...customElementBindableAttributeRegions,
+        ];
         const customElementViewRegion = createRegion({
           tagName,
           sourceCodeLocation: startTag.sourceCodeLocation,
           type: ViewRegionType.CustomElement,
-          data: customElementAttributeRegions,
+          data,
         });
         viewRegions.push(customElementViewRegion);
       }
@@ -425,7 +450,12 @@ export async function getDocumentRegions(
 ): Promise<HTMLDocumentRegions> {
   let regions: AsyncReturnType<typeof parseDocumentRegions> = [];
   try {
-    regions = await parseDocumentRegions(document, aureliaProgram);
+    const componentList = aureliaProgram.getComponentList();
+    regions = await parseDocumentRegions(
+      document,
+      aureliaProgram,
+      componentList
+    );
   } catch (error) {
     console.log('TCL: error', error);
   }
@@ -458,11 +488,11 @@ function createRegion<RegionDataType = any>({
     | SaxStream.StartTagToken['sourceCodeLocation']
     | parse5.AttributesLocation[string];
   type: ViewRegionType;
-  regionValue?: string;
   attribute?: parse5.Attribute;
   attributeName?: string; // TODO: Remove in favor of `attribute` (one line above)
   tagName?: string;
   data?: RegionDataType;
+  regionValue?: string;
 }): ViewRegionInfo {
   const calculatedStart = sourceCodeLocation?.startOffset;
   const calculatedEnd = sourceCodeLocation?.endOffset;
@@ -647,9 +677,9 @@ export function getRegionAtPosition(
   // position; /*?*/
   const offset = document.offsetAt(position);
   // document; /*?*/
-  // offset; /*?*/
+  offset; /*?*/
 
-  // regions; /*?*/
+  regions; /*?*/
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {
@@ -773,6 +803,36 @@ function append(result: string, str: string, n: number): string {
     str += str;
   }
   return result;
+}
+
+function createBindableAttributeRegion(
+  attr: parse5.Attribute,
+  attrLocation: parse5.Location,
+  tagName: string,
+  document: TextDocument
+): ViewRegionInfo {
+  AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST;
+  const startOffset = attrLocation.startOffset;
+  /** Eg. >click.delegate="<increaseCounter()" */
+  const onlyBindableName = getBindableNameFromAttritute(attr.name);
+  const endOffset = startOffset + onlyBindableName.length;
+  const updatedLocation = {
+    ...attrLocation,
+    startOffset,
+    endOffset,
+  };
+
+  // document.getText().substring(startOffset, endOffset); /*?*/
+
+  const viewRegion = createRegion({
+    attribute: attr,
+    attributeName: attr.name,
+    sourceCodeLocation: updatedLocation,
+    type: ViewRegionType.BindableAttribute,
+    regionValue: onlyBindableName,
+    tagName,
+  });
+  return viewRegion;
 }
 
 // function getAttributeLanguage(attributeName: string): string | null {
