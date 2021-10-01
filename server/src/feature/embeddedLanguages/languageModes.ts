@@ -5,7 +5,10 @@ import {
   Range,
   TextDocument,
 } from 'vscode-html-languageservice';
-import { TextDocumentPositionParams } from 'vscode-languageserver';
+import {
+  TextDocumentPositionParams,
+  WorkspaceEdit,
+} from 'vscode-languageserver';
 
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AureliaCompletionItem } from '../completions/virtualCompletion';
@@ -24,6 +27,7 @@ import {
 import { getAttributeInterpolationMode } from './modes/getAttributeInterpolationMode';
 import { getAttributeMode } from './modes/getAttributeMode';
 import { getAureliaHtmlMode } from './modes/getAureliaHtmlMode';
+import { getBindableAttributeMode } from './modes/getBindableAttributeMode';
 import { getCustomElementMode } from './modes/getCustomElementMode';
 import { getRepeatForMode } from './modes/getRepeatForMode';
 import { getTextInterpolationMode } from './modes/getTextInterpolationMode';
@@ -65,6 +69,12 @@ export interface LanguageMode {
     goToSourceWord: string,
     region: ViewRegionInfo
   ) => Promise<CustomHover | undefined>;
+  doRename?: (
+    document: TextDocument,
+    position: Position,
+    newName: string,
+    region: ViewRegionInfo
+  ) => Promise<WorkspaceEdit | undefined>;
   onDocumentRemoved(document: TextDocument): void;
   dispose(): void;
 }
@@ -112,15 +122,18 @@ export async function getLanguageModes(
 
   let modes = Object.create(null) as LanguageModeWithRegionMap;
 
+  // Html
   modes[ViewRegionType.Html] = {};
   modes[ViewRegionType.Html].mode = getAureliaHtmlMode(aureliaProgram);
 
+  // Attribute
   modes[ViewRegionType.Attribute] = {};
   modes[ViewRegionType.Attribute].mode = getAttributeMode(
     aureliaProgram,
     languageModelCacheDocument
   );
 
+  // AttributeInterpolation
   modes[ViewRegionType.AttributeInterpolation] = {};
   modes[
     ViewRegionType.AttributeInterpolation
@@ -129,20 +142,31 @@ export async function getLanguageModes(
     languageModelCacheDocument
   );
 
+  // BindableAttribute
+  modes[ViewRegionType.BindableAttribute] = {};
+  modes[ViewRegionType.BindableAttribute].mode = getBindableAttributeMode(
+    aureliaProgram,
+    languageModelCacheDocument
+  );
+
+  // CustomElement
   modes[ViewRegionType.CustomElement] = {};
   modes[ViewRegionType.CustomElement].mode = getCustomElementMode(
     aureliaProgram
   );
 
+  // RepeatFor
   modes[ViewRegionType.RepeatFor] = {};
   modes[ViewRegionType.RepeatFor].mode = getRepeatForMode(aureliaProgram);
 
+  // TextInterpolation
   modes[ViewRegionType.TextInterpolation] = {};
   modes[ViewRegionType.TextInterpolation].mode = getTextInterpolationMode(
     aureliaProgram,
     languageModelCacheDocument
   );
 
+  // ValueConverter
   modes[ViewRegionType.ValueConverter] = {};
   modes[ViewRegionType.ValueConverter].mode = getValueConverterMode(
     aureliaProgram

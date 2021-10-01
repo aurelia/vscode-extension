@@ -1,7 +1,9 @@
 import { Position } from 'vscode-html-languageservice';
 import {
+  RenameParams,
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
+  TextDocuments,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -14,6 +16,7 @@ import { onDefintion } from './definitions/on-definitions';
 import { initDependencyInjection } from './depdenceny-injection';
 import { onHover } from './hover/on-hover';
 import { onConnectionInitialized } from './initialization/initialization';
+import { onRenameRequest } from './rename/on-rename-request';
 
 export class AureliaServer {
   constructor(
@@ -115,7 +118,22 @@ export class AureliaServer {
   // onDocumentFormatting() {}
   // onDocumentRangeFormatting() {}
   // onDocumentOnTypeFormatting() {}
-  // onRenameRequest() {}
+
+  async onRenameRequest(
+    position: Position,
+    document: TextDocument,
+    newName: string,
+    languageModes: LanguageModes
+  ) {
+    const renamed = await onRenameRequest(
+      position,
+      document,
+      newName,
+      languageModes
+    );
+    return renamed;
+  }
+
   // onPrepareRename() {}
   // onDocumentLinks() {}
   // onDocumentLinkResolve() {}

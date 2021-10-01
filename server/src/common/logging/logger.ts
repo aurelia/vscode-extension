@@ -17,7 +17,7 @@ interface ILogOptions {
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
-  measurePerf: true,
+  measurePerf: false,
   focusedPerf: true,
   logPerf: false,
   reset: false,

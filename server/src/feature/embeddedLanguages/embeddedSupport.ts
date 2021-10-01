@@ -672,7 +672,8 @@ export function getRegionAtPosition(
   // position; /*?*/
   const offset = document.offsetAt(position);
   // document; /*?*/
-  offset; /*?*/
+  // document.getText(); /*?*/
+  // offset; /*?*/
 
   // regions; /*?*/
   const potentialRegions = regions.filter((region) => {
@@ -683,7 +684,6 @@ export function getRegionAtPosition(
     }
     return false;
   });
-  // potentialRegions; /*?*/
 
   if (potentialRegions.length === 0) {
     console.error('embeddedSupport -> getRegionAtPosition -> No Region found');
@@ -691,10 +691,41 @@ export function getRegionAtPosition(
   }
 
   if (potentialRegions.length === 1) {
+    // custom element sub regions
+    if (potentialRegions[0].type === ViewRegionType.CustomElement) {
+      const customElementRegion = getSmallestCustomElementRegion(
+        potentialRegions[0].data,
+        offset
+      );
+      return customElementRegion;
+    }
+
+    // standard case
     return potentialRegions[0];
   }
 
   const targetRegion = getSmallestRegion(potentialRegions);
+  return targetRegion;
+}
+
+function getSmallestCustomElementRegion(
+  regions: ViewRegionInfo[],
+  offset: number
+): ViewRegionInfo {
+  const potentialRegions = regions.filter((region) => {
+    if (region.startOffset! <= offset) {
+      if (offset <= region.endOffset!) {
+        return Object.keys(region).length;
+      }
+    }
+    return false;
+  });
+
+  if (potentialRegions.length === 1) {
+    return potentialRegions[0];
+  }
+
+  const targetRegion = getSmallestRegion(regions);
   return targetRegion;
 }
 
@@ -815,6 +846,7 @@ function createBindableAttributeRegion(
     ...attrLocation,
     startOffset,
     endOffset,
+    endCol: attrLocation.startCol + onlyBindableName.length,
   };
 
   // document.getText().substring(startOffset, endOffset); /*?*/

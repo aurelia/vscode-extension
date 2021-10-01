@@ -6,6 +6,7 @@ import {
   FileNameStepTable,
   getTableValues,
 } from '../../../common/gherkin/gherkin-step-table';
+import { givenIOpenVsCodeWithTheFollowingFiles } from '../../capabilities/new-common/project.step';
 import { myMockServer } from './detecting-on-init.spec';
 
 const logger = new Logger('[Test] Hydrate on init');
@@ -50,22 +51,6 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     expect(AureliaProjects.hydrateAureliaProjects).not.toBeCalled();
   });
 };
-
-export async function givenIOpenVsCodeWithTheFollowingFiles(
-  textDocumentPaths: string[]
-) {
-  const mockTextDocuments = myMockServer.textDocuments
-    .mock(textDocumentPaths)
-    .getAll();
-  await myMockServer.getAureliaServer().onConnectionInitialized(
-    {
-      aureliaProject: {
-        rootDirectory: myMockServer.getWorkspaceUri(),
-      },
-    },
-    mockTextDocuments
-  );
-}
 
 function getPathsFromTable(uri: string, table: FileNameStepTable) {
   const fileNames = getTableValues(table);

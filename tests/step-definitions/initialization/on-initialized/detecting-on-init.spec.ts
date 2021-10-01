@@ -2,41 +2,15 @@ import { strictEqual } from 'assert';
 
 import { StepDefinitions } from 'jest-cucumber';
 
-import { Logger } from '../../../../server/src/common/logging/logger';
-import { UriUtils } from '../../../../server/src/common/view/uri-utils';
-import { testError } from '../../../common/errors/TestErrors';
-import {
-  FixtureNames,
-  getFixtureUri,
-} from '../../../common/fixtures/get-fixture-dir';
+import { FixtureNames } from '../../../common/fixtures/get-fixture-dir';
 import { MockServer } from '../../../common/mock-server/mock-server';
-import { testContainer } from '../../../jest-cucumber-setup.spec';
-
-const logger = new Logger('[Test] Detecting');
+import { theProjectIsNamed } from '../../capabilities/new-common/project.step';
 
 export let myMockServer: MockServer;
-let _WORKSPACE_URI_CACHE = '';
 
 export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
   given(/^the project is named "(.*)"$/, async (projectName: FixtureNames) => {
-    /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', {  reset: true, });
-    // /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', { logPerf: true, reset: true, });
-
-    testError.verifyProjectName(projectName);
-
-    const workspaceRootUri = getFixtureUri(projectName);
-    const useCached = workspaceRootUri !== _WORKSPACE_URI_CACHE;
-    // if (useCached) {
-    if (true) {
-      myMockServer = new MockServer(testContainer, workspaceRootUri, {
-        aureliaProject: {
-          rootDirectory: UriUtils.toPath(workspaceRootUri),
-        },
-      });
-      myMockServer.setWorkspaceUri(workspaceRootUri);
-    }
-
-    _WORKSPACE_URI_CACHE = workspaceRootUri;
+    /* prettier-ignore */ theProjectIsNamed(projectName);
   });
 
   then('the extension should not activate', () => {
