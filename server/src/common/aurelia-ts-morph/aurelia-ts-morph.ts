@@ -1,6 +1,7 @@
 import { Project, ts } from 'ts-morph';
 
 import { DocumentSettings } from '../../configuration/DocumentSettings';
+import { UriUtils } from '../view/uri-utils';
 
 const TEST_FILE_NAME =
   '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/cli-generated/src/realdworld-advanced/settings/index.ts'; // mac
@@ -26,13 +27,13 @@ export class AureliaTsMorph {
     }
 
     this.tsconfigPath =
-      settings.pathToTsConfig ??
-      ts.findConfigFile(
-        /* searchPath */ targetSourceDirectory,
+      settings.pathToTsConfig ||
+      (ts.findConfigFile(
+        /* searchPath */ UriUtils.toPath(targetSourceDirectory),
         ts.sys.fileExists,
         'tsconfig.json'
       ) ??
-      '';
+        '');
   }
 
   create(): void {}
@@ -42,18 +43,18 @@ export class AureliaTsMorph {
     compilerSettings = {
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ESNext,
-      outDir: 'dist',
-      emitDecoratorMetadata: true,
-      experimentalDecorators: true,
+      // outDir: 'dist',
+      // emitDecoratorMetadata: true,
+      // experimentalDecorators: true,
       // lib: ['es2017.object', 'es7', 'dom'],
       sourceMap: true,
       rootDir: '.',
     };
 
     const project = createTsMorphProject({
-      customCompilerOptions: {
-        ...compilerSettings,
-      },
+      // customCompilerOptions: {
+      //   ...compilerSettings,
+      // },
       tsConfigPath: this.tsconfigPath,
     });
 
