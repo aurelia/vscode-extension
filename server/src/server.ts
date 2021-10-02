@@ -168,7 +168,6 @@ connection.onDidOpenTextDocument((param) => {
 documents.onDidChangeContent(
   async (change: TextDocumentChangeEvent<TextDocument>) => {
     if (!hasServerInitialized) return;
-    console.log('TCL: onDidChangeContent');
     await aureliaServer.onConnectionDidChangeContent(change);
   }
 );
@@ -246,7 +245,7 @@ connection.onHover(
 );
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
+  // /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
   return null;
 });
 
@@ -263,7 +262,10 @@ connection.onRenameRequest(
       newName,
       languageModes
     );
-    return renamed;
+
+    if (renamed) {
+      return renamed;
+    }
   }
 );
 

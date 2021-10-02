@@ -1,4 +1,4 @@
-import { Range } from 'vscode-languageserver';
+import { Range, TextDocumentEdit, TextEdit } from 'vscode-languageserver';
 
 import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 import {
@@ -24,19 +24,24 @@ export function getBindableAttributeMode(
       newName: string,
       region: ViewRegionInfo
     ) {
-      /* prettier-ignore */ console.log('TCL: region', region)
       if (!region.startCol) return;
       if (!region.endCol) return;
 
       const { line } = position;
-      const startPosition = Position.create(line, region.startCol);
-      const endPosition = Position.create(line, region.endCol);
+      const startPosition = Position.create(line, region.startCol - 1);
+      const endPosition = Position.create(line, region.endCol - 1);
       const range = Range.create(startPosition, endPosition);
 
       return {
-        changes: {
-          [document.uri]: [{ range, newText: newName }],
-        },
+        // changes: {
+        //   [document.uri]: [TextEdit.replace(range, newName)],
+        // },
+        documentChanges: [
+          TextDocumentEdit.create(
+            { version: document.version + 1, uri: document.uri },
+            [TextEdit.replace(range, newName)]
+          ),
+        ],
       };
     },
 
