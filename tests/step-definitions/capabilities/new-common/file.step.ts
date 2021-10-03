@@ -18,10 +18,16 @@ export async function givenImOnTheLineAtCharacter(
   const character = findCharacterPosition(codeWithCursor);
   const position = Position.create(line, character);
 
-  const { AureliaProjects } = myMockServer.getContainerDirectly();
+  const {
+    AureliaProjects,
+    DocumentSettings,
+  } = myMockServer.getContainerDirectly();
   const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
   if (aureliaProgram) {
-    languageModes = await getLanguageModes(aureliaProgram);
+    languageModes = await getLanguageModes(
+      aureliaProgram,
+      DocumentSettings.getSettings()
+    );
   }
   return { position, languageModes };
 }

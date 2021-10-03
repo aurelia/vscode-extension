@@ -40,11 +40,11 @@ export const CLI_GENERATED = {
   'tsconfig.json': getAbsPathInCliGenerated('tsconfig.json'),
 };
 
+// prettier-ignore
 export const SCOPED_FOR_TESTING = {
   root: getFixtureDir('scoped-for-testing'),
-  'custom-element-user.html': getAbsPathInScopedForTesting(
-    'src/view/custom-element/custom-element-user.html'
-  ),
+  'custom-element-user.html': getAbsPathInScopedForTesting( 'src/view/custom-element/custom-element-user.html'),
+  'other-custom-element-user.html': getAbsPathInScopedForTesting( 'src/view/custom-element/other-custom-element-user.html'),
 };
 
 /**

@@ -127,7 +127,7 @@ connection.onInitialized(async () => {
     const { aureliaProgram } = aureliaProjects.getProjects()[0];
 
     if (aureliaProgram) {
-      languageModes = await getLanguageModes(aureliaProgram);
+      languageModes = await getLanguageModes(aureliaProgram, extensionSettings);
     }
 
     hasServerInitialized = true;
@@ -245,7 +245,7 @@ connection.onHover(
 );
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  // /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
+  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
   return null;
 });
 

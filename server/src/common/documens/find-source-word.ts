@@ -1,11 +1,17 @@
 import { ViewRegionInfo } from '../../feature/embeddedLanguages/embeddedSupport';
 import { whiteSpaceRegex, WORD_SEPARATORS } from '../constants';
 
+interface WordInfo {
+  startOffset: number;
+  endOffset: number;
+  word: string;
+}
+
 export function findSourceWord(region: ViewRegionInfo, offset: number): string {
   if (region.startOffset === undefined) return '';
 
   // ?? ?? custom element
-  const input = region.attributeValue ?? region.regionValue ?? region.tagName;
+  const input = region.attributeValue || region.regionValue || region.tagName;
   if (!input) return '';
 
   const normalizedOffset = Math.abs(region.startOffset - offset);
@@ -21,22 +27,37 @@ export function findSourceWord(region: ViewRegionInfo, offset: number): string {
  * const str = 'hi |: on';
  * getWordAtOffset(str, 0); // hi
  * getWordAtOffset(str, 1); // hi
- * getWordAtOffset(str, 2); // ''
+ * getWordAtOffset(str, 2); // hi
  * getWordAtOffset(str, 3); // ''
  * getWordAtOffset(str, 4); // ''
  * getWordAtOffset(str, 5); // ''
  * getWordAtOffset(str, 6); // on
  * getWordAtOffset(str, 7); // on
+ * getWordAtOffset(str, 8); // on
  */
-function getWordAtOffset(input: string, offset: number): string {
+export function getWordAtOffset(input: string, offset: number): string {
+  return getWordInfoAtOffset(input, offset).word;
+}
+
+export function getWordInfoAtOffset(input: string, offset: number): WordInfo {
   if (isNonWordCharacter(input[offset])) {
-    return '';
+    const offsetPrevious = offset - 1;
+    if (!isNonWordCharacter(input[offsetPrevious])) {
+      offset = offsetPrevious;
+    } else {
+      return { startOffset: NaN, endOffset: NaN, word: '' };
+    }
   }
 
   const wordStartIndex = getBackwardNonWordIndex(input, offset);
   const wordEndIndex = getForwardNonWordIndex(input, offset);
   const word = input.substring(wordStartIndex, wordEndIndex + 1);
-  return word;
+
+  return {
+    startOffset: wordStartIndex,
+    endOffset: wordEndIndex,
+    word,
+  };
 }
 
 function isNonWordCharacter(char: string): boolean {

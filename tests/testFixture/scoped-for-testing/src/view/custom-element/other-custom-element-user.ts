@@ -1,4 +1,4 @@
-export class CustomElementCustomElement {
+export class OtherCustomElementCustomElement {
   @bindable foo;
   @bindable bar;
   qux;

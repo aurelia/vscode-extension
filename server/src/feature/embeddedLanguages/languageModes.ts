@@ -9,6 +9,7 @@ import {
   TextDocumentPositionParams,
   WorkspaceEdit,
 } from 'vscode-languageserver';
+import { ExtensionSettings } from '../../configuration/DocumentSettings';
 
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AureliaCompletionItem } from '../completions/virtualCompletion';
@@ -109,7 +110,8 @@ export interface LanguageModeWithRegion {
 type LanguageModeWithRegionMap = Record<ViewRegionType, LanguageModeWithRegion>;
 
 export async function getLanguageModes(
-  aureliaProgram: AureliaProgram
+  aureliaProgram: AureliaProgram,
+  extensionSettings: ExtensionSettings
 ): Promise<LanguageModes> {
   const languageModelCacheDocument = getLanguageModelCache<HTMLDocumentRegions>(
     10,
@@ -146,7 +148,7 @@ export async function getLanguageModes(
   modes[ViewRegionType.BindableAttribute] = {};
   modes[ViewRegionType.BindableAttribute].mode = getBindableAttributeMode(
     aureliaProgram,
-    languageModelCacheDocument
+    extensionSettings
   );
 
   // CustomElement

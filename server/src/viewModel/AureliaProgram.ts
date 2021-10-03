@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import * as Path from 'path';
 
-import { ts } from 'ts-morph';
+import { Project, ts } from 'ts-morph';
 
 import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
 import { AureliaClassTypes } from '../common/constants';
@@ -67,6 +67,7 @@ export class AureliaProgram {
   public projectFilePaths: string[];
   private componentList: IAureliaComponent[];
   private bindableList: IAureliaBindable[];
+  tsMorphProject: Project;
 
   public initComponentList(): IAureliaComponent[] | undefined {
     const componentList: IAureliaComponent[] = [];
@@ -252,6 +253,13 @@ export class AureliaProgram {
   public setBuilderProgram(builderProgram: ts.Program): void {
     this.builderProgram = builderProgram;
     this.updateAureliaSourceFiles(this.builderProgram);
+  }
+
+  public getTsMorphProject() {
+    return this.tsMorphProject;
+  }
+  public setTsMorphProject(tsMorphProject: Project) {
+    this.tsMorphProject = tsMorphProject;
   }
 
   /**

@@ -129,7 +129,8 @@ export class AureliaServer {
       position,
       document,
       newName,
-      languageModes
+      languageModes,
+      this.container
     );
     return renamed;
   }

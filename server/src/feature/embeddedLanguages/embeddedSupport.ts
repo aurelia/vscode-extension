@@ -669,10 +669,10 @@ export function getRegionAtPosition(
   regions: ViewRegionInfo[],
   position: Position
 ): ViewRegionInfo | undefined {
-  // position; /*?*/
-  const offset = document.offsetAt(position);
   // document; /*?*/
   // document.getText(); /*?*/
+  // position; /*?*/
+  const offset = document.offsetAt(position);
   // offset; /*?*/
 
   // regions; /*?*/
@@ -711,7 +711,7 @@ export function getRegionAtPosition(
 function getSmallestCustomElementRegion(
   regions: ViewRegionInfo[],
   offset: number
-): ViewRegionInfo {
+): ViewRegionInfo | undefined {
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {
@@ -721,6 +721,9 @@ function getSmallestCustomElementRegion(
     return false;
   });
 
+  if (potentialRegions.length === 0) {
+    return;
+  }
   if (potentialRegions.length === 1) {
     return potentialRegions[0];
   }

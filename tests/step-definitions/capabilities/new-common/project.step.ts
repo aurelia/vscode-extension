@@ -21,7 +21,6 @@ export function theProjectIsNamed(projectName: FixtureNames) {
   testError.verifyProjectName(projectName);
 
   const workspaceRootUri = getFixtureUri(projectName);
-  workspaceRootUri; /*?*/
   const useCached = workspaceRootUri !== _WORKSPACE_URI_CACHE;
   // if (useCached) {
   if (true) {

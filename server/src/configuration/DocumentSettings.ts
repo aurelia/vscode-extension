@@ -72,7 +72,10 @@ export class DocumentSettings {
   public hasConfigurationCapability: boolean = true;
 
   constructor(private readonly extensionSettings: ExtensionSettings) {
-    this.globalSettings = this.defaultSettings;
+    this.globalSettings = {
+      ...this.defaultSettings,
+      ...this.extensionSettings,
+    };
 
     let exclude = this.extensionSettings.aureliaProject?.exclude;
 
@@ -103,7 +106,7 @@ export class DocumentSettings {
   }
 
   public getSettings(): ExtensionSettings {
-    return this.extensionSettings;
+    return this.globalSettings;
   }
 
   public inject(
