@@ -2,7 +2,7 @@ import { StepDefinitions } from 'jest-cucumber';
 
 import { testError } from '../../common/errors/TestErrors';
 import { getPathsFromFileNames } from '../../common/file-path-mocks';
-import { myMockServer } from '../initialization/on-initialized/detecting-on-init.spec';
+import { myMockServer } from '../capabilities/new-common/project.step';
 
 export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
   when(/^I open the file "(.*)"$/, (fileName: string) => {

@@ -2,10 +2,8 @@ import { StepDefinitions } from 'jest-cucumber';
 import { LocationLink } from 'vscode-languageserver';
 
 import { UriUtils } from '../../../server/src/common/view/uri-utils';
-import { DefinitionResult } from '../../../server/src/feature/definition/getDefinition';
-import { testError } from '../../common/errors/TestErrors';
-import { myMockServer } from '../initialization/on-initialized/detecting-on-init.spec';
 import { languageModes, position } from './common/common-capabilities.spec';
+import { myMockServer } from './new-common/project.step';
 
 export const definitionSteps: StepDefinitions = ({ when, then }) => {
   let definition: LocationLink[] | undefined;

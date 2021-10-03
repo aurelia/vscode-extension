@@ -1,5 +1,3 @@
-import { performance, PerformanceObserver } from 'perf_hooks';
-
 import { Container } from 'aurelia-dependency-injection';
 import { loadFeatures, autoBindSteps } from 'jest-cucumber';
 
@@ -22,17 +20,10 @@ import {
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
 import { minimalSteps } from './minimal-jest/minimal.spec';
 
+//
+
 export const testContainer = new Container();
 const logger = new Logger('[Test] Detecting');
-
-// export const perfObs = new PerformanceObserver((items) => {
-//   const entry = items.getEntries()[0];
-//   const duration = `${entry.duration / 1000} sec`;
-//   const message = `${entry.name}: ${duration}`;
-//   console.log('TCL: message', message);
-//   performance.clearMarks();
-// });
-// perfObs.observe({ entryTypes: ['measure'] });
 
 resetFeatureCache();
 function init() {
@@ -42,10 +33,12 @@ function init() {
   // logger.log('before loadfeature', { logPerf: true });
   let features = readFeatureCache();
   if (!features) {
-    features = loadFeatures('**/features/**/*.feature', {
-      tagFilter: '@focus',
+    /* refactoring steps: rename */
+    features = loadFeatures('**/features/**/!(rename)/*.feature', {
+      // features = loadFeatures('**/features/**/*.feature', {
+      // tagFilter: '@focus',
+      tagFilter: '@cli_generated',
       // tagFilter: '@cli_generated and  @focus',
-      // tagFilter: '@cli_generated',
       // scenarioNameTemplate: (vars) => {
       // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
       // },
@@ -70,4 +63,4 @@ function init() {
   ]);
 }
 
-// init();
+init();

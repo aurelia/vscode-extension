@@ -6,8 +6,10 @@ import {
   FileNameStepTable,
   getTableValues,
 } from '../../../common/gherkin/gherkin-step-table';
-import { givenIOpenVsCodeWithTheFollowingFiles } from '../../capabilities/new-common/project.step';
-import { myMockServer } from './detecting-on-init.spec';
+import {
+  givenIOpenVsCodeWithTheFollowingFiles,
+  myMockServer,
+} from '../../capabilities/new-common/project.step';
 
 const logger = new Logger('[Test] Hydrate on init');
 

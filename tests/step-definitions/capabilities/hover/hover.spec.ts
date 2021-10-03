@@ -2,8 +2,8 @@ import { StepDefinitions } from 'jest-cucumber';
 
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { CustomHover } from '../../../../server/src/feature/virtual/virtualSourceFile';
-import { myMockServer } from '../../initialization/on-initialized/detecting-on-init.spec';
 import { position, languageModes } from '../common/common-capabilities.spec';
+import { myMockServer } from '../new-common/project.step';
 
 export const hoverSteps: StepDefinitions = ({ when, then }) => {
   let hover: CustomHover | undefined;

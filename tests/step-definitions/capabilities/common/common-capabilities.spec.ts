@@ -4,11 +4,11 @@ import { Position } from 'vscode-html-languageservice';
 import { AsyncReturnType } from '../../../../server/src/common/global';
 import { Logger } from '../../../../server/src/common/logging/logger';
 import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguages/languageModes';
-import { myMockServer } from '../../initialization/on-initialized/detecting-on-init.spec';
 import {
   removeCursorFromCode,
   givenImOnTheLineAtCharacter,
 } from '../new-common/file.step';
+import { myMockServer } from '../new-common/project.step';
 
 export const CURSOR_CHARACTER = '|';
 export const CURSOR_CHARACTER_1 = '>>|<<';

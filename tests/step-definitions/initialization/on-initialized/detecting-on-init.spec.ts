@@ -3,10 +3,10 @@ import { strictEqual } from 'assert';
 import { StepDefinitions } from 'jest-cucumber';
 
 import { FixtureNames } from '../../../common/fixtures/get-fixture-dir';
-import { MockServer } from '../../../common/mock-server/mock-server';
-import { theProjectIsNamed } from '../../capabilities/new-common/project.step';
-
-export let myMockServer: MockServer;
+import {
+  myMockServer,
+  theProjectIsNamed,
+} from '../../capabilities/new-common/project.step';
 
 export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
   given(/^the project is named "(.*)"$/, async (projectName: FixtureNames) => {

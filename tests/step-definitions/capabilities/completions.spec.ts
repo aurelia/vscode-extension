@@ -7,8 +7,8 @@ import {
   isAureliaCompletionItem,
 } from '../../../server/src/feature/completions/virtualCompletion';
 import { createTextDocumentPositionParams } from '../../../server/src/feature/embeddedLanguages/languageModes';
-import { myMockServer } from '../initialization/on-initialized/detecting-on-init.spec';
 import { position, languageModes } from './common/common-capabilities.spec';
+import { myMockServer } from './new-common/project.step';
 
 const logger = new Logger('[Test] Completions');
 

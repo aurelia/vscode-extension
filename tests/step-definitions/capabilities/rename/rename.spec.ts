@@ -3,19 +3,10 @@ import { WorkspaceEdit } from 'vscode-languageserver';
 import { Position } from 'vscode-languageserver-protocol';
 import { AsyncReturnType } from '../../../../server/src/common/global';
 import { Logger } from '../../../../server/src/common/logging/logger';
-import {
-  AureliaCompletionItem,
-  isAureliaCompletionItem,
-} from '../../../../server/src/feature/completions/virtualCompletion';
-import {
-  CompletionList,
-  createTextDocumentPositionParams,
-  getLanguageModes,
-} from '../../../../server/src/feature/embeddedLanguages/languageModes';
+import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguages/languageModes';
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import { getTestDir } from '../../../common/files/get-test-dir';
 import { FixtureNames } from '../../../common/fixtures/get-fixture-dir';
-import { completions } from '../completions.spec';
 import {
   removeCursorFromCode,
   givenImOnTheLineAtCharacter,
@@ -31,7 +22,7 @@ const logger = new Logger('rename.spec');
 const feature = loadFeature(
   `${getTestDir()}/features/capabilities/rename/rename.feature`,
   {
-    tagFilter: '@focus',
+    // tagFilter: '@focus',
   }
 );
 
@@ -81,8 +72,6 @@ defineFeature(feature, (test) => {
       renamed = await myMockServer
         .getAureliaServer()
         .onRenameRequest(position, document, newWord, languageModes);
-
-      renamed; /*?*/
 
       expect(true).toBeFalsy();
     });
