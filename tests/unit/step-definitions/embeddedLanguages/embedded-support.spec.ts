@@ -18,33 +18,28 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
-  test('Parsing - Custom Element - Bindable Attribute', ({
+  test.skip('Parsing - Custom Element - Bindable Attribute', ({
     given,
     when,
     then,
   }) => {
-    let workspaceRootUri;
-    let regionResults: ViewRegionInfo<ViewRegionInfo<any>[]>[];
+    let parsedRegions: ViewRegionInfo<ViewRegionInfo<any>[]>[] = [];
+    let shared = {
+      workspaceRootUri: '',
+      parsedRegions,
+    };
 
-    given(/^I'm in the project "(.*)"$/, (projectName: FixtureNames) => {
-      workspaceRootUri = getFixtureUri(projectName);
-    });
+    givenImInTheProject(given, shared);
 
-    when(/^I parse the file "(.*)"$/, async (fileName: string) => {
-      const textDocumentPaths = getPathsFromFileNames(workspaceRootUri, [
-        fileName,
-      ]);
-      const textDocuments = new MockTextDocuments(workspaceRootUri);
-      const textDocument = textDocuments.mock(textDocumentPaths).getFirst();
+    whenIParseTheFile(when, shared);
 
-      const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
-        textDocument,
-        // @ts-ignore
-        [{ componentName: 'custom-element' }]
-      );
+    then('the result should include Custom element bindable attributes', () => {
+      const regionResults = shared.parsedRegions.filter((region) => {
+        region; /*?*/
+        if (!region.data) return false;
+        if (!Array.isArray(region.data)) return false;
 
-      regionResults = parsedRegions.filter((region) => {
-        const temp = region.data?.filter(
+        const temp = region.data.filter(
           (attribute) => attribute.type === ViewRegionType.BindableAttribute
         );
 
@@ -54,9 +49,7 @@ defineFeature(feature, (test) => {
 
         return false;
       });
-    });
 
-    then('the result should include Custom element bindable attributes', () => {
       expect(regionResults.length).toBeGreaterThan(0);
       const result = regionResults[0].data?.find(
         (attribute) => attribute.type === ViewRegionType.BindableAttribute
@@ -64,4 +57,68 @@ defineFeature(feature, (test) => {
       expect(result?.regionValue).toBe('foo');
     });
   });
+
+  test('Parsing - Offsets', ({ given, when, then, and }) => {
+    let parsedRegions: ViewRegionInfo<ViewRegionInfo<any>[]>[] = [];
+    let shared = {
+      workspaceRootUri: '',
+      parsedRegions,
+      line: '',
+    };
+    givenImInTheProject(given, shared);
+
+    whenIParseTheFile(when, shared);
+
+    and(/^I'm on line (\d)$/, (line: string) => {
+      shared.line = line;
+    });
+
+    then(
+      /^the result should have the correct (\d) and (\d) for the whole region$/,
+      (startOffset: string, endOffset: string) => {
+        const target = getTargetRegion(shared.line);
+        target; /*?*/
+        expect(target?.startOffset).toBe(Number(startOffset));
+        expect(target?.endOffset).toBe(Number(endOffset));
+      }
+    );
+
+    and(
+      /^the result should have the correct (.*) and (.*) for the region value$/,
+      (regionValueStartOffset: string, regionValueEndOffse: string) => {
+        expect(true).toBeFalsy();
+      }
+    );
+
+    function getTargetRegion(line: string) {
+      const result = shared.parsedRegions.find((region) => {
+        return region.startLine === Number(line);
+      });
+      return result;
+    }
+  });
 });
+
+function givenImInTheProject(given, shared) {
+  given(/^I'm in the project "(.*)"$/, (projectName: FixtureNames) => {
+    shared.workspaceRootUri = getFixtureUri(projectName);
+  });
+}
+
+function whenIParseTheFile(when, shared) {
+  when(/^I parse the file "(.*)"$/, async (fileName: string) => {
+    const textDocumentPaths = getPathsFromFileNames(shared.workspaceRootUri, [
+      fileName,
+    ]);
+    const textDocuments = new MockTextDocuments(shared.workspaceRootUri);
+    const textDocument = textDocuments.mock(textDocumentPaths).getFirst();
+
+    const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
+      textDocument,
+      // @ts-ignore
+      [{ componentName: 'custom-element', viewFilePath: 'custom-element.html' }]
+    );
+
+    shared.parsedRegions = parsedRegions;
+  });
+}

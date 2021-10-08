@@ -44,6 +44,7 @@ export const CLI_GENERATED = {
 export const SCOPED_FOR_TESTING = {
   root: getFixtureDir('scoped-for-testing'),
   'custom-element-user.html': getAbsPathInScopedForTesting( 'src/view/custom-element/custom-element-user.html'),
+  'custom-element.html': getAbsPathInScopedForTesting( 'src/view/custom-element/custom-element.html'),
   'other-custom-element-user.html': getAbsPathInScopedForTesting( 'src/view/custom-element/other-custom-element-user.html'),
 };
 

@@ -413,7 +413,9 @@ export function parseDocumentRegions<RegionDataType = any>(
           /** Eg. >css="width: ${message}<px;" */
           const interpolationValue = interpolationMatch[1];
           const endInterpolationLength =
-            startInterpolationLength + Number(interpolationValue.length); // message
+            startInterpolationLength +
+            Number(interpolationValue.length) + // message
+            1; // "embrace" end char
 
           const updatedLocation: parse5.Location = {
             ...attrLocation,

@@ -3,6 +3,7 @@ import { pathToFileURL } from 'url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   parseDocumentRegions,
+  RepeatForRegionData,
   ViewRegionInfo,
   ViewRegionType,
 } from '../../feature/embeddedLanguages/embeddedSupport';
@@ -58,6 +59,32 @@ export async function findAllBindableRegions(
   );
 
   return regionsLookUp;
+}
+
+export async function findRegionsWithValue(
+  aureliaProgram: AureliaProgram,
+  document: TextDocument,
+  sourceWord: string
+): Promise<ViewRegionInfo[]> {
+  const componentList = aureliaProgram.getComponentList();
+  const regions = await parseDocumentRegions(document, componentList);
+
+  const targetRegions = regions.filter((region) => {
+    // 1. repeat-for regions
+    if (region.type === ViewRegionType.RepeatFor) {
+      const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
+      const isTargetIterable =
+        repeatForRegion.data?.iterableName === sourceWord;
+
+      return isTargetIterable;
+    }
+
+    // 2. default case: .regionValue
+    const isDefault = region.regionValue === sourceWord;
+    return isDefault;
+  });
+
+  return targetRegions;
 }
 
 function getRegionsOfType<RegionDataType>(
