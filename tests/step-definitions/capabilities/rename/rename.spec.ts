@@ -33,7 +33,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
         expect(Object.keys(renamed.changes).length).toBeGreaterThan(0);
       }
 
-      expect(true).toBeFalsy();
+      // expect(true).toBeFalsy();
     }
   );
 };

@@ -19,8 +19,8 @@ module.exports = function (wallaby) {
     ],
 
     tests: [
-      // 'tests/jest-cucumber-setup.spec.ts',
-      'tests/unit/step-definitions/embeddedLanguages/embedded-support.spec.ts',
+      'tests/jest-cucumber-setup.spec.ts',
+      // 'tests/unit/step-definitions/embeddedLanguages/embedded-support.spec.ts',
     ],
 
     testFramework: 'jest',

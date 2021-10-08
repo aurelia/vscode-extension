@@ -10,12 +10,12 @@ import {
 } from 'vscode-languageserver';
 
 import { AureliaClassTypes } from '../../common/constants';
+import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
 import {
-  AureliaProgram,
   IAureliaClassMember,
   IAureliaComponent,
-} from '../../viewModel/AureliaProgram';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
+  AureliaProgram,
+} from '../../core/viewModel/AureliaProgram';
 
 export function createCompletionItem(
   classMember: IAureliaClassMember,

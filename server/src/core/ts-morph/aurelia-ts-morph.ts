@@ -1,7 +1,7 @@
 import { Project, ts } from 'ts-morph';
 
-import { DocumentSettings } from '../../configuration/DocumentSettings';
-import { UriUtils } from '../view/uri-utils';
+import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
+import { UriUtils } from '../../common/view/uri-utils';
 
 const TEST_FILE_NAME =
   '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/cli-generated/src/realdworld-advanced/settings/index.ts'; // mac

@@ -1,6 +1,6 @@
 import { Position } from 'vscode-languageserver';
 import { AsyncReturnType } from '../../../../server/src/common/global';
-import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguages/languageModes';
+import { getLanguageModes } from '../../../../server/src/core/embeddedLanguages/languageModes';
 import { myMockServer } from './project.step';
 
 export let languageModes: AsyncReturnType<typeof getLanguageModes>;

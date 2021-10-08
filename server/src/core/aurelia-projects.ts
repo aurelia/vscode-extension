@@ -6,11 +6,11 @@ import { bgBlack } from 'colorette';
 import { ts } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DocumentSettings } from '../configuration/DocumentSettings';
-import { AureliaProgram } from '../viewModel/AureliaProgram';
-import { AureliaTsMorph } from './aurelia-ts-morph/aurelia-ts-morph';
-import { IProjectOptions, defaultProjectOptions } from './common.types';
-import { Logger } from './logging/logger';
+import { DocumentSettings } from '../feature/configuration/DocumentSettings';
+import { AureliaTsMorph } from './ts-morph/aurelia-ts-morph';
+import { IProjectOptions, defaultProjectOptions } from '../common/common.types';
+import { Logger } from '../common/logging/logger';
+import { AureliaProgram } from './viewModel/AureliaProgram';
 
 const logger = new Logger('AureliaProjectFiles');
 

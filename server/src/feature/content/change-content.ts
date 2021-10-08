@@ -3,7 +3,7 @@ import { Logger } from 'culog';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaProjects } from '../../common/aurelia-projects';
+import { AureliaProjects } from '../../core/aurelia-projects';
 import { uriToPath } from '../../common/uriToPath';
 
 const logger = new Logger({ scope: 'change-content' });

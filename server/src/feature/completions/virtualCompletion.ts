@@ -39,8 +39,8 @@ import {
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
+import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
   createVirtualViewModelSourceFile,

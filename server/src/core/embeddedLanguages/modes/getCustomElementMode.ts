@@ -4,12 +4,12 @@ import { camelCase } from 'lodash';
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { findSourceWord } from '../../../common/documens/find-source-word';
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
-import { getBindablesCompletion } from '../../completions/completions';
-import { DefinitionResult } from '../../definition/getDefinition';
-import { getVirtualDefinition } from '../../definition/virtualDefinition';
 import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
+import { getBindablesCompletion } from '../../../feature/completions/completions';
+import { DefinitionResult } from '../../../feature/definition/getDefinition';
+import { getVirtualDefinition } from '../../../feature/definition/virtualDefinition';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
 export function getCustomElementMode(
   aureliaProgram: AureliaProgram

@@ -1,4 +1,4 @@
-import { ViewRegionInfo } from '../../feature/embeddedLanguages/embeddedSupport';
+import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
 import { whiteSpaceRegex, WORD_SEPARATORS } from '../constants';
 
 interface WordInfo {

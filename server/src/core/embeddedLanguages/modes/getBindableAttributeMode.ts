@@ -7,7 +7,6 @@ import {
   WorkspaceEdit,
 } from 'vscode-languageserver';
 
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
 import {
   RepeatForRegionData,
   ViewRegionInfo,
@@ -19,14 +18,12 @@ import {
   findRegionsWithValue,
 } from '../../../core/regions/find-specific-region';
 import { findSourceWord } from '../../../common/documens/find-source-word';
-import { ExtensionSettings } from '../../../configuration/DocumentSettings';
-import {
-  getClass,
-  getClassMember,
-} from '../../../common/ts-morph/ts-morph-class';
+import { getClass, getClassMember } from '../../ts-morph/ts-morph-class';
 import { camelCase } from 'lodash';
 import { getRelatedFilePath } from '../../../common/documens/related';
 import { pathToFileURL } from 'url';
+import { ExtensionSettings } from '../../../feature/configuration/DocumentSettings';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
 export function getBindableAttributeMode(
   aureliaProgram: AureliaProgram,

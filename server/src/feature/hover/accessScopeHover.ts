@@ -1,6 +1,6 @@
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
-import { Position, TextDocument } from '../embeddedLanguages/languageModes';
+import { TextDocument, Position } from 'vscode-languageserver';
+import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualLanguageService,
   CustomHover,

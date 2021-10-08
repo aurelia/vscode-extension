@@ -6,7 +6,7 @@ import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
 } from '../../../server/src/feature/completions/virtualCompletion';
-import { createTextDocumentPositionParams } from '../../../server/src/feature/embeddedLanguages/languageModes';
+import { createTextDocumentPositionParams } from '../../../server/src/core/embeddedLanguages/languageModes';
 import { position, languageModes } from './common/common-capabilities.spec';
 import { myMockServer } from './new-common/project.step';
 

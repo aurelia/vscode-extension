@@ -1,8 +1,8 @@
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { AureliaClassTypes } from '../../../common/constants';
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
-import { createComponentCompletionList } from '../../completions/completions';
+import { createComponentCompletionList } from '../../../feature/completions/completions';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { ViewRegionInfo } from '../embeddedSupport';
 import { LanguageMode, TextDocument } from '../languageModes';
 

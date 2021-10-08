@@ -5,12 +5,9 @@ import { Container } from 'aurelia-dependency-injection';
 import * as fastGlob from 'fast-glob';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  AureliaProjects,
-  IAureliaProject,
-} from '../../common/aurelia-projects';
+import { AureliaProjects, IAureliaProject } from '../../core/aurelia-projects';
 import { Logger } from '../../common/logging/logger';
-import { ExtensionSettings } from '../../configuration/DocumentSettings';
+import { ExtensionSettings } from '../configuration/DocumentSettings';
 
 const logger = new Logger('aureliaServer');
 

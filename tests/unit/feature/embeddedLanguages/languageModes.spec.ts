@@ -8,7 +8,7 @@
 //   getLanguageModes,
 //   LanguageModes,
 //   LanguageModeWithRegion,
-// } from '../../../../server/src/feature/embeddedLanguages/languageModes';
+// } from '../../../../server/src/core/embeddedLanguages/languageModes';
 // import {
 //   createTextDocumentForTesting,
 //   getAureliaProgramForTesting,

@@ -1,11 +1,11 @@
 import { TextDocumentPositionParams } from 'vscode-languageserver';
+import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
+import { getAccessScopeDefinition } from '../../../feature/definition/accessScopeDefinition';
+import { DefinitionResult } from '../../../feature/definition/getDefinition';
+import { getAccessScopeHover } from '../../../feature/hover/accessScopeHover';
+import { VirtualLanguageService } from '../../../feature/virtual/virtualSourceFile';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
-import { AureliaProgram } from '../../../viewModel/AureliaProgram';
-import { getAureliaVirtualCompletions } from '../../completions/virtualCompletion';
-import { getAccessScopeDefinition } from '../../definition/accessScopeDefinition';
-import { DefinitionResult } from '../../definition/getDefinition';
-import { getAccessScopeHover } from '../../hover/accessScopeHover';
-import { VirtualLanguageService } from '../../virtual/virtualSourceFile';
 import {
   ViewRegionInfo,
   ViewRegionType,
@@ -14,13 +14,13 @@ import {
 import { LanguageModelCache } from '../languageModelCache';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 
-export function getAttributeInterpolationMode(
+export function getTextInterpolationMode(
   aureliaProgram: AureliaProgram,
   languageModelCacheDocument: LanguageModelCache<Promise<HTMLDocumentRegions>>
 ): LanguageMode {
   return {
     getId() {
-      return ViewRegionType.AttributeInterpolation;
+      return ViewRegionType.TextInterpolation;
     },
     async doComplete(
       document: TextDocument,
@@ -42,6 +42,7 @@ export function getAttributeInterpolationMode(
 
       return [];
     },
+
     async doDefinition(
       document: TextDocument,
       position: Position,
@@ -50,14 +51,16 @@ export function getAttributeInterpolationMode(
       const regions = (
         await languageModelCacheDocument.get(document)
       ).getRegions();
-      return getAccessScopeDefinition(
+      const definition = getAccessScopeDefinition(
         aureliaProgram,
         document,
         position,
         region,
         regions
       );
+      return definition;
     },
+
     async doHover(
       document: TextDocument,
       position: Position,

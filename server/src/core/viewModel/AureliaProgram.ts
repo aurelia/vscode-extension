@@ -3,11 +3,14 @@ import * as Path from 'path';
 
 import { Project, ts } from 'ts-morph';
 
-import { defaultProjectOptions, IProjectOptions } from '../common/common.types';
-import { AureliaClassTypes } from '../common/constants';
-import { Logger } from '../common/logging/logger';
-import { ViewRegionInfo } from '../feature/embeddedLanguages/embeddedSupport';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
+import { Logger } from '../../common/logging/logger';
+import {
+  IProjectOptions,
+  defaultProjectOptions,
+} from '../../common/common.types';
+import { AureliaClassTypes } from '../../common/constants';
+import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 
 const logger = new Logger('AureliaProgram');
 

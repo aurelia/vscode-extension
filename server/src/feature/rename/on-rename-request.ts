@@ -6,17 +6,14 @@ import {
   TextEdit,
   WorkspaceEdit,
 } from 'vscode-languageserver';
-import { AureliaProjects } from '../../common/aurelia-projects';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import { AureliaProjects } from '../../core/aurelia-projects';
 import {
   getWordAtOffset,
   getWordInfoAtOffset,
 } from '../../common/documens/find-source-word';
 import { UriUtils } from '../../common/view/uri-utils';
-import {
-  LanguageModes,
-  TextDocument,
-} from '../../feature/embeddedLanguages/languageModes';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 
 export async function onRenameRequest(
   position: Position,

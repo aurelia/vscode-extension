@@ -21,14 +21,14 @@ import * as Path from 'path';
 import { kebabCase } from 'lodash';
 import { ts } from 'ts-morph';
 
-import { getElementNameFromClassDeclaration } from '../common/className';
+import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
+import { getElementNameFromClassDeclaration } from '../../common/className';
 import {
+  VALUE_CONVERTER_SUFFIX,
   AureliaClassTypes,
   AureliaDecorator,
   AureliaViewModel,
-  VALUE_CONVERTER_SUFFIX,
-} from '../common/constants';
-import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
+} from '../../common/constants';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,

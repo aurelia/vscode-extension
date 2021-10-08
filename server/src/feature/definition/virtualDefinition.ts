@@ -1,4 +1,4 @@
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
   getVirtualLangagueService,

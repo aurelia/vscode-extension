@@ -9,12 +9,11 @@ import {
   TextDocumentPositionParams,
   WorkspaceEdit,
 } from 'vscode-languageserver';
-import { ExtensionSettings } from '../../configuration/DocumentSettings';
-
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { AureliaCompletionItem } from '../completions/virtualCompletion';
-import { DefinitionResult } from '../definition/getDefinition';
-import { CustomHover } from '../virtual/virtualSourceFile';
+import { AureliaCompletionItem } from '../../feature/completions/virtualCompletion';
+import { ExtensionSettings } from '../../feature/configuration/DocumentSettings';
+import { DefinitionResult } from '../../feature/definition/getDefinition';
+import { CustomHover } from '../../feature/virtual/virtualSourceFile';
+import { AureliaProgram } from '../viewModel/AureliaProgram';
 import {
   HTMLDocumentRegions,
   ViewRegionInfo,

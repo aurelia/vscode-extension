@@ -4,7 +4,7 @@ import { Position, TextDocument } from 'vscode-html-languageservice';
 import { LocationLink, Range } from 'vscode-languageserver';
 
 import { AsyncReturnType } from '../../common/global';
-import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
+import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 
 export async function onDefintion(
   documentContent: string,

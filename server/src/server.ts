@@ -19,21 +19,20 @@ import {
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  getLanguageModes,
-  LanguageModes,
-} from './feature/embeddedLanguages/languageModes';
-
 // We need to import this to include reflect functionality
 import 'reflect-metadata';
 
 import {
   ExtensionSettings,
   settingsName,
-} from './configuration/DocumentSettings';
-import { globalContainer } from './container';
+} from './feature/configuration/DocumentSettings';
+import { globalContainer } from './core/container';
 import { AureliaServer } from './core/aureliaServer';
-import { AureliaProjects } from './common/aurelia-projects';
+import { AureliaProjects } from './core/aurelia-projects';
+import {
+  getLanguageModes,
+  LanguageModes,
+} from './core/embeddedLanguages/languageModes';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.

@@ -1,6 +1,6 @@
 import { Logger } from '../../../../server/src/common/logging/logger';
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
-import { Container } from '../../../../server/src/container';
+import { Container } from '../../../../server/src/core/container';
 import { testError } from '../../../common/errors/TestErrors';
 import {
   FixtureNames,

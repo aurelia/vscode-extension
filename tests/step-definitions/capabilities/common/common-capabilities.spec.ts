@@ -3,7 +3,8 @@ import { Position } from 'vscode-html-languageservice';
 
 import { AsyncReturnType } from '../../../../server/src/common/global';
 import { Logger } from '../../../../server/src/common/logging/logger';
-import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguages/languageModes';
+import { getLanguageModes } from '../../../../server/src/core/embeddedLanguages/languageModes';
+
 import {
   removeCursorFromCode,
   givenImOnTheLineAtCharacter,

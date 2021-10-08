@@ -10,11 +10,8 @@ import { DiagnosticMessages } from '../../common/diagnostic-messages/DiagnosticM
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
-import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../configuration/DocumentSettings';
-import {
-  AureliaProgram,
-  IAureliaComponent,
-} from '../../viewModel/AureliaProgram';
+import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../feature/configuration/DocumentSettings';
+import { IAureliaComponent, AureliaProgram } from '../viewModel/AureliaProgram';
 import { Position, Range } from './languageModes';
 
 const logger = new Logger('embeddedSupport');

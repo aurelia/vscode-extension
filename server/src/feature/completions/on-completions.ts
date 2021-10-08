@@ -10,11 +10,11 @@ import {
 } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { checkInsideTag } from '../../common/view/document-parsing';
+import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 import {
   createAureliaTemplateAttributeKeywordCompletions,
   createAureliaTemplateAttributeCompletions,
-} from '../../feature/completions/createAureliaTemplateAttributeCompletions';
-import { LanguageModes } from '../../feature/embeddedLanguages/languageModes';
+} from './createAureliaTemplateAttributeCompletions';
 
 const logger = new Logger('on-completions');
 

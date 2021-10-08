@@ -2,12 +2,12 @@ import * as fs from 'fs';
 import { pathToFileURL } from 'url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
-  parseDocumentRegions,
-  RepeatForRegionData,
   ViewRegionInfo,
+  parseDocumentRegions,
   ViewRegionType,
-} from '../../feature/embeddedLanguages/embeddedSupport';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+  RepeatForRegionData,
+} from '../embeddedLanguages/embeddedSupport';
+import { AureliaProgram } from '../viewModel/AureliaProgram';
 
 type Uri = string;
 type RegionsLookUp = Record<Uri, ViewRegionInfo[]>;
