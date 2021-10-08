@@ -38,7 +38,8 @@ function init() {
     // features = loadFeatures('**/features/**/!(rename)/*.feature', {
     features = loadFeatures('**/features/**/*.feature', {
       // tagFilter: '@focus',
-      tagFilter: '@cli_generated or @scoped_for_testing',
+      // tagFilter: '@scoped_for_testing',
+      tagFilter: '@cli_generated or @scoped_for_testing or @monorepo',
       // tagFilter: '(@cli_generated or @scoped_for_testing) and @focus',
       // tagFilter: '(@cli_generated and @focus) or (@scoped_for_testing and @focus)',
       // tagFilter: '@cli_generated and  @focus',

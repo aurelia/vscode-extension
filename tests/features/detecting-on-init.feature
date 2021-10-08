@@ -14,7 +14,7 @@ Feature: Detecting an Aurelia project
     And I open VSCode with no active files
     Then the extension should detect the Aurelia project
 
-  #
+  @monorepo
   Scenario: Monorepo project
     Given the project is named "monorepo"
     And I open VSCode with no active files

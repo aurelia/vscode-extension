@@ -701,20 +701,12 @@ export function getRegionAtPosition(
 
       if (customElementSubRegion) {
         return customElementSubRegion;
+      } else if (!isOffsetAtTagName(potentialRegions[0], offset)) {
+        return undefined;
       }
     }
 
     return potentialRegions[0];
-
-    // if (isOffsetAtTagName(potentialRegions[0], offset)) {
-    //   // standard case
-    //   // TODO: returns region, but should just be HTML attribute
-    // } else {
-    //   /**
-    //    * Eg. a normal attribute
-    //    */
-    //   return undefined;
-    // }
   }
 
   const targetRegion = getSmallestRegion(potentialRegions);
