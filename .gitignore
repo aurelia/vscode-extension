@@ -5,4 +5,6 @@ client/server
 
 client/testFixture/src/gitignore
 
+server/src/common/debugging/debugging-data.json
+
 tests/dev-test-helpers/features-cache.json
