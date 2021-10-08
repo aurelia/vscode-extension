@@ -1,10 +1,10 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import {
   parseDocumentRegions,
+  RepeatForRegionData,
   ViewRegionInfo,
   ViewRegionType,
 } from '../../../../server/src/feature/embeddedLanguages/embeddedSupport';
-import { AureliaProgram } from '../../../../server/src/viewModel/AureliaProgram';
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import { getTestDir } from '../../../common/files/get-test-dir';
 import {
@@ -18,12 +18,12 @@ const feature = loadFeature(
 );
 
 defineFeature(feature, (test) => {
-  test.skip('Parsing - Custom Element - Bindable Attribute', ({
+  test('Parsing - Custom Element - Bindable Attribute', ({
     given,
     when,
     then,
   }) => {
-    let parsedRegions: ViewRegionInfo<ViewRegionInfo<any>[]>[] = [];
+    let parsedRegions: ViewRegionInfo[] = [];
     let shared = {
       workspaceRootUri: '',
       parsedRegions,
@@ -59,7 +59,7 @@ defineFeature(feature, (test) => {
   });
 
   test('Parsing - Offsets', ({ given, when, then, and }) => {
-    let parsedRegions: ViewRegionInfo<ViewRegionInfo<any>[]>[] = [];
+    let parsedRegions: ViewRegionInfo[] = [];
     let shared = {
       workspaceRootUri: '',
       parsedRegions,
@@ -74,19 +74,22 @@ defineFeature(feature, (test) => {
     });
 
     then(
-      /^the result should have the correct (\d) and (\d) for the whole region$/,
+      /^the result should have the correct (\d*) and (\d*) for the whole region$/,
       (startOffset: string, endOffset: string) => {
         const target = getTargetRegion(shared.line);
-        target; /*?*/
-        expect(target?.startOffset).toBe(Number(startOffset));
-        expect(target?.endOffset).toBe(Number(endOffset));
-      }
-    );
 
-    and(
-      /^the result should have the correct (.*) and (.*) for the region value$/,
-      (regionValueStartOffset: string, regionValueEndOffse: string) => {
-        expect(true).toBeFalsy();
+        if (target?.type === ViewRegionType.RepeatFor) {
+          const repeatForRegion = target as ViewRegionInfo<RepeatForRegionData>;
+          expect(repeatForRegion.data?.iterableStartOffset).toBe(
+            Number(startOffset)
+          );
+          expect(repeatForRegion.data?.iterableEndOffset).toBe(
+            Number(endOffset)
+          );
+        } else {
+          expect(target?.startOffset).toBe(Number(startOffset));
+          expect(target?.endOffset).toBe(Number(endOffset));
+        }
       }
     );
 

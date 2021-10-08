@@ -69,6 +69,8 @@ export interface ViewRegionInfo<RegionDataType = any> {
 export interface RepeatForRegionData {
   /** repeat.for="num of >numbers<" */
   iterableName: string;
+  iterableStartOffset: number;
+  iterableEndOffset: number;
   /** repeat.for=">num< of numbers" */
   iterator: string;
 }
@@ -190,7 +192,7 @@ export function parseDocumentRegions<RegionDataType = any>(
             2; // ="
 
           /** Eg. click.delegate="increaseCounter()>"< */
-          const lastCharIndex = attrLocation.endOffset - 1;
+          const lastCharIndex = attrLocation.endOffset;
 
           const updatedLocation: parse5.Location = {
             ...attrLocation,
@@ -227,7 +229,7 @@ export function parseDocumentRegions<RegionDataType = any>(
             2; // ="
 
           /** Eg. click.delegate="increaseCounter()>"< */
-          const endInterpolationLength = attrLocation.endOffset - 1;
+          const endInterpolationLength = attrLocation.endOffset;
 
           // __<label repeat.for="rule of grammarRules">
           const startColAdjust =
@@ -236,18 +238,28 @@ export function parseDocumentRegions<RegionDataType = any>(
             2 - // ="
             1; // index starts from 0
 
+          const startOffset =
+            attrLocation.startOffset + startInterpolationLength;
           const updatedLocation: parse5.Location = {
             ...attrLocation,
-            startOffset: attrLocation.startOffset + startInterpolationLength,
+            startOffset: startOffset,
             startCol: startColAdjust,
             endOffset: endInterpolationLength,
           };
           // eslint-disable-next-line no-inner-declarations
           function getRepeatForData() {
-            const splitUpRepeatFor = attr.value.split(' ');
+            const [iterator, ofKeyword, iterable] = attr.value.split(' ');
+            const iterableStartOffset =
+              startOffset +
+              iterator.length + // iterator
+              1 + // space
+              ofKeyword.length + // of
+              1; // space
             const repeatForData: RepeatForRegionData = {
-              iterator: splitUpRepeatFor[0],
-              iterableName: splitUpRepeatFor[2],
+              iterator,
+              iterableName: iterable,
+              iterableStartOffset,
+              iterableEndOffset: iterableStartOffset + iterable.length + 1,
             };
             return repeatForData;
           }
@@ -280,7 +292,8 @@ export function parseDocumentRegions<RegionDataType = any>(
               const endInterpolationLength =
                 attrLocation.startOffset +
                 startInterpolationLength +
-                Number(interpolationValue.length); // message
+                Number(interpolationValue.length) + // message
+                1; // "embrace" end char
 
               const updatedLocation: parse5.Location = {
                 ...attrLocation,

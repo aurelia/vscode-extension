@@ -8,7 +8,11 @@ import {
 } from 'vscode-languageserver';
 
 import { AureliaProgram } from '../../../viewModel/AureliaProgram';
-import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
+import {
+  RepeatForRegionData,
+  ViewRegionInfo,
+  ViewRegionType,
+} from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import {
   findAllBindableRegions,
@@ -55,7 +59,6 @@ export function getBindableAttributeMode(
 
       // 2. rename all others
       const otherComponentChanges = await getAllOtherChangesForComponentsWithBindable(
-        aureliaProgram,
         sourceWord,
         newName
       );
@@ -101,7 +104,6 @@ export function getBindableAttributeMode(
   };
 
   async function getAllOtherChangesForComponentsWithBindable(
-    aureliaProgram: AureliaProgram,
     bindableName: string,
     newName: string
   ) {
@@ -175,7 +177,7 @@ export function getBindableAttributeMode(
     const { uri } = document;
     result[uri] = [];
     regions.forEach((region) => {
-      const range = getRangeFromRegion(region);
+      const range = getRangeFromRegion(region, document);
       if (!range) return;
 
       result[uri].push(TextEdit.replace(range, newName));
@@ -186,7 +188,21 @@ export function getBindableAttributeMode(
   }
 }
 
-function getRangeFromRegion(region: ViewRegionInfo): Range | undefined {
+function getRangeFromRegion(
+  region: ViewRegionInfo,
+  document?: TextDocument
+): Range | undefined {
+  let range;
+  if (document) {
+    range = getRangeFromRegionViaDocument(region, document);
+  } else {
+    range = getRangeFromStandardRegion(region, range);
+  }
+
+  return range;
+}
+
+function getRangeFromStandardRegion(region: ViewRegionInfo<any>, range: any) {
   if (!region.startCol) return;
   if (!region.startLine) return;
   if (!region.endCol) return;
@@ -197,6 +213,46 @@ function getRangeFromRegion(region: ViewRegionInfo): Range | undefined {
     region.startCol - 1
   );
   const endPosition = Position.create(region.endLine - 1, region.endCol - 1);
+  range = Range.create(startPosition, endPosition);
+
+  return range;
+}
+
+function getRangeFromRegionViaDocument(
+  region: ViewRegionInfo,
+  document: TextDocument
+) {
+  if (!region.startOffset) return;
+  if (!region.endOffset) return;
+
+  let startPosition;
+  let endPosition;
+  let range;
+
+  if (region.type === ViewRegionType.RepeatFor) {
+    range = getRangeFromRepeatForRegion(region, document);
+  } else {
+    startPosition = document.positionAt(region.startOffset);
+    endPosition = document.positionAt(region.endOffset - 1);
+    range = Range.create(startPosition, endPosition);
+  }
+
+  return range;
+}
+
+function getRangeFromRepeatForRegion(
+  region: ViewRegionInfo<any>,
+  document: TextDocument
+): any {
+  const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
+  if (!repeatForRegion.data) return;
+
+  const startPosition = document.positionAt(
+    repeatForRegion.data.iterableStartOffset
+  );
+  const endPosition = document.positionAt(
+    repeatForRegion.data.iterableEndOffset - 1
+  );
   const range = Range.create(startPosition, endPosition);
 
   return range;
