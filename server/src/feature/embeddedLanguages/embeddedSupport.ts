@@ -670,12 +670,12 @@ export function getRegionAtPosition(
   position: Position
 ): ViewRegionInfo | undefined {
   // document; /*?*/
-  document.getText(); /*?*/
+  // document.getText(); /*?*/
   // position; /*?*/
   const offset = document.offsetAt(position);
-  offset; /*?*/
+  // offset; /*?*/
 
-  regions; /*?*/
+  // regions; /*?*/
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {
@@ -694,25 +694,34 @@ export function getRegionAtPosition(
   if (potentialRegions.length === 1) {
     // custom element sub regions
     if (potentialRegions[0].type === ViewRegionType.CustomElement) {
-      const customElementRegion = getSmallestCustomElementRegion(
+      const customElementSubRegion = getSmallestCustomElementSubRegion(
         potentialRegions[0].data,
         offset
       );
 
-      if (customElementRegion) {
-        return customElementRegion;
+      if (customElementSubRegion) {
+        return customElementSubRegion;
       }
     }
 
-    // standard case
     return potentialRegions[0];
+
+    // if (isOffsetAtTagName(potentialRegions[0], offset)) {
+    //   // standard case
+    //   // TODO: returns region, but should just be HTML attribute
+    // } else {
+    //   /**
+    //    * Eg. a normal attribute
+    //    */
+    //   return undefined;
+    // }
   }
 
   const targetRegion = getSmallestRegion(potentialRegions);
   return targetRegion;
 }
 
-function getSmallestCustomElementRegion(
+function getSmallestCustomElementSubRegion(
   regions: ViewRegionInfo[],
   offset: number
 ): ViewRegionInfo | undefined {
@@ -867,6 +876,27 @@ function createBindableAttributeRegion(
     tagName,
   });
   return viewRegion;
+}
+
+/**
+ * Assumption: <tag-name
+ *             ^
+ *             | startOffset
+ */
+function isOffsetAtTagName(
+  region: ViewRegionInfo<any>,
+  offset: number
+): boolean {
+  if (!region.startOffset) return false;
+  if (!region.tagName) return false;
+
+  const tagNameOffsetEnd = region.startOffset + region.tagName.length + 1; // +1: include last character
+
+  const isAtTagName =
+    region.startOffset <= offset && offset <= tagNameOffsetEnd;
+
+  isAtTagName; /*?*/
+  return isAtTagName;
 }
 
 // function getAttributeLanguage(attributeName: string): string | null {

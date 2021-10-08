@@ -32,7 +32,6 @@ export async function onDefintion(
 
   if (!mode) return;
   if (!region) return;
-  region.type; /* ? */
 
   const doDefinition = mode.doDefinition;
 

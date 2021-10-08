@@ -103,9 +103,10 @@ export class AureliaProjects {
         const program = tsMorphProject.getProgram();
         // [PERF]: 1.87967675s
         compilerObject = program.compilerObject;
-        aureliaProgram.setBuilderProgram(compilerObject);
         aureliaProgram.setTsMorphProject(tsMorphProject);
       }
+
+      aureliaProgram.setBuilderProgram(compilerObject);
 
       // [PERF]: 0.67967675s
       aureliaProgram.updateAureliaComponents(projectOptions);

@@ -36,7 +36,7 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
   then('the extension should detect the Aurelia project', () => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
     const auProjects = AureliaProjects.getProjects();
-    strictEqual(auProjects.length, 1);
+    expect(auProjects.length).toBeGreaterThan(0);
     // [PERF][TODO]: For perf, this should be active
     // strictEqual(auProjects[0].aureliaProgram, null);
   });

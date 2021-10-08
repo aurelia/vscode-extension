@@ -4,7 +4,6 @@ import { getLanguageModes } from '../../../../server/src/feature/embeddedLanguag
 import { myMockServer } from './project.step';
 
 export let languageModes: AsyncReturnType<typeof getLanguageModes>;
-export let position: Position;
 export let codeForCharacter;
 export let code = '';
 

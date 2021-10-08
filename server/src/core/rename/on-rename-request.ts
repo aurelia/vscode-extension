@@ -65,12 +65,15 @@ function normalRename(
   const range = Range.create(startPosition, endPosition);
 
   return {
-    documentChanges: [
-      TextDocumentEdit.create(
-        { version: document.version + 1, uri: document.uri },
-        [TextEdit.replace(range, newName)]
-      ),
-    ],
+    changes: {
+      [document.uri]: [TextEdit.replace(range, newName)],
+    },
+    // documentChanges: [
+    //   TextDocumentEdit.create(
+    //     { version: document.version + 1, uri: document.uri },
+    //     [TextEdit.replace(range, newName)]
+    //   ),
+    // ],
   };
 }
 

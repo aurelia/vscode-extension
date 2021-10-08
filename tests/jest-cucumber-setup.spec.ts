@@ -18,6 +18,7 @@ import {
   commonExtensionSteps,
 } from './step-definitions/initialization/on-initialized/detecting-on-init.spec';
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
+import { renameSteps } from './step-definitions/capabilities/rename/rename.spec';
 import { minimalSteps } from './minimal-jest/minimal.spec';
 
 //
@@ -34,10 +35,12 @@ function init() {
   let features = readFeatureCache();
   if (!features) {
     /* refactoring steps: rename */
-    features = loadFeatures('**/features/**/!(rename)/*.feature', {
-      // features = loadFeatures('**/features/**/*.feature', {
+    // features = loadFeatures('**/features/**/!(rename)/*.feature', {
+    features = loadFeatures('**/features/**/*.feature', {
       // tagFilter: '@focus',
-      tagFilter: '@cli_generated',
+      tagFilter: '@cli_generated or @scoped_for_testing',
+      // tagFilter: '(@cli_generated or @scoped_for_testing) and @focus',
+      // tagFilter: '(@cli_generated and @focus) or (@scoped_for_testing and @focus)',
       // tagFilter: '@cli_generated and  @focus',
       // scenarioNameTemplate: (vars) => {
       // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
@@ -60,6 +63,7 @@ function init() {
     completionSteps,
     completionValueConverterSteps,
     hoverSteps,
+    renameSteps,
   ]);
 }
 
