@@ -17,9 +17,9 @@
     "esModuleInterop": true
   },
   "include": [
-    "./common",
-    "./step-definitions",
-    "./unit"
+    "common",
+    "step-definitions",
+    "unit"
   ],
   "exclude": [
     "node_modules"
