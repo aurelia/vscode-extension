@@ -278,7 +278,7 @@ connection.onRequest('aurelia-get-component-list', () => {
   const { aureliaProgram } = aureliaProjects.get()[0];
   if (!aureliaProgram) return;
 
-  return aureliaProgram.getComponentList().map((cList) => {
+  return aureliaProgram.aureliaComponents.get().map((cList) => {
     const {
       componentName,
       className,

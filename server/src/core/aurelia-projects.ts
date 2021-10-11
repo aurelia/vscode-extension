@@ -162,7 +162,7 @@ export class AureliaProjects {
         aureliaProgram.setTsMorphProject(tsMorphProject);
       }
 
-      aureliaProgram.setBuilderProgram(compilerObject);
+      aureliaProgram.setProgram(compilerObject);
 
       // [PERF]: 0.67967675s
       aureliaProgram.initAureliaComponents(projectOptions);

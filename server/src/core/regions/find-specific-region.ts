@@ -19,7 +19,7 @@ export async function findAllBindableRegions(
   const regionsLookUp: RegionsLookUp = {};
 
   // 1. Find Custom Elements with target Bindable
-  const componentList = aureliaProgram.getComponentList();
+  const componentList = aureliaProgram.aureliaComponents.get();
   await Promise.all(
     componentList.map(async (component) => {
       const path = component.viewFilePath!;
@@ -66,7 +66,7 @@ export async function findRegionsWithValue(
   document: TextDocument,
   sourceWord: string
 ): Promise<ViewRegionInfo[]> {
-  const componentList = aureliaProgram.getComponentList();
+  const componentList = aureliaProgram.aureliaComponents.get();
   const regions = await parseDocumentRegions(document, componentList);
 
   const targetRegions = regions.filter((region) => {

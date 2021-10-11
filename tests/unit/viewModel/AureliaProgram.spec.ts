@@ -17,7 +17,7 @@
 //   it('#initComponentList', () => {
 //     testAureliaProgram.initComponentList();
 
-//     const componentList = testAureliaProgram.getComponentList(); /*?*/
+//     const componentList = testaureliaProgram.aureliaComponents.get();  /*?*/
 
 //     strictEqual(componentList.length, 2);
 

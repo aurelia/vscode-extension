@@ -107,7 +107,7 @@ export function parseDocumentRegions<RegionDataType = any>(
     return Promise.resolve([]);
   }
 
-  // const componentList = aureliaProgram.getComponentList();
+  // const componentList = aureliaProgram.aureliaComponents.get();
   if (componentList === undefined) {
     return Promise.resolve([]);
   }
@@ -459,7 +459,7 @@ export async function getDocumentRegions(
 ): Promise<HTMLDocumentRegions> {
   let regions: AsyncReturnType<typeof parseDocumentRegions> = [];
   try {
-    const componentList = aureliaProgram.getComponentList();
+    const componentList = aureliaProgram.aureliaComponents.get();
     regions = await parseDocumentRegions(document, componentList);
   } catch (error) {
     console.log('TCL: error', error);

@@ -346,7 +346,7 @@ export function createVirtualFileWithContent(
   content: string
 ): VirtualSourceFileInfo | undefined {
   // 1. Get original viewmodel file associated with view
-  const componentList = aureliaProgram.getComponentList();
+  const componentList = aureliaProgram.aureliaComponents.get();
 
   const targetComponent = componentList.find((component) => {
     if (component.viewFilePath === undefined) return false;

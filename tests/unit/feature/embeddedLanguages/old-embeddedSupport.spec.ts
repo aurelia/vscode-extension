@@ -38,7 +38,7 @@
 //   });
 
 //   it('parsedocumentregions', async () => {
-//     const aureliacomponentlist = testaureliaprogram.getcomponentlist();
+//     const aureliacomponentlist = testaureliaProgram.aureliaComponents.get();
 //     const settingscomponent = aureliacomponentlist.find(
 //       (component) => component.componentname === 'settings-view'
 //     );
@@ -74,7 +74,7 @@
 
 //   it('parsedocumentregions - set viewregions to componentlist', async () => {
 //     testaureliaprogram.initcomponentlist();
-//     const aureliacomponentlist = testaureliaprogram.getcomponentlist();
+//     const aureliacomponentlist = testaureliaProgram.aureliaComponents.get();
 //     const settingscomponent = aureliacomponentlist.find(
 //       (component) => component.componentname === 'settings-view'
 //     );

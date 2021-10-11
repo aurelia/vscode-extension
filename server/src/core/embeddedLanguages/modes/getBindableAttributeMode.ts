@@ -62,7 +62,7 @@ export function getBindableAttributeMode(
 
       // 3. rename all regions in view of target custom element
       // 3.1 Get document of corresponding view
-      const componentList = aureliaProgram.getComponentList();
+      const componentList = aureliaProgram.aureliaComponents.get();
       const targetComponent = componentList.find(
         (component) => component.viewModelFilePath === viewModelPath
       );
@@ -130,7 +130,7 @@ export function getBindableAttributeMode(
     sourceWord: string,
     newName: string
   ) {
-    const components = aureliaProgram.getComponentList();
+    const components = aureliaProgram.aureliaComponents.get();
     const targetComponent = components.find(
       (component) => component.viewModelFilePath === viewModelPath
     );

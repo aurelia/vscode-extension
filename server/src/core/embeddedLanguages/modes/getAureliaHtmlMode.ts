@@ -20,8 +20,8 @@ export function getAureliaHtmlMode(
       region?: ViewRegionInfo
     ) {
       if (triggerCharacter === '<') {
-        const aureliaComponents = aureliaProgram
-          .getComponentList()
+        const aureliaComponents = aureliaProgram.aureliaComponents
+          .get()
           .filter(
             (component) => component.type === AureliaClassTypes.CUSTOM_ELEMENT
           );
