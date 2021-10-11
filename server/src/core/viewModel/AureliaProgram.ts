@@ -64,11 +64,12 @@ export interface IAureliaBindable {
  * (aka. program in typescript terminology)
  */
 export class AureliaProgram {
-  public builderProgram: ts.Program;
-  public aureliaSourceFiles?: ts.SourceFile[] | undefined;
-  public projectFilePaths: string[] = [];
   public aureliaComponents: AureliaComponents;
-  tsMorphProject: Project;
+
+  private builderProgram: ts.Program;
+  private aureliaSourceFiles?: ts.SourceFile[] | undefined;
+  private filePaths: string[] = [];
+  private tsMorphProject: Project;
 
   constructor() {
     this.aureliaComponents = new AureliaComponents();
@@ -76,45 +77,10 @@ export class AureliaProgram {
 
   public initAureliaComponents(projectOptions: IProjectOptions): void {
     const program = this.getProgram();
-    this.determineProjectFilePaths(projectOptions);
-    const filePaths = this.getProjectFilePaths();
+    this.determineFilePaths(projectOptions);
+    const filePaths = this.getFilePaths();
 
     this.aureliaComponents.init(program, filePaths);
-  }
-
-  public getProjectFilePaths(): string[] {
-    return this.projectFilePaths;
-  }
-
-  public determineProjectFilePaths(projectOptions: IProjectOptions): void {
-    if (projectOptions.rootDirectory) {
-      this.projectFilePaths = this.getCustomProjectsFilePaths(projectOptions);
-      return;
-    }
-
-    const sourceFiles = this.getAureliaSourceFiles();
-    if (!sourceFiles) return;
-    const filePaths = sourceFiles.map((file) => file.fileName);
-    if (!filePaths) return;
-    this.projectFilePaths = filePaths;
-  }
-
-  public getCustomProjectsFilePaths(
-    options: IProjectOptions = defaultProjectOptions
-  ): string[] {
-    const { rootDirectory, exclude, include } = options;
-    const targetSourceDirectory = rootDirectory || ts.sys.getCurrentDirectory();
-    const finalExcludes = getFinalExcludes(exclude);
-    const finalIncludes = getFinalIncludes(include);
-    const paths = ts.sys.readDirectory(
-      targetSourceDirectory,
-      ['ts'],
-      // ['ts', 'js', 'html'],
-      finalExcludes,
-      finalIncludes
-    );
-
-    return paths;
   }
 
   /**
@@ -140,20 +106,9 @@ export class AureliaProgram {
   public getTsMorphProject() {
     return this.tsMorphProject;
   }
+
   public setTsMorphProject(tsMorphProject: Project) {
     this.tsMorphProject = tsMorphProject;
-  }
-
-  /**
-   * Only update aurelia source files with relevant source files
-   */
-  public initAureliaSourceFiles(builderProgram: ts.Program): void {
-    // [PERF]: ~0.6s
-    const sourceFiles = builderProgram.getSourceFiles();
-    this.aureliaSourceFiles = sourceFiles?.filter((sourceFile) => {
-      const isNodeModules = sourceFile.fileName.includes('node_modules');
-      return !isNodeModules;
-    });
   }
 
   /**
@@ -165,6 +120,53 @@ export class AureliaProgram {
     this.initAureliaSourceFiles(this.builderProgram);
     return this.aureliaSourceFiles;
   }
+
+  /**
+   * Only update aurelia source files with relevant source files
+   */
+  private initAureliaSourceFiles(builderProgram: ts.Program): void {
+    // [PERF]: ~0.6s
+    const sourceFiles = builderProgram.getSourceFiles();
+    this.aureliaSourceFiles = sourceFiles?.filter((sourceFile) => {
+      const isNodeModules = sourceFile.fileName.includes('node_modules');
+      return !isNodeModules;
+    });
+  }
+
+  private getFilePaths(): string[] {
+    return this.filePaths;
+  }
+
+  private determineFilePaths(projectOptions: IProjectOptions): void {
+    if (projectOptions.rootDirectory) {
+      this.filePaths = getUserConfiguredFilePaths(projectOptions);
+      return;
+    }
+
+    const sourceFiles = this.getAureliaSourceFiles();
+    if (!sourceFiles) return;
+    const filePaths = sourceFiles.map((file) => file.fileName);
+    if (!filePaths) return;
+    this.filePaths = filePaths;
+  }
+}
+
+function getUserConfiguredFilePaths(
+  options: IProjectOptions = defaultProjectOptions
+): string[] {
+  const { rootDirectory, exclude, include } = options;
+  const targetSourceDirectory = rootDirectory || ts.sys.getCurrentDirectory();
+  const finalExcludes = getFinalExcludes(exclude);
+  const finalIncludes = getFinalIncludes(include);
+  const paths = ts.sys.readDirectory(
+    targetSourceDirectory,
+    ['ts'],
+    // ['ts', 'js', 'html'],
+    finalExcludes,
+    finalIncludes
+  );
+
+  return paths;
 }
 
 function getFinalIncludes(include: string[] | undefined) {

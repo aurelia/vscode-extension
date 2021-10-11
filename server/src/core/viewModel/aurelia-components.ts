@@ -11,18 +11,6 @@ export class AureliaComponents {
   private components: IAureliaComponent[] = [];
   private bindables: IAureliaBindable[] = [];
 
-  public set(components: IAureliaComponent[]): void {
-    this.components = components;
-  }
-
-  public get(): IAureliaComponent[] {
-    if (this.components.length === 0) {
-      logger.log('Error: No Aurelia components found.');
-    }
-
-    return this.components;
-  }
-
   public init(program: ts.Program, filePaths: string[]): void {
     if (filePaths.length === 0) {
       logger.log('Error: No Aurelia files found.');
@@ -73,6 +61,18 @@ export class AureliaComponents {
     this.setBindables(componentList);
 
     this.logInfoAboutComponents(componentList);
+  }
+
+  public set(components: IAureliaComponent[]): void {
+    this.components = components;
+  }
+
+  public get(): IAureliaComponent[] {
+    if (this.components.length === 0) {
+      logger.log('Error: No Aurelia components found.');
+    }
+
+    return this.components;
   }
 
   public setBindables(components: IAureliaComponent[]): void {
