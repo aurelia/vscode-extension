@@ -80,7 +80,7 @@ function typescriptRename(
   document: TextDocument
 ): WorkspaceEdit | PromiseLike<WorkspaceEdit | undefined> | undefined {
   const aureliaProjects = container.get(AureliaProjects);
-  const tsMorphProject = aureliaProjects.getFirstAureliaProject().aureliaProgram
+  const tsMorphProject = aureliaProjects.getFirst().aureliaProgram
     ?.tsMorphProject;
 
   if (!tsMorphProject) return;

@@ -26,16 +26,13 @@ export interface IAureliaProject {
 
 export class AureliaProjects {
   private readonly aureliaProjects: IAureliaProject[] = [];
-  // aureliaProjectMap: Map<string, any> = new Map();
 
   public constructor(
     public readonly aureliaTsMorph: AureliaTsMorph,
     public readonly documentSettings: DocumentSettings
   ) {}
 
-  public async gatherProjectInfo() {}
-
-  public async setAureliaProjects(packageJsonPaths: string[]) {
+  public async set(packageJsonPaths: string[]) {
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
@@ -64,18 +61,18 @@ export class AureliaProjects {
     });
   }
 
-  public getProjects(): AureliaProjects['aureliaProjects'] {
+  public get(): AureliaProjects['aureliaProjects'] {
     return this.aureliaProjects;
   }
 
-  public getFirstAureliaProject(): IAureliaProject {
+  public getFirst(): IAureliaProject {
     return this.aureliaProjects[0];
   }
 
-  public async setAndVerifyProjectFiles(extensionSettings: ExtensionSettings) {
+  public async setAndVerify(extensionSettings: ExtensionSettings) {
     const packageJsonPaths = getPackageJsonPaths(extensionSettings);
-    await this.setAureliaProjects(packageJsonPaths);
-    const projects = this.getProjects();
+    await this.set(packageJsonPaths);
+    const projects = this.get();
     const hasAureliaProject = projects.length > 0;
 
     if (!hasAureliaProject) {
@@ -88,11 +85,11 @@ export class AureliaProjects {
   /**
    * [PERF]: 2.5s
    */
-  public async hydrateAureliaProjects(documentsPaths: string[]) {
+  public async hydrate(documentsPaths: string[]) {
     /** TODO: Makes esnse? */
     if (documentsPaths.length === 0) return;
 
-    const aureliaProjects = this.getProjects();
+    const aureliaProjects = this.get();
     const settings = this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
 
@@ -137,16 +134,14 @@ export class AureliaProjects {
     });
   }
 
-  public async hydrateProjectWithActiveDocuments(
-    activeDocuments: TextDocument[]
-  ) {
+  public async hydrateWithActiveDocuments(activeDocuments: TextDocument[]) {
     /* prettier-ignore */ logger.culogger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO', });
 
     const activeDocumentPaths = activeDocuments.map((activeDocument) => {
       const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
       return documentPath;
     });
-    await this.hydrateAureliaProjects(activeDocumentPaths);
+    await this.hydrate(activeDocumentPaths);
     /* prettier-ignore */ logger.culogger.debug(['Parsing done. Aurelia Extension is ready.'], { logLevel: 'INFO', });
   }
 

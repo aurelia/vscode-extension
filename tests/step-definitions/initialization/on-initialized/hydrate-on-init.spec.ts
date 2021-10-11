@@ -37,20 +37,20 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
   then('the extension should hydrate the Aurelia project', () => {
     /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project');
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
+    const { aureliaProgram } = AureliaProjects.getFirst();
     expect(aureliaProgram).toBeTruthy();
   });
 
   then('the extension should rehydrate', () => {
     /* prettier-ignore */ logger.log('the extension should rehydrate');
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    expect(AureliaProjects.hydrateAureliaProjects).toBeCalled();
+    expect(AureliaProjects.hydrate).toBeCalled();
   });
 
   then(/^the extension should not rehydrate$/, () => {
     /* prettier-ignore */ logger.log('/^the extension should not rehydrate$/');
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    expect(AureliaProjects.hydrateAureliaProjects).not.toBeCalled();
+    expect(AureliaProjects.hydrate).not.toBeCalled();
   });
 };
 

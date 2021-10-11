@@ -21,7 +21,7 @@ export async function givenImOnTheLineAtCharacter(
     AureliaProjects,
     DocumentSettings,
   } = myMockServer.getContainerDirectly();
-  const { aureliaProgram } = AureliaProjects.getFirstAureliaProject();
+  const { aureliaProgram } = AureliaProjects.getFirst();
   if (aureliaProgram) {
     languageModes = await getLanguageModes(
       aureliaProgram,
