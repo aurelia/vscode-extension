@@ -1,16 +1,19 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { inject } from 'aurelia-dependency-injection';
-import { bgBlack } from 'colorette';
+import * as fastGlob from 'fast-glob';
 import { ts } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DocumentSettings } from '../feature/configuration/DocumentSettings';
+import {
+  DocumentSettings,
+  ExtensionSettings,
+} from '../feature/configuration/DocumentSettings';
 import { AureliaTsMorph } from './ts-morph/aurelia-ts-morph';
 import { IProjectOptions, defaultProjectOptions } from '../common/common.types';
 import { Logger } from '../common/logging/logger';
 import { AureliaProgram } from './viewModel/AureliaProgram';
+import { fileURLToPath } from 'url';
 
 const logger = new Logger('AureliaProjectFiles');
 
@@ -69,6 +72,19 @@ export class AureliaProjects {
     return this.aureliaProjects[0];
   }
 
+  public async setAndVerifyProjectFiles(extensionSettings: ExtensionSettings) {
+    const packageJsonPaths = getPackageJsonPaths(extensionSettings);
+    await this.setAureliaProjects(packageJsonPaths);
+    const projects = this.getProjects();
+    const hasAureliaProject = projects.length > 0;
+
+    if (!hasAureliaProject) {
+      logHasNoAureliaProject();
+      return;
+    }
+    logFoundAureliaProjects(projects);
+  }
+
   /**
    * [PERF]: 2.5s
    */
@@ -119,6 +135,19 @@ export class AureliaProjects {
 
       targetAureliaProject.aureliaProgram = aureliaProgram;
     });
+  }
+
+  public async hydrateProjectWithActiveDocuments(
+    activeDocuments: TextDocument[]
+  ) {
+    /* prettier-ignore */ logger.culogger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO', });
+
+    const activeDocumentPaths = activeDocuments.map((activeDocument) => {
+      const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
+      return documentPath;
+    });
+    await this.hydrateAureliaProjects(activeDocumentPaths);
+    /* prettier-ignore */ logger.culogger.debug(['Parsing done. Aurelia Extension is ready.'], { logLevel: 'INFO', });
   }
 
   /**
@@ -237,4 +266,28 @@ function getProjectFilePaths(
   );
 
   return paths;
+}
+
+function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
+  const workspaceRootUri =
+    extensionSettings.aureliaProject?.rootDirectory ?? '';
+  const cwd = fileURLToPath(path.normalize(workspaceRootUri));
+  const packageJsonPaths = fastGlob.sync('**/package.json', {
+    absolute: true,
+    ignore: ['node_modules'],
+    cwd,
+  });
+  return packageJsonPaths;
+}
+
+function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
+  /* prettier-ignore */ logger.culogger.debug([`Found ${aureliaProjects.length} Aurelia projects in: `], { logLevel: 'INFO', });
+  aureliaProjects.forEach(({ tsConfigPath }) => {
+    /* prettier-ignore */ logger.culogger.debug([tsConfigPath], { logLevel: 'INFO', });
+  });
+}
+
+function logHasNoAureliaProject() {
+  /* prettier-ignore */ logger.culogger.debug(['No active Aurelia project found.'], { logLevel: 'INFO', });
+  /* prettier-ignore */ logger.culogger.debug([ 'Extension will activate, as soon as a file inside an Aurelia project is opened.', ], { logLevel: 'INFO' });
 }
