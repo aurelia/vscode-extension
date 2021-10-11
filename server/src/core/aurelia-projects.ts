@@ -14,6 +14,7 @@ import { IProjectOptions, defaultProjectOptions } from '../common/common.types';
 import { Logger } from '../common/logging/logger';
 import { AureliaProgram } from './viewModel/AureliaProgram';
 import { fileURLToPath } from 'url';
+import { TextDocumentChangeEvent } from 'vscode-languageserver';
 
 const logger = new Logger('AureliaProjectFiles');
 
@@ -61,7 +62,7 @@ export class AureliaProjects {
     });
   }
 
-  public get(): AureliaProjects['aureliaProjects'] {
+  public get(): IAureliaProject[] {
     return this.aureliaProjects;
   }
 
@@ -143,6 +144,29 @@ export class AureliaProjects {
     });
     await this.hydrate(activeDocumentPaths);
     /* prettier-ignore */ logger.culogger.debug(['Parsing done. Aurelia Extension is ready.'], { logLevel: 'INFO', });
+  }
+
+  /**
+   * Prevent when
+   * 1. Project already includes document
+   * 2. Document was just opened
+   */
+  preventHydration(change: TextDocumentChangeEvent<TextDocument>): boolean {
+    // 1.
+    if (!this.isDocumentIncluded(change.document)) {
+      return false;
+    }
+
+    // 2.
+    if (hasDocumentChanged(change.document)) {
+      return false;
+    }
+
+    logger.culogger.todo(
+      `What should happen to document, that is not included?: ${change.document.uri}`
+    );
+
+    return true;
   }
 
   /**
@@ -285,4 +309,11 @@ function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
 function logHasNoAureliaProject() {
   /* prettier-ignore */ logger.culogger.debug(['No active Aurelia project found.'], { logLevel: 'INFO', });
   /* prettier-ignore */ logger.culogger.debug([ 'Extension will activate, as soon as a file inside an Aurelia project is opened.', ], { logLevel: 'INFO' });
+}
+
+/**
+ * Document changes -> version > 1.
+ */
+function hasDocumentChanged({ version }: TextDocument): boolean {
+  return version > 1;
 }

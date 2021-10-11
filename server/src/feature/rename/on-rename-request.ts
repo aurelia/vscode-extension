@@ -2,17 +2,11 @@ import { Container } from 'aurelia-dependency-injection';
 import {
   Position,
   Range,
-  TextDocumentEdit,
   TextEdit,
   WorkspaceEdit,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { AureliaProjects } from '../../core/aurelia-projects';
-import {
-  getWordAtOffset,
-  getWordInfoAtOffset,
-} from '../../common/documens/find-source-word';
-import { UriUtils } from '../../common/view/uri-utils';
+import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 
 export async function onRenameRequest(
@@ -72,25 +66,4 @@ function normalRename(
     //   ),
     // ],
   };
-}
-
-function typescriptRename(
-  container: Container,
-  position: Position,
-  document: TextDocument
-): WorkspaceEdit | PromiseLike<WorkspaceEdit | undefined> | undefined {
-  const aureliaProjects = container.get(AureliaProjects);
-  const tsMorphProject = aureliaProjects.getFirst().aureliaProgram
-    ?.tsMorphProject;
-
-  if (!tsMorphProject) return;
-  tsMorphProject;
-
-  const offset = document.offsetAt(position);
-  const sourceWord = getWordAtOffset(document.getText(), offset);
-  const sourceFile = tsMorphProject.getSourceFile(
-    UriUtils.toPath(document.uri)
-  );
-  const text = sourceFile?.getText();
-  sourceFile?.getVariableDeclaration(sourceWord)?.rename('hihih');
 }
