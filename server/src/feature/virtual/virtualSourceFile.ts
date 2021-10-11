@@ -65,10 +65,11 @@ export async function createVirtualLanguageService(
   let virtualContent: string = '';
   if (options.region) {
     const region = options.region;
+    if (!region.endOffset) return;
 
     virtualContent = document
       .getText()
-      .slice(region.startOffset, region.endOffset);
+      .slice(region.startOffset, region.endOffset - 1);
   } else if (options.virtualContent !== undefined) {
     virtualContent = options.virtualContent;
   }
@@ -149,6 +150,8 @@ function getQuickInfoAtPosition(
    * Workaround: The normal ls.getQuickInfoAtPosition returns for objects and arrays just
    * `{}`, that's why we go through `getDefinitionAtPosition`.
    */
+  virtualSourcefile.getText(); /*?*/
+  virtualCursorIndex; /*?*/
   const defintion = languageService.getDefinitionAtPosition(
     virtualSourcefile.fileName,
     virtualCursorIndex

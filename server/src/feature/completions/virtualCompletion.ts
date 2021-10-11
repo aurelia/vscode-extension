@@ -179,10 +179,11 @@ async function getVirtualViewModelCompletion(
   const documentUri = textDocumentPosition.textDocument.uri;
 
   if (!region) return [];
+  if (!region.endOffset) return [];
 
   const virtualContent = document
     .getText()
-    .slice(region.startOffset, region.endOffset);
+    .slice(region.startOffset, region.endOffset - 1);
 
   const {
     virtualSourcefile,
