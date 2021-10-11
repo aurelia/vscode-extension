@@ -40,10 +40,15 @@ export function getCustomElementMode(
       position: Position,
       customElementRegion: ViewRegionInfo
     ): Promise<DefinitionResult | undefined> {
+      document.getText(); /*?*/
+      position; /*?*/
       const offset = document.offsetAt(position);
+      offset; /*?*/
       const goToSourceWord = findSourceWord(customElementRegion, offset);
+      goToSourceWord; /*?*/
 
       const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
+      aureliaSourceFiles?.map((file) => file.fileName); /*?*/
       const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {
         return path.parse(sourceFile.fileName).name === goToSourceWord;
       });

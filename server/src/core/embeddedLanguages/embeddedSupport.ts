@@ -103,25 +103,23 @@ export function parseDocumentRegions<RegionDataType = any>(
   document: TextDocument,
   componentList: IAureliaComponent[]
 ): Promise<ViewRegionInfo<RegionDataType>[]> {
+  if (document.getText() === '') {
+    return Promise.resolve([]);
+  }
+
+  // const componentList = aureliaProgram.getComponentList();
+  if (componentList === undefined) {
+    return Promise.resolve([]);
+  }
+
   // eslint-disable-next-line max-lines-per-function
   return new Promise((resolve) => {
-    if (document.getText() === '') {
-      resolve([]);
-      return;
-    }
-
     /* prettier-ignore */ logger.culogger.debug(['Start document parsing'], { logLevel: 'INFO' });
 
     const saxStream = new SaxStream({ sourceCodeLocationInfo: true });
     const viewRegions: ViewRegionInfo[] = [];
     const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
     let hasImportTemplateTag = false;
-
-    // const componentList = aureliaProgram.getComponentList();
-    if (componentList === undefined) {
-      resolve([]);
-      return;
-    }
 
     const aureliaCustomElementNames = componentList.map(
       (component) => component.componentName

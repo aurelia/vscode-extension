@@ -11,6 +11,7 @@ import {
 } from '../../common/common.types';
 import { AureliaClassTypes } from '../../common/constants';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
+import { AureliaComponents } from './aurelia-components';
 
 const logger = new Logger('AureliaProgram');
 
@@ -66,162 +67,51 @@ export interface IAureliaBindable {
  */
 export class AureliaProgram {
   public builderProgram: ts.Program;
-  public aureliaSourceFiles?: ts.SourceFile[];
-  public projectFilePaths: string[];
-  private componentList: IAureliaComponent[];
-  private bindableList: IAureliaBindable[];
+  public aureliaSourceFiles?: ts.SourceFile[] | undefined;
+  public projectFilePaths: string[] = [];
+  public aureliaComponents: AureliaComponents;
   tsMorphProject: Project;
 
-  public initComponentList(): IAureliaComponent[] | undefined {
-    const componentList: IAureliaComponent[] = [];
-
-    const program = this.getProgram();
-    if (program === undefined) {
-      console.log('No Program associated with your Aurelia project.');
-      return;
-    }
-    // [PERF]: ~0.6s
-    const checker = program.getTypeChecker();
-
-    this.projectFilePaths.forEach((path) => {
-      const isDTs = Path.basename(path).endsWith('.d.ts');
-      if (isDTs) return;
-
-      const ext = Path.extname(path);
-      switch (ext) {
-        case '.js':
-        case '.ts': {
-          const sourceFile = program.getSourceFile(path);
-          if (sourceFile === undefined) {
-            // console.log(
-            //   'These source files are ignored by the extension: ',
-            //   path
-            // );
-            return;
-          }
-
-          /* export class MyCustomElement */
-          const componentInfo = getAureliaComponentInfoFromClassDeclaration(
-            sourceFile,
-            checker
-          );
-
-          if (componentInfo) {
-            componentList.push(componentInfo);
-          }
-
-          break;
-        }
-        case '.html': {
-          break;
-        }
-        default: {
-          console.log('Unsupported extension');
-        }
-      }
-    });
-
-    if (componentList.length === 0) {
-      console.log('Error: No Aurelia class found');
-    }
-
-    this.setComponentList(componentList);
-    this.setBindableList(componentList);
-  }
-
-  public setComponentList(componentList: IAureliaComponent[]): void {
-    this.componentList = componentList;
+  constructor() {
+    this.aureliaComponents = new AureliaComponents();
   }
 
   public getComponentList(): IAureliaComponent[] {
-    return this.componentList;
+    return this.aureliaComponents.get();
   }
 
-  public updateAureliaComponents = (projectOptions?: IProjectOptions): void => {
-    this.initTheProjectsFilePaths(projectOptions);
+  public initAureliaComponents(projectOptions: IProjectOptions): void {
+    const program = this.getProgram();
+    this.determineProjectFilePaths(projectOptions);
+    const filePaths = this.getProjectFilePaths();
 
-    this.initComponentList();
-    const componentList = this.getComponentList();
+    this.aureliaComponents.init(program, filePaths);
+  }
 
-    if (componentList.length) {
-      this.setComponentList(componentList);
-      /* prettier-ignore */ logger.culogger.debug([ `>>> The extension found this many components: ${componentList.length}`, ], { logLevel: 'INFO' });
+  public getProjectFilePaths(): string[] {
+    return this.projectFilePaths;
+  }
 
-      if (componentList.length < 10) {
-        logger.culogger.debug(['List: '], { logLevel: 'INFO' });
-
-        componentList.forEach((component, index) => {
-          /* prettier-ignore */ logger.culogger.debug([`${index} - ${component.viewModelFilePath}`], { logLevel: 'INFO', });
-        });
-      }
-    } else {
-      console.log('[WARNING]: No components found');
+  public determineProjectFilePaths(projectOptions: IProjectOptions): void {
+    if (projectOptions.rootDirectory) {
+      this.projectFilePaths = this.getCustomProjectsFilePaths(projectOptions);
+      return;
     }
-  };
 
-  public setBindableList(componentList: IAureliaComponent[]): void {
-    const bindableList: IAureliaBindable[] = [];
-    componentList.forEach((component) => {
-      component.classMembers?.forEach((classMember) => {
-        if (classMember.isBindable) {
-          if (component.componentName === undefined) return;
-
-          const targetBindable: IAureliaBindable = {
-            componentName: component.componentName,
-            classMember,
-          };
-          bindableList.push(targetBindable);
-        }
-      });
-    });
-    this.bindableList = bindableList;
+    const sourceFiles = this.getAureliaSourceFiles();
+    if (!sourceFiles) return;
+    const filePaths = sourceFiles.map((file) => file.fileName);
+    if (!filePaths) return;
+    this.projectFilePaths = filePaths;
   }
 
-  public getBindableList(): IAureliaBindable[] {
-    return this.bindableList;
-  }
-
-  public setViewRegions(
-    componentName: string,
-    newRegions: ViewRegionInfo[]
-  ): void {
-    const componentList = this.getComponentList();
-    const targetComponent = componentList.find(
-      (component) => component.componentName === componentName
-    );
-
-    if (!targetComponent) return;
-
-    targetComponent.viewRegions = newRegions;
-  }
-
-  public initTheProjectsFilePaths(
+  public getCustomProjectsFilePaths(
     options: IProjectOptions = defaultProjectOptions
   ): string[] {
     const { rootDirectory, exclude, include } = options;
-    const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
-
-    const finalExcludes: string[] = [];
-
-    if (exclude === undefined) {
-      const defaultExcludes = [
-        '**/node_modules',
-        'aurelia_project',
-        '**/out',
-        '**/build',
-        '**/dist',
-      ];
-      finalExcludes.push(...defaultExcludes);
-    }
-
-    let finalIncludes: string[];
-
-    if (include !== undefined) {
-      finalIncludes = include;
-    } else {
-      finalIncludes = ['src'];
-    }
-
+    const targetSourceDirectory = rootDirectory || ts.sys.getCurrentDirectory();
+    const finalExcludes = getFinalExcludes(exclude);
+    const finalIncludes = getFinalIncludes(include);
     const paths = ts.sys.readDirectory(
       targetSourceDirectory,
       ['ts'],
@@ -230,12 +120,7 @@ export class AureliaProgram {
       finalIncludes
     );
 
-    this.projectFilePaths = paths;
     return paths;
-  }
-
-  public getProjectFilePaths(): string[] {
-    return this.projectFilePaths;
   }
 
   /**
@@ -255,7 +140,7 @@ export class AureliaProgram {
 
   public setBuilderProgram(builderProgram: ts.Program): void {
     this.builderProgram = builderProgram;
-    this.updateAureliaSourceFiles(this.builderProgram);
+    this.initAureliaSourceFiles(this.builderProgram);
   }
 
   public getTsMorphProject() {
@@ -268,11 +153,12 @@ export class AureliaProgram {
   /**
    * Only update aurelia source files with relevant source files
    */
-  public updateAureliaSourceFiles(builderProgram: ts.Program): void {
+  public initAureliaSourceFiles(builderProgram: ts.Program): void {
+    // [PERF]: ~0.6s
     const sourceFiles = builderProgram.getSourceFiles();
     this.aureliaSourceFiles = sourceFiles?.filter((sourceFile) => {
-      if (sourceFile.fileName.includes('node_modules')) return false;
-      return sourceFile;
+      const isNodeModules = sourceFile.fileName.includes('node_modules');
+      return !isNodeModules;
     });
   }
 
@@ -282,7 +168,34 @@ export class AureliaProgram {
   public getAureliaSourceFiles(): ts.SourceFile[] | undefined {
     if (this.aureliaSourceFiles) return this.aureliaSourceFiles;
 
-    this.updateAureliaSourceFiles(this.builderProgram);
+    this.initAureliaSourceFiles(this.builderProgram);
     return this.aureliaSourceFiles;
   }
+}
+
+function getFinalIncludes(include: string[] | undefined) {
+  let finalIncludes: string[];
+
+  if (include !== undefined) {
+    finalIncludes = include;
+  } else {
+    finalIncludes = ['src'];
+  }
+  return finalIncludes;
+}
+
+function getFinalExcludes(exclude: string[] | undefined) {
+  const finalExcludes: string[] = [];
+
+  if (exclude === undefined) {
+    const defaultExcludes = [
+      '**/node_modules',
+      'aurelia_project',
+      '**/out',
+      '**/build',
+      '**/dist',
+    ];
+    finalExcludes.push(...defaultExcludes);
+  }
+  return finalExcludes;
 }

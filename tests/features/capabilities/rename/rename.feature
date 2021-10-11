@@ -13,7 +13,6 @@ Feature: Rename in View
       | DESCRIPTION | LINE | CODE          | NEW_WORD |
       | View model  | 5    | `    \|id=""` | new-new   |
 
-  @focus
   Scenario Outline: Rename Bindable attribute
     Given the project is named "scoped-for-testing"
     And I open VSCode with the following file "other-custom-element-user.html"

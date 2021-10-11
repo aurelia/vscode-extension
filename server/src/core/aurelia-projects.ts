@@ -8,9 +8,9 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   DocumentSettings,
   ExtensionSettings,
+  IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaTsMorph } from './ts-morph/aurelia-ts-morph';
-import { IProjectOptions, defaultProjectOptions } from '../common/common.types';
 import { Logger } from '../common/logging/logger';
 import { AureliaProgram } from './viewModel/AureliaProgram';
 import { fileURLToPath } from 'url';
@@ -37,16 +37,6 @@ export class AureliaProjects {
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
-      const filePaths = getProjectFilePaths({
-        ...this.documentSettings.getSettings().aureliaProject,
-        rootDirectory: aureliaProjectPath,
-      });
-
-      if (filePaths.length === 0) {
-        /* prettier-ignore */ logger.culogger.debug([ `Not including path ${aureliaProjectPath}, because it was excluded or not included.`, ], { logLevel: 'INFO', log: true });
-        return;
-      }
-
       const alreadyHasProject = this.aureliaProjects.find(
         (project) => project.tsConfigPath === aureliaProjectPath
       );
@@ -90,49 +80,11 @@ export class AureliaProjects {
     /** TODO: Makes esnse? */
     if (documentsPaths.length === 0) return;
 
-    const aureliaProjects = this.get();
     const settings = this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
 
     // 1. To each map assign a separate program
-    /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    aureliaProjects.forEach(async ({ tsConfigPath, aureliaProgram }) => {
-      const shouldActive = documentsPaths.some((docPath) => {
-        const result = docPath.includes(tsConfigPath);
-        return result;
-      });
-      if (!shouldActive) return;
-
-      const projectOptions = {
-        ...aureliaProjectSettings,
-        rootDirectory: tsConfigPath,
-      };
-
-      if (aureliaProgram === null) {
-        aureliaProgram = new AureliaProgram();
-      }
-
-      if (!compilerObject) {
-        const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
-        const program = tsMorphProject.getProgram();
-        // [PERF]: 1.87967675s
-        compilerObject = program.compilerObject;
-        aureliaProgram.setTsMorphProject(tsMorphProject);
-      }
-
-      aureliaProgram.setBuilderProgram(compilerObject);
-
-      // [PERF]: 0.67967675s
-      aureliaProgram.updateAureliaComponents(projectOptions);
-
-      const targetAureliaProject = aureliaProjects.find(
-        (auP) => auP.tsConfigPath === tsConfigPath
-      );
-
-      if (!targetAureliaProject) return;
-
-      targetAureliaProject.aureliaProgram = aureliaProgram;
-    });
+    await this.initAureliaProgram(documentsPaths, aureliaProjectSettings);
   }
 
   public async hydrateWithActiveDocuments(activeDocuments: TextDocument[]) {
@@ -151,7 +103,9 @@ export class AureliaProjects {
    * 1. Project already includes document
    * 2. Document was just opened
    */
-  preventHydration(change: TextDocumentChangeEvent<TextDocument>): boolean {
+  public preventHydration(
+    change: TextDocumentChangeEvent<TextDocument>
+  ): boolean {
     // 1.
     if (!this.isDocumentIncluded(change.document)) {
       return false;
@@ -173,12 +127,62 @@ export class AureliaProjects {
    * Check whether a textDocument (via its uri), if it is already included
    * in the Aurelia project.
    */
-  public isDocumentIncluded({ uri }: TextDocument): boolean {
+  private isDocumentIncluded({ uri }: TextDocument): boolean {
     const isIncluded = this.aureliaProjects.some(({ tsConfigPath }) => {
       return uri.includes(tsConfigPath);
     });
     return isIncluded;
   }
+
+  private async initAureliaProgram(
+    documentsPaths: string[],
+    aureliaProjectSettings: IAureliaProjectSetting | undefined
+  ) {
+    const aureliaProjects = this.get();
+
+    /** TODO rename: tsConfigPath -> projectPath (or sth else) */
+    aureliaProjects.forEach(async ({ tsConfigPath, aureliaProgram }) => {
+      const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
+      if (!shouldActivate) return;
+
+      const projectOptions = {
+        ...aureliaProjectSettings,
+        rootDirectory: tsConfigPath,
+      };
+
+      if (aureliaProgram === null) {
+        aureliaProgram = new AureliaProgram();
+      }
+
+      if (!compilerObject) {
+        const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
+        const program = tsMorphProject.getProgram();
+        // [PERF]: 1.87967675s
+        compilerObject = program.compilerObject;
+        aureliaProgram.setTsMorphProject(tsMorphProject);
+      }
+
+      aureliaProgram.setBuilderProgram(compilerObject);
+
+      // [PERF]: 0.67967675s
+      aureliaProgram.initAureliaComponents(projectOptions);
+
+      const targetAureliaProject = aureliaProjects.find(
+        (auP) => auP.tsConfigPath === tsConfigPath
+      );
+
+      if (!targetAureliaProject) return;
+
+      targetAureliaProject.aureliaProgram = aureliaProgram;
+    });
+  }
+}
+
+function getShouldActivate(documentsPaths: string[], tsConfigPath: string) {
+  return documentsPaths.some((docPath) => {
+    const result = docPath.includes(tsConfigPath);
+    return result;
+  });
 }
 
 function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
@@ -243,48 +247,6 @@ function getAureliaProjectPaths(
   // });
 
   return aureliaProjectPaths;
-}
-
-/** Copied from AureliaProgram#~ */
-function getProjectFilePaths(
-  options: IProjectOptions = defaultProjectOptions
-): string[] {
-  const { rootDirectory, exclude, include } = options;
-  const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
-
-  const finalExcludes: string[] = [];
-
-  if (exclude === undefined) {
-    const defaultExcludes = [
-      '**/node_modules',
-      'aurelia_project',
-      '**/out',
-      '**/build',
-      '**/dist',
-    ];
-    finalExcludes.push(...defaultExcludes);
-  }
-  // console.log('[INFO] Exclude paths globs: ');
-  // console.log(finalExcludes.join(', '));
-
-  let finalIncludes: string[] = [];
-
-  if (include !== undefined) {
-    finalIncludes = include;
-  }
-
-  // console.log('[INFO] Include paths globs: ');
-  // console.log(finalIncludes.join(', '));
-
-  const paths = ts.sys.readDirectory(
-    targetSourceDirectory,
-    ['ts'],
-    // ['ts', 'js', 'html'],
-    finalExcludes,
-    finalIncludes
-  );
-
-  return paths;
 }
 
 function getPackageJsonPaths(extensionSettings: ExtensionSettings) {

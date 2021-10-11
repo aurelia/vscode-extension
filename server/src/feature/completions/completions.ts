@@ -95,7 +95,7 @@ export async function getBindablesCompletion(
   if (!region) return [];
 
   aureliaProgram.getComponentList();
-  const bindableList = aureliaProgram.getBindableList();
+  const bindableList = aureliaProgram.aureliaComponents.getBindables();
   const asCompletionItem = bindableList.map((bindable) => {
     const result = createCompletionItem(
       bindable.classMember,

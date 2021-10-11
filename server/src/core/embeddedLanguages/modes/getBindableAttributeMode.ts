@@ -144,7 +144,7 @@ export function getBindableAttributeMode(
     tsMorphProject.saveSync();
   }
 
-  function getViewModelPathFromTagName(tagName: string) {
+  function getViewModelPathFromTagName(tagName: string): string | undefined {
     const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
     const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {
       return path.parse(sourceFile.fileName).name === tagName;
