@@ -22,7 +22,6 @@ export const hoverSteps: StepDefinitions = ({ when, then }) => {
   });
 
   then('I should see hover details', () => {
-    hover; /* ? */
     expect(hover).toBeDefined();
     if (hover?.contents) {
       expect(hover.contents.value).toBeTruthy();

@@ -1,23 +1,18 @@
 ```mermaid
 flowchart TD
-  AureliaServer --> AureliaProjectFiles
+  AureliaServer --> AureliaProjects
   AureliaServer --> DocumentSettings
-  AureliaProjectFiles --> hydrateAureliaProjectList
-  hydrateAureliaProjectList --> createAureliaWatchProgram
-  createAureliaWatchProgram --> updateAureliaComponents
-  updateAureliaComponents --> AureliaProgram
+  AureliaProjects --> hydrateAureliaProjectList
+  hydrateAureliaProjectList --> AureliaProgram
 
   AureliaServer
 
   DocumentSettings
 
-  AureliaProjectFiles
+  AureliaProjects
   hydrateAureliaProjectList
 
   AureliaProgram
-
-  createAureliaWatchProgram
-  updateAureliaComponents
 
 ```
 
@@ -27,19 +22,19 @@ flowchart TD
 sequenceDiagram
     autonumber
     participant AureliaServer
-    participant AureliaProjectFiles
+    participant AureliaProjects
     participant WatcherProgram
     participant AureliaProgram
 
-    AureliaServer->>AureliaProjectFiles: onConnectionInitialized
+    AureliaServer->>AureliaProjects: onConnectionInitialized
 
     loop For each project
-      AureliaProjectFiles ->> WatcherProgram: hydrateAureliaProjectList
+      AureliaProjects ->> WatcherProgram: hydrateAureliaProjectList
     end
     WatcherProgram ->> WatcherProgram: createAureliaWatchProgram
     WatcherProgram ->> AureliaProgram: updateAureliaComponents
     AureliaProgram ->> AureliaProgram: setComponentList
-    AureliaProgram ->> AureliaProjectFiles: targetAureliaProject.aureliaProgram = aureliaProgram
+    AureliaProgram ->> AureliaProjects: targetAureliaProject.aureliaProgram = aureliaProgram
 
-    AureliaServer->>AureliaProjectFiles: onContentChanged
+    AureliaServer->>AureliaProjects: onContentChanged
 ```

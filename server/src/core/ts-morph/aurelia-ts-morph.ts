@@ -1,30 +1,17 @@
 import { Project, ts } from 'ts-morph';
 
-import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
+import {
+  DocumentSettings,
+  ExtensionSettings,
+} from '../../feature/configuration/DocumentSettings';
 import { UriUtils } from '../../common/view/uri-utils';
-
-const TEST_FILE_NAME =
-  '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/cli-generated/src/realdworld-advanced/settings/index.ts'; // mac
-// '/home/hdn/Desktop/note-taking/replit/ts-sandbox/ts-test-class.ts';
-const AU_TEST_CLASS =
-  '/Users/hdn/Desktop/note-taking/replit/ts-sandbox/virtual-file/aurelia-test-class.ts';
-
-const tsConfigPath =
-  '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/cli-generated/tsconfig.json';
 
 export class AureliaTsMorph {
   private tsconfigPath = '';
 
   public constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();
-    let targetSourceDirectory = '';
-
-    if (settings?.aureliaProject?.rootDirectory) {
-      targetSourceDirectory = settings.aureliaProject.rootDirectory;
-    } else {
-      targetSourceDirectory =
-        settings?.aureliaProject?.rootDirectory ?? ts.sys.getCurrentDirectory();
-    }
+    let targetSourceDirectory = getTargetSourceDirectory(settings);
 
     this.tsconfigPath =
       settings.pathToTsConfig ||
@@ -35,8 +22,6 @@ export class AureliaTsMorph {
       ) ??
         '');
   }
-
-  create(): void {}
 
   getTsMorphProject(): Project {
     let compilerSettings = {} as ts.CompilerOptions;
@@ -60,6 +45,17 @@ export class AureliaTsMorph {
 
     return project;
   }
+}
+
+function getTargetSourceDirectory(settings: ExtensionSettings) {
+  let targetSourceDirectory = '';
+  if (settings?.aureliaProject?.rootDirectory) {
+    targetSourceDirectory = settings.aureliaProject.rootDirectory;
+  } else {
+    targetSourceDirectory = ts.sys.getCurrentDirectory();
+  }
+
+  return targetSourceDirectory;
 }
 
 export function createTsMorphProject(
