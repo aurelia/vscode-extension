@@ -10,7 +10,7 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
     testError.verifyFileInProject(uri, fileName);
 
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    spyOn(AureliaProjects, 'hydrateAureliaProjects');
+    spyOn(AureliaProjects, 'hydrate');
     const textDocumentPaths = getPathsFromFileNames(uri, [fileName]);
     const [document] = myMockServer.textDocuments
       .mock(textDocumentPaths)
@@ -24,7 +24,7 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
     testError.verifyFileInProject(uri, fileName);
 
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    spyOn(AureliaProjects, 'hydrateAureliaProjects');
+    spyOn(AureliaProjects, 'hydrate');
     const textDocumentPaths = getPathsFromFileNames(uri, [fileName]);
     const [document] = myMockServer.textDocuments
       .findAndChange(textDocumentPaths[0])

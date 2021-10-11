@@ -2,8 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { loadFeatures } from 'jest-cucumber';
+import { getTestDir } from '../common/files/get-test-dir';
 
-const TEST_PATH = path.resolve(__dirname, '..');
+const TEST_PATH = getTestDir();
 const CACHE_FILE_PATH = path.resolve(
   TEST_PATH,
   'dev-test-helpers/features-cache.json'

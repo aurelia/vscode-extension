@@ -702,7 +702,7 @@ export function getRegionAtPosition(
     return undefined;
   }
 
-  potentialRegions; /*?*/
+  // potentialRegions; /*?*/
   if (potentialRegions.length === 1) {
     // custom element sub regions
     if (potentialRegions[0].type === ViewRegionType.CustomElement) {
