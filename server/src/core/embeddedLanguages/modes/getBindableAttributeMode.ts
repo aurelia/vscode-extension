@@ -3,15 +3,9 @@ import * as path from 'path';
 import { pathToFileURL } from 'url';
 
 import { camelCase } from 'lodash';
-import {
-  Range,
-  TextDocumentEdit,
-  TextEdit,
-  WorkspaceEdit,
-} from 'vscode-languageserver';
+import { Range, TextEdit, WorkspaceEdit } from 'vscode-languageserver';
 
 import { findSourceWord } from '../../../common/documens/find-source-word';
-import { getRelatedFilePath } from '../../../common/documens/related';
 import { ExtensionSettings } from '../../../feature/configuration/DocumentSettings';
 import {
   findAllBindableRegions,
@@ -25,6 +19,9 @@ import {
   ViewRegionType,
 } from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
+import { Logger } from '../../../common/logging/logger';
+
+const logger = new Logger('getBindableAttributeMode');
 
 export function getBindableAttributeMode(
   aureliaProgram: AureliaProgram,
@@ -53,7 +50,11 @@ export function getBindableAttributeMode(
       const offset = document.offsetAt(position);
       const sourceWord = findSourceWord(region, offset);
       const viewModelPath = getViewModelPathFromTagName(region.tagName ?? '')!;
-      performViewModelChanges(viewModelPath, sourceWord, camelCase(newName));
+      const viewModelChanes = performViewModelChanges(
+        viewModelPath,
+        sourceWord,
+        camelCase(newName)
+      );
 
       // 2. rename all others
       const otherComponentChanges = await getAllOtherChangesForComponentsWithBindable(
@@ -84,6 +85,7 @@ export function getBindableAttributeMode(
       return {
         changes: {
           [document.uri]: [TextEdit.replace(range, newName)],
+          ...viewModelChanes,
           ...otherComponentChanges,
           ...otherChangesInsideSameView,
         },
@@ -130,19 +132,42 @@ export function getBindableAttributeMode(
     viewModelPath: string,
     sourceWord: string,
     newName: string
-  ) {
+  ): WorkspaceEdit['changes'] {
+    // 1. Prepare
+    const result: WorkspaceEdit['changes'] = {};
     const components = aureliaProgram.aureliaComponents.get();
     const targetComponent = components.find(
       (component) => component.viewModelFilePath === viewModelPath
     );
-
     const tsMorphProject = aureliaProgram.getTsMorphProject();
     const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
+    const uri = pathToFileURL(viewModelPath).toString();
+    result[uri] = [];
+    const content = fs.readFileSync(viewModelPath, 'utf-8');
+    const viewModelDocument = TextDocument.create(uri, 'html', 0, content);
     const className = targetComponent?.className ?? '';
     const classNode = getClass(sourceFile, className);
     const classMemberNode = getClassMember(classNode, sourceWord);
-    classMemberNode?.rename(newName);
-    tsMorphProject.saveSync();
+
+    // 2. Find rename locations
+    if (classMemberNode) {
+      const renameLocations = tsMorphProject
+        .getLanguageService()
+        .findRenameLocations(classMemberNode);
+
+      renameLocations.forEach((location) => {
+        const textSpan = location.getTextSpan();
+        const startPosition = viewModelDocument.positionAt(textSpan.getStart());
+        const endPosition = viewModelDocument.positionAt(textSpan.getEnd());
+        const range = Range.create(startPosition, endPosition);
+
+        result[uri].push(TextEdit.replace(range, newName));
+      });
+    } else {
+      logger.log('Error: No class member found');
+    }
+
+    return result;
   }
 
   function getViewModelPathFromTagName(tagName: string): string | undefined {
@@ -181,7 +206,6 @@ export function getBindableAttributeMode(
       result[uri].push(TextEdit.replace(range, newName));
     });
 
-    result; /* ? */
     return result;
   }
 }
