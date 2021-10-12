@@ -3,6 +3,7 @@ import { TextDocumentPositionParams } from 'vscode-languageserver';
 import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
 import { getAccessScopeViewModelDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
+import { aureliaRename } from '../../../feature/rename/aureliaRename';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
@@ -44,6 +45,23 @@ export function getRepeatForMode(aureliaProgram: AureliaProgram): LanguageMode {
         aureliaProgram
       );
     },
+
+    async doRename(
+      document: TextDocument,
+      position: Position,
+      newName: string,
+      region: ViewRegionInfo
+    ) {
+      const renames = aureliaRename(
+        aureliaProgram,
+        document,
+        position,
+        newName,
+        region
+      );
+      return renames;
+    },
+
     onDocumentRemoved(_document: TextDocument) {},
     dispose() {},
   };

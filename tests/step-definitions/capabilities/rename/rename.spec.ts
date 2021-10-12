@@ -22,8 +22,16 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
   });
 
   then('the View model variable should be renamed', () => {
-    const { AureliaProjects } = myMockServer.getContainerDirectly();
-    // TODO: update componentList
+    expect(renamed?.changes).toBeDefined();
+    if (renamed?.changes) {
+      const viewModelChanges = Object.keys(renamed.changes).some(
+        (filePaths) => {
+          const result = filePaths.includes('custom-element.ts');
+          return result;
+        }
+      );
+      expect(viewModelChanges).toBe(true);
+    }
   });
 
   and(
@@ -31,7 +39,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
     () => {
       expect(renamed?.changes).toBeDefined();
       if (renamed?.changes) {
-        expect(Object.keys(renamed.changes).length).toBeGreaterThan(0);
+        expect(Object.keys(renamed.changes).length).toBeGreaterThan(5);
       }
 
       // expect(true).toBeFalsy();
