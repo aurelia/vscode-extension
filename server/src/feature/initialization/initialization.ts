@@ -1,7 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaProjects } from '../../core/aurelia-projects';
+import { AureliaProjects } from '../../core/AureliaProjects';
 import { ExtensionSettings } from '../configuration/DocumentSettings';
 
 /**

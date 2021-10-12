@@ -4,14 +4,14 @@ import { Container } from 'aurelia-dependency-injection';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaProjects } from '../../../server/src/core/aurelia-projects';
+import { AureliaProjects } from '../../../server/src/core/AureliaProjects';
 import {
   ExtensionSettings,
   DocumentSettings,
   IAureliaProjectSetting,
 } from '../../../server/src/feature/configuration/DocumentSettings';
 import { globalContainer } from '../../../server/src/core/container';
-import { AureliaServer } from '../../../server/src/core/aureliaServer';
+import { AureliaServer } from '../../../server/src/core/AureliaServer';
 import { AureliaProgram } from '../../../server/src/core/viewModel/AureliaProgram';
 import { findProjectRoot } from '../find-project-root';
 import { MockTextDocuments } from './text-documents';

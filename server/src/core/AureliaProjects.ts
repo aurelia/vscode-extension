@@ -10,7 +10,7 @@ import {
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
-import { AureliaTsMorph } from './ts-morph/aurelia-ts-morph';
+import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
 import { Logger } from '../common/logging/logger';
 import { AureliaProgram } from './viewModel/AureliaProgram';
 import { fileURLToPath } from 'url';

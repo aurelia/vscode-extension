@@ -9,13 +9,13 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
 import { Container } from './container';
-import { onCompletion } from '../feature/completions/on-completions';
-import { onConnectionDidChangeContent } from '../feature/content/change-content';
-import { initDependencyInjection } from './depdenceny-injection';
+import { onCompletion } from '../feature/completions/onCompletions';
+import { onConnectionDidChangeContent } from '../feature/content/changeContent';
+import { initDependencyInjection } from './depdencenyInjection';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
-import { onRenameRequest } from '../feature/rename/on-rename-request';
-import { onDefintion } from '../feature/definition/on-definitions';
-import { onHover } from '../feature/hover/on-hover';
+import { onRenameRequest } from '../feature/rename/onRenameRequest';
+import { onDefintion } from '../feature/definition/onDefinitions';
+import { onHover } from '../feature/hover/onHover';
 import { LanguageModes } from './embeddedLanguages/languageModes';
 
 export class AureliaServer {

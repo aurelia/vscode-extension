@@ -1,7 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 
-import { AureliaProjects } from './aurelia-projects';
-import { AureliaTsMorph } from './ts-morph/aurelia-ts-morph';
+import { AureliaProjects } from './AureliaProjects';
+import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
 import {
   ExtensionSettings,
   DocumentSettings,

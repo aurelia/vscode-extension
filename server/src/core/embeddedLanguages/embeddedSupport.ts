@@ -6,7 +6,7 @@ import {
   AureliaView,
   AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST,
 } from '../../common/constants';
-import { DiagnosticMessages } from '../../common/diagnostic-messages/DiagnosticMessages';
+import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';

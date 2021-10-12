@@ -16,9 +16,9 @@ import { LanguageMode, Position, TextDocument } from '../languageModes';
 import {
   findAllBindableRegions,
   findRegionsWithValue,
-} from '../../../core/regions/find-specific-region';
+} from '../../regions/findSpecificRegion';
 import { findSourceWord } from '../../../common/documens/find-source-word';
-import { getClass, getClassMember } from '../../ts-morph/ts-morph-class';
+import { getClass, getClassMember } from '../../tsMorph/tsMorphClass';
 import { camelCase } from 'lodash';
 import { getRelatedFilePath } from '../../../common/documens/related';
 import { pathToFileURL } from 'url';

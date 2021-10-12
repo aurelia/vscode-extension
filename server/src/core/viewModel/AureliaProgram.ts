@@ -9,7 +9,7 @@ import {
 } from '../../common/common.types';
 import { AureliaClassTypes } from '../../common/constants';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
-import { AureliaComponents } from './aurelia-components';
+import { AureliaComponents } from './AureliaComponents';
 
 const logger = new Logger('AureliaProgram');
 

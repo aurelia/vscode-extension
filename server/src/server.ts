@@ -27,8 +27,8 @@ import {
   settingsName,
 } from './feature/configuration/DocumentSettings';
 import { globalContainer } from './core/container';
-import { AureliaServer } from './core/aureliaServer';
-import { AureliaProjects } from './core/aurelia-projects';
+import { AureliaServer } from './core/AureliaServer';
+import { AureliaProjects } from './core/AureliaProjects';
 import {
   getLanguageModes,
   LanguageModes,
