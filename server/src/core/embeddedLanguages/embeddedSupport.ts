@@ -111,6 +111,7 @@ export function parseDocumentRegions<RegionDataType = any>(
   if (componentList === undefined) {
     return Promise.resolve([]);
   }
+  componentList.map((component) => component.className); /*?*/
 
   // eslint-disable-next-line max-lines-per-function
   return new Promise((resolve) => {
@@ -161,7 +162,7 @@ export function parseDocumentRegions<RegionDataType = any>(
         hasTemplateTag = true;
       }
 
-      if (!hasTemplateTag && !hasImportTemplateTag) return;
+      if (!hasTemplateTag && !hasImportTemplateTag) return Promise.resolve([]);
 
       // Attributes and Interpolation
       startTag.attrs.forEach((attr) => {
@@ -180,7 +181,7 @@ export function parseDocumentRegions<RegionDataType = any>(
         if (isAttributeKeyword) {
           const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
 
-          if (!attrLocation) return;
+          if (!attrLocation) return Promise.resolve([]);
           /** Eg. >click.delegate="<increaseCounter()" */
           const attrNameLength =
             attr.name.length + // click.delegate
@@ -217,7 +218,7 @@ export function parseDocumentRegions<RegionDataType = any>(
           // 5. Repeat for
           const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
 
-          if (!attrLocation) return;
+          if (!attrLocation) return Promise.resolve([]);
           /** Eg. >repeat.for="<rule of grammarRules" */
           const startInterpolationLength =
             attr.name.length + // click.delegate
@@ -273,7 +274,7 @@ export function parseDocumentRegions<RegionDataType = any>(
             if (interpolationMatch !== null) {
               const attrLocation =
                 startTag.sourceCodeLocation?.attrs[attr.name];
-              if (!attrLocation) return;
+              if (!attrLocation) continue;
 
               /** Eg. >css="width: ${<message}px;" */
               const startInterpolationLength =
@@ -314,7 +315,7 @@ export function parseDocumentRegions<RegionDataType = any>(
         // 6. Value converter region
         if (isValueConverterRegion) {
           const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
-          if (!attrLocation) return;
+          if (!attrLocation) return Promise.resolve([]);
 
           // 6.1. Split up repeat.for='repo of repos | sort:column.value:direction.value | take:10'
           // Don't split || ("or")
@@ -410,7 +411,7 @@ export function parseDocumentRegions<RegionDataType = any>(
       while ((interpolationMatch = interpolationRegex.exec(text.text))) {
         if (interpolationMatch !== null) {
           const attrLocation = text.sourceCodeLocation;
-          if (!attrLocation) return;
+          if (!attrLocation) continue;
 
           /** Eg. \n\n  ${grammarRules.length} */
           const startInterpolationLength =
@@ -446,6 +447,8 @@ export function parseDocumentRegions<RegionDataType = any>(
 
       if (isTemplateTag || hasImportTemplateTag) {
         resolve(viewRegions);
+      } else {
+        resolve([]);
       }
     });
 
@@ -461,6 +464,7 @@ export async function getDocumentRegions(
   try {
     const componentList = aureliaProgram.aureliaComponents.get();
     regions = await parseDocumentRegions(document, componentList);
+    regions.length; /*?*/
   } catch (error) {
     console.log('TCL: error', error);
   }
@@ -885,10 +889,7 @@ function createBindableAttributeRegion(
  *             ^
  *             | startOffset
  */
-function isOffsetAtTagName(
-  region: ViewRegionInfo,
-  offset: number
-): boolean {
+function isOffsetAtTagName(region: ViewRegionInfo, offset: number): boolean {
   if (!region.startOffset) return false;
   if (!region.tagName) return false;
 
