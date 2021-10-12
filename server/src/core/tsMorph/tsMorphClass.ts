@@ -19,7 +19,6 @@ export function getClassMember(classNode: ClassDeclaration, name: string) {
   const target = classNode
     .getDescendantsOfKind(SyntaxKind.Identifier)
     .find((descendant) => {
-      descendant.getText();
       return descendant.getText() === name;
     });
 

@@ -4,8 +4,10 @@ import { Logger as Culogger } from 'culog';
 import { PerformanceMeasure } from './performance-measure';
 
 interface ILogOptions {
-  measurePerf?: boolean;
+  log?: boolean;
+  focusedLogging?: boolean;
 
+  measurePerf?: boolean;
   focusedPerf?: boolean;
   logPerf?: boolean;
 
@@ -17,6 +19,8 @@ interface ILogOptions {
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
+  log: true,
+  focusedLogging: true,
   measurePerf: false,
   focusedPerf: true,
   logPerf: false,
@@ -85,17 +89,28 @@ export class Logger {
      * Wallaby logic.
      * Wallaby does not console.log from external library.
      */
-    const loggedMessage = this.culogger.debug([message], { logLevel: 'INFO' });
+    this.logMessage(message, options);
+
+    return {
+      measureTo: this.getPerformanceMeasure()?.measureTo(message),
+    };
+  }
+
+  private logMessage(
+    message: string,
+    options: ILogOptions = DEFAULT_LOG_OPTIONS
+  ) {
+    const { log } = options;
+    const loggedMessage = this.culogger.debug([message], {
+      logLevel: 'INFO',
+      log,
+    });
     if (loggedMessage) {
       console.log(loggedMessage[0]);
       if (loggedMessage.length > 1) {
         console.log('There are more log messages');
       }
     }
-
-    return {
-      measureTo: this.getPerformanceMeasure()?.measureTo(message),
-    };
   }
 
   getPerformanceMeasure() {

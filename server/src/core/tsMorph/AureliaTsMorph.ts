@@ -7,7 +7,7 @@ import {
 } from '../../feature/configuration/DocumentSettings';
 
 export class AureliaTsMorph {
-  private readonly tsconfigPath = '';
+  private readonly tsconfigPath: string = '';
 
   public constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();

@@ -9,13 +9,10 @@ import {
   TextDocumentSyncKind,
   InitializeResult,
   CompletionList,
-  Range,
-  Position,
   TextDocumentChangeEvent,
   RenameParams,
   PrepareRenameParams,
   ResponseError,
-  CodeActionParams,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -75,11 +72,11 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':', '|'],
+        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
       },
       definitionProvider: true,
       hoverProvider: true,
-      codeActionProvider: true,
+      // codeActionProvider: true,
       renameProvider: true,
     },
   };
@@ -243,10 +240,9 @@ connection.onHover(
   }
 );
 
-connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams);
-  return null;
-});
+// connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
+//   return null;
+// });
 
 connection.onRenameRequest(
   async ({ position, textDocument, newName }: RenameParams) => {
@@ -268,10 +264,10 @@ connection.onRenameRequest(
   }
 );
 
-connection.onPrepareRename(async (prepareRename: PrepareRenameParams) => {
-  /* prettier-ignore */ console.log('TCL: prepareRename', prepareRename);
-  return new ResponseError(0, 'failed');
-});
+// connection.onPrepareRename(async (prepareRename: PrepareRenameParams) => {
+//   /* prettier-ignore */ console.log('TCL: prepareRename', prepareRename);
+//   return new ResponseError(0, 'failed');
+// });
 
 connection.onRequest('aurelia-get-component-list', () => {
   const aureliaProjects = globalContainer.get(AureliaProjects);
