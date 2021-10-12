@@ -1,25 +1,21 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import { pathToFileURL } from 'url';
 
 import { camelCase } from 'lodash';
-import { Range, TextEdit, WorkspaceEdit } from 'vscode-languageserver';
+import { Range, TextEdit } from 'vscode-languageserver';
 
 import { findSourceWord } from '../../../common/documens/find-source-word';
 import { ExtensionSettings } from '../../../feature/configuration/DocumentSettings';
-import {
-  findAllBindableRegions,
-  findRegionsWithValue,
-} from '../../regions/findSpecificRegion';
-import { getClass, getClassMember } from '../../tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import {
-  RepeatForRegionData,
-  ViewRegionInfo,
-  ViewRegionType,
-} from '../embeddedSupport';
+import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { Logger } from '../../../common/logging/logger';
+import {
+  getViewModelPathFromTagName,
+  performViewModelChanges,
+  getAllOtherChangesForComponentsWithBindable,
+  renameAllOtherRegionsInSameView,
+} from '../../../feature/rename/workspaceEdits';
 
 const logger = new Logger('getBindableAttributeMode');
 
@@ -49,8 +45,12 @@ export function getBindableAttributeMode(
       // 1. rename view model
       const offset = document.offsetAt(position);
       const sourceWord = findSourceWord(region, offset);
-      const viewModelPath = getViewModelPathFromTagName(region.tagName ?? '')!;
+      const viewModelPath = getViewModelPathFromTagName(
+        aureliaProgram,
+        region.tagName ?? ''
+      )!;
       const viewModelChanes = performViewModelChanges(
+        aureliaProgram,
         viewModelPath,
         sourceWord,
         camelCase(newName)
@@ -58,6 +58,7 @@ export function getBindableAttributeMode(
 
       // 2. rename all others
       const otherComponentChanges = await getAllOtherChangesForComponentsWithBindable(
+        aureliaProgram,
         sourceWord,
         newName
       );
@@ -77,6 +78,7 @@ export function getBindableAttributeMode(
       if (!viewDocument) return;
 
       const otherChangesInsideSameView = await renameAllOtherRegionsInSameView(
+        aureliaProgram,
         viewDocument,
         sourceWord,
         newName
@@ -102,180 +104,4 @@ export function getBindableAttributeMode(
     onDocumentRemoved(_document: TextDocument) {},
     dispose() {},
   };
-
-  async function getAllOtherChangesForComponentsWithBindable(
-    bindableName: string,
-    newName: string
-  ) {
-    const bindableRegions = await findAllBindableRegions(
-      aureliaProgram,
-      bindableName
-    );
-
-    const result: WorkspaceEdit['changes'] = {};
-    Object.entries(bindableRegions).forEach(([uri, regions]) => {
-      regions.forEach((region) => {
-        const range = getRangeFromRegion(region);
-        if (!range) return;
-
-        if (result[uri] === undefined) {
-          result[uri] = [];
-        }
-        result[uri].push(TextEdit.replace(range, newName));
-      });
-    });
-
-    return result;
-  }
-
-  function performViewModelChanges(
-    viewModelPath: string,
-    sourceWord: string,
-    newName: string
-  ): WorkspaceEdit['changes'] {
-    // 1. Prepare
-    const result: WorkspaceEdit['changes'] = {};
-    const components = aureliaProgram.aureliaComponents.get();
-    const targetComponent = components.find(
-      (component) => component.viewModelFilePath === viewModelPath
-    );
-    const tsMorphProject = aureliaProgram.getTsMorphProject();
-    const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
-    const uri = pathToFileURL(viewModelPath).toString();
-    result[uri] = [];
-    const content = fs.readFileSync(viewModelPath, 'utf-8');
-    const viewModelDocument = TextDocument.create(uri, 'html', 0, content);
-    const className = targetComponent?.className ?? '';
-    const classNode = getClass(sourceFile, className);
-    const classMemberNode = getClassMember(classNode, sourceWord);
-
-    // 2. Find rename locations
-    if (classMemberNode) {
-      const renameLocations = tsMorphProject
-        .getLanguageService()
-        .findRenameLocations(classMemberNode);
-
-      renameLocations.forEach((location) => {
-        const textSpan = location.getTextSpan();
-        const startPosition = viewModelDocument.positionAt(textSpan.getStart());
-        const endPosition = viewModelDocument.positionAt(textSpan.getEnd());
-        const range = Range.create(startPosition, endPosition);
-
-        result[uri].push(TextEdit.replace(range, newName));
-      });
-    } else {
-      logger.log('Error: No class member found');
-    }
-
-    return result;
-  }
-
-  function getViewModelPathFromTagName(tagName: string): string | undefined {
-    const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
-    const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {
-      return path.parse(sourceFile.fileName).name === tagName;
-    });
-
-    /**
-     * 1. Triggered on <|my-component>
-     * */
-    if (typeof targetAureliaFile?.fileName === 'string') {
-      return targetAureliaFile.fileName;
-    }
-  }
-
-  async function renameAllOtherRegionsInSameView(
-    document: TextDocument,
-    sourceWord: string,
-    newName: string
-  ) {
-    const result: WorkspaceEdit['changes'] = {};
-
-    const regions = await findRegionsWithValue(
-      aureliaProgram,
-      document,
-      sourceWord
-    );
-
-    const { uri } = document;
-    result[uri] = [];
-    regions.forEach((region) => {
-      const range = getRangeFromRegion(region, document);
-      if (!range) return;
-
-      result[uri].push(TextEdit.replace(range, newName));
-    });
-
-    return result;
-  }
-}
-
-function getRangeFromRegion(
-  region: ViewRegionInfo,
-  document?: TextDocument
-): Range | undefined {
-  let range;
-  if (document) {
-    range = getRangeFromRegionViaDocument(region, document);
-  } else {
-    range = getRangeFromStandardRegion(region, range);
-  }
-
-  return range;
-}
-
-function getRangeFromStandardRegion(region: ViewRegionInfo, range: any) {
-  if (!region.startCol) return;
-  if (!region.startLine) return;
-  if (!region.endCol) return;
-  if (!region.endLine) return;
-
-  const startPosition = Position.create(
-    region.startLine - 1,
-    region.startCol - 1
-  );
-  const endPosition = Position.create(region.endLine - 1, region.endCol - 1);
-  range = Range.create(startPosition, endPosition);
-
-  return range;
-}
-
-function getRangeFromRegionViaDocument(
-  region: ViewRegionInfo,
-  document: TextDocument
-) {
-  if (!region.startOffset) return;
-  if (!region.endOffset) return;
-
-  let startPosition;
-  let endPosition;
-  let range;
-
-  if (region.type === ViewRegionType.RepeatFor) {
-    range = getRangeFromRepeatForRegion(region, document);
-  } else {
-    startPosition = document.positionAt(region.startOffset);
-    endPosition = document.positionAt(region.endOffset - 1);
-    range = Range.create(startPosition, endPosition);
-  }
-
-  return range;
-}
-
-function getRangeFromRepeatForRegion(
-  region: ViewRegionInfo,
-  document: TextDocument
-): any {
-  const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
-  if (!repeatForRegion.data) return;
-
-  const startPosition = document.positionAt(
-    repeatForRegion.data.iterableStartOffset
-  );
-  const endPosition = document.positionAt(
-    repeatForRegion.data.iterableEndOffset - 1
-  );
-  const range = Range.create(startPosition, endPosition);
-
-  return range;
 }
