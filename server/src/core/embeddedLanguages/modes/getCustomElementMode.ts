@@ -4,12 +4,12 @@ import { camelCase } from 'lodash';
 import { TextDocumentPositionParams } from 'vscode-languageserver';
 
 import { findSourceWord } from '../../../common/documens/find-source-word';
-import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
-import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { getBindablesCompletion } from '../../../feature/completions/completions';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { getVirtualDefinition } from '../../../feature/definition/virtualDefinition';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
+import { LanguageMode, Position, TextDocument } from '../languageModes';
 
 export function getCustomElementMode(
   aureliaProgram: AureliaProgram
@@ -40,15 +40,15 @@ export function getCustomElementMode(
       position: Position,
       customElementRegion: ViewRegionInfo
     ): Promise<DefinitionResult | undefined> {
-      document.getText(); /*?*/
-      position; /*?*/
+      document.getText(); /* ? */
+      position; /* ? */
       const offset = document.offsetAt(position);
-      offset; /*?*/
+      offset; /* ? */
       const goToSourceWord = findSourceWord(customElementRegion, offset);
-      goToSourceWord; /*?*/
+      goToSourceWord; /* ? */
 
       const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
-      aureliaSourceFiles?.map((file) => file.fileName); /*?*/
+      aureliaSourceFiles?.map((file) => file.fileName); /* ? */
       const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {
         return path.parse(sourceFile.fileName).name === goToSourceWord;
       });

@@ -2,11 +2,11 @@ import { StepDefinitions } from 'jest-cucumber';
 import { CompletionList } from 'vscode-html-languageservice';
 
 import { Logger } from '../../../server/src/common/logging/logger';
+import { createTextDocumentPositionParams } from '../../../server/src/core/embeddedLanguages/languageModes';
 import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
 } from '../../../server/src/feature/completions/virtualCompletion';
-import { createTextDocumentPositionParams } from '../../../server/src/core/embeddedLanguages/languageModes';
 import { position, languageModes } from './common/common-capabilities.spec';
 import { myMockServer } from './new-common/project.step';
 

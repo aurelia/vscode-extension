@@ -9,6 +9,7 @@ import {
   TextDocumentPositionParams,
   WorkspaceEdit,
 } from 'vscode-languageserver';
+
 import { AureliaCompletionItem } from '../../feature/completions/virtualCompletion';
 import { ExtensionSettings } from '../../feature/configuration/DocumentSettings';
 import { DefinitionResult } from '../../feature/definition/getDefinition';

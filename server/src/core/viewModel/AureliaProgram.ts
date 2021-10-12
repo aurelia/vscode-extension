@@ -2,12 +2,12 @@ import 'reflect-metadata';
 
 import { Project, ts } from 'ts-morph';
 
-import { Logger } from '../../common/logging/logger';
 import {
   IProjectOptions,
   defaultProjectOptions,
 } from '../../common/common.types';
 import { AureliaClassTypes } from '../../common/constants';
+import { Logger } from '../../common/logging/logger';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 import { AureliaComponents } from './AureliaComponents';
 

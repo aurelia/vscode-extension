@@ -1,20 +1,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 import * as fastGlob from 'fast-glob';
 import { ts } from 'ts-morph';
+import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { Logger } from '../common/logging/logger';
 import {
   DocumentSettings,
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
-import { Logger } from '../common/logging/logger';
 import { AureliaProgram } from './viewModel/AureliaProgram';
-import { fileURLToPath } from 'url';
-import { TextDocumentChangeEvent } from 'vscode-languageserver';
 
 const logger = new Logger('AureliaProjectFiles');
 

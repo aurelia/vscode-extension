@@ -886,7 +886,7 @@ function createBindableAttributeRegion(
  *             | startOffset
  */
 function isOffsetAtTagName(
-  region: ViewRegionInfo<any>,
+  region: ViewRegionInfo,
   offset: number
 ): boolean {
   if (!region.startOffset) return false;
@@ -897,7 +897,7 @@ function isOffsetAtTagName(
   const isAtTagName =
     region.startOffset <= offset && offset <= tagNameOffsetEnd;
 
-  isAtTagName; /*?*/
+  isAtTagName; /* ? */
   return isAtTagName;
 }
 

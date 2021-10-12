@@ -7,15 +7,15 @@ import {
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
-import { Container } from './container';
 import { onCompletion } from '../feature/completions/onCompletions';
+import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
-import { initDependencyInjection } from './depdencenyInjection';
-import { onConnectionInitialized } from '../feature/initialization/initialization';
-import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDefintion } from '../feature/definition/onDefinitions';
 import { onHover } from '../feature/hover/onHover';
+import { onConnectionInitialized } from '../feature/initialization/initialization';
+import { onRenameRequest } from '../feature/rename/onRenameRequest';
+import { Container } from './container';
+import { initDependencyInjection } from './depdencenyInjection';
 import { LanguageModes } from './embeddedLanguages/languageModes';
 
 export class AureliaServer {

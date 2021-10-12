@@ -1,11 +1,11 @@
 import { Container } from 'aurelia-dependency-injection';
 
-import { AureliaProjects } from './AureliaProjects';
-import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
 import {
   ExtensionSettings,
   DocumentSettings,
 } from '../feature/configuration/DocumentSettings';
+import { AureliaProjects } from './AureliaProjects';
+import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
 
 export function initDependencyInjection(
   container: Container,

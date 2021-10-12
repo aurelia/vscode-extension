@@ -6,6 +6,7 @@ import {
   WorkspaceEdit,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 

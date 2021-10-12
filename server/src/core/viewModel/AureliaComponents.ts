@@ -1,5 +1,6 @@
-import { ts } from '@ts-morph/common';
 import * as Path from 'path';
+
+import { ts } from '@ts-morph/common';
 
 import { Logger } from '../../common/logging/logger';
 import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';

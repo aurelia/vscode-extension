@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import { pathToFileURL } from 'url';
+
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   ViewRegionInfo,
   parseDocumentRegions,

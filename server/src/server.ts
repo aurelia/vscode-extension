@@ -22,17 +22,17 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 // We need to import this to include reflect functionality
 import 'reflect-metadata';
 
-import {
-  ExtensionSettings,
-  settingsName,
-} from './feature/configuration/DocumentSettings';
-import { globalContainer } from './core/container';
-import { AureliaServer } from './core/AureliaServer';
 import { AureliaProjects } from './core/AureliaProjects';
+import { AureliaServer } from './core/AureliaServer';
+import { globalContainer } from './core/container';
 import {
   getLanguageModes,
   LanguageModes,
 } from './core/embeddedLanguages/languageModes';
+import {
+  ExtensionSettings,
+  settingsName,
+} from './feature/configuration/DocumentSettings';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -75,7 +75,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
+        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':', '|'],
       },
       definitionProvider: true,
       hoverProvider: true,
@@ -244,7 +244,7 @@ connection.onHover(
 );
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
+  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams);
   return null;
 });
 
@@ -269,7 +269,7 @@ connection.onRenameRequest(
 );
 
 connection.onPrepareRename(async (prepareRename: PrepareRenameParams) => {
-  /* prettier-ignore */ console.log('TCL: prepareRename', prepareRename)
+  /* prettier-ignore */ console.log('TCL: prepareRename', prepareRename);
   return new ResponseError(0, 'failed');
 });
 

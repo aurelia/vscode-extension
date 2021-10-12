@@ -1,11 +1,11 @@
 import { TextDocumentPositionParams } from 'vscode-languageserver';
+
 import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
 import { getAccessScopeDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { getAccessScopeHover } from '../../../feature/hover/accessScopeHover';
 import { VirtualLanguageService } from '../../../feature/virtual/virtualSourceFile';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
-
 import {
   ViewRegionInfo,
   ViewRegionType,

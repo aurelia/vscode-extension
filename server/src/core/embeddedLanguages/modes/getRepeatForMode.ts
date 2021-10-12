@@ -1,9 +1,9 @@
 import { TextDocumentPositionParams } from 'vscode-languageserver';
+
 import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
 import { getAccessScopeViewModelDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
-
 import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 

@@ -1,6 +1,7 @@
 import { ts } from 'ts-morph';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
+
 import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 
@@ -150,8 +151,8 @@ function getQuickInfoAtPosition(
    * Workaround: The normal ls.getQuickInfoAtPosition returns for objects and arrays just
    * `{}`, that's why we go through `getDefinitionAtPosition`.
    */
-  virtualSourcefile.getText(); /*?*/
-  virtualCursorIndex; /*?*/
+  virtualSourcefile.getText(); /* ? */
+  virtualCursorIndex; /* ? */
   const defintion = languageService.getDefinitionAtPosition(
     virtualSourcefile.fileName,
     virtualCursorIndex

@@ -1,4 +1,5 @@
 import { TextDocument, Position } from 'vscode-languageserver';
+
 import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {

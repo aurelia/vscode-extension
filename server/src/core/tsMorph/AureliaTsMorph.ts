@@ -1,17 +1,17 @@
 import { Project, ts } from 'ts-morph';
 
+import { UriUtils } from '../../common/view/uri-utils';
 import {
   DocumentSettings,
   ExtensionSettings,
 } from '../../feature/configuration/DocumentSettings';
-import { UriUtils } from '../../common/view/uri-utils';
 
 export class AureliaTsMorph {
-  private tsconfigPath = '';
+  private readonly tsconfigPath = '';
 
   public constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();
-    let targetSourceDirectory = getTargetSourceDirectory(settings);
+    const targetSourceDirectory = getTargetSourceDirectory(settings);
 
     this.tsconfigPath =
       settings.pathToTsConfig ||

@@ -21,7 +21,6 @@ import * as Path from 'path';
 import { kebabCase } from 'lodash';
 import { ts } from 'ts-morph';
 
-import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 import { getElementNameFromClassDeclaration } from '../../common/className';
 import {
   VALUE_CONVERTER_SUFFIX,
@@ -29,6 +28,7 @@ import {
   AureliaDecorator,
   AureliaViewModel,
 } from '../../common/constants';
+import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,

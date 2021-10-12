@@ -1,4 +1,5 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
+
 import {
   parseDocumentRegions,
   RepeatForRegionData,
@@ -23,8 +24,8 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    let parsedRegions: ViewRegionInfo[] = [];
-    let shared = {
+    const parsedRegions: ViewRegionInfo[] = [];
+    const shared = {
       workspaceRootUri: '',
       parsedRegions,
     };
@@ -35,7 +36,7 @@ defineFeature(feature, (test) => {
 
     then('the result should include Custom element bindable attributes', () => {
       const regionResults = shared.parsedRegions.filter((region) => {
-        region; /*?*/
+        region; /* ? */
         if (!region.data) return false;
         if (!Array.isArray(region.data)) return false;
 
@@ -59,8 +60,8 @@ defineFeature(feature, (test) => {
   });
 
   test('Parsing - Offsets', ({ given, when, then, and }) => {
-    let parsedRegions: ViewRegionInfo[] = [];
-    let shared = {
+    const parsedRegions: ViewRegionInfo[] = [];
+    const shared = {
       workspaceRootUri: '',
       parsedRegions,
       line: '',

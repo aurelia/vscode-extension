@@ -1,5 +1,8 @@
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
+import { pathToFileURL } from 'url';
+
+import { camelCase } from 'lodash';
 import {
   Range,
   TextDocumentEdit,
@@ -7,23 +10,21 @@ import {
   WorkspaceEdit,
 } from 'vscode-languageserver';
 
+import { findSourceWord } from '../../../common/documens/find-source-word';
+import { getRelatedFilePath } from '../../../common/documens/related';
+import { ExtensionSettings } from '../../../feature/configuration/DocumentSettings';
+import {
+  findAllBindableRegions,
+  findRegionsWithValue,
+} from '../../regions/findSpecificRegion';
+import { getClass, getClassMember } from '../../tsMorph/tsMorphClass';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import {
   RepeatForRegionData,
   ViewRegionInfo,
   ViewRegionType,
 } from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
-import {
-  findAllBindableRegions,
-  findRegionsWithValue,
-} from '../../regions/findSpecificRegion';
-import { findSourceWord } from '../../../common/documens/find-source-word';
-import { getClass, getClassMember } from '../../tsMorph/tsMorphClass';
-import { camelCase } from 'lodash';
-import { getRelatedFilePath } from '../../../common/documens/related';
-import { pathToFileURL } from 'url';
-import { ExtensionSettings } from '../../../feature/configuration/DocumentSettings';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
 
 export function getBindableAttributeMode(
   aureliaProgram: AureliaProgram,
@@ -180,7 +181,7 @@ export function getBindableAttributeMode(
       result[uri].push(TextEdit.replace(range, newName));
     });
 
-    result; /*?*/
+    result; /* ? */
     return result;
   }
 }
@@ -199,7 +200,7 @@ function getRangeFromRegion(
   return range;
 }
 
-function getRangeFromStandardRegion(region: ViewRegionInfo<any>, range: any) {
+function getRangeFromStandardRegion(region: ViewRegionInfo, range: any) {
   if (!region.startCol) return;
   if (!region.startLine) return;
   if (!region.endCol) return;
@@ -238,7 +239,7 @@ function getRangeFromRegionViaDocument(
 }
 
 function getRangeFromRepeatForRegion(
-  region: ViewRegionInfo<any>,
+  region: ViewRegionInfo,
   document: TextDocument
 ): any {
   const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
