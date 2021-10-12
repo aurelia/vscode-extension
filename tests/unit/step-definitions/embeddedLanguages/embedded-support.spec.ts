@@ -5,7 +5,8 @@ import {
   RepeatForRegionData,
   ViewRegionInfo,
   ViewRegionType,
-} from '../../../../server/src/feature/embeddedLanguages/embeddedSupport';
+} from '../../../../server/src/core/embeddedLanguages/embeddedSupport';
+
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import { getTestDir } from '../../../common/files/get-test-dir';
 import {
