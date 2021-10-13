@@ -72,6 +72,7 @@ export class AureliaProgram {
   private tsMorphProject: Project;
 
   constructor() {
+    /* prettier-ignore */ console.log('TCL: AureliaProgram -> constructor -> constructor')
     this.aureliaComponents = new AureliaComponents();
   }
 

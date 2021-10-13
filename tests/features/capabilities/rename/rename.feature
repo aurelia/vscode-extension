@@ -13,6 +13,7 @@ Feature: Rename in View
       | DESCRIPTION      | LINE | CODE          | NEW_WORD |
       | Normal Attribute | 5    | `    \|id=""` | new-new  |
 
+  @focus
   Scenario Outline: Rename Bindable attribute
     And I open VSCode with the following file "other-custom-element-user.html"
     And I'm on the line <LINE> at character <CODE>
