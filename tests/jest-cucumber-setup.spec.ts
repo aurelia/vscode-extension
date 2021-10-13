@@ -25,31 +25,23 @@ import { minimalSteps } from './minimal-jest/minimal.spec';
 
 export const testContainer = new Container();
 const logger = new Logger('[Test] Detecting');
+const useCache = false;
 
-resetFeatureCache();
-function init() {
-  // logger.log('before test', { logPerf: true });
-  // logger.log('after test', { logPerf: true });
-
-  // logger.log('before loadfeature', { logPerf: true });
-  let features = readFeatureCache();
-  if (!features) {
-    /* refactoring steps: rename */
-    // features = loadFeatures('**/features/**/!(rename)/*.feature', {
+export function initCucumberTests(tagFilter: string = '@focus') {
+  let features;
+  if (useCache) {
+    features = readFeatureCache();
+  } else {
     features = loadFeatures('**/features/**/*.feature', {
+      tagFilter,
       // tagFilter: '@focus',
-      // tagFilter: '@scoped_for_testing',
-      tagFilter: '@cli_generated or @scoped_for_testing or @monorepo', // <<<
-      // tagFilter: '(@cli_generated or @scoped_for_testing) and @focus',
-      // tagFilter: '(@cli_generated and @focus) or (@scoped_for_testing and @focus)',
-      // tagFilter: '@cli_generated and  @focus',
+      // tagFilter: '@cli_generated or @scoped_for_testing or @monorepo', // <<<
       // scenarioNameTemplate: (vars) => {
-      // return `${vars.featureTitle} - ${vars.scenarioTitle}`;
+      //   return `${vars.featureTitle} - ${vars.scenarioTitle}`;
       // },
     });
     createFeatureCache(features);
   }
-  // logger.log('after loadfeature', { logPerf: true });
 
   autoBindSteps(features, [
     minimalSteps,
@@ -67,5 +59,3 @@ function init() {
     renameSteps,
   ]);
 }
-
-init();

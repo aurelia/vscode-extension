@@ -33,6 +33,13 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
     }
   });
 
+  then('the word should be renamed', () => {
+    expect(renamed?.changes).toBeDefined();
+    if (renamed?.changes) {
+      expect(Object.keys(renamed.changes).length).toBe(1);
+    }
+  });
+
   and(
     'all other components, that also use the Bindable should be renamed',
     () => {
@@ -40,8 +47,6 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
       if (renamed?.changes) {
         expect(Object.keys(renamed.changes).length).toBeGreaterThan(5);
       }
-
-      // expect(true).toBeFalsy();
     }
   );
 };

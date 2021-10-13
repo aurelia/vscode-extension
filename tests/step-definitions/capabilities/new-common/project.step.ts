@@ -8,8 +8,7 @@ import {
 } from '../../../common/fixtures/get-fixture-dir';
 import { MockServer } from '../../../common/mock-server/mock-server';
 
-export const testContainer = new Container();
-
+const testContainer = new Container();
 const logger = new Logger('Project steps');
 
 export let myMockServer: MockServer;
@@ -29,7 +28,7 @@ export function theProjectIsNamed(projectName: FixtureNames) {
         rootDirectory: UriUtils.toPath(workspaceRootUri),
       },
     });
-    myMockServer.setWorkspaceUri(workspaceRootUri);
+    // myMockServer.setWorkspaceUri(workspaceRootUri);
   }
 
   _WORKSPACE_URI_CACHE = workspaceRootUri;

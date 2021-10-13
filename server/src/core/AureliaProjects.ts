@@ -152,17 +152,17 @@ export class AureliaProjects {
 
       if (aureliaProgram === null) {
         aureliaProgram = new AureliaProgram();
-      }
 
-      if (!compilerObject) {
-        const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
-        const program = tsMorphProject.getProgram();
-        // [PERF]: 1.87967675s
-        compilerObject = program.compilerObject;
-        aureliaProgram.setTsMorphProject(tsMorphProject);
-      }
+        if (!compilerObject) {
+          const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
+          const program = tsMorphProject.getProgram();
+          // [PERF]: 1.87967675s
+          compilerObject = program.compilerObject;
+          aureliaProgram.setTsMorphProject(tsMorphProject);
+        }
 
-      aureliaProgram.setProgram(compilerObject);
+        aureliaProgram.setProgram(compilerObject);
+      }
 
       // [PERF]: 0.67967675s
       aureliaProgram.initAureliaComponents(projectOptions);

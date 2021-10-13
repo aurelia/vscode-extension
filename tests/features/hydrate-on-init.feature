@@ -1,7 +1,6 @@
 Feature: Hydrate on initialization
 
-  # @focus @cli_generated
-   @cli_generated
+  @cli_generated
   Scenario: Hydrate cli generated project
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.ts"

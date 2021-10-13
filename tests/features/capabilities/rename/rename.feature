@@ -7,8 +7,7 @@ Feature: Rename in View
     And I open VSCode with the following file "other-custom-element-user.html"
     And I'm on the line <LINE> at character <CODE>
     When I trigger Rename to <NEW_WORD>
-    Then the View model variable should be renamed
-    And all other components, that also use the Bindable should be renamed
+    Then the word should be renamed
 
     Examples:
       | DESCRIPTION | LINE | CODE          | NEW_WORD |
@@ -25,7 +24,7 @@ Feature: Rename in View
       | DESCRIPTION | LINE | CODE                | NEW_WORD |
       | View model  | 3    | `    \|foo.bind=""` | new-new  |
 
-  Scenario Outline: Rename View variable
+  Scenario Outline: Rename variable in View
     And I open VSCode with the following file "custom-element.html"
     And I'm on the line <LINE> at character <CODE>
     When I trigger Rename to <NEW_WORD>

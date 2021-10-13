@@ -68,6 +68,7 @@ export function createTsMorphProject(
   }
 ) {
   const { customCompilerOptions, tsConfigPath } = customProjectSettings;
+  tsConfigPath; /*?*/ /// <--- BUG: same tsconfig (probably, because AureliaProject injects tsmorph, but we need antoher instance?!)
   const project = new Project({
     compilerOptions: customCompilerOptions,
   });
