@@ -5,8 +5,8 @@ import { getLanguageModes } from '../../../../server/src/core/embeddedLanguages/
 import { myMockServer } from './project.step';
 
 export let languageModes: AsyncReturnType<typeof getLanguageModes>;
+export let position: Position;
 export let codeForCharacter;
-export const code = '';
 
 const CURSOR_CHARACTER = '|';
 const CURSOR_CHARACTER_1 = '>>|<<';
@@ -16,20 +16,20 @@ export async function givenImOnTheLineAtCharacter(
   line: number
 ) {
   const character = findCharacterPosition(codeWithCursor);
-  const position = Position.create(line, character);
+  position = Position.create(line, character);
 
   const {
     AureliaProjects,
     DocumentSettings,
   } = myMockServer.getContainerDirectly();
   const { aureliaProgram } = AureliaProjects.getFirst();
+  AureliaProjects.get().map((p) => p.tsConfigPath); /*?*/
   if (aureliaProgram) {
     languageModes = await getLanguageModes(
       aureliaProgram,
       DocumentSettings.getSettings()
     );
   }
-  return { position, languageModes };
 }
 
 export function removeCursorFromCode(code: string): string {

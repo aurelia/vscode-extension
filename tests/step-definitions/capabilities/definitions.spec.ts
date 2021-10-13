@@ -2,7 +2,7 @@ import { StepDefinitions } from 'jest-cucumber';
 import { LocationLink } from 'vscode-languageserver';
 
 import { UriUtils } from '../../../server/src/common/view/uri-utils';
-import { languageModes, position } from './common/common-capabilities.spec';
+import { position, languageModes } from './new-common/file.step';
 import { myMockServer } from './new-common/project.step';
 
 export const definitionSteps: StepDefinitions = ({ when, then }) => {

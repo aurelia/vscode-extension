@@ -7,7 +7,7 @@ import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
 } from '../../../server/src/feature/completions/virtualCompletion';
-import { position, languageModes } from './common/common-capabilities.spec';
+import { position, languageModes } from './new-common/file.step';
 import { myMockServer } from './new-common/project.step';
 
 const logger = new Logger('[Test] Completions');

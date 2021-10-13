@@ -2,8 +2,7 @@ import { StepDefinitions } from 'jest-cucumber';
 import { WorkspaceEdit } from 'vscode-languageserver';
 
 import { Logger } from '../../../../server/src/common/logging/logger';
-import { position } from '../common/common-capabilities.spec';
-import { languageModes } from '../new-common/file.step';
+import { languageModes, position } from '../new-common/file.step';
 import { myMockServer } from '../new-common/project.step';
 
 const logger = new Logger('rename.spec');
