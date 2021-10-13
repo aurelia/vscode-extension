@@ -17,7 +17,7 @@ export class AureliaComponents {
       logger.log('Error: No Aurelia files found.');
     }
 
-    const components: IAureliaComponent[] = [];
+    const componentList: IAureliaComponent[] = [];
     const checker = program.getTypeChecker();
 
     filePaths.forEach((path) => {
@@ -45,7 +45,7 @@ export class AureliaComponents {
 
           if (!componentInfo) return;
 
-          components.push(componentInfo);
+          componentList.push(componentInfo);
 
           break;
         }
@@ -58,10 +58,10 @@ export class AureliaComponents {
       }
     });
 
-    this.set(components);
-    this.setBindables(components);
+    this.set(componentList);
+    this.setBindables(componentList);
 
-    this.logInfoAboutComponents(components);
+    this.logInfoAboutComponents(componentList);
   }
 
   public set(components: IAureliaComponent[]): void {
@@ -75,20 +75,6 @@ export class AureliaComponents {
 
     return this.components;
   }
-
-  public getOneByViewModelFilePath(
-    viewModelFilePath: string,
-    callback: (component: IAureliaComponent) => void
-  ): void {
-    const target = this.get().find(
-      (component) => component.viewModelFilePath === viewModelFilePath
-    );
-    if (target) {
-      callback(target);
-    }
-  }
-
-  public updateOne(componentName: string): void {}
 
   public setBindables(components: IAureliaComponent[]): void {
     const bindableList: IAureliaBindable[] = [];

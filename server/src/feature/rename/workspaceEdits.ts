@@ -48,33 +48,10 @@ export function performViewModelChanges(
 ): WorkspaceEdit['changes'] {
   // 1. Prepare
   const result: WorkspaceEdit['changes'] = {};
-  const { aureliaComponents } = aureliaProgram;
-  const components = aureliaComponents.get();
+  const components = aureliaProgram.aureliaComponents.get();
   const targetComponent = components.find(
     (component) => component.viewModelFilePath === viewModelPath
   );
-
-  // 2. Change variable in view model
-  // if (targetComponent?.classMembers) {
-  //   const targetMember = targetComponent.classMembers.find((member) => {
-  //     return member.name === sourceWord;
-  //   });
-  //   if (targetMember?.name) {
-  //     targetMember.name = newName;
-  //   }
-  // }
-  // aureliaComponents.getOneByViewModelFilePath(viewModelPath, (component) => {
-  //   if (component?.classMembers) {
-  //     const targetMember = component.classMembers.find((member) => {
-  //       return member.name === sourceWord;
-  //     });
-  //     if (targetMember?.name) {
-  //       targetMember.name = newName;
-  //     }
-  //   }
-  // });
-  // aureliaComponents.set(components);
-
   const tsMorphProject = aureliaProgram.getTsMorphProject();
   const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
   const uri = pathToFileURL(viewModelPath).toString();
@@ -85,7 +62,7 @@ export function performViewModelChanges(
   const classNode = getClass(sourceFile, className);
   const classMemberNode = getClassMember(classNode, sourceWord);
 
-  // 3. Find rename locations
+  // 2. Find rename locations
   if (classMemberNode) {
     const renameLocations = tsMorphProject
       .getLanguageService()
