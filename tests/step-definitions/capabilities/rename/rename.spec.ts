@@ -13,7 +13,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
   when(/^I trigger Rename to (.*)$/, async (newWord: string) => {
     /* prettier-ignore */ logger.log('I trigger Suggestions',{logPerf:true});
 
-    const document = myMockServer.textDocuments.getFirst();
+    const document = myMockServer.textDocuments.getActive();
 
     renamed = await myMockServer
       .getAureliaServer()

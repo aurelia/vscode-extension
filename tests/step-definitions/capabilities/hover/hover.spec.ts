@@ -9,7 +9,7 @@ export const hoverSteps: StepDefinitions = ({ when, then }) => {
   let hover: CustomHover | undefined;
 
   when('I execute Hover', async () => {
-    const document = myMockServer.textDocuments.getFirst();
+    const document = myMockServer.textDocuments.getActive();
 
     hover = await myMockServer
       .getAureliaServer()

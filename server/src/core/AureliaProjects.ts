@@ -112,6 +112,7 @@ export class AureliaProjects {
     }
 
     // 2.
+    change.document.uri; /*?*/
     if (hasDocumentChanged(change.document)) {
       return false;
     }
@@ -277,5 +278,6 @@ function logHasNoAureliaProject() {
  * Document changes -> version > 1.
  */
 function hasDocumentChanged({ version }: TextDocument): boolean {
+  version; /*?*/
   return version > 1;
 }

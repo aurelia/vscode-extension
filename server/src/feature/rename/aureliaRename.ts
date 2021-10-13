@@ -40,7 +40,6 @@ export async function aureliaRename(
   const sourceWord = findSourceWord(region, offset);
 
   let viewModelPath = '';
-  region.type; /*?*/
 
   // 1.1 Determine view model path
   if (region.type === ViewRegionType.BindableAttribute) {

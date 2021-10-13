@@ -12,10 +12,11 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
     spyOn(AureliaProjects, 'hydrate');
     const textDocumentPaths = getPathsFromFileNames(uri, [fileName]);
-    const [document] = myMockServer.textDocuments
+    const document = myMockServer.textDocuments
       .mock(textDocumentPaths)
-      .getAll();
+      .getActive();
     const aureliaServer = myMockServer.getAureliaServer();
+
     aureliaServer.onConnectionDidChangeContent({ document });
   });
 

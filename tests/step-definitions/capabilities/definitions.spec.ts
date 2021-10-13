@@ -9,7 +9,7 @@ export const definitionSteps: StepDefinitions = ({ when, then }) => {
   let definition: LocationLink[] | undefined;
 
   when(/^I execute Go To Definition$/, async () => {
-    const document = myMockServer.textDocuments.getFirst();
+    const document = myMockServer.textDocuments.getActive();
 
     definition = await myMockServer
       .getAureliaServer()

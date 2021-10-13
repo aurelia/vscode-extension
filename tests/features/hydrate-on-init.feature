@@ -28,4 +28,4 @@ Feature: Hydrate on initialization
 
     Given the project is named "cli-generated"
     And I open VSCode with the following file "tsconfig.json"
-    # Then the extension should hydrate the Aurelia project
+# Then the extension should hydrate the Aurelia project

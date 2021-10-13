@@ -18,7 +18,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
       /* prettier-ignore */ logger.log('/^I\'m replacing the file content with (.*)$/',{logPerf: true});
 
       code = removeCursorFromCode(codeWithCursor);
-      myMockServer.textDocuments.changeFirst(code);
+      myMockServer.textDocuments.changeActive(code);
       // /* prettier-ignore */ logger.log(`after`, { logPerf: true });
     }
   );

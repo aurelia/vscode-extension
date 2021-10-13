@@ -116,7 +116,7 @@ function whenIParseTheFile(when, shared) {
       fileName,
     ]);
     const textDocuments = new MockTextDocuments(shared.workspaceRootUri);
-    const textDocument = textDocuments.mock(textDocumentPaths).getFirst();
+    const textDocument = textDocuments.mock(textDocumentPaths).getActive();
 
     const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
       textDocument,

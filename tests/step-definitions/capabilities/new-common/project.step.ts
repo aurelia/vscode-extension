@@ -21,8 +21,8 @@ export function theProjectIsNamed(projectName: FixtureNames) {
 
   const workspaceRootUri = getFixtureUri(projectName);
   const useCached = workspaceRootUri !== _WORKSPACE_URI_CACHE;
-  // if (useCached) {
-  if (true) {
+  if (useCached) {
+    // if (true) {
     myMockServer = new MockServer(testContainer, workspaceRootUri, {
       aureliaProject: {
         rootDirectory: UriUtils.toPath(workspaceRootUri),
@@ -39,6 +39,7 @@ export async function givenIOpenVsCodeWithTheFollowingFiles(
 ) {
   const mockTextDocuments = myMockServer.textDocuments
     .mock(textDocumentPaths)
+    .setActive(textDocumentPaths)
     .getAll();
   await myMockServer.getAureliaServer().onConnectionInitialized(
     {

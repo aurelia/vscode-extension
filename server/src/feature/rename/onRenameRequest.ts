@@ -31,7 +31,6 @@ export async function onRenameRequest(
 
   if (!mode) return normalRename(position, document, newName);
   if (!region) return normalRename(position, document, newName);
-  // region; /*?*/
 
   const doRename = mode.doRename;
 

@@ -11,6 +11,7 @@ const logger = new Logger('text-documents');
 
 export class MockTextDocuments {
   private textDocuments: TextDocument[] = [];
+  private activeTextDocument: TextDocument;
 
   private readonly CHANGE = 'changes-';
   private readonly INITIAL = '0123';
@@ -23,6 +24,17 @@ export class MockTextDocuments {
 
   public setMany(textDocuments: TextDocument[]): void {
     this.textDocuments = textDocuments;
+  }
+
+  public setActive(textDocumentPaths: string[]): MockTextDocuments {
+    const target = this.find(textDocumentPaths[0]);
+    if (target) {
+      this.activeTextDocument = target;
+    } else {
+      logger.log('No document found ');
+    }
+
+    return this;
   }
 
   public push(textDocument: TextDocument): void {
@@ -43,6 +55,17 @@ export class MockTextDocuments {
     return this.textDocuments[0];
   }
 
+  public getActive(): TextDocument {
+    return this.activeTextDocument;
+  }
+
+  public create(uri: string): TextDocument {
+    const path = UriUtils.toPath(uri);
+    const fileContent = fs.readFileSync(path, 'utf-8');
+    const textDocument = TextDocument.create(uri, 'typescript', 1, fileContent);
+    return textDocument;
+  }
+
   public change(targetDocument: TextDocument | undefined, change: string) {
     if (!targetDocument) return;
 
@@ -55,10 +78,17 @@ export class MockTextDocuments {
     );
   }
 
-  public changeFirst(change: string = this.CHANGE): MockTextDocuments {
-    const targetDocument = this.textDocuments[0];
+  public changeActive(change: string = this.CHANGE): MockTextDocuments {
+    const targetDocument = this.getActive();
     this.change(targetDocument, change);
     return this;
+  }
+
+  private find(documentPath: string): TextDocument | undefined {
+    const targetDocument = this.textDocuments.find((document) =>
+      document.uri.includes(documentPath)
+    );
+    return targetDocument;
   }
 
   public findAndChange(
@@ -111,8 +141,8 @@ export class MockTextDocuments {
 
       if (targetDocument) return;
 
-      console.log('TODO: add');
-      // this.textDocuments.push(targetDocument);
+      const newTextDocument = this.create(uri);
+      this.textDocuments.push(newTextDocument);
     });
 
     return this;

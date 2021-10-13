@@ -16,10 +16,11 @@ module.exports = function (wallaby) {
 
       'tests/minimal-jest/**/*.{ts,feature}',
       'tests/dev-test-helpers/**/*.{ts,json}',
+      'tests/jest-cucumber-setup.spec.ts',
     ],
 
     tests: [
-      'tests/jest-cucumber-setup.spec.ts',
+      'tests/testLauncher/withWallaby.spec.ts',
       // 'tests/unit/step-definitions/embeddedLanguages/embedded-support.spec.ts',
     ],
 

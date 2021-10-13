@@ -111,7 +111,6 @@ export function parseDocumentRegions<RegionDataType = any>(
   if (componentList === undefined) {
     return Promise.resolve([]);
   }
-  componentList.map((component) => component.className); /*?*/
 
   // eslint-disable-next-line max-lines-per-function
   return new Promise((resolve) => {
@@ -464,7 +463,6 @@ export async function getDocumentRegions(
   try {
     const componentList = aureliaProgram.aureliaComponents.get();
     regions = await parseDocumentRegions(document, componentList);
-    regions.length; /*?*/
   } catch (error) {
     console.log('TCL: error', error);
   }
