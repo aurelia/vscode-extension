@@ -14,7 +14,11 @@ import {
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
-import { AureliaProgram } from './viewModel/AureliaProgram';
+import {
+  AureliaProgram,
+  IAureliaClassMember,
+} from './viewModel/AureliaProgram';
+import { uriToPath } from '../common/uriToPath';
 
 const logger = new Logger('AureliaProjectFiles');
 
@@ -52,8 +56,16 @@ export class AureliaProjects {
     });
   }
 
-  public get(): IAureliaProject[] {
+  public getAll(): IAureliaProject[] {
     return this.aureliaProjects;
+  }
+
+  public getBy(tsConfigPath: string): IAureliaProject | undefined {
+    const target = this.getAll().find(
+      (projects) => projects.tsConfigPath === tsConfigPath
+    );
+
+    return target;
   }
 
   public getFirst(): IAureliaProject {
@@ -63,7 +75,7 @@ export class AureliaProjects {
   public async setAndVerify(extensionSettings: ExtensionSettings) {
     const packageJsonPaths = getPackageJsonPaths(extensionSettings);
     await this.set(packageJsonPaths);
-    const projects = this.get();
+    const projects = this.getAll();
     const hasAureliaProject = projects.length > 0;
 
     if (!hasAureliaProject) {
@@ -76,8 +88,10 @@ export class AureliaProjects {
   /**
    * [PERF]: 2.5s
    */
-  public async hydrate(documentsPaths: string[]) {
+  public async hydrate(documents: TextDocument[]) {
+    /* prettier-ignore */ logger.culogger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO', });
     /** TODO: Makes esnse? */
+    const documentsPaths = uriToPath(documents);
     if (documentsPaths.length === 0) return;
 
     const settings = this.documentSettings.getSettings();
@@ -85,16 +99,7 @@ export class AureliaProjects {
 
     // 1. To each map assign a separate program
     await this.initAureliaProgram(documentsPaths, aureliaProjectSettings);
-  }
 
-  public async hydrateWithActiveDocuments(activeDocuments: TextDocument[]) {
-    /* prettier-ignore */ logger.culogger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO', });
-
-    const activeDocumentPaths = activeDocuments.map((activeDocument) => {
-      const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
-      return documentPath;
-    });
-    await this.hydrate(activeDocumentPaths);
     /* prettier-ignore */ logger.culogger.debug(['Parsing done. Aurelia Extension is ready.'], { logLevel: 'INFO', });
   }
 
@@ -103,25 +108,39 @@ export class AureliaProjects {
    * 1. Project already includes document
    * 2. Document was just opened
    */
-  public preventHydration(
-    change: TextDocumentChangeEvent<TextDocument>
-  ): boolean {
+  public preventHydration(document: TextDocument): boolean {
     // 1.
-    if (!this.isDocumentIncluded(change.document)) {
+    if (!this.isDocumentIncluded(document)) {
       return false;
     }
 
     // 2.
-    change.document.uri; /*?*/
-    if (hasDocumentChanged(change.document)) {
+    if (hasDocumentChanged(document)) {
       return false;
     }
 
     logger.culogger.todo(
-      `What should happen to document, that is not included?: ${change.document.uri}`
+      `What should happen to document, that is not included?: ${document.uri}`
     );
 
     return true;
+  }
+
+  public updateManyViewModel(documents: TextDocument[]) {
+    documents.forEach((document) => {
+      const targetProject = this.getAll().find((project) =>
+        document.uri.includes(project.tsConfigPath)
+      );
+
+      const aureliaProgram = targetProject?.aureliaProgram;
+      if (!aureliaProgram) return;
+
+      aureliaProgram.aureliaComponents.updateOne(
+        // this.aureliaTsMorph.createTsMorphProject(),
+        aureliaProgram.getTsMorphProject(),
+        document
+      );
+    });
   }
 
   /**
@@ -139,7 +158,7 @@ export class AureliaProjects {
     documentsPaths: string[],
     aureliaProjectSettings: IAureliaProjectSetting | undefined
   ) {
-    const aureliaProjects = this.get();
+    const aureliaProjects = this.getAll();
 
     /** TODO rename: tsConfigPath -> projectPath (or sth else) */
     aureliaProjects.forEach(async ({ tsConfigPath, aureliaProgram }) => {
@@ -155,7 +174,7 @@ export class AureliaProjects {
         aureliaProgram = new AureliaProgram();
 
         if (!compilerObject) {
-          const tsMorphProject = this.aureliaTsMorph.getTsMorphProject();
+          const tsMorphProject = this.aureliaTsMorph.createTsMorphProject();
           const program = tsMorphProject.getProgram();
           // [PERF]: 1.87967675s
           compilerObject = program.compilerObject;
@@ -278,6 +297,5 @@ function logHasNoAureliaProject() {
  * Document changes -> version > 1.
  */
 function hasDocumentChanged({ version }: TextDocument): boolean {
-  version; /*?*/
   return version > 1;
 }

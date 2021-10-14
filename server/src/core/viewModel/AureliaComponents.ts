@@ -5,12 +5,20 @@ import { ts } from '@ts-morph/common';
 import { Logger } from '../../common/logging/logger';
 import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import { UriUtils } from '../../common/view/uri-utils';
+import { Project } from 'ts-morph';
 
 const logger = new Logger('aurelia-components');
 
 export class AureliaComponents {
   private components: IAureliaComponent[] = [];
   private bindables: IAureliaBindable[] = [];
+  checker: ts.TypeChecker;
+
+  constructor() {
+    /* prettier-ignore */ console.log('TCL: AureliaComponents -> constructor -> constructor')
+  }
 
   public init(program: ts.Program, filePaths: string[]): void {
     if (filePaths.length === 0) {
@@ -18,7 +26,9 @@ export class AureliaComponents {
     }
 
     const componentList: IAureliaComponent[] = [];
-    const checker = program.getTypeChecker();
+    if (!this.checker) {
+      this.checker = program.getTypeChecker();
+    }
 
     filePaths.forEach((path) => {
       const isDTs = Path.basename(path).endsWith('.d.ts');
@@ -40,7 +50,7 @@ export class AureliaComponents {
           /* export class MyCustomElement */
           const componentInfo = getAureliaComponentInfoFromClassDeclaration(
             sourceFile,
-            checker
+            this.checker
           );
 
           if (!componentInfo) return;
@@ -68,12 +78,61 @@ export class AureliaComponents {
     this.components = components;
   }
 
-  public get(): IAureliaComponent[] {
+  public getAll(): IAureliaComponent[] {
     if (this.components.length === 0) {
       logger.log('Error: No Aurelia components found.');
     }
 
     return this.components;
+  }
+
+  public getOneBy<
+    T extends keyof IAureliaComponent,
+    Value extends IAureliaComponent[T]
+  >(key: T, targetValue: Value): IAureliaComponent | undefined {
+    const target = this.getAll().find(
+      (component) => component[key] === targetValue
+    );
+    return target;
+  }
+
+  public getIndexBy<
+    T extends keyof IAureliaComponent,
+    Value extends IAureliaComponent[T]
+  >(key: T, targetValue: Value): number {
+    const target = this.getAll().findIndex(
+      (component) => component[key] === targetValue
+    );
+    return target;
+  }
+
+  /**
+   * Parse current state of source file, and assign to components.
+   */
+  public updateOne(project: Project, document: TextDocument): void {
+    const sourceFilePath = UriUtils.toPath(document.uri);
+    const sourceFile = project.getSourceFile(sourceFilePath);
+    if (!sourceFile) return;
+
+    const updatedText = document.getText();
+    const updatedSourceFile = project.createSourceFile(
+      sourceFilePath,
+      updatedText,
+      { overwrite: true }
+    );
+
+    const componentInfo = getAureliaComponentInfoFromClassDeclaration(
+      updatedSourceFile.compilerNode,
+      project.getTypeChecker().compilerObject
+    );
+    if (!componentInfo) return;
+
+    let targetIndex = this.getIndexBy(
+      'viewModelFilePath',
+      UriUtils.toPath(document.uri)
+    );
+
+    this.components[targetIndex] = componentInfo;
   }
 
   public setBindables(components: IAureliaComponent[]): void {

@@ -23,7 +23,7 @@ export class AureliaTsMorph {
         '');
   }
 
-  getTsMorphProject(): Project {
+  createTsMorphProject(): Project {
     let compilerSettings = {} as ts.CompilerOptions;
     compilerSettings = {
       module: ts.ModuleKind.CommonJS,

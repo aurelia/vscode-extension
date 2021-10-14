@@ -11,8 +11,6 @@ import {
   CompletionList,
   TextDocumentChangeEvent,
   RenameParams,
-  PrepareRenameParams,
-  ResponseError,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -161,12 +159,16 @@ connection.onDidOpenTextDocument((param) => {
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent(
-  async (change: TextDocumentChangeEvent<TextDocument>) => {
-    if (!hasServerInitialized) return;
-    await aureliaServer.onConnectionDidChangeContent(change);
-  }
-);
+// documents.onDidChangeContent(
+//   async (change: TextDocumentChangeEvent<TextDocument>) => {
+//     if (!hasServerInitialized) return;
+//     await aureliaServer.onConnectionDidChangeContent(change);
+//   }
+// );
+
+documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
+  await aureliaServer.onDidSave(change);
+});
 
 connection.onDidChangeWatchedFiles((_change) => {
   // Monitored files have change in VSCode

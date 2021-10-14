@@ -19,6 +19,7 @@ import {
 } from './step-definitions/initialization/on-initialized/detecting-on-init.spec';
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
 import { renameSteps } from './step-definitions/capabilities/rename/rename.spec';
+import { AureliaProjectsSteps } from './step-definitions/core/AureliaProjects.spec';
 import { minimalSteps } from './minimal-jest/minimal.spec';
 
 //
@@ -47,6 +48,9 @@ export function initCucumberTests(tagFilter: string = '@focus') {
     minimalSteps,
     cliGenerateSteps,
     commonExtensionSteps,
+    // core
+    AureliaProjectsSteps,
+    //
     hydrateSteps,
     // content
     contentChangeSteps,

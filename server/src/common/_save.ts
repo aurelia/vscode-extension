@@ -1,3 +1,44 @@
+// public updateManyViewModelClassMember(
+//   documents: TextDocument[],
+//   oldName: string,
+//   newName: string
+// ): void {
+//   documents.forEach((document) => {
+//     if (!this.isViewModelDocument(document)) return;
+
+//     const targetProject = this.getAll().find((project) =>
+//       document.uri.includes(project.tsConfigPath)
+//     );
+//     const components = targetProject?.aureliaProgram?.aureliaComponents.getAll();
+
+//     if (!components) return;
+//     let targetClassMember: IAureliaClassMember | undefined;
+//     components.forEach((component) => {
+//       const targetMember = component.classMembers?.find(
+//         (member) => member.name === oldName
+//       );
+//       if (targetMember) {
+//         targetClassMember = targetMember;
+//       }
+//     });
+
+//     if (!targetClassMember) return;
+
+//     targetClassMember.name = newName;
+//   });
+// }
+
+// private isViewModelDocument(document: TextDocument) {
+//   const settings = this.documentSettings.getSettings();
+//   const scriptExtensions = settings?.relatedFiles?.script;
+//   const isScript = scriptExtensions?.find((extension) =>
+//     document.uri.endsWith(extension)
+//   );
+//   return isScript;
+// }
+
+// -------------------------
+
 // /** Copied from AureliaProgram#~ */
 // function getProjectFilePaths(
 //   options: IProjectOptions = defaultProjectOptions

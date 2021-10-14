@@ -1,9 +1,7 @@
 import { Position } from 'vscode-html-languageservice';
 import {
-  RenameParams,
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
-  TextDocuments,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -14,6 +12,7 @@ import { onDefintion } from '../feature/definition/onDefinitions';
 import { onHover } from '../feature/hover/onHover';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
+import { onDidSave } from '../feature/save/saveContent';
 import { Container } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
 import { LanguageModes } from './embeddedLanguages/languageModes';
@@ -61,7 +60,11 @@ export class AureliaServer {
   // onDidCloseTextDocument() {}
   // onWillSaveTextDocument() {}
   // onWillSaveTextDocumentWaitUntil() {}
-  // onDidSaveTextDocument() {}
+
+  async onDidSave(change: TextDocumentChangeEvent<TextDocument>) {
+    await onDidSave(this.container, change);
+  }
+
   // sendDiagnostics() {}
   async onHover(
     documentContent: string,
