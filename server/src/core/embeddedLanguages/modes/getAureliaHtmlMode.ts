@@ -21,7 +21,7 @@ export function getAureliaHtmlMode(
     ) {
       if (triggerCharacter === '<') {
         const aureliaComponents = aureliaProgram.aureliaComponents
-          .get()
+          .getAll()
           .filter(
             (component) => component.type === AureliaClassTypes.CUSTOM_ELEMENT
           );

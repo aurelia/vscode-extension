@@ -94,7 +94,7 @@ export async function getBindablesCompletion(
 ): Promise<CompletionItem[]> {
   if (!region) return [];
 
-  aureliaProgram.aureliaComponents.get();
+  aureliaProgram.aureliaComponents.getAll();
   const bindableList = aureliaProgram.aureliaComponents.getBindables();
   const asCompletionItem = bindableList.map((bindable) => {
     const result = createCompletionItem(
@@ -113,7 +113,7 @@ export function createValueConverterCompletion(
   aureliaProgram: AureliaProgram
 ): CompletionItem[] {
   const valueConverterCompletionList = aureliaProgram.aureliaComponents
-    .get()
+    .getAll()
     .filter((component) => component.type === AureliaClassTypes.VALUE_CONVERTER)
     .map((valueConverterComponent) => {
       const elementName = valueConverterComponent.valueConverterName ?? '';

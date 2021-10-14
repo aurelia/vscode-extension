@@ -461,7 +461,7 @@ export async function getDocumentRegions(
 ): Promise<HTMLDocumentRegions> {
   let regions: AsyncReturnType<typeof parseDocumentRegions> = [];
   try {
-    const componentList = aureliaProgram.aureliaComponents.get();
+    const componentList = aureliaProgram.aureliaComponents.getAll();
     regions = await parseDocumentRegions(document, componentList);
   } catch (error) {
     console.log('TCL: error', error);

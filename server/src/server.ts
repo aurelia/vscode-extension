@@ -120,7 +120,7 @@ connection.onInitialized(async () => {
     );
 
     const aureliaProjects = globalContainer.get(AureliaProjects);
-    const { aureliaProgram } = aureliaProjects.get()[0];
+    const { aureliaProgram } = aureliaProjects.getAll()[0];
 
     if (aureliaProgram) {
       languageModes = await getLanguageModes(aureliaProgram, extensionSettings);
@@ -271,10 +271,10 @@ connection.onRenameRequest(
 
 connection.onRequest('aurelia-get-component-list', () => {
   const aureliaProjects = globalContainer.get(AureliaProjects);
-  const { aureliaProgram } = aureliaProjects.get()[0];
+  const { aureliaProgram } = aureliaProjects.getAll()[0];
   if (!aureliaProgram) return;
 
-  return aureliaProgram.aureliaComponents.get().map((cList) => {
+  return aureliaProgram.aureliaComponents.getAll().map((cList) => {
     const {
       componentName,
       className,

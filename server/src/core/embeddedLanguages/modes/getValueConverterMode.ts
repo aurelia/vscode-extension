@@ -48,7 +48,7 @@ export function getValueConverterMode(
     ): Promise<DefinitionResult | undefined> {
       const targetRegion = valueConverterRegion as ViewRegionInfo<ValueConverterRegionData>;
       const targetValueConverterComponent = aureliaProgram.aureliaComponents
-        .get()
+        .getAll()
         .filter(
           (component) => component.type === AureliaClassTypes.VALUE_CONVERTER
         )
@@ -76,7 +76,7 @@ async function onValueConverterCompletion(
   document: TextDocument,
   aureliaProgram: AureliaProgram
 ) {
-  const componentList = aureliaProgram.aureliaComponents.get();
+  const componentList = aureliaProgram.aureliaComponents.getAll();
   const regions = await parseDocumentRegions(document, componentList);
   const targetRegion = getRegionAtPosition(
     document,
@@ -91,7 +91,7 @@ async function onValueConverterCompletion(
   const valueConverterRegion = targetRegion as ViewRegionInfo<ValueConverterRegionData>;
 
   const targetValueConverterComponent = aureliaProgram.aureliaComponents
-    .get()
+    .getAll()
     .filter((component) => component.type === AureliaClassTypes.VALUE_CONVERTER)
     .find(
       (valueConverterComponent) =>

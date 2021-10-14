@@ -7,7 +7,6 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaProjects } from '../../../server/src/core/AureliaProjects';
 import { AureliaServer } from '../../../server/src/core/AureliaServer';
 import { globalContainer } from '../../../server/src/core/container';
-import { AureliaProgram } from '../../../server/src/core/viewModel/AureliaProgram';
 import {
   ExtensionSettings,
   DocumentSettings,
@@ -28,7 +27,6 @@ export class MockServer {
 
   private readonly aureliaServer: AureliaServer;
   private readonly AureliaProjects: AureliaProjects;
-  private readonly AureliaProgram: AureliaProgram;
   private readonly DocumentSettings: DocumentSettings;
 
   constructor(
@@ -44,7 +42,6 @@ export class MockServer {
     this.textDocuments = new MockTextDocuments(this.workspaceRootUri);
 
     this.AureliaProjects = this.container.get(AureliaProjects);
-    this.AureliaProgram = this.container.get(AureliaProgram);
     this.DocumentSettings = this.container.get(DocumentSettings);
   }
 
@@ -75,7 +72,6 @@ export class MockServer {
   public getContainerDirectly() {
     return {
       AureliaProjects: this.AureliaProjects,
-      AureliaProgram: this.AureliaProgram,
       DocumentSettings: this.DocumentSettings,
     };
   }

@@ -15,7 +15,7 @@ export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
 
   then('the extension should not activate', () => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const auProjects = AureliaProjects.get();
+    const auProjects = AureliaProjects.getAll();
     strictEqual(auProjects.length, 0);
   });
 };
@@ -35,7 +35,7 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
 
   then('the extension should detect the Aurelia project', () => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const auProjects = AureliaProjects.get();
+    const auProjects = AureliaProjects.getAll();
     expect(auProjects.length).toBeGreaterThan(0);
     // [PERF][TODO]: For perf, this should be active
     // strictEqual(auProjects[0].aureliaProgram, null);
@@ -43,7 +43,7 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
 
   then('the extension should detect all Aurelia projects', () => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const auProjects = AureliaProjects.get();
+    const auProjects = AureliaProjects.getAll();
     strictEqual(auProjects.length >= 2, true);
   });
 };

@@ -48,7 +48,7 @@ export function performViewModelChanges(
 ): WorkspaceEdit['changes'] {
   // 1. Prepare
   const result: WorkspaceEdit['changes'] = {};
-  const components = aureliaProgram.aureliaComponents.get();
+  const components = aureliaProgram.aureliaComponents.getAll();
   const targetComponent = components.find(
     (component) => component.viewModelFilePath === viewModelPath
   );

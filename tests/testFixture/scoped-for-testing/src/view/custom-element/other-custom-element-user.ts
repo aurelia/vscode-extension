@@ -1,9 +1,9 @@
 export class OtherCustomElementCustomElement {
-  @bindable foo;
-  @bindable bar;
-  qux;
+  @bindable otherFoo;
+  @bindable otherBar;
+  otherQux;
 
-  useFoo() {
-    this.foo
+  otherUseFoo() {
+    this.foo;
   }
 }

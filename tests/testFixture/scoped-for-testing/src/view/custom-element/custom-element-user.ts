@@ -1,5 +1,5 @@
 export class CustomElementUserCustomElement {
-  @bindable foo;
-  @bindable bar;
-  qux;
+  @bindable fooUser;
+  @bindable barUser;
+  quxUser;
 }

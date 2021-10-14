@@ -68,7 +68,7 @@ export async function aureliaRename(
 
   // 3. rename all regions in view of target custom element
   // 3.1 Get document of corresponding view
-  const componentList = aureliaProgram.aureliaComponents.get();
+  const componentList = aureliaProgram.aureliaComponents.getAll();
   const targetComponent = componentList.find(
     (component) => component.viewModelFilePath === viewModelPath
   );

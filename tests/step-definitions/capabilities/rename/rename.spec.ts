@@ -47,7 +47,6 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
       if (renamed?.changes) {
         expect(Object.keys(renamed.changes).length).toBeGreaterThan(5);
       }
-      expect(true).toBeFalsy();
     }
   );
 };
