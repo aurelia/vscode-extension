@@ -68,6 +68,13 @@ export class AureliaProjects {
     return target;
   }
 
+  public getFromPath(documentPath: string): IAureliaProject | undefined {
+    const target = this.getAll().find((project) =>
+      documentPath.includes(project.tsConfigPath)
+    );
+    return target;
+  }
+
   public getFirst(): IAureliaProject {
     return this.aureliaProjects[0];
   }

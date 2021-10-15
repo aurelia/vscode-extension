@@ -5,14 +5,21 @@ import { pathToFileURL } from 'url';
 import { Position, Range } from 'vscode-html-languageservice';
 import { TextEdit } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { findSourceWord } from '../../common/documens/find-source-word';
+import {
+  findSourceWord,
+  getWordAtOffset,
+} from '../../common/documens/find-source-word';
 import { getRelatedFilePath } from '../../common/documens/related';
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
+import { AureliaProjects } from '../../core/AureliaProjects';
+import { Container } from '../../core/container';
 import {
   ViewRegionInfo,
   ViewRegionType,
 } from '../../core/embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
+import { DocumentSettings } from '../configuration/DocumentSettings';
 import {
   getViewModelPathFromTagName,
   performViewModelChanges,
@@ -29,11 +36,6 @@ export async function aureliaRenameFromView(
 ) {
   if (!region.startCol) return;
   if (!region.endCol) return;
-
-  const { line } = position;
-  const startPosition = Position.create(line - 1, region.startCol - 1);
-  const endPosition = Position.create(line - 1, region.endCol - 1);
-  const range = Range.create(startPosition, endPosition);
 
   // 1. rename view model
   const offset = document.offsetAt(position);
@@ -87,9 +89,14 @@ export async function aureliaRenameFromView(
     newName
   );
 
+  // const { line } = position;
+  // const startPosition = Position.create(line - 1, region.startCol - 1);
+  // const endPosition = Position.create(line - 1, region.endCol - 1);
+  // const range = Range.create(startPosition, endPosition);
+
   return {
     changes: {
-      [document.uri]: [TextEdit.replace(range, newName)],
+      // [document.uri]: [TextEdit.replace(range, newName)],
       ...viewModelChanes,
       ...otherComponentChanges,
       ...otherChangesInsideSameView,
@@ -101,5 +108,71 @@ export async function aureliaRenameFromView(
     //     [TextEdit.replace(range, newName)]
     //   ),
     // ],
+  };
+}
+
+/**
+ * console.log('TODO: Check for bindable decorator [ISSUE-cjMoQgGT]');
+ *
+ * Rename "from View model" behaves differently, than rename "from View",
+ * because in the "from View" version, we check for Regions in the View.
+ */
+export async function aureliaRenameFromViewModel(
+  container: Container,
+  documentSettings: DocumentSettings,
+  document: TextDocument,
+  position: Position,
+  newName: string
+) {
+  const offset = document.offsetAt(position);
+  const sourceWord = getWordAtOffset(document.getText(), offset);
+  const viewModelPath = UriUtils.toPath(document.uri);
+  const targetProject = container
+    .get(AureliaProjects)
+    .getFromPath(viewModelPath);
+  if (!targetProject) return;
+
+  const { aureliaProgram } = targetProject;
+  if (!aureliaProgram) return;
+
+  // View Model
+  const viewModelChanges = performViewModelChanges(
+    aureliaProgram,
+    viewModelPath,
+    sourceWord,
+    camelCase(newName)
+  );
+
+  // View
+  const otherComponentChanges = await getAllOtherChangesForComponentsWithBindable(
+    aureliaProgram,
+    sourceWord,
+    newName
+  );
+
+  // View
+  const viewExtensions = documentSettings.getSettings().relatedFiles?.view;
+  if (!viewExtensions) return;
+
+  const viewPath = getRelatedFilePath(
+    UriUtils.toPath(document.uri),
+    viewExtensions
+  );
+
+  const viewDocument = TextDocumentUtils.createHtmlFromPath(viewPath);
+  viewDocument.getText();
+  const otherChangesInsideSameView = await renameAllOtherRegionsInSameView(
+    aureliaProgram,
+    viewDocument,
+    sourceWord,
+    newName
+  );
+
+  return {
+    changes: {
+      ...viewModelChanges,
+      ...otherComponentChanges,
+      ...otherChangesInsideSameView,
+    },
   };
 }

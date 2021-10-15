@@ -39,6 +39,20 @@ export function getWordAtOffset(input: string, offset: number): string {
   return getWordInfoAtOffset(input, offset).word;
 }
 
+// const input =
+//   '' +
+//   `@customElement({ name: 'custom-element', template })
+// export class CustomElementCustomElement {
+//   @bindable foo;
+//   @bindable bar;
+//   qux;
+
+//   useFoo() {
+//     this.foo;
+//   }
+// } `;
+// getWordAtOffset(input, 106); /*?*/
+
 export function getWordInfoAtOffset(input: string, offset: number): WordInfo {
   if (isNonWordCharacter(input[offset])) {
     const offsetPrevious = offset - 1;

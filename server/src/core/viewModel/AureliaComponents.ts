@@ -16,10 +16,6 @@ export class AureliaComponents {
   private bindables: IAureliaBindable[] = [];
   checker: ts.TypeChecker;
 
-  constructor() {
-    /* prettier-ignore */ console.log('TCL: AureliaComponents -> constructor -> constructor')
-  }
-
   public init(program: ts.Program, filePaths: string[]): void {
     if (filePaths.length === 0) {
       logger.log('Error: No Aurelia files found.');

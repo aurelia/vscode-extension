@@ -2,6 +2,7 @@ import { Position } from 'vscode-languageserver';
 
 import { AsyncReturnType } from '../../../../server/src/common/global';
 import { getLanguageModes } from '../../../../server/src/core/embeddedLanguages/languageModes';
+import { testError } from '../../../common/errors/TestErrors';
 import { myMockServer } from './project.step';
 
 export let languageModes: AsyncReturnType<typeof getLanguageModes>;
@@ -15,7 +16,12 @@ export async function givenImOnTheLineAtCharacter(
   codeWithCursor: string,
   line: number
 ) {
-  const character = findCharacterPosition(codeWithCursor);
+  const character = findCursorCharacterPosition(codeWithCursor);
+  if (character === -1) {
+    testError.log(
+      `Please add Cursor position to input, was: ${codeWithCursor}`
+    );
+  }
   position = Position.create(line, character);
 
   const {
@@ -47,7 +53,7 @@ export function removeCursorFromCode(code: string): string {
  * @param input - Of the form `<div id="|">`, where "|" represents the cursor.
  * @returns index of cursor.
  */
-function findCharacterPosition(input: string): number {
+function findCursorCharacterPosition(input: string): number {
   const [, codeContent] = /^`(.*)`$/.exec(input) ?? [];
 
   if (codeContent.includes(CURSOR_CHARACTER_1)) {

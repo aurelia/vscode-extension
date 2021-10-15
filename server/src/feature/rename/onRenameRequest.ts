@@ -9,6 +9,20 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
+import { DocumentSettings } from '../configuration/DocumentSettings';
+import { aureliaRenameFromViewModel } from './aureliaRename';
+
+function isViewModelDocument(
+  document: TextDocument,
+  documentSettings: DocumentSettings
+) {
+  const settings = documentSettings.getSettings();
+  const scriptExtensions = settings?.relatedFiles?.script;
+  const isScript = scriptExtensions?.find((extension) =>
+    document.uri.endsWith(extension)
+  );
+  return isScript;
+}
 
 export async function onRenameRequest(
   position: Position,
@@ -17,8 +31,21 @@ export async function onRenameRequest(
   languageModes: LanguageModes,
   container: Container
 ): Promise<WorkspaceEdit | undefined> {
-  if (document.uri.includes('.ts')) {
-    return;
+  // if (document.uri.includes('.ts')) {
+  //   return;
+  // }
+  const documentSettings = container.get(DocumentSettings);
+  const isViewModel = isViewModelDocument(document, documentSettings);
+
+  if (isViewModel) {
+    const renamed = aureliaRenameFromViewModel(
+      container,
+      documentSettings,
+      document,
+      position,
+      newName
+    );
+    return renamed;
   }
 
   const modeAndRegion = await languageModes.getModeAndRegionAtPosition(

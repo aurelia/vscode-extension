@@ -44,8 +44,9 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
     'all other components, that also use the Bindable should be renamed',
     () => {
       expect(renamed?.changes).toBeDefined();
+      renamed; /*?*/
       if (renamed?.changes) {
-        expect(Object.keys(renamed.changes).length).toBeGreaterThan(5);
+        expect(Object.keys(renamed.changes).length).toBeGreaterThan(4);
       }
     }
   );
