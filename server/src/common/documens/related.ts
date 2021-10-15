@@ -19,6 +19,7 @@ export function getRelatedFilePath(
       )}${ext}`.replace('.spec.spec', '.spec'); // Quick fix because we are appending eg. '.spec.ts' to 'file.spec'
       fullPath = path.join(path.dirname(fullPath), fileName);
       if (!fs.existsSync(fullPath)) return;
+
       targetFile = fullPath;
     });
   } catch (error) {

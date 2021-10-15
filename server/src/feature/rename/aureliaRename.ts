@@ -20,7 +20,7 @@ import {
   renameAllOtherRegionsInSameView,
 } from './workspaceEdits';
 
-export async function aureliaRename(
+export async function aureliaRenameFromView(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
   position: Position,

@@ -14,7 +14,7 @@ import { AureliaProgram } from '../viewModel/AureliaProgram';
 type Uri = string;
 type RegionsLookUp = Record<Uri, ViewRegionInfo[]>;
 
-export async function findAllBindableRegions(
+export async function findAllBindableAttributeRegions(
   aureliaProgram: AureliaProgram,
   bindableName: string
 ): Promise<RegionsLookUp> {

@@ -5,7 +5,7 @@ import { WorkspaceEdit, TextEdit, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Logger } from '../../common/logging/logger';
 import {
-  findAllBindableRegions,
+  findAllBindableAttributeRegions,
   findRegionsWithValue,
 } from '../../core/regions/findSpecificRegion';
 import { getRangeFromRegion } from '../../core/regions/rangeFromRegion';
@@ -19,7 +19,7 @@ export async function getAllOtherChangesForComponentsWithBindable(
   bindableName: string,
   newName: string
 ) {
-  const bindableRegions = await findAllBindableRegions(
+  const bindableRegions = await findAllBindableAttributeRegions(
     aureliaProgram,
     bindableName
   );

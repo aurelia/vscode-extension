@@ -4,7 +4,7 @@ import { getAureliaVirtualCompletions } from '../../../feature/completions/virtu
 import { getAccessScopeDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { getAccessScopeHover } from '../../../feature/hover/accessScopeHover';
-import { aureliaRename } from '../../../feature/rename/aureliaRename';
+import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
 import { VirtualLanguageService } from '../../../feature/virtual/virtualSourceFile';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import {
@@ -79,7 +79,7 @@ export function getAttributeMode(
       newName: string,
       region: ViewRegionInfo
     ) {
-      const renames = aureliaRename(
+      const renames = aureliaRenameFromView(
         aureliaProgram,
         document,
         position,

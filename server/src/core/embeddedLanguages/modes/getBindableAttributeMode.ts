@@ -3,7 +3,7 @@ import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { ViewRegionInfo, ViewRegionType } from '../embeddedSupport';
 import { LanguageMode, Position, TextDocument } from '../languageModes';
 import { Logger } from '../../../common/logging/logger';
-import { aureliaRename } from '../../../feature/rename/aureliaRename';
+import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
 
 const logger = new Logger('getBindableAttributeMode');
 
@@ -22,7 +22,7 @@ export function getBindableAttributeMode(
       newName: string,
       region: ViewRegionInfo
     ) {
-      const renames = aureliaRename(
+      const renames = aureliaRenameFromView(
         aureliaProgram,
         document,
         position,
