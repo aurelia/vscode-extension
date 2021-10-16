@@ -63,6 +63,39 @@ export async function findAllBindableAttributeRegions(
   return regionsLookUp;
 }
 
+export async function forEachRegion<
+  RegionType extends ViewRegionType,
+  RegionDataType = RegionType extends ViewRegionType.CustomElement
+    ? ViewRegionInfo
+    : any
+>(
+  aureliaProgram: AureliaProgram,
+  regionType: RegionType,
+  forEachRegionsCallback: (
+    regions: ViewRegionInfo<RegionDataType>[],
+    document: TextDocument
+  ) => void
+): Promise<RegionsLookUp> {
+  const regionsLookUp: RegionsLookUp = {};
+
+  // 1. Find Custom Elements with target Bindable
+  const componentList = aureliaProgram.aureliaComponents.getAll();
+  await Promise.all(
+    componentList.map(async (component) => {
+      const path = component.viewFilePath!;
+      const uri = pathToFileURL(path).toString();
+      const content = fs.readFileSync(path, 'utf-8');
+      const document = TextDocument.create(uri, 'html', 0, content);
+      if (!document) return;
+      // 1.1 Parse document, and find all Custom Element regions
+      const regions = await parseDocumentRegions(document, componentList);
+      forEachRegionsCallback(regions, document);
+    })
+  );
+
+  return regionsLookUp;
+}
+
 export async function findRegionsWithValue(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
@@ -89,7 +122,7 @@ export async function findRegionsWithValue(
   return targetRegions;
 }
 
-function getRegionsOfType<RegionDataType>(
+export function getRegionsOfType<RegionDataType>(
   regions: ViewRegionInfo<RegionDataType>[],
   regionType: ViewRegionType
 ) {

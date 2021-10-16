@@ -44,10 +44,39 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
     'all other components, that also use the Bindable should be renamed',
     () => {
       expect(renamed?.changes).toBeDefined();
-      renamed; /*?*/
+      // renamed; /*?*/
       if (renamed?.changes) {
         expect(Object.keys(renamed.changes).length).toBeGreaterThan(4);
+
+        // TODO: Expect kebab case
+        const targetChanges = Object.entries(
+          renamed.changes
+        ).filter(([fileName]) => fileName.endsWith('.html'));
+
+        if (!targetChanges) return;
+        targetChanges.forEach(([fileName, change]) => {
+          // same component
+          if (fileName.includes('custom-element.html')) {
+            expect(change[0].newText).toBe('newNew');
+            // other components
+          } else {
+            expect(change[0].newText).toBe('new-new');
+          }
+        });
       }
     }
+  );
+
+  then('the View model class should be renamed', () => {
+    expect(renamed?.changes).toBeDefined();
+    if (renamed?.changes) {
+      renamed; /*?*/
+      expect(true).toBeFalsy();
+    }
+  });
+
+  and(
+    'all other components, that also use the Custom Element should be renamed',
+    () => {}
   );
 };

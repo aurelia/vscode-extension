@@ -23,7 +23,7 @@ import { DocumentSettings } from '../configuration/DocumentSettings';
 import {
   getViewModelPathFromTagName,
   performViewModelChanges,
-  getAllOtherChangesForComponentsWithBindable,
+  getAllChangesForOtherCustomElements,
   renameAllOtherRegionsInSameView,
 } from './workspaceEdits';
 
@@ -62,8 +62,9 @@ export async function aureliaRenameFromView(
   );
 
   // 2. rename all others
-  const otherComponentChanges = await getAllOtherChangesForComponentsWithBindable(
+  const otherComponentChanges = await getAllChangesForOtherCustomElements(
     aureliaProgram,
+    viewModelPath,
     sourceWord,
     newName
   );
@@ -142,13 +143,16 @@ export async function aureliaRenameFromViewModel(
     sourceWord,
     camelCase(newName)
   );
+  // viewModelChanges; /*?*/
 
   // View
-  const otherComponentChanges = await getAllOtherChangesForComponentsWithBindable(
+  const otherComponentChanges = await getAllChangesForOtherCustomElements(
     aureliaProgram,
+    viewModelPath,
     sourceWord,
     newName
   );
+  // otherComponentChanges; /*?*/
 
   // View
   const viewExtensions = documentSettings.getSettings().relatedFiles?.view;
@@ -167,12 +171,15 @@ export async function aureliaRenameFromViewModel(
     sourceWord,
     newName
   );
+  // otherChangesInsideSameView; /*?*/
 
-  return {
+  const finalChanges = {
     changes: {
       ...viewModelChanges,
       ...otherComponentChanges,
       ...otherChangesInsideSameView,
     },
   };
+  // finalChanges; /*?*/
+  return finalChanges;
 }

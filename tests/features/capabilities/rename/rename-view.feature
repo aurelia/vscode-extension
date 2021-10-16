@@ -37,15 +37,3 @@ Feature: Rename in View
       | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  |
       | View model         | 2    | `<div id.bind="\|foo"></div>`                  | new-new  |
       | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  |
-
-  @focus
-  Scenario Outline: Rename variable in View Model
-    And I open VSCode with the following file "custom-element.ts"
-    And I'm on the line <LINE> at character <CODE>
-    When I trigger Rename to <NEW_WORD>
-    Then the View model variable should be renamed
-    And all other components, that also use the Bindable should be renamed
-
-    Examples:
-      | DESCRIPTION        | LINE | CODE                 | NEW_WORD |
-      | Text Interploation | 2    | `  @bindable \|foo;` | new-new  |

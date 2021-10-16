@@ -58,6 +58,7 @@ export function getAureliaComponentInfoFromClassDeclaration(
         symbol.getDocumentationComment(checker)
       );
 
+      // Value Converter
       const isValueConverterModel = checkValueConverter(targetClassDeclaration);
       if (isValueConverterModel) {
         const valueConverterName = targetClassDeclaration.name
@@ -76,14 +77,10 @@ export function getAureliaComponentInfoFromClassDeclaration(
         return;
       }
 
-      const viewModelName = getElementNameFromClassDeclaration(
-        targetClassDeclaration
-      );
-
-      let viewFilePath: string = '';
-
+      // Standard Component
       const { fileName } = targetClassDeclaration.getSourceFile();
       const conventionViewFilePath = fileName.replace(/.[jt]s$/, '.html');
+      let viewFilePath: string = '';
       if (fs.existsSync(conventionViewFilePath)) {
         viewFilePath = conventionViewFilePath;
       } else {
@@ -94,10 +91,12 @@ export function getAureliaComponentInfoFromClassDeclaration(
           ) ?? '';
       }
 
-      //
       const resultClassMembers = getAureliaViewModelClassMembers(
         targetClassDeclaration,
         checker
+      );
+      const viewModelName = getElementNameFromClassDeclaration(
+        targetClassDeclaration
       );
 
       result = {
