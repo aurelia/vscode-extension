@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 
 import { kebabCase } from 'lodash';
-import { ts } from 'ts-morph';
+import { SyntaxKind, ts } from 'ts-morph';
 
 import { getElementNameFromClassDeclaration } from '../../common/className';
 import {
@@ -99,10 +99,42 @@ export function getAureliaComponentInfoFromClassDeclaration(
         targetClassDeclaration
       );
 
+      // Decorator
+      const customElementDecorator = getCustomElementDecorator(
+        targetClassDeclaration
+      );
+      let decoratorComponentName;
+      let decoratorStartOffset;
+      let decoratorEndOffset;
+      if (customElementDecorator) {
+        // get argument for name property in decorator
+        customElementDecorator.expression.forEachChild((decoratorChild) => {
+          if (!ts.isObjectLiteralExpression(decoratorChild)) return;
+          decoratorChild.forEachChild((decoratorArgument) => {
+            if (!ts.isPropertyAssignment(decoratorArgument)) return;
+            decoratorArgument.forEachChild((decoratorProp) => {
+              if (!ts.isStringLiteral(decoratorProp)) {
+                // TODO: What if name is not a string? --> Notify users [ISSUE-8Rh31VAG]
+                return;
+              }
+
+              decoratorComponentName = decoratorProp
+                .getText()
+                .replace(/['"]/g, '');
+              decoratorStartOffset = decoratorProp.getStart() + 1; // start quote
+              decoratorEndOffset = decoratorProp.getEnd() - 1; // end quote
+            });
+          });
+        });
+      }
+
       result = {
         documentation,
         className: targetClassDeclaration.name?.getText() ?? '',
         componentName: viewModelName,
+        decoratorComponentName,
+        decoratorStartOffset,
+        decoratorEndOffset,
         baseViewModelFileName: Path.parse(sourceFile.fileName).name,
         viewModelFilePath: sourceFile.fileName,
         viewFilePath,
@@ -158,7 +190,7 @@ export function getClassDecoratorInfos(
   return classDecoratorInfos.filter((info) => info.decoratorName !== '');
 }
 
-export function getAureliaViewModelClassMembers(
+function getAureliaViewModelClassMembers(
   classDeclaration: ts.ClassDeclaration,
   checker: ts.TypeChecker
 ): IAureliaClassMember[] {
@@ -219,7 +251,7 @@ export function getAureliaViewModelClassMembers(
  *
  * @param classDeclaration - ClassDeclaration to check
  */
-export function classDeclarationHasUseViewOrNoView(
+function classDeclarationHasUseViewOrNoView(
   classDeclaration: ts.ClassDeclaration
 ): boolean {
   if (!classDeclaration.decorators) return false;
@@ -235,19 +267,35 @@ export function classDeclarationHasUseViewOrNoView(
 }
 
 /**
+ * [refactor]: also get other decorators
+ */
+export function getCustomElementDecorator(
+  classDeclaration: ts.ClassDeclaration
+) {
+  const target = classDeclaration.decorators?.find((decorator) => {
+    const result = decorator
+      .getText()
+      .includes(AureliaDecorator.CUSTOM_ELEMENT);
+    return result;
+  });
+  return target;
+}
+
+/**
  * MyClassCustomelement
  *
  * \@customElement(...)
  * MyClass
  */
-export function hasCustomElementNamingConvention(
+function hasCustomElementNamingConvention(
   classDeclaration: ts.ClassDeclaration
 ): boolean {
   const hasCustomElementDecorator =
     classDeclaration.decorators?.some((decorator) => {
-      const result = decorator
-        .getText()
-        .includes(AureliaDecorator.CUSTOM_ELEMENT);
+      const decoratorName = decorator.getText();
+      const result =
+        decoratorName.includes(AureliaDecorator.CUSTOM_ELEMENT) ||
+        decoratorName.includes('name');
       return result;
     }) ?? false;
 
@@ -273,7 +321,7 @@ export function hasCustomElementNamingConvention(
  * \@valueConverter(...)
  * MyClass
  */
-export function hasValueConverterNamingConvention(
+function hasValueConverterNamingConvention(
   classDeclaration: ts.ClassDeclaration
 ): boolean {
   const hasValueConverterDecorator =
@@ -291,7 +339,7 @@ export function hasValueConverterNamingConvention(
   return hasValueConverterDecorator || hasValueConverterNamingConvention;
 }
 
-export function getTemplateImportPathFromCustomElementDecorator(
+function getTemplateImportPathFromCustomElementDecorator(
   classDeclaration: ts.ClassDeclaration,
   sourceFile: ts.SourceFile
 ): string | undefined {

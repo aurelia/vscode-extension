@@ -33,6 +33,12 @@ export interface IAureliaProjectSetting {
   rootDirectory?: string;
 }
 
+export const defaultProjectOptions: IAureliaProjectSetting = {
+  include: [],
+  exclude: [],
+  rootDirectory: '',
+};
+
 interface Features {}
 
 // The example settings
@@ -107,6 +113,16 @@ export class DocumentSettings {
 
   public getSettings(): ExtensionSettings {
     return this.globalSettings;
+  }
+
+  public setSettings(extensionSettings: ExtensionSettings) {
+    this.globalSettings = {
+      ...this.globalSettings,
+      aureliaProject: {
+        ...this.globalSettings.aureliaProject,
+        ...extensionSettings.aureliaProject,
+      },
+    };
   }
 
   public inject(

@@ -16,7 +16,7 @@ export function getElementNameFromClassDeclaration(
 
   classDecoratorInfos
     .find((info) => info.decoratorName === 'customElement')
-    ?.decoratorArgument.replace(/'"/, ''); // The argument is a string with the quotes. We don' want the quotes.
+    ?.decoratorArgument.replace(/['"]/g, ''); // The argument is a string with the quotes. We don' want the quotes.
 
   const className = classDeclaration.name?.getText() ?? '';
   const withoutCustomElementSuffix = className.replace(

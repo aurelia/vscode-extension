@@ -2,12 +2,12 @@ import 'reflect-metadata';
 
 import { Project, ts } from 'ts-morph';
 
-import {
-  IProjectOptions,
-  defaultProjectOptions,
-} from '../../common/common.types';
 import { AureliaClassTypes } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
+import {
+  defaultProjectOptions,
+  IAureliaProjectSetting,
+} from '../../feature/configuration/DocumentSettings';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 import { AureliaComponents } from './AureliaComponents';
 
@@ -39,6 +39,9 @@ export interface IAureliaComponent {
    * export class >ComponentName< {} --> component-name
    * */
   componentName?: string;
+  decoratorComponentName?: string;
+  decoratorStartOffset?: number;
+  decoratorEndOffset?: number;
   viewFilePath?: string;
   type: AureliaClassTypes;
   /** ******** Class Members */
@@ -76,7 +79,7 @@ export class AureliaProgram {
     this.aureliaComponents = new AureliaComponents();
   }
 
-  public initAureliaComponents(projectOptions: IProjectOptions): void {
+  public initAureliaComponents(projectOptions: IAureliaProjectSetting): void {
     const program = this.getProgram();
     this.determineFilePaths(projectOptions);
     const filePaths = this.getFilePaths();
@@ -138,7 +141,7 @@ export class AureliaProgram {
     return this.filePaths;
   }
 
-  private determineFilePaths(projectOptions: IProjectOptions): void {
+  private determineFilePaths(projectOptions: IAureliaProjectSetting): void {
     if (projectOptions.rootDirectory) {
       this.filePaths = getUserConfiguredFilePaths(projectOptions);
       return;
@@ -153,7 +156,7 @@ export class AureliaProgram {
 }
 
 function getUserConfiguredFilePaths(
-  options: IProjectOptions = defaultProjectOptions
+  options: IAureliaProjectSetting = defaultProjectOptions
 ): string[] {
   const { rootDirectory, exclude, include } = options;
   const targetSourceDirectory = rootDirectory || ts.sys.getCurrentDirectory();

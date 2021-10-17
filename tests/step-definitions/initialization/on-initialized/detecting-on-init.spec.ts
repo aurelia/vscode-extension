@@ -10,7 +10,7 @@ import {
 
 export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
   given(/^the project is named "(.*)"$/, async (projectName: FixtureNames) => {
-    /* prettier-ignore */ theProjectIsNamed(projectName);
+    theProjectIsNamed(projectName);
   });
 
   then('the extension should not activate', () => {

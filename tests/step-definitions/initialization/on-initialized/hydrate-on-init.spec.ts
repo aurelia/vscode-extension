@@ -28,11 +28,16 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
       /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$');
-      const uri = myMockServer.getWorkspaceUri();
-      const textDocumentPaths = getPathsFromFileNames(uri, [fileName]);
-      await givenIOpenVsCodeWithTheFollowingFiles(textDocumentPaths);
+      myMockServer.setActiveFilePath(fileName);
+      await givenIOpenVsCodeWithTheFollowingFiles([
+        myMockServer.getActiveFilePath(),
+      ]);
     }
   );
+
+  and(/the active file is "(.*)"/, async (fileName: string) => {
+    myMockServer.setActiveFilePath(fileName);
+  });
 
   then('the extension should hydrate the Aurelia project', () => {
     /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project');

@@ -14,6 +14,14 @@ import {
 } from '../../../server/src/feature/configuration/DocumentSettings';
 import { findProjectRoot } from '../find-project-root';
 import { MockTextDocuments } from './text-documents';
+import { UriUtils } from '../../../server/src/common/view/uri-utils';
+import { getPathsFromFileNames } from '../file-path-mocks';
+import { AureliaProgram } from '../../../server/src/core/viewModel/AureliaProgram';
+import {
+  AureliaTsMorph,
+  createTsMorphProject,
+} from '../../../server/src/core/tsMorph/AureliaTsMorph';
+import { ts } from '../../../server/node_modules/ts-morph/lib/ts-morph';
 
 const testsDir = findProjectRoot();
 const monorepoFixtureDir = path.resolve(
@@ -28,6 +36,7 @@ export class MockServer {
   private readonly aureliaServer: AureliaServer;
   private readonly AureliaProjects: AureliaProjects;
   private readonly DocumentSettings: DocumentSettings;
+  private activeFilePath: string;
 
   constructor(
     private readonly container: Container = globalContainer,
@@ -50,6 +59,32 @@ export class MockServer {
     const logValue = pluck(this);
     console.log('TCL: MockConnection -> log -> input', logValue);
     return this;
+  }
+
+  public createMockProgram(filePath?: string) {
+    if (!filePath) {
+      filePath = this.getActiveFilePath();
+    }
+
+    const project = createTsMorphProject();
+    project.addSourceFileAtPath(filePath);
+    const program = project.getProgram().compilerObject;
+    const result = {
+      get: () => program,
+      getSourceFile: () => program.getSourceFile(filePath!),
+    };
+
+    return result;
+  }
+
+  public setActiveFilePath(fileName: string) {
+    this.activeFilePath = getPathsFromFileNames(this.workspaceRootUri, [
+      fileName,
+    ])[0];
+  }
+
+  public getActiveFilePath() {
+    return this.activeFilePath;
   }
 
   public setWorkspaceUri(uri: string): void {
@@ -78,6 +113,17 @@ export class MockServer {
 
   public getAureliaServer(): AureliaServer {
     return this.aureliaServer;
+  }
+
+  public getAureliaProgram() {
+    const targetProject = this.AureliaProjects.getBy(
+      UriUtils.toPath(this.workspaceRootUri)
+    );
+    const aureliaProgram = targetProject?.aureliaProgram;
+
+    if (!aureliaProgram) return;
+
+    return aureliaProgram;
   }
 
   /**
