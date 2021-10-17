@@ -64,6 +64,31 @@ defineFeature(feature, (test) => {
     });
   });
 
+  test('Parsing - Custom Element - Opening Tag', ({ given, when, then }) => {
+    const parsedRegions: ViewRegionInfo[] = [];
+    const shared = {
+      workspaceRootUri: '',
+      parsedRegions,
+    };
+
+    givenImInTheProject(given, shared);
+
+    whenIParseTheFile(when, shared);
+
+    then('the result should include Custom element opening tag', () => {
+      const regionResults = getRegionsOfType(
+        shared.parsedRegions,
+        ViewRegionType.CustomElement
+      );
+
+      const openingCustomElementTag = regionResults[0];
+      expect(openingCustomElementTag.startLine).toBe(3);
+      expect(openingCustomElementTag.startOffset).toBe(49);
+      expect(openingCustomElementTag.endLine).toBe(3);
+      expect(openingCustomElementTag.endOffset).toBe(63);
+    });
+  });
+
   test('Parsing - Custom Element - Closing Tag', ({ given, when, then }) => {
     const parsedRegions: ViewRegionInfo[] = [];
     const shared = {
@@ -82,6 +107,11 @@ defineFeature(feature, (test) => {
       );
 
       expect(regionResults.length).toBe(2);
+      const closingCustomElementTag = regionResults[1];
+      expect(closingCustomElementTag.startLine).toBe(7);
+      expect(closingCustomElementTag.startOffset).toBe(113);
+      expect(closingCustomElementTag.endLine).toBe(7);
+      expect(closingCustomElementTag.endOffset).toBe(127);
     });
   });
 
@@ -145,7 +175,6 @@ function whenIParseTheFile(when, shared) {
       .mock(textDocumentPaths)
       .setActive(textDocumentPaths)
       .getActive();
-    textDocument.getText(); /*?*/
 
     const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
       textDocument,

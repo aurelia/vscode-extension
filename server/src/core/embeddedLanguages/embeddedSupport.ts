@@ -395,13 +395,27 @@ export function parseDocumentRegions<RegionDataType = any>(
           ...customElementAttributeRegions,
           ...customElementBindableAttributeRegions,
         ];
-        const customElementViewRegion = createRegion({
-          tagName,
-          sourceCodeLocation: startTag.sourceCodeLocation,
-          type: ViewRegionType.CustomElement,
-          data,
-        });
-        viewRegions.push(customElementViewRegion);
+        const { sourceCodeLocation } = startTag;
+        if (sourceCodeLocation) {
+          const { startOffset, startLine } = sourceCodeLocation;
+          const finalStartOffset = startOffset + 1; // +1 for "<" of tag
+          const endOffset = finalStartOffset + tagName.length;
+
+          const onlyOpeningTagLocation = {
+            ...sourceCodeLocation,
+            startOffset: finalStartOffset,
+            startLine,
+            endOffset,
+            endLine: startLine,
+          };
+          const customElementViewRegion = createRegion({
+            tagName,
+            sourceCodeLocation: onlyOpeningTagLocation,
+            type: ViewRegionType.CustomElement,
+            data,
+          });
+          viewRegions.push(customElementViewRegion);
+        }
       }
     });
 
@@ -446,12 +460,23 @@ export function parseDocumentRegions<RegionDataType = any>(
       const isCustomElement = aureliaCustomElementNames.includes(tagName);
 
       if (isCustomElement) {
-        const customElementViewRegion = createRegion({
-          tagName,
-          sourceCodeLocation: endTag.sourceCodeLocation,
-          type: ViewRegionType.CustomElement,
-        });
-        viewRegions.push(customElementViewRegion);
+        const { sourceCodeLocation } = endTag;
+        if (sourceCodeLocation) {
+          const { startOffset, endOffset } = sourceCodeLocation;
+          const finalStartOffset = startOffset + 2; // +2 </ of closing tag
+          const finalEndOffset = endOffset - 1; // -1 > of closing tag
+          const updatedEndLocation = {
+            ...sourceCodeLocation,
+            startOffset: finalStartOffset,
+            endOffset: finalEndOffset,
+          };
+          const customElementViewRegion = createRegion({
+            tagName,
+            sourceCodeLocation: updatedEndLocation,
+            type: ViewRegionType.CustomElement,
+          });
+          viewRegions.push(customElementViewRegion);
+        }
       }
     });
 
