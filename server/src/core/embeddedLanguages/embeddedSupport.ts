@@ -397,16 +397,20 @@ export function parseDocumentRegions<RegionDataType = any>(
         ];
         const { sourceCodeLocation } = startTag;
         if (sourceCodeLocation) {
-          const { startOffset, startLine } = sourceCodeLocation;
+          const { startCol, startOffset, startLine } = sourceCodeLocation;
+          const finalStartCol = startCol + 1; // +1 for "<" of tag
           const finalStartOffset = startOffset + 1; // +1 for "<" of tag
           const endOffset = finalStartOffset + tagName.length;
+          const finalEndCol = finalStartCol + tagName.length;
 
           const onlyOpeningTagLocation = {
             ...sourceCodeLocation,
-            startOffset: finalStartOffset,
+            startCol: finalStartCol,
             startLine,
-            endOffset,
+            endCol: finalEndCol,
+            startOffset: finalStartOffset,
             endLine: startLine,
+            endOffset,
           };
           const customElementViewRegion = createRegion({
             tagName,
@@ -462,12 +466,16 @@ export function parseDocumentRegions<RegionDataType = any>(
       if (isCustomElement) {
         const { sourceCodeLocation } = endTag;
         if (sourceCodeLocation) {
-          const { startOffset, endOffset } = sourceCodeLocation;
-          const finalStartOffset = startOffset + 2; // +2 </ of closing tag
-          const finalEndOffset = endOffset - 1; // -1 > of closing tag
+          const { startCol, startOffset, endOffset } = sourceCodeLocation;
+          const finalStartCol = startCol + 2; // + 2 for "<" of tag
+          const finalStartOffset = startOffset + 2; // + 2 </ of closing tag
+          const finalEndCol = finalStartCol + tagName.length;
+          const finalEndOffset = endOffset - 1; // - 1 > of closing tag
           const updatedEndLocation = {
             ...sourceCodeLocation,
+            startCol: finalStartCol,
             startOffset: finalStartOffset,
+            endCol: finalEndCol,
             endOffset: finalEndOffset,
           };
           const customElementViewRegion = createRegion({

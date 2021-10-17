@@ -135,7 +135,6 @@ export function performViewModelChanges(
       classIdentifier.getEnd()
     );
     const range = Range.create(startPosition, endPosition);
-    range; /*?*/
     result[viewModelUri].push(TextEdit.replace(range, newName));
 
     return result;

@@ -62,12 +62,13 @@ export async function aureliaRenameFromView(
   );
 
   // 2. rename all others
-  const otherComponentChanges = await getAllChangesForOtherCustomElements(
+  const otherCustomElementChanges = await getAllChangesForOtherCustomElements(
     aureliaProgram,
     viewModelPath,
     sourceWord,
     newName
   );
+  // otherCustomElementChanges; /*?*/
 
   // 3. rename all regions in view of target custom element
   // 3.1 Get document of corresponding view
@@ -99,7 +100,7 @@ export async function aureliaRenameFromView(
     changes: {
       // [document.uri]: [TextEdit.replace(range, newName)],
       ...viewModelChanes,
-      ...otherComponentChanges,
+      ...otherCustomElementChanges,
       ...otherChangesInsideSameView,
     },
 

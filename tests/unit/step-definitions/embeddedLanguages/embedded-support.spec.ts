@@ -82,8 +82,10 @@ defineFeature(feature, (test) => {
       );
 
       const openingCustomElementTag = regionResults[0];
+      expect(openingCustomElementTag.startCol).toBe(4);
       expect(openingCustomElementTag.startLine).toBe(3);
       expect(openingCustomElementTag.startOffset).toBe(49);
+      expect(openingCustomElementTag.endCol).toBe(18);
       expect(openingCustomElementTag.endLine).toBe(3);
       expect(openingCustomElementTag.endOffset).toBe(63);
     });
@@ -108,8 +110,10 @@ defineFeature(feature, (test) => {
 
       expect(regionResults.length).toBe(2);
       const closingCustomElementTag = regionResults[1];
+      expect(closingCustomElementTag.startCol).toBe(6);
       expect(closingCustomElementTag.startLine).toBe(7);
       expect(closingCustomElementTag.startOffset).toBe(113);
+      expect(closingCustomElementTag.endCol).toBe(20);
       expect(closingCustomElementTag.endLine).toBe(7);
       expect(closingCustomElementTag.endOffset).toBe(127);
     });

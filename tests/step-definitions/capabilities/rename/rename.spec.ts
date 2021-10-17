@@ -70,7 +70,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
   then('the View model class should be renamed', () => {
     expect(renamed?.changes).toBeDefined();
     if (renamed?.changes) {
-      renamed; /*?*/
+      // rename
       expect(true).toBeFalsy();
     }
   });
