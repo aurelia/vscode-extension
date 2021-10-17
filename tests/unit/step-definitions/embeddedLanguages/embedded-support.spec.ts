@@ -6,6 +6,7 @@ import {
   ViewRegionInfo,
   ViewRegionType,
 } from '../../../../server/src/core/embeddedLanguages/embeddedSupport';
+import { getRegionsOfType } from '../../../../server/src/core/regions/findSpecificRegion';
 
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import { getTestDir } from '../../../common/files/get-test-dir';
@@ -16,7 +17,10 @@ import {
 import { MockTextDocuments } from '../../../common/mock-server/text-documents';
 
 const feature = loadFeature(
-  `${getTestDir()}/unit/feature-files/embedded-support.feature`
+  `${getTestDir()}/unit/feature-files/embedded-support.feature`,
+  {
+    // tagFilter: '@focus',
+  }
 );
 
 defineFeature(feature, (test) => {
@@ -57,6 +61,27 @@ defineFeature(feature, (test) => {
         (attribute) => attribute.type === ViewRegionType.BindableAttribute
       );
       expect(result?.regionValue).toBe('foo');
+    });
+  });
+
+  test('Parsing - Custom Element - Closing Tag', ({ given, when, then }) => {
+    const parsedRegions: ViewRegionInfo[] = [];
+    const shared = {
+      workspaceRootUri: '',
+      parsedRegions,
+    };
+
+    givenImInTheProject(given, shared);
+
+    whenIParseTheFile(when, shared);
+
+    then('the result should include Custom element closing tag', () => {
+      const regionResults = getRegionsOfType(
+        shared.parsedRegions,
+        ViewRegionType.CustomElement
+      );
+
+      expect(regionResults.length).toBe(2);
     });
   });
 
@@ -116,7 +141,11 @@ function whenIParseTheFile(when, shared) {
       fileName,
     ]);
     const textDocuments = new MockTextDocuments(shared.workspaceRootUri);
-    const textDocument = textDocuments.mock(textDocumentPaths).getActive();
+    const textDocument = textDocuments
+      .mock(textDocumentPaths)
+      .setActive(textDocumentPaths)
+      .getActive();
+    textDocument.getText(); /*?*/
 
     const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
       textDocument,

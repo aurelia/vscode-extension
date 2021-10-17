@@ -1,6 +1,5 @@
 @core
 Feature: AureliaComponents
-  @focus
   Scenario: Component Identifier
     Given the project is named "scoped-for-testing"
     And the active file is "custom-element.ts"

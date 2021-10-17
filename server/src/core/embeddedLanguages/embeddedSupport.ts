@@ -442,16 +442,22 @@ export function parseDocumentRegions<RegionDataType = any>(
     });
 
     saxStream.on('endTag', (endTag) => {
-      const isTemplateTag = endTag.tagName === AureliaView.TEMPLATE_TAG_NAME;
+      const tagName = endTag.tagName;
+      const isCustomElement = aureliaCustomElementNames.includes(tagName);
 
-      if (isTemplateTag || hasImportTemplateTag) {
-        resolve(viewRegions);
-      } else {
-        resolve([]);
+      if (isCustomElement) {
+        const customElementViewRegion = createRegion({
+          tagName,
+          sourceCodeLocation: endTag.sourceCodeLocation,
+          type: ViewRegionType.CustomElement,
+        });
+        viewRegions.push(customElementViewRegion);
       }
     });
 
     saxStream.write(document.getText());
+
+    resolve(viewRegions);
   });
 }
 

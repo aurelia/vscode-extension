@@ -37,6 +37,10 @@ export class MockTextDocuments {
     return this;
   }
 
+  public getActive(): TextDocument {
+    return this.activeTextDocument;
+  }
+
   public push(textDocument: TextDocument): void {
     this.textDocuments.push(textDocument);
   }
@@ -53,10 +57,6 @@ export class MockTextDocuments {
 
   public getFirst(): TextDocument {
     return this.textDocuments[0];
-  }
-
-  public getActive(): TextDocument {
-    return this.activeTextDocument;
   }
 
   public create(uri: string): TextDocument {

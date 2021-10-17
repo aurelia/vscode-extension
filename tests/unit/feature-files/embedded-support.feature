@@ -6,6 +6,10 @@ Feature: Embedded support
     When I parse the file "custom-element-user.html"
     Then the result should include Custom element bindable attributes
 
+  Scenario: Parsing - Custom Element - Closing Tag
+    When I parse the file "other-custom-element-user.html"
+    Then the result should include Custom element closing tag
+
   Scenario Outline: Parsing - Offsets
     When I parse the file "custom-element.html"
     And I'm on line <LINE>
