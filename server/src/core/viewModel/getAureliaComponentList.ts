@@ -122,7 +122,7 @@ export function getAureliaComponentInfoFromClassDeclaration(
                 .getText()
                 .replace(/['"]/g, '');
               decoratorStartOffset = decoratorProp.getStart() + 1; // start quote
-              decoratorEndOffset = decoratorProp.getEnd() - 1; // end quote
+              decoratorEndOffset = decoratorProp.getEnd(); // include the last character, ie. the end quote
             });
           });
         });

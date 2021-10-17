@@ -1,3 +1,4 @@
+import { RenameLocation } from 'ts-morph';
 import { Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
@@ -5,6 +6,20 @@ import {
   ViewRegionType,
   RepeatForRegionData,
 } from '../embeddedLanguages/embeddedSupport';
+
+export function getRangeFromDocumentOffsets(
+  document: TextDocument,
+  startOffset: number | undefined,
+  endOffset: number | undefined
+) {
+  if (!startOffset) return;
+  if (!endOffset) return;
+
+  const startPosition = document.positionAt(startOffset);
+  const endPosition = document.positionAt(endOffset - 1);
+  const range = Range.create(startPosition, endPosition);
+  return range;
+}
 
 export function getRangeFromRegion(
   region: ViewRegionInfo,
@@ -27,16 +42,16 @@ function getRangeFromRegionViaDocument(
   if (!region.startOffset) return;
   if (!region.endOffset) return;
 
-  let startPosition;
-  let endPosition;
   let range;
 
   if (region.type === ViewRegionType.RepeatFor) {
     range = getRangeFromRepeatForRegion(region, document);
   } else {
-    startPosition = document.positionAt(region.startOffset);
-    endPosition = document.positionAt(region.endOffset - 1);
-    range = Range.create(startPosition, endPosition);
+    range = getRangeFromDocumentOffsets(
+      document,
+      region.startOffset,
+      region.endOffset
+    );
   }
 
   return range;
@@ -65,13 +80,32 @@ function getRangeFromRepeatForRegion(
   const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
   if (!repeatForRegion.data) return;
 
-  const startPosition = document.positionAt(
-    repeatForRegion.data.iterableStartOffset
-  );
-  const endPosition = document.positionAt(
+  const range = getRangeFromDocumentOffsets(
+    document,
+    repeatForRegion.data.iterableStartOffset,
     repeatForRegion.data.iterableEndOffset - 1
   );
-  const range = Range.create(startPosition, endPosition);
 
+  return range;
+}
+
+export function getRangeFromLocation(location: RenameLocation) {
+  const textSpan = location.getTextSpan();
+  const locationSourceFile = location.getSourceFile();
+  const startLocation = locationSourceFile.getLineAndColumnAtPos(
+    textSpan.getStart()
+  );
+  const startPosition = Position.create(
+    startLocation.line - 1,
+    startLocation.column - 1
+  );
+  const endLocation = locationSourceFile.getLineAndColumnAtPos(
+    textSpan.getEnd()
+  );
+  const endPosition = Position.create(
+    endLocation.line - 1,
+    endLocation.column - 1
+  );
+  const range = Range.create(startPosition, endPosition);
   return range;
 }

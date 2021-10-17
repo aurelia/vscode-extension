@@ -3,23 +3,25 @@ import * as fs from 'fs';
 import { kebabCase } from 'lodash';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import {
-  WorkspaceEdit,
-  TextEdit,
-  Range,
-  Position,
-} from 'vscode-languageserver';
+import { WorkspaceEdit, TextEdit, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
+import { UriUtils } from '../../common/view/uri-utils';
 import { ViewRegionType } from '../../core/embeddedLanguages/embeddedSupport';
 import {
   findAllBindableAttributeRegions,
   findRegionsWithValue,
   forEachRegion,
 } from '../../core/regions/findSpecificRegion';
-import { getRangeFromRegion } from '../../core/regions/rangeFromRegion';
+import {
+  getRangeFromDocumentOffsets,
+  getRangeFromLocation,
+  getRangeFromRegion,
+} from '../../core/regions/rangeFromRegion';
 import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
+import { getCustomElementDecorator } from '../../core/viewModel/getAureliaComponentList';
 
 const logger = new Logger('workspaceEdits');
 
@@ -53,9 +55,7 @@ export async function getAllChangesForOtherCustomElements(
             }
 
             if (region.type === ViewRegionType.CustomElement) {
-              result[document.uri].push(
-                TextEdit.replace(range, kebabCase(newName))
-              );
+              result[document.uri].push(TextEdit.replace(range, newName));
             }
           }
         });
@@ -75,7 +75,7 @@ export async function getAllChangesForOtherCustomElements(
       const range = getRangeFromRegion(region);
       if (!range) return;
 
-      result[uri].push(TextEdit.replace(range, kebabCase(newName)));
+      result[uri].push(TextEdit.replace(range, newName));
     });
   });
 
@@ -89,11 +89,22 @@ export function performViewModelChanges(
   newName: string
 ): WorkspaceEdit['changes'] {
   // 1. Prepare
+  // 1.1 Naming convention
+  let finalNewName = newName;
+  let finalComponentName = newName;
+  if (sourceWord.endsWith(CUSTOM_ELEMENT_SUFFIX)) {
+    finalNewName = newName.concat(CUSTOM_ELEMENT_SUFFIX);
+  } else if (newName.endsWith(CUSTOM_ELEMENT_SUFFIX)) {
+    finalComponentName.replace(CUSTOM_ELEMENT_SUFFIX, '');
+  }
+
+  // 1.2
   const result: WorkspaceEdit['changes'] = {};
   const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
     'viewModelFilePath',
     viewModelPath
   );
+  if (!targetComponent) return;
 
   const tsMorphProject = aureliaProgram.getTsMorphProject();
   const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
@@ -102,45 +113,6 @@ export function performViewModelChanges(
 
   const className = targetComponent?.className ?? '';
   const classNode = getClass(sourceFile, className);
-
-  // 2.1 Find rename locations - Class Declaration
-  const isCustomElement = className === sourceWord;
-  if (isCustomElement) {
-    const classIdentifier = classNode.getFirstChildByKind(
-      SyntaxKind.Identifier
-    );
-    if (!classIdentifier) return;
-
-    // 2.1.1 References
-    const renameLocations = tsMorphProject
-      .getLanguageService()
-      .findRenameLocations(classNode);
-
-    renameLocations.forEach((location) => {
-      const textSpan = location.getTextSpan();
-      const startPosition = viewModelDocument.positionAt(textSpan.getStart());
-      const endPosition = viewModelDocument.positionAt(textSpan.getEnd());
-      const range = Range.create(startPosition, endPosition);
-
-      result[viewModelUri].push(TextEdit.replace(range, newName));
-    });
-
-    // 2.1.2 Class name
-    const startPosition = Position.create(
-      classIdentifier.getStartLineNumber(),
-      classIdentifier.getStart()
-    );
-    const endPosition = Position.create(
-      classIdentifier.getEndLineNumber(),
-      classIdentifier.getEnd()
-    );
-    const range = Range.create(startPosition, endPosition);
-    result[viewModelUri].push(TextEdit.replace(range, newName));
-
-    return result;
-  }
-
-  // 2.2 Find rename locations - Class Members
   const content = fs.readFileSync(viewModelPath, 'utf-8');
   const viewModelDocument = TextDocument.create(
     viewModelUri,
@@ -148,6 +120,43 @@ export function performViewModelChanges(
     0,
     content
   );
+
+  // 2.1 Find rename locations - Class Declaration
+  const isCustomElementClass = className === sourceWord;
+  if (isCustomElementClass) {
+    // 2.1.1 Custom element decorator
+    const range = getRangeFromDocumentOffsets(
+      viewModelDocument,
+      targetComponent.decoratorStartOffset,
+      targetComponent.decoratorEndOffset
+    );
+    if (range) {
+      result[viewModelUri].push(
+        TextEdit.replace(range, kebabCase(finalComponentName))
+      );
+    }
+
+    // 2.1.2 References and original Class
+    const classIdentifier = classNode.getFirstChildByKind(
+      SyntaxKind.Identifier
+    );
+    if (!classIdentifier) return;
+    const renameLocations = tsMorphProject
+      .getLanguageService()
+      .findRenameLocations(classIdentifier);
+    renameLocations.forEach((location) => {
+      const range = getRangeFromLocation(location);
+      const referencePath = location.getSourceFile().getFilePath();
+      const referenceUri = UriUtils.toUri(referencePath);
+      if (!result[referenceUri]) result[referenceUri] = [];
+      result[referenceUri].push(TextEdit.replace(range, finalNewName));
+    });
+
+    // result; /*?*/
+    return result;
+  }
+
+  // 2.2 Find rename locations - Class Members
   const classMemberNode = getClassMember(classNode, sourceWord);
   if (classMemberNode) {
     const renameLocations = tsMorphProject
@@ -160,7 +169,7 @@ export function performViewModelChanges(
       const endPosition = viewModelDocument.positionAt(textSpan.getEnd());
       const range = Range.create(startPosition, endPosition);
 
-      result[viewModelUri].push(TextEdit.replace(range, newName));
+      result[viewModelUri].push(TextEdit.replace(range, finalNewName));
     });
   } else {
     logger.log('Error: No class member found');

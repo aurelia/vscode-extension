@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import { camelCase } from 'lodash';
+import { camelCase, kebabCase } from 'lodash';
 import { pathToFileURL } from 'url';
 import { Position, Range } from 'vscode-html-languageservice';
 import { TextEdit } from 'vscode-languageserver-protocol';
@@ -66,7 +66,7 @@ export async function aureliaRenameFromView(
     aureliaProgram,
     viewModelPath,
     sourceWord,
-    newName
+    kebabCase(newName)
   );
   // otherCustomElementChanges; /*?*/
 
@@ -142,20 +142,20 @@ export async function aureliaRenameFromViewModel(
     aureliaProgram,
     viewModelPath,
     sourceWord,
-    camelCase(newName)
+    newName
   );
   // viewModelChanges; /*?*/
 
-  // View
+  // Other Views
   const otherComponentChanges = await getAllChangesForOtherCustomElements(
     aureliaProgram,
     viewModelPath,
     sourceWord,
-    newName
+    kebabCase(newName)
   );
   // otherComponentChanges; /*?*/
 
-  // View
+  // Related View
   const viewExtensions = documentSettings.getSettings().relatedFiles?.view;
   if (!viewExtensions) return;
 
