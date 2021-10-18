@@ -1,6 +1,6 @@
 import { SyntaxKind } from '@ts-morph/common';
 import * as fs from 'fs';
-import { kebabCase } from 'lodash';
+import { camelCase, kebabCase } from 'lodash';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import { WorkspaceEdit, TextEdit, Range } from 'vscode-languageserver';
@@ -8,16 +8,20 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
-import { ViewRegionType } from '../../core/embeddedLanguages/embeddedSupport';
+import {
+  ViewRegionSubType,
+  ViewRegionType,
+} from '../../core/embeddedLanguages/embeddedSupport';
 import {
   findAllBindableAttributeRegions,
   findRegionsWithValue,
-  forEachRegion,
+  forEachRegionOfType,
 } from '../../core/regions/findSpecificRegion';
 import {
   getRangeFromDocumentOffsets,
   getRangeFromLocation,
   getRangeFromRegion,
+  getStartTagNameRange,
 } from '../../core/regions/rangeFromRegion';
 import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
@@ -25,7 +29,7 @@ import { getCustomElementDecorator } from '../../core/viewModel/getAureliaCompon
 
 const logger = new Logger('workspaceEdits');
 
-export async function getAllChangesForOtherCustomElements(
+export async function getAllChangesForOtherViews(
   aureliaProgram: AureliaProgram,
   viewModelPath: string,
   sourceWord: string,
@@ -41,30 +45,37 @@ export async function getAllChangesForOtherCustomElements(
   // 2.1 Find rename locations - Custom element tag
   const isCustomElement = className === sourceWord;
   if (isCustomElement) {
-    forEachRegion(
+    forEachRegionOfType(
       aureliaProgram,
       ViewRegionType.CustomElement,
       (regions, document) => {
         regions.forEach((region) => {
-          if (region.tagName === targetComponent?.componentName) {
-            const range = getRangeFromRegion(region);
+          if (region.tagName !== targetComponent?.componentName) return;
+          if (result[document.uri] === undefined) {
+            result[document.uri] = [];
+          }
+
+          if (region.subType === ViewRegionSubType.StartTag) {
+            // From Start tag sub region, just get location info of tag name
+            // (we account (multi-lined) attributes as well)
+            const range = getStartTagNameRange(region, document);
             if (!range) return;
 
-            if (result[document.uri] === undefined) {
-              result[document.uri] = [];
-            }
-
-            if (region.type === ViewRegionType.CustomElement) {
-              result[document.uri].push(TextEdit.replace(range, newName));
-            }
+            result[document.uri].push(TextEdit.replace(range, newName));
+            return;
           }
+
+          const range = getRangeFromRegion(region);
+          if (!range) return;
+
+          result[document.uri].push(TextEdit.replace(range, newName));
         });
       }
     );
     return result;
   }
 
-  // 2.1 Find rename locations - Bindable attributes
+  // 2.2 Find rename locations - Bindable attributes
   const bindableRegions = await findAllBindableAttributeRegions(
     aureliaProgram,
     sourceWord
@@ -74,8 +85,9 @@ export async function getAllChangesForOtherCustomElements(
     regions.forEach((region) => {
       const range = getRangeFromRegion(region);
       if (!range) return;
+      if (!result[uri]) result[uri] = [];
 
-      result[uri].push(TextEdit.replace(range, newName));
+      result[uri].push(TextEdit.replace(range, kebabCase(newName)));
     });
   });
 
@@ -215,7 +227,7 @@ export async function renameAllOtherRegionsInSameView(
     const range = getRangeFromRegion(region, document);
     if (!range) return;
 
-    result[uri].push(TextEdit.replace(range, newName));
+    result[uri].push(TextEdit.replace(range, camelCase(newName)));
   });
 
   return result;

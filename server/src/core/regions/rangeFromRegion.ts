@@ -109,3 +109,25 @@ export function getRangeFromLocation(location: RenameLocation) {
   const range = Range.create(startPosition, endPosition);
   return range;
 }
+
+export function getStartTagNameRange(
+  region: ViewRegionInfo,
+  document: TextDocument
+) {
+  const { startCol, startOffset, startLine, tagName } = region;
+  if (!startCol) return;
+  if (!startOffset) return;
+  if (!startLine) return;
+  if (!tagName) return;
+
+  const finalStartOffset = startOffset + 1; // +1 for "<" of tag
+  const endOffset = finalStartOffset + tagName.length + 1; // + 1, magic, because of all the offsetting we have to fix;
+
+  const range = getRangeFromDocumentOffsets(
+    document,
+    finalStartOffset,
+    endOffset
+  );
+
+  return range;
+}

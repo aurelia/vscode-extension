@@ -23,7 +23,7 @@ import { DocumentSettings } from '../configuration/DocumentSettings';
 import {
   getViewModelPathFromTagName,
   performViewModelChanges,
-  getAllChangesForOtherCustomElements,
+  getAllChangesForOtherViews,
   renameAllOtherRegionsInSameView,
 } from './workspaceEdits';
 
@@ -62,7 +62,7 @@ export async function aureliaRenameFromView(
   );
 
   // 2. rename all others
-  const otherCustomElementChanges = await getAllChangesForOtherCustomElements(
+  const otherCustomElementChanges = await getAllChangesForOtherViews(
     aureliaProgram,
     viewModelPath,
     sourceWord,
@@ -147,7 +147,7 @@ export async function aureliaRenameFromViewModel(
   // viewModelChanges; /*?*/
 
   // Other Views
-  const otherComponentChanges = await getAllChangesForOtherCustomElements(
+  const otherComponentChanges = await getAllChangesForOtherViews(
     aureliaProgram,
     viewModelPath,
     sourceWord,

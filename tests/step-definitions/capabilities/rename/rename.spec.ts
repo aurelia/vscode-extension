@@ -79,18 +79,18 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
       if (!change) return;
 
       // TODO: Decorator
+      expect(change.length).toBeGreaterThan(1);
+
       expect(change[0].range.start.character).toBe(24);
       expect(change[0].range.start.line).toBe(0);
-      expect(change[0].range.end.character).toBe(37);
+      expect(change[0].range.end.character).toBe(38);
       expect(change[0].range.end.line).toBe(0);
 
       // Class identifier
-      if (change.length >= 2) {
-        expect(change[1].range.start.character).toBe(13);
-        expect(change[1].range.start.line).toBe(1);
-        expect(change[1].range.end.character).toBe(39);
-        expect(change[1].range.end.line).toBe(1);
-      }
+      expect(change[1].range.start.character).toBe(13);
+      expect(change[1].range.start.line).toBe(1);
+      expect(change[1].range.end.character).toBe(39);
+      expect(change[1].range.end.line).toBe(1);
 
       // expect(true).toBeFalsy();
     }
@@ -98,7 +98,27 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
 
   and(
     'all other components, that also use the Custom Element should be renamed',
-    () => {}
+    () => {
+      const change = getRenameChangeFromFilePath({
+        filePath: 'other-custom-element-user.html',
+      });
+
+      if (!change) return;
+
+      expect(change.length).toBeGreaterThan(1);
+
+      expect(change[0].range.start.character).toBe(3);
+      expect(change[0].range.start.line).toBe(2);
+      expect(change[0].range.end.character).toBe(17);
+      expect(change[0].range.end.line).toBe(2);
+
+      // Class identifier
+      expect(change[1].range.start.character).toBe(5);
+      expect(change[1].range.start.line).toBe(6);
+      expect(change[1].range.end.character).toBe(19);
+      expect(change[1].range.end.line).toBe(6);
+      // expect(true).toBeFalsy();
+    }
   );
 };
 
@@ -115,7 +135,8 @@ function getRenameChangeFromFilePath({
 
   const [, targetChanges] =
     Object.entries(renamed?.changes).find(([fileUri]) => {
-      return UriUtils.toPath(fileUri).includes(finalTargetPath);
+      const result = UriUtils.toPath(fileUri).includes(finalTargetPath);
+      return result;
     }) ?? [];
 
   if (!targetChanges) return;

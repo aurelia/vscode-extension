@@ -47,8 +47,14 @@ export enum ViewRegionType {
   ValueConverter = 'ValueConverter',
 }
 
+export enum ViewRegionSubType {
+  StartTag = 'StartTag',
+  EndTag = 'EndTag',
+}
+
 export interface ViewRegionInfo<RegionDataType = any> {
   type?: ViewRegionType;
+  subType?: any;
   languageId: ViewRegionType;
   startOffset?: number;
   startCol?: number;
@@ -397,25 +403,11 @@ export function parseDocumentRegions<RegionDataType = any>(
         ];
         const { sourceCodeLocation } = startTag;
         if (sourceCodeLocation) {
-          const { startCol, startOffset, startLine } = sourceCodeLocation;
-          const finalStartCol = startCol + 1; // +1 for "<" of tag
-          const finalStartOffset = startOffset + 1; // +1 for "<" of tag
-          const endOffset = finalStartOffset + tagName.length;
-          const finalEndCol = finalStartCol + tagName.length;
-
-          const onlyOpeningTagLocation = {
-            ...sourceCodeLocation,
-            startCol: finalStartCol,
-            startLine,
-            endCol: finalEndCol,
-            startOffset: finalStartOffset,
-            endLine: startLine,
-            endOffset,
-          };
           const customElementViewRegion = createRegion({
             tagName,
-            sourceCodeLocation: onlyOpeningTagLocation,
+            sourceCodeLocation: startTag.sourceCodeLocation,
             type: ViewRegionType.CustomElement,
+            subType: ViewRegionSubType.StartTag,
             data,
           });
           viewRegions.push(customElementViewRegion);
@@ -467,8 +459,8 @@ export function parseDocumentRegions<RegionDataType = any>(
         const { sourceCodeLocation } = endTag;
         if (sourceCodeLocation) {
           const { startCol, startOffset, endOffset } = sourceCodeLocation;
-          const finalStartCol = startCol + 2; // + 2 for "<" of tag
-          const finalStartOffset = startOffset + 2; // + 2 </ of closing tag
+          const finalStartCol = startCol + 2; // + 2 for "</" of closing tag
+          const finalStartOffset = startOffset + 2; // + 2 for </ of closing tag
           const finalEndCol = finalStartCol + tagName.length;
           const finalEndOffset = endOffset - 1; // - 1 > of closing tag
           const updatedEndLocation = {
@@ -482,6 +474,7 @@ export function parseDocumentRegions<RegionDataType = any>(
             tagName,
             sourceCodeLocation: updatedEndLocation,
             type: ViewRegionType.CustomElement,
+            subType: ViewRegionSubType.EndTag,
           });
           viewRegions.push(customElementViewRegion);
         }
@@ -524,6 +517,7 @@ export async function getDocumentRegions(
 function createRegion<RegionDataType = any>({
   sourceCodeLocation,
   type,
+  subType,
   attribute,
   attributeName,
   tagName,
@@ -534,6 +528,7 @@ function createRegion<RegionDataType = any>({
     | SaxStream.StartTagToken['sourceCodeLocation']
     | parse5.AttributesLocation[string];
   type: ViewRegionType;
+  subType?: ViewRegionSubType;
   attribute?: parse5.Attribute;
   attributeName?: string; // TODO: Remove in favor of `attribute` (one line above)
   tagName?: string;
@@ -545,6 +540,7 @@ function createRegion<RegionDataType = any>({
 
   return {
     type,
+    subType,
     languageId: type, // [ASSUMPTION]: In offi demo, languageId (css, html), but our regions are aurelai specific (not really languages, thus use the `type` field)
     startOffset: calculatedStart,
     startCol: sourceCodeLocation?.startCol,

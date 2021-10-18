@@ -14,7 +14,6 @@ Feature: Rename in View Model
       | DESCRIPTION        | LINE | CODE                 | NEW_WORD |
       | Text Interploation | 2    | `  @bindable \|foo;` | newNew  |
 
-  @focus
   Scenario Outline: Class in View Model
     And I open VSCode with the following file "custom-element.ts"
     And I'm on the line <LINE> at character <CODE>

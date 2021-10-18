@@ -31,7 +31,7 @@ export const IAureliaComponentSteps: StepDefinitions = ({ when, then }) => {
     expect(targetComponent.decoratorComponentName).toBe(componentName);
     expect(targetComponent.decoratorStartOffset).toBe(24);
     expect(targetComponent.decoratorEndOffset).toBe(
-      startOffset + componentName.length
+      startOffset + componentName.length + 1
     );
   });
 };

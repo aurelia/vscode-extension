@@ -63,7 +63,7 @@ export async function findAllBindableAttributeRegions(
   return regionsLookUp;
 }
 
-export async function forEachRegion<
+export async function forEachRegionOfType<
   RegionType extends ViewRegionType,
   RegionDataType = RegionType extends ViewRegionType.CustomElement
     ? ViewRegionInfo
@@ -89,7 +89,10 @@ export async function forEachRegion<
       if (!document) return;
       // 1.1 Parse document, and find all Custom Element regions
       const regions = await parseDocumentRegions(document, componentList);
-      forEachRegionsCallback(regions, document);
+      const finalRegions = regions.filter(
+        (region) => region.type === regionType
+      );
+      forEachRegionsCallback(finalRegions, document);
     })
   );
 
