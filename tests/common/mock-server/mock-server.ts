@@ -4,24 +4,24 @@ import { Container } from 'aurelia-dependency-injection';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { ts } from '../../../server/node_modules/ts-morph/lib/ts-morph';
+import { UriUtils } from '../../../server/src/common/view/uri-utils';
 import { AureliaProjects } from '../../../server/src/core/AureliaProjects';
 import { AureliaServer } from '../../../server/src/core/AureliaServer';
 import { globalContainer } from '../../../server/src/core/container';
+import {
+  AureliaTsMorph,
+  createTsMorphProject,
+} from '../../../server/src/core/tsMorph/AureliaTsMorph';
+import { AureliaProgram } from '../../../server/src/core/viewModel/AureliaProgram';
 import {
   ExtensionSettings,
   DocumentSettings,
   IAureliaProjectSetting,
 } from '../../../server/src/feature/configuration/DocumentSettings';
+import { getPathsFromFileNames } from '../file-path-mocks';
 import { findProjectRoot } from '../find-project-root';
 import { MockTextDocuments } from './text-documents';
-import { UriUtils } from '../../../server/src/common/view/uri-utils';
-import { getPathsFromFileNames } from '../file-path-mocks';
-import { AureliaProgram } from '../../../server/src/core/viewModel/AureliaProgram';
-import {
-  AureliaTsMorph,
-  createTsMorphProject,
-} from '../../../server/src/core/tsMorph/AureliaTsMorph';
-import { ts } from '../../../server/node_modules/ts-morph/lib/ts-morph';
 
 const testsDir = findProjectRoot();
 const monorepoFixtureDir = path.resolve(

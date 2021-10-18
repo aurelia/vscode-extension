@@ -8,6 +8,7 @@ import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../common/logging/logger';
+import { uriToPath } from '../common/uriToPath';
 import {
   DocumentSettings,
   ExtensionSettings,
@@ -18,7 +19,6 @@ import {
   AureliaProgram,
   IAureliaClassMember,
 } from './viewModel/AureliaProgram';
-import { uriToPath } from '../common/uriToPath';
 
 const logger = new Logger('AureliaProjectFiles');
 

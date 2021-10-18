@@ -26,7 +26,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
   and(
     /^I'm on the line (\d+) at character (.*)$/,
     /**
-     * @param line 0 based
+     * @param line - 0 based
      */
     async (line: number, codeWithCursor: string) => {
       /* prettier-ignore */ logger.log('/^I\'m on the line (\d+) at character (.*)$/',{logPerf: true});

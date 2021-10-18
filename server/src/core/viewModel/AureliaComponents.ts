@@ -1,13 +1,13 @@
 import * as Path from 'path';
 
 import { ts } from '@ts-morph/common';
+import { Project } from 'ts-morph';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../../common/logging/logger';
+import { UriUtils } from '../../common/view/uri-utils';
 import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { UriUtils } from '../../common/view/uri-utils';
-import { Project } from 'ts-morph';
 
 const logger = new Logger('aurelia-components');
 
@@ -123,7 +123,7 @@ export class AureliaComponents {
     );
     if (!componentInfo) return;
 
-    let targetIndex = this.getIndexBy(
+    const targetIndex = this.getIndexBy(
       'viewModelFilePath',
       UriUtils.toPath(document.uri)
     );

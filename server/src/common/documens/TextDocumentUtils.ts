@@ -1,5 +1,7 @@
 import * as fs from 'fs';
+
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { UriUtils } from '../view/uri-utils';
 
 export class TextDocumentUtils {

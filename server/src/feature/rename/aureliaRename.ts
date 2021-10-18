@@ -1,10 +1,11 @@
 import * as fs from 'fs';
+import { pathToFileURL } from 'url';
 
 import { camelCase, kebabCase } from 'lodash';
-import { pathToFileURL } from 'url';
 import { Position, Range } from 'vscode-html-languageservice';
 import { TextEdit } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   findSourceWord,
   getWordAtOffset,

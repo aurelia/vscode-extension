@@ -1,5 +1,6 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { UriUtils } from '../../../server/src/common/view/uri-utils';
 import { myMockServer } from '../capabilities/new-common/project.step';
 

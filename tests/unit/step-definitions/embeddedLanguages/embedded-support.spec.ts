@@ -7,7 +7,6 @@ import {
   ViewRegionType,
 } from '../../../../server/src/core/embeddedLanguages/embeddedSupport';
 import { getRegionsOfType } from '../../../../server/src/core/regions/findSpecificRegion';
-
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import { getTestDir } from '../../../common/files/get-test-dir';
 import {

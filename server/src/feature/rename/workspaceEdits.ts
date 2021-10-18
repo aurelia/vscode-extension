@@ -1,10 +1,12 @@
-import { SyntaxKind } from '@ts-morph/common';
 import * as fs from 'fs';
-import { camelCase, kebabCase } from 'lodash';
 import path from 'path';
 import { pathToFileURL } from 'url';
+
+import { SyntaxKind } from '@ts-morph/common';
+import { camelCase, kebabCase } from 'lodash';
 import { WorkspaceEdit, TextEdit, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
@@ -103,7 +105,7 @@ export function performViewModelChanges(
   // 1. Prepare
   // 1.1 Naming convention
   let finalNewName = newName;
-  let finalComponentName = newName;
+  const finalComponentName = newName;
   if (sourceWord.endsWith(CUSTOM_ELEMENT_SUFFIX)) {
     finalNewName = newName.concat(CUSTOM_ELEMENT_SUFFIX);
   } else if (newName.endsWith(CUSTOM_ELEMENT_SUFFIX)) {

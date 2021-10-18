@@ -1,6 +1,7 @@
 import { RenameLocation } from 'ts-morph';
 import { Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   ViewRegionInfo,
   ViewRegionType,

@@ -1,6 +1,5 @@
 import { StepDefinitions } from 'jest-cucumber';
-import { AureliaTsMorph } from '../../../server/src/core/tsMorph/AureliaTsMorph';
-import { AureliaComponents } from '../../../server/src/core/viewModel/AureliaComponents';
+
 import { IAureliaComponent } from '../../../server/src/core/viewModel/AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from '../../../server/src/core/viewModel/getAureliaComponentList';
 import { myMockServer } from '../capabilities/new-common/project.step';
