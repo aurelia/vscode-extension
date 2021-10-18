@@ -15,6 +15,6 @@ export async function onConnectionInitialized(
   activeDocuments: TextDocument[] = []
 ) {
   const aureliaProjects = container.get(AureliaProjects);
-  await aureliaProjects.setAndVerify(extensionSettings);
+  await aureliaProjects.initAndVerify(extensionSettings);
   await aureliaProjects.hydrate(activeDocuments);
 }

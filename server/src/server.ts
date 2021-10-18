@@ -28,6 +28,7 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
+import { UriUtils } from './common/view/uri-utils';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -70,7 +71,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':', '|'],
+        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
       },
       definitionProvider: true,
       hoverProvider: true,
@@ -117,8 +118,11 @@ connection.onInitialized(async () => {
       documents.all()
     );
 
+    const tsConfigPath = UriUtils.toPath(workspaceRootUri);
     const aureliaProjects = globalContainer.get(AureliaProjects);
-    const { aureliaProgram } = aureliaProjects.getAll()[0];
+    const targetProject = aureliaProjects.getBy(tsConfigPath);
+    if (!targetProject) return;
+    const { aureliaProgram } = targetProject;
 
     if (aureliaProgram) {
       languageModes = await getLanguageModes(aureliaProgram, extensionSettings);
@@ -273,7 +277,9 @@ connection.onRenameRequest(
 
 connection.onRequest('aurelia-get-component-list', () => {
   const aureliaProjects = globalContainer.get(AureliaProjects);
+  // TODO: use .getBy instead of getAll
   const { aureliaProgram } = aureliaProjects.getAll()[0];
+
   if (!aureliaProgram) return;
 
   return aureliaProgram.aureliaComponents.getAll().map((cList) => {

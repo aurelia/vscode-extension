@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 
 import * as fastGlob from 'fast-glob';
 import { ts } from 'ts-morph';
-import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../common/logging/logger';
@@ -15,10 +14,7 @@ import {
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
-import {
-  AureliaProgram,
-  IAureliaClassMember,
-} from './viewModel/AureliaProgram';
+import { AureliaProgram } from './viewModel/AureliaProgram';
 
 const logger = new Logger('AureliaProjectFiles');
 
@@ -37,23 +33,17 @@ export class AureliaProjects {
     public readonly documentSettings: DocumentSettings
   ) {}
 
-  public async set(packageJsonPaths: string[]) {
-    const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
+  public async initAndVerify(extensionSettings: ExtensionSettings) {
+    const packageJsonPaths = getPackageJsonPaths(extensionSettings);
+    await this.init(packageJsonPaths);
+    const projects = this.getAll();
+    const hasAureliaProject = projects.length > 0;
 
-    aureliaProjectPaths.forEach((aureliaProjectPath) => {
-      const alreadyHasProject = this.aureliaProjects.find(
-        (project) => project.tsConfigPath === aureliaProjectPath
-      );
-
-      if (alreadyHasProject) {
-        return;
-      }
-
-      this.aureliaProjects.push({
-        tsConfigPath: aureliaProjectPath,
-        aureliaProgram: null,
-      });
-    });
+    if (!hasAureliaProject) {
+      logHasNoAureliaProject();
+      return;
+    }
+    logFoundAureliaProjects(projects);
   }
 
   public getAll(): IAureliaProject[] {
@@ -75,23 +65,6 @@ export class AureliaProjects {
     return target;
   }
 
-  public getFirst(): IAureliaProject {
-    return this.aureliaProjects[0];
-  }
-
-  public async setAndVerify(extensionSettings: ExtensionSettings) {
-    const packageJsonPaths = getPackageJsonPaths(extensionSettings);
-    await this.set(packageJsonPaths);
-    const projects = this.getAll();
-    const hasAureliaProject = projects.length > 0;
-
-    if (!hasAureliaProject) {
-      logHasNoAureliaProject();
-      return;
-    }
-    logFoundAureliaProjects(projects);
-  }
-
   /**
    * [PERF]: 2.5s
    */
@@ -105,7 +78,10 @@ export class AureliaProjects {
     const aureliaProjectSettings = settings?.aureliaProject;
 
     // 1. To each map assign a separate program
-    await this.initAureliaProgram(documentsPaths, aureliaProjectSettings);
+    await this.addAureliaProgramToEachProject(
+      documentsPaths,
+      aureliaProjectSettings
+    );
 
     /* prettier-ignore */ logger.culogger.debug(['Parsing done. Aurelia Extension is ready.'], { logLevel: 'INFO', });
   }
@@ -150,18 +126,26 @@ export class AureliaProjects {
     });
   }
 
-  /**
-   * Check whether a textDocument (via its uri), if it is already included
-   * in the Aurelia project.
-   */
-  private isDocumentIncluded({ uri }: TextDocument): boolean {
-    const isIncluded = this.aureliaProjects.some(({ tsConfigPath }) => {
-      return uri.includes(tsConfigPath);
+  private async init(packageJsonPaths: string[]) {
+    const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
+
+    aureliaProjectPaths.forEach((aureliaProjectPath) => {
+      const alreadyHasProject = this.aureliaProjects.find(
+        (project) => project.tsConfigPath === aureliaProjectPath
+      );
+
+      if (alreadyHasProject) {
+        return;
+      }
+
+      this.aureliaProjects.push({
+        tsConfigPath: aureliaProjectPath,
+        aureliaProgram: null,
+      });
     });
-    return isIncluded;
   }
 
-  private async initAureliaProgram(
+  private async addAureliaProgramToEachProject(
     documentsPaths: string[],
     aureliaProjectSettings: IAureliaProjectSetting | undefined
   ) {
@@ -172,14 +156,8 @@ export class AureliaProjects {
       const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
       if (!shouldActivate) return;
 
-      const projectOptions = {
-        ...aureliaProjectSettings,
-        rootDirectory: tsConfigPath,
-      };
-
       if (aureliaProgram === null) {
         aureliaProgram = new AureliaProgram();
-
         if (!compilerObject) {
           const tsMorphProject = this.aureliaTsMorph.createTsMorphProject();
           const program = tsMorphProject.getProgram();
@@ -187,21 +165,33 @@ export class AureliaProjects {
           compilerObject = program.compilerObject;
           aureliaProgram.setTsMorphProject(tsMorphProject);
         }
-
         aureliaProgram.setProgram(compilerObject);
       }
 
+      const projectOptions = {
+        ...aureliaProjectSettings,
+        rootDirectory: tsConfigPath,
+      };
       // [PERF]: 0.67967675s
       aureliaProgram.initAureliaComponents(projectOptions);
 
       const targetAureliaProject = aureliaProjects.find(
         (auP) => auP.tsConfigPath === tsConfigPath
       );
-
       if (!targetAureliaProject) return;
-
       targetAureliaProject.aureliaProgram = aureliaProgram;
     });
+  }
+
+  /**
+   * Check whether a textDocument (via its uri), if it is already included
+   * in the Aurelia project.
+   */
+  private isDocumentIncluded({ uri }: TextDocument): boolean {
+    const isIncluded = this.aureliaProjects.some(({ tsConfigPath }) => {
+      return uri.includes(tsConfigPath);
+    });
+    return isIncluded;
   }
 }
 
@@ -247,31 +237,15 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
  * 1.1 Based on package.json
  * 1.2 Detect if is Aurelia project
  */
-function getAureliaProjectPaths(
-  packageJsonPaths: string[]
-  // activeDocuments: TextDocument[] = []
-): string[] {
+function getAureliaProjectPaths(packageJsonPaths: string[]): string[] {
   const aureliaProjectsRaw = packageJsonPaths.filter((packageJsonPath) => {
     const isAu = isAureliaProjectBasedOnPackageJson(packageJsonPath);
     return isAu;
   });
-
-  // const activeDocumentPaths = activeDocuments.map((activeDocument) => {
-  //   const documentPath = fileURLToPath(path.normalize(activeDocument.uri));
-  //   return documentPath;
-  // });
-
   const aureliaProjectPaths = aureliaProjectsRaw.map((aureliaProject) => {
     const dirName = path.dirname(aureliaProject);
     return dirName;
   });
-  // aureliaProjectPaths = aureliaProjectPaths.filter((aureliaProjectPath) => {
-  //   const isOpen = activeDocumentPaths.some((activeDocumentPath) => {
-  //     const isProject = activeDocumentPath.includes(aureliaProjectPath);
-  //     return isProject;
-  //   });
-  //   return isOpen;
-  // });
 
   return aureliaProjectPaths;
 }

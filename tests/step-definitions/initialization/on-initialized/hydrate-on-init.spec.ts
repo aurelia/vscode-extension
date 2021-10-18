@@ -1,6 +1,7 @@
 import { StepDefinitions } from 'jest-cucumber';
 
 import { Logger } from '../../../../server/src/common/logging/logger';
+import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import {
   FileNameStepTable,
@@ -42,7 +43,10 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
   then('the extension should hydrate the Aurelia project', () => {
     /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project');
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const { aureliaProgram } = AureliaProjects.getFirst();
+    const tsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
+    const targetProject = AureliaProjects.getBy(tsConfigPath);
+    if (!targetProject) return;
+    const { aureliaProgram } = targetProject;
     expect(aureliaProgram).toBeTruthy();
   });
 
