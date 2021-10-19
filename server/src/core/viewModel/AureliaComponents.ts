@@ -14,7 +14,7 @@ const logger = new Logger('aurelia-components');
 export class AureliaComponents {
   private components: IAureliaComponent[] = [];
   private bindables: IAureliaBindable[] = [];
-  checker: ts.TypeChecker;
+  private checker: ts.TypeChecker;
 
   public init(program: ts.Program, filePaths: string[]): void {
     if (filePaths.length === 0) {
@@ -48,9 +48,7 @@ export class AureliaComponents {
             sourceFile,
             this.checker
           );
-
           if (!componentInfo) return;
-
           componentList.push(componentInfo);
 
           break;
@@ -59,7 +57,7 @@ export class AureliaComponents {
           break;
         }
         default: {
-          console.log('Unsupported extension');
+          logger.log(`Unsupported extension: ${ext}`);
         }
       }
     });
@@ -92,6 +90,10 @@ export class AureliaComponents {
     return target;
   }
 
+  /**
+   * Note: Difference to #getOneBy.
+   *   Could relate to pointer to object.
+   */
   public getIndexBy<
     T extends keyof IAureliaComponent,
     Value extends IAureliaComponent[T]
