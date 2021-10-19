@@ -120,7 +120,7 @@ export function performViewModelChanges(
   );
   if (!targetComponent) return;
 
-  const tsMorphProject = aureliaProgram.getTsMorphProject();
+  const tsMorphProject = aureliaProgram.tsMorphProject.get();
   const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
   const viewModelUri = pathToFileURL(viewModelPath).toString();
   result[viewModelUri] = [];

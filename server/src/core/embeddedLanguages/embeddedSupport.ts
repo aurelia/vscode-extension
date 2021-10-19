@@ -733,7 +733,8 @@ export function getRegionAtPosition(
   });
 
   if (potentialRegions.length === 0) {
-    console.error('embeddedSupport -> getRegionAtPosition -> No Region found');
+    logger.culogger.debug(['No Region found'], { logLevel: 'ERROR' });
+
     return undefined;
   }
 

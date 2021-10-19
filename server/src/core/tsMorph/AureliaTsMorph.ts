@@ -6,7 +6,9 @@ import {
   ExtensionSettings,
 } from '../../feature/configuration/DocumentSettings';
 
-export class AureliaTsMorph {
+export class TsMorphProject {
+  public project: Project;
+
   private readonly tsconfigPath: string = '';
 
   public constructor(public readonly documentSettings: DocumentSettings) {
@@ -23,7 +25,7 @@ export class AureliaTsMorph {
         '');
   }
 
-  createTsMorphProject(): Project {
+  create(): Project {
     let compilerSettings = {} as ts.CompilerOptions;
     compilerSettings = {
       module: ts.ModuleKind.CommonJS,
@@ -43,7 +45,17 @@ export class AureliaTsMorph {
       tsConfigPath: this.tsconfigPath,
     });
 
+    this.set(project);
+
     return project;
+  }
+
+  public get() {
+    return this.project;
+  }
+
+  public set(tsMorphProject: Project) {
+    this.project = tsMorphProject;
   }
 }
 

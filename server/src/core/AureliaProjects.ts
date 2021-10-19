@@ -13,7 +13,6 @@ import {
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
-import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
 import { AureliaProgram } from './viewModel/AureliaProgram';
 
 const logger = new Logger('AureliaProjectFiles');
@@ -28,10 +27,7 @@ export interface IAureliaProject {
 export class AureliaProjects {
   private readonly aureliaProjects: IAureliaProject[] = [];
 
-  public constructor(
-    public readonly aureliaTsMorph: AureliaTsMorph,
-    public readonly documentSettings: DocumentSettings
-  ) {}
+  public constructor(public readonly documentSettings: DocumentSettings) {}
 
   public async initAndVerify(extensionSettings: ExtensionSettings) {
     const packageJsonPaths = getPackageJsonPaths(extensionSettings);
@@ -119,8 +115,7 @@ export class AureliaProjects {
       if (!aureliaProgram) return;
 
       aureliaProgram.aureliaComponents.updateOne(
-        // this.aureliaTsMorph.createTsMorphProject(),
-        aureliaProgram.getTsMorphProject(),
+        aureliaProgram.tsMorphProject.get(),
         document
       );
     });
@@ -157,13 +152,12 @@ export class AureliaProjects {
       if (!shouldActivate) return;
 
       if (aureliaProgram === null) {
-        aureliaProgram = new AureliaProgram();
+        aureliaProgram = new AureliaProgram(this.documentSettings);
         if (!compilerObject) {
-          const tsMorphProject = this.aureliaTsMorph.createTsMorphProject();
+          const tsMorphProject = aureliaProgram.tsMorphProject.create();
           const program = tsMorphProject.getProgram();
           // [PERF]: 1.87967675s
           compilerObject = program.compilerObject;
-          aureliaProgram.setTsMorphProject(tsMorphProject);
         }
         aureliaProgram.setProgram(compilerObject);
       }

@@ -5,7 +5,7 @@ import {
   DocumentSettings,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaProjects } from './AureliaProjects';
-import { AureliaTsMorph } from './tsMorph/AureliaTsMorph';
+import { TsMorphProject } from './tsMorph/AureliaTsMorph';
 
 export function initDependencyInjection(
   container: Container,
@@ -16,10 +16,6 @@ export function initDependencyInjection(
     new DocumentSettings(extensionSettings)
   );
   const settings = container.get(DocumentSettings);
-  container.registerInstance(AureliaTsMorph, new AureliaTsMorph(settings));
-  const aureliaTsMorph = container.get(AureliaTsMorph);
-  container.registerInstance(
-    AureliaProjects,
-    new AureliaProjects(aureliaTsMorph, settings)
-  );
+  container.registerInstance(TsMorphProject, new TsMorphProject(settings));
+  container.registerInstance(AureliaProjects, new AureliaProjects(settings));
 }

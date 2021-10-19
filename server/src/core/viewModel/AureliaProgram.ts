@@ -1,14 +1,16 @@
 import 'reflect-metadata';
 
-import { Project, ts } from 'ts-morph';
+import { ts } from 'ts-morph';
 
 import { AureliaClassTypes } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import {
   defaultProjectOptions,
+  DocumentSettings,
   IAureliaProjectSetting,
 } from '../../feature/configuration/DocumentSettings';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
+import { TsMorphProject } from '../tsMorph/AureliaTsMorph';
 import { AureliaComponents } from './AureliaComponents';
 
 const logger = new Logger('AureliaProgram');
@@ -68,15 +70,16 @@ export interface IAureliaBindable {
  */
 export class AureliaProgram {
   public aureliaComponents: AureliaComponents;
+  public tsMorphProject: TsMorphProject;
 
   private builderProgram: ts.Program;
   private aureliaSourceFiles?: ts.SourceFile[] | undefined;
   private filePaths: string[] = [];
-  private tsMorphProject: Project;
 
-  constructor() {
+  public constructor(public readonly documentSettings: DocumentSettings) {
     // /* prettier-ignore */ console.log('TCL: AureliaProgram -> constructor -> constructor')
     this.aureliaComponents = new AureliaComponents();
+    this.tsMorphProject = new TsMorphProject(documentSettings);
   }
 
   public initAureliaComponents(projectOptions: IAureliaProjectSetting): void {
@@ -105,14 +108,6 @@ export class AureliaProgram {
   public setProgram(program: ts.Program): void {
     this.builderProgram = program;
     this.initAureliaSourceFiles(this.builderProgram);
-  }
-
-  public getTsMorphProject() {
-    return this.tsMorphProject;
-  }
-
-  public setTsMorphProject(tsMorphProject: Project) {
-    this.tsMorphProject = tsMorphProject;
   }
 
   /**
