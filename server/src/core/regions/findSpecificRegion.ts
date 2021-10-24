@@ -119,6 +119,16 @@ export async function findRegionsWithValue(
 
     // 2. default case: .regionValue
     const isDefault = region.regionValue === sourceWord;
+
+    // 3. Access member: line.next.value --> line
+
+    // 4. Method
+
+    // 5. Array
+
+    // TODO: 6. sub interpolation
+    // TODO: 7. expression: line !== 'value'
+
     return isDefault;
   });
 

@@ -13,18 +13,13 @@ export const definitionSteps: StepDefinitions = ({ when, then }) => {
 
     definition = await myMockServer
       .getAureliaServer()
-      .onDefinition(
-        document.getText(),
-        position,
-        UriUtils.toPath(document.uri),
-        languageModes
-      );
+      .onDefinition(document, position, languageModes);
   });
 
-  then(/^I should land in the file (.*)$/, (viewModelFileName: string) => {
+  then(/^I should land in the file (.*)$/, (fileName: string) => {
     expect(definition).toBeTruthy();
     if (definition) {
-      expect(definition[0].targetUri).toContain(viewModelFileName);
+      expect(definition[0].targetUri).toContain(fileName);
     }
   });
 };

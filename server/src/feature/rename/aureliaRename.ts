@@ -2,8 +2,7 @@ import * as fs from 'fs';
 import { pathToFileURL } from 'url';
 
 import { camelCase, kebabCase } from 'lodash';
-import { Position, Range } from 'vscode-html-languageservice';
-import { TextEdit } from 'vscode-languageserver-protocol';
+import { Position } from 'vscode-html-languageservice';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
@@ -58,7 +57,7 @@ export async function aureliaRenameFromView(
   const viewModelChanes = performViewModelChanges(
     aureliaProgram,
     viewModelPath,
-    sourceWord,
+    camelCase(sourceWord), // vars can be kebab from eg. view rename
     camelCase(newName)
   );
 

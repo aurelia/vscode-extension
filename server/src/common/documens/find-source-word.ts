@@ -11,7 +11,7 @@ export function findSourceWord(region: ViewRegionInfo, offset: number): string {
   if (region.startOffset === undefined) return '';
 
   // ?? ?? custom element
-  const input = region.attributeValue || region.regionValue || region.tagName;
+  const input = region.regionValue || region.attributeValue || region.tagName;
   if (!input) return '';
 
   const normalizedOffset = Math.abs(region.startOffset - offset);

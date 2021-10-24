@@ -2,17 +2,32 @@ import { pathToFileURL } from 'url';
 
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { LocationLink, Range } from 'vscode-languageserver';
+import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 
 import { AsyncReturnType } from '../../common/global';
+import { Container } from '../../core/container';
 import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
+import { DocumentSettings } from '../configuration/DocumentSettings';
+import { aureliaDefinitionFromViewModel } from './aureliaDefintion';
 
 export async function onDefintion(
-  documentContent: string,
+  document: TextDocument,
   position: Position,
-  filePath: string,
-  languageModes: LanguageModes
+  languageModes: LanguageModes,
+  container: Container
 ): Promise<LocationLink[] | undefined> {
-  const document = TextDocument.create(filePath, 'html', 0, documentContent);
+  const documentSettings = container.get(DocumentSettings);
+  const isViewModel = isViewModelDocument(document, documentSettings);
+
+  if (isViewModel) {
+    const defintion = await aureliaDefinitionFromViewModel(
+      container,
+      document,
+      position
+    );
+    return defintion;
+  }
+
   const isRefactor = true;
 
   let modeAndRegion: AsyncReturnType<

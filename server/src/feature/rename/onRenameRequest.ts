@@ -8,21 +8,10 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
+import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaRenameFromViewModel } from './aureliaRename';
-
-function isViewModelDocument(
-  document: TextDocument,
-  documentSettings: DocumentSettings
-) {
-  const settings = documentSettings.getSettings();
-  const scriptExtensions = settings?.relatedFiles?.script;
-  const isScript = scriptExtensions?.find((extension) =>
-    document.uri.endsWith(extension)
-  );
-  return isScript;
-}
 
 export async function onRenameRequest(
   position: Position,

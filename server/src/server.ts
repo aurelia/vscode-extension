@@ -215,9 +215,8 @@ connection.onDefinition(
     if (!document) return null;
 
     const definition = await aureliaServer.onDefinition(
-      document.getText(),
+      document,
       position,
-      documentUri,
       languageModes
     );
 

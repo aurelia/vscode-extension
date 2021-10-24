@@ -95,16 +95,15 @@ export class AureliaServer {
   // onDeclaration() {}
 
   async onDefinition(
-    documentContent: string,
+    document: TextDocument,
     position: Position,
-    filePath: string,
     languageModes: LanguageModes
   ) {
     const definition = await onDefintion(
-      documentContent,
+      document,
       position,
-      filePath,
-      languageModes
+      languageModes,
+      this.container
     );
     return definition;
   }
