@@ -241,6 +241,8 @@ function getAureliaViewModelClassMembers(
         syntaxKind: ts.isPropertyDeclaration(classMember)
           ? ts.SyntaxKind.VariableDeclaration
           : ts.SyntaxKind.MethodDeclaration,
+        start: classMember.getStart(),
+        end: classMember.getEnd(),
       };
       classMembers.push(result);
     }

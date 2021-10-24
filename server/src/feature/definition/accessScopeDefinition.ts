@@ -5,6 +5,9 @@
 import { Position, TextDocument } from 'vscode-languageserver';
 
 import { findSourceWord } from '../../common/documens/find-source-word';
+import { getRelatedFilePath } from '../../common/documens/related';
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
+import { UriUtils } from '../../common/view/uri-utils';
 import {
   ViewRegionInfo,
   ViewRegionType,
@@ -12,7 +15,6 @@ import {
 } from '../../core/embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DefinitionResult } from './getDefinition';
-import { getVirtualDefinition } from './virtualDefinition';
 
 /**
  * Priority
@@ -65,7 +67,7 @@ export function getAccessScopeDefinition(
         line: targetRepeatForRegion.startLine,
         character: targetRepeatForRegion.startCol,
       } /** TODO: Find class declaration position. Currently default to top of file */,
-      viewModelFilePath: document.uri,
+      viewModelFilePath: UriUtils.toPath(document.uri),
     };
   }
 
@@ -95,17 +97,32 @@ export function getAccessScopeViewModelDefinition(
   const offset = document.offsetAt(position);
   const goToSourceWord = findSourceWord(region, offset);
 
-  const virtualDefinition = getVirtualDefinition(
-    document.uri,
-    aureliaProgram,
-    goToSourceWord
+  const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
+    'viewFilePath',
+    UriUtils.toPath(document.uri)
   );
-  if (
-    virtualDefinition?.lineAndCharacter.line !== 0 &&
-    virtualDefinition?.lineAndCharacter.character !== 0
-  ) {
-    return virtualDefinition;
-  }
+  const targetMember = targetComponent?.classMembers?.find(
+    (member) => member.name === goToSourceWord
+  );
 
-  return;
+  if (!targetMember) return;
+
+  const viewModelPath = getRelatedFilePath(UriUtils.toPath(document.uri), [
+    '.js',
+    '.ts',
+  ]);
+  const viewModelDocument = TextDocumentUtils.createFromPath(
+    viewModelPath,
+    'typescript'
+  );
+  const targetPosition = viewModelDocument.positionAt(targetMember.start);
+  const defintion: DefinitionResult = {
+    lineAndCharacter: {
+      line: targetPosition.line + 1, // from sourcefile, but defintion is 1 based
+      character: targetPosition.character,
+    },
+    viewModelFilePath: viewModelPath,
+  };
+
+  return defintion;
 }

@@ -20,6 +20,8 @@ export interface IAureliaClassMember {
   documentation: string;
   isBindable: boolean;
   syntaxKind: ts.SyntaxKind;
+  start: number;
+  end: number;
 }
 
 export interface IAureliaComponent {
