@@ -91,6 +91,9 @@ export function getAureliaComponentInfoFromClassDeclaration(
           ) ?? '';
       }
 
+      // TODO: better way to filter out non aurelia classes?
+      if (viewFilePath === '') return;
+
       const resultClassMembers = getAureliaViewModelClassMembers(
         targetClassDeclaration,
         checker
