@@ -253,6 +253,7 @@
     "webpack": "^4.46.0"
   },
   "dependencies": {
+    "@aurelia/runtime": "^2.0.0-alpha.22",
     "aspect.js": "^0.8.1",
     "aurelia-dependency-injection": "^1.5.2",
     "colorette": "^2.0.12",

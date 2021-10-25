@@ -2,6 +2,33 @@
 # yarn lockfile v1
 
 
+"@aurelia/kernel@2.0.0-alpha.22":
+  version "2.0.0-alpha.22"
+  resolved "https://registry.yarnpkg.com/@aurelia/kernel/-/kernel-2.0.0-alpha.22.tgz#1f250abf4c03f5b4c4ce527df3fdca47d133bcad"
+  integrity sha512-D+hGb/2agEN1Gf7dIEiAYV8csPNf6Sn6u0Ilp4C4JL4jhYAaACPcdqGxvj0+DIVgyALHJtKGy25NpE1YJw5e2Q==
+  dependencies:
+    "@aurelia/metadata" "2.0.0-alpha.22"
+    "@aurelia/platform" "2.0.0-alpha.22"
+
+"@aurelia/metadata@2.0.0-alpha.22":
+  version "2.0.0-alpha.22"
+  resolved "https://registry.yarnpkg.com/@aurelia/metadata/-/metadata-2.0.0-alpha.22.tgz#4cf26d2fcce098f8eefbc40eb840bd2cf8f89cf2"
+  integrity sha512-liG+oSEaKyxNJUtMGGofXgITXggu+K+YoH9BQKMp2AQhPRsSOq6qWq216sU04RlQpj27o4bEXCjg8rdAAlauJw==
+
+"@aurelia/platform@2.0.0-alpha.22":
+  version "2.0.0-alpha.22"
+  resolved "https://registry.yarnpkg.com/@aurelia/platform/-/platform-2.0.0-alpha.22.tgz#f12c4189a9ceaa895a2ae5d679a877639c8c1d07"
+  integrity sha512-pKWRauPDwMXOMyVi1J9EJWxdX+M0Yy5T8mjmv6lyG+2m8rouvJCJc7NPtYfDRPGQ9KfPkCj75MD4dBgeNtL91w==
+
+"@aurelia/runtime@^2.0.0-alpha.22":
+  version "2.0.0-alpha.22"
+  resolved "https://registry.yarnpkg.com/@aurelia/runtime/-/runtime-2.0.0-alpha.22.tgz#4d64f73cb329198358e96e0a2bb6ef9cf1894ff1"
+  integrity sha512-JwDm6kNClCWpy4Tia5xr/hHG7qkxMe9I5Yz+JCn6w83qj7UlTJKbG/m2fqgAgkl0cI0v8MOjn5izNhE+v9k+og==
+  dependencies:
+    "@aurelia/kernel" "2.0.0-alpha.22"
+    "@aurelia/metadata" "2.0.0-alpha.22"
+    "@aurelia/platform" "2.0.0-alpha.22"
+
 "@babel/code-frame@7.12.11":
   version "7.12.11"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.11.tgz#f4ad435aa263db935b8f10f2c552d23fb716a63f"
