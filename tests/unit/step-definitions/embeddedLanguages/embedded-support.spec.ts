@@ -81,6 +81,7 @@ defineFeature(feature, (test) => {
       );
 
       const openingCustomElementTag = regionResults[0];
+      openingCustomElementTag; /*?*/
       expect(openingCustomElementTag.startCol).toBe(4);
       expect(openingCustomElementTag.startLine).toBe(3);
       expect(openingCustomElementTag.startOffset).toBe(49);

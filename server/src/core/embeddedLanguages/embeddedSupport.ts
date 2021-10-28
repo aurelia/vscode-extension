@@ -406,11 +406,30 @@ export function parseDocumentRegions<RegionDataType = any>(
         ];
         const { sourceCodeLocation } = startTag;
         if (sourceCodeLocation) {
+          const {
+            startLine,
+            startCol,
+            startOffset,
+            endOffset,
+          } = sourceCodeLocation;
+          const finalStartCol = startCol + 1; // + 1 for "<" of closing tag
+          const finalStartOffset = startOffset + 1; // + 1 for < of closing tag
+          const finalEndCol = finalStartCol + tagName.length;
+          const finalEndOffset = finalStartOffset + tagName.length;
+          const onlyOpeningTagLocation = {
+            ...sourceCodeLocation,
+            startCol: finalStartCol,
+            startOffset: finalStartOffset,
+            startLine,
+            endLine: startLine,
+            endCol: finalEndCol,
+            endOffset: finalEndOffset,
+          };
+
           const customElementViewRegion = createRegion({
             tagName,
-            sourceCodeLocation: startTag.sourceCodeLocation,
+            sourceCodeLocation: onlyOpeningTagLocation,
             type: ViewRegionType.CustomElement,
-            subType: ViewRegionSubType.StartTag,
             data,
           });
           viewRegions.push(customElementViewRegion);
@@ -421,6 +440,7 @@ export function parseDocumentRegions<RegionDataType = any>(
     saxStream.on('text', (text) => {
       let interpolationMatch;
       while ((interpolationMatch = interpolationRegex.exec(text.text))) {
+        // interpolationMatch; /*?*/
         if (interpolationMatch !== null) {
           const attrLocation = text.sourceCodeLocation;
           if (!attrLocation) continue;

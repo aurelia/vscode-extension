@@ -16,7 +16,7 @@ import {
 } from '../../core/embeddedLanguages/embeddedSupport';
 import {
   findAllBindableAttributeRegions,
-  findRegionsWithValue,
+  findRegionsByWord,
   forEachRegionOfType,
 } from '../../core/regions/findSpecificRegion';
 import {
@@ -217,11 +217,7 @@ export async function renameAllOtherRegionsInSameView(
 ) {
   const result: WorkspaceEdit['changes'] = {};
 
-  const regions = await findRegionsWithValue(
-    aureliaProgram,
-    document,
-    sourceWord
-  );
+  const regions = await findRegionsByWord(aureliaProgram, document, sourceWord);
 
   const { uri } = document;
   result[uri] = [];

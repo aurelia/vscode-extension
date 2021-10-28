@@ -1,6 +1,12 @@
 import * as fs from 'fs';
 import { pathToFileURL } from 'url';
 
+import {
+  ExpressionKind,
+  ExpressionType,
+  Interpolation,
+  parseExpression,
+} from '@aurelia/runtime';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
@@ -10,6 +16,7 @@ import {
   RepeatForRegionData,
 } from '../embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
+import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
 
 type Uri = string;
 type RegionsLookUp = Record<Uri, ViewRegionInfo[]>;
@@ -99,7 +106,7 @@ export async function forEachRegionOfType<
   return regionsLookUp;
 }
 
-export async function findRegionsWithValue(
+export async function findRegionsByWord(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
   sourceWord: string
@@ -108,31 +115,57 @@ export async function findRegionsWithValue(
   const regions = await parseDocumentRegions(document, componentList);
 
   const targetRegions = regions.filter((region) => {
-    // 1. repeat-for regions
-    if (region.type === ViewRegionType.RepeatFor) {
-      const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
-      const isTargetIterable =
-        repeatForRegion.data?.iterableName === sourceWord;
-
-      return isTargetIterable;
+    // 1. default case: .regionValue
+    const isDefault = region.regionValue === sourceWord;
+    if (isDefault) {
+      return true;
     }
 
-    // 2. default case: .regionValue
-    const isDefault = region.regionValue === sourceWord;
+    // 2. repeat-for regions
+    else if (region.type === ViewRegionType.RepeatFor) {
+      return isRepeatForIncludesWord(region, sourceWord);
+    }
 
-    // 3. Access member: line.next.value --> line
+    // 3. Expressions
+    let expressionType;
+    // Interpolation
+    if (
+      region.type === ViewRegionType.AttributeInterpolation ||
+      region.type === ViewRegionType.TextInterpolation
+    ) {
+      expressionType = ExpressionType.Interpolation;
+    }
+    // None
+    else if (region.type === ViewRegionType.Attribute) {
+      expressionType = ExpressionType.None;
+    }
 
-    // 4. Method
-
-    // 5. Array
-
-    // TODO: 6. sub interpolation
-    // TODO: 7. expression: line !== 'value'
-
-    return isDefault;
+    const parseInput = region.textValue ?? region.attributeValue ?? '';
+    const parsed = (parseExpression(
+      parseInput,
+      expressionType
+    ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
+      parsed,
+      ExpressionKind.AccessScope
+    );
+    const hasSourceWordInScope = accessScopes.find(
+      (accessScope) => accessScope.name === sourceWord
+    );
+    return hasSourceWordInScope;
   });
 
   return targetRegions;
+}
+
+function isRepeatForIncludesWord(
+  region: ViewRegionInfo<any>,
+  sourceWord: string
+) {
+  const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
+  const isTargetIterable = repeatForRegion.data?.iterableName === sourceWord;
+
+  return isTargetIterable;
 }
 
 export function getRegionsOfType<RegionDataType>(

@@ -7,7 +7,7 @@ import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { findRegionsWithValue } from '../../core/regions/findSpecificRegion';
+import { findRegionsByWord } from '../../core/regions/findSpecificRegion';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 
@@ -37,14 +37,14 @@ export async function aureliaDefinitionFromViewModel(
     UriUtils.toPath(document.uri),
     viewExtensions
   );
-
   const viewDocument = TextDocumentUtils.createHtmlFromPath(viewPath);
-
-  const regions = await findRegionsWithValue(
+  const regions = await findRegionsByWord(
     aureliaProgram,
     viewDocument,
     sourceWord
   );
+  // regions;
+  // regions; /*?*/
 
   const definitions: LocationLink[] = [];
   for (let region of regions) {
