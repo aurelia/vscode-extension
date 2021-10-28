@@ -46,7 +46,7 @@ export async function aureliaDefinitionFromViewModel(
   // regions;
   // regions; /*?*/
 
-  const definitions: LocationLink[] = [];
+  const viewRegionDefinitions: LocationLink[] = [];
   for (let region of regions) {
     if (!region.startLine) continue;
     if (!region.startCol) continue;
@@ -60,8 +60,60 @@ export async function aureliaDefinitionFromViewModel(
       range,
       range
     );
-    definitions.push(locationLink);
+    viewRegionDefinitions.push(locationLink);
   }
+
+  const regularDefintions =
+    findRegularTypescriptDefinitions(aureliaProgram, viewModelPath, offset) ??
+    [];
+
+  const finalDefinitions: LocationLink[] = [
+    ...viewRegionDefinitions,
+    ...regularDefintions,
+  ];
+
+  return finalDefinitions;
+}
+
+function findRegularTypescriptDefinitions(
+  aureliaProgram: AureliaProgram,
+  viewModelPath: string,
+  offset: number
+) {
+  const definitions: LocationLink[] = [];
+
+  const tsMorphProject = aureliaProgram.tsMorphProject.get();
+  const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
+  if (!sourceFile) return;
+  const references = tsMorphProject
+    .getLanguageService()
+    .findReferencesAtPosition(sourceFile, offset);
+  references.forEach((reference) => {
+    reference.getReferences().forEach((subReference) => {
+      const refNode = subReference.getNode();
+      const startLine = refNode.getStartLineNumber() - 1;
+      const startOffset = refNode.getStart() - 1;
+      const startPos = refNode.getStartLinePos() - 1;
+      const startCol = startOffset - startPos;
+      const endLine = refNode.getEndLineNumber() - 1;
+      const endOffset = refNode.getEnd() - 1;
+      const endPos = refNode.getStartLinePos() - 1;
+      const endCol = endOffset - endPos;
+
+      const range = Range.create(
+        Position.create(startLine, startCol),
+        Position.create(endLine, endCol)
+      );
+      const path = subReference.getSourceFile().getFilePath();
+      const locationLink = LocationLink.create(
+        pathToFileURL(path).toString(),
+        range,
+        range
+      );
+
+      definitions.push(locationLink);
+    });
+  });
 
   return definitions;
 }

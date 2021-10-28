@@ -28,6 +28,7 @@ export const definitionSteps: StepDefinitions = ({ when, then, and }) => {
     (numOfDefintions: string) => {
       if (definitions) {
         expect(definitions.length).toBe(Number(numOfDefintions));
+        expect(true).toBeFalsy();
       }
     }
   );
