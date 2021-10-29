@@ -74,7 +74,7 @@ connection.onInitialize(async (params: InitializeParams) => {
         triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
       },
       definitionProvider: true,
-      hoverProvider: true,
+      // hoverProvider: true,
       // codeActionProvider: true,
       renameProvider: true,
     },

@@ -789,9 +789,11 @@ export function getRegionAtPosition(
 }
 
 function getSmallestCustomElementSubRegion(
-  regions: ViewRegionInfo[],
+  regions: ViewRegionInfo[] | undefined,
   offset: number
 ): ViewRegionInfo | undefined {
+  if (!regions) return;
+
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {

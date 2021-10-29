@@ -1,3 +1,4 @@
+import { DocumentSpan } from 'ts-morph';
 import { pathToFileURL } from 'url';
 import { LocationLink, Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -38,10 +39,28 @@ export async function aureliaDefinitionFromViewModel(
   const { aureliaProgram } = targetProject;
   if (!aureliaProgram) return;
 
+  const finalDefinitions: LocationLink[] = [];
   const regularDefintions =
     findRegularTypescriptDefinitions(aureliaProgram, viewModelPath, offset) ??
     [];
-  const finalDefinitions: LocationLink[] = regularDefintions;
+  const isSourceDefinition = getIsSourceDefinition(
+    regularDefintions,
+    viewModelPath,
+    position
+  );
+
+  /** Not source, so push source */
+  if (!isSourceDefinition) {
+    finalDefinitions.push(...regularDefintions);
+
+    return finalDefinitions;
+  } else {
+    /** Source, so push references */
+    const regularReferences =
+      findRegularTypescriptReferences(aureliaProgram, viewModelPath, offset) ??
+      [];
+    finalDefinitions.push(...regularReferences);
+  }
 
   let sourceWord = getWordAtOffset(document.getText(), offset);
   sourceWord; /*?*/
@@ -165,8 +184,28 @@ function findRegularTypescriptDefinitions(
   viewModelPath: string,
   offset: number
 ) {
-  const definitions: LocationLink[] = [];
+  const finalDefinitions: LocationLink[] = [];
+  const tsMorphProject = aureliaProgram.tsMorphProject.get();
+  const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
+  if (!sourceFile) return;
+  const sourceDefinitions = tsMorphProject
+    .getLanguageService()
+    .getDefinitionsAtPosition(sourceFile, offset);
 
+  sourceDefinitions.find((definition) => {
+    const locationLink = createLocationLinkFromDocumentSpan(definition);
+    finalDefinitions.push(locationLink);
+  });
+
+  return finalDefinitions;
+}
+
+function findRegularTypescriptReferences(
+  aureliaProgram: AureliaProgram,
+  viewModelPath: string,
+  offset: number
+) {
+  const finalReferences: LocationLink[] = [];
   const tsMorphProject = aureliaProgram.tsMorphProject.get();
   const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
   if (!sourceFile) return;
@@ -175,32 +214,36 @@ function findRegularTypescriptDefinitions(
     .findReferencesAtPosition(sourceFile, offset);
   references.forEach((reference) => {
     reference.getReferences().forEach((subReference) => {
-      const refNode = subReference.getNode();
-      const startLine = refNode.getStartLineNumber() - 1;
-      const startOffset = refNode.getStart() - 1;
-      const startPos = refNode.getStartLinePos() - 1;
-      const startCol = startOffset - startPos;
-      const endLine = refNode.getEndLineNumber() - 1;
-      const endOffset = refNode.getEnd() - 1;
-      const endPos = refNode.getStartLinePos() - 1;
-      const endCol = endOffset - endPos;
-
-      const range = Range.create(
-        Position.create(startLine, startCol),
-        Position.create(endLine, endCol)
-      );
-      const path = subReference.getSourceFile().getFilePath();
-      const locationLink = LocationLink.create(
-        pathToFileURL(path).toString(),
-        range,
-        range
-      );
-
-      definitions.push(locationLink);
+      const locationLink = createLocationLinkFromDocumentSpan(subReference);
+      finalReferences.push(locationLink);
     });
   });
 
-  return definitions;
+  return finalReferences;
+}
+
+function createLocationLinkFromDocumentSpan(documentSpan: DocumentSpan) {
+  const refNode = documentSpan.getNode();
+  const startLine = refNode.getStartLineNumber() - 1;
+  const startOffset = refNode.getStart() - 1;
+  const startPos = refNode.getStartLinePos() - 1;
+  const startCol = startOffset - startPos;
+  const endLine = refNode.getEndLineNumber() - 1;
+  const endOffset = refNode.getEnd() - 1;
+  const endPos = refNode.getStartLinePos() - 1;
+  const endCol = endOffset - endPos;
+
+  const range = Range.create(
+    Position.create(startLine, startCol),
+    Position.create(endLine, endCol)
+  );
+  const path = documentSpan.getSourceFile().getFilePath();
+  const locationLink = LocationLink.create(
+    pathToFileURL(path).toString(),
+    range,
+    range
+  );
+  return locationLink;
 }
 
 function createLocationLinkFromRegion(
@@ -223,4 +266,41 @@ function createLocationLinkFromRegion(
   );
 
   return locationLink;
+}
+
+function getIsSourceDefinition(
+  definitions: LocationLink[],
+  viewModelPath: string,
+  position: Position
+) {
+  const targetDefinition = definitions.find((definition) => {
+    definition.targetUri;
+
+    const { start, end } = definition.targetRange;
+    const _isIncludedPosition = isIncludedPosition(start, end, position);
+    const isSamePath = definition.targetUri === UriUtils.toUri(viewModelPath);
+
+    const isSourceDefinition = _isIncludedPosition && isSamePath;
+    return isSourceDefinition;
+  });
+
+  return targetDefinition;
+}
+
+function isIncludedPosition(start: Position, end: Position, target: Position) {
+  const projectedStart = projectPosision(start);
+  const projectedEnd = projectPosision(end);
+  const projectedSources = projectPosision(target);
+  const isIncluded =
+    projectedStart <= projectedSources && projectedSources <= projectedEnd;
+
+  return isIncluded;
+}
+
+/**
+ * Project 2dim line x character to a 1dim value
+ */
+function projectPosision(position: Position) {
+  const projection = position.line * 100000 + position.character;
+  return projection;
 }

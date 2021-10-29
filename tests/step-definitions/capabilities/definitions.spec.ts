@@ -17,6 +17,7 @@ export const definitionSteps: StepDefinitions = ({ when, then, and }) => {
 
   then(/^I should land in the file (.*)$/, (fileName: string) => {
     expect(definitions?.length).toBeTruthy();
+    // definitions; /*?*/
 
     if (definitions) {
       expect(
