@@ -19,7 +19,9 @@ export const definitionSteps: StepDefinitions = ({ when, then, and }) => {
     expect(definitions?.length).toBeTruthy();
 
     if (definitions) {
-      expect(definitions[0].targetUri).toContain(fileName);
+      expect(
+        definitions.find((defintion) => defintion.targetUri.includes(fileName))
+      ).toBeTruthy();
     }
   });
 

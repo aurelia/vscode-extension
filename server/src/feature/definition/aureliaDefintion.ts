@@ -7,8 +7,19 @@ import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { findRegionsByWord } from '../../core/regions/findSpecificRegion';
-import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
+import {
+  ViewRegionInfo,
+  ViewRegionSubType,
+  ViewRegionType,
+} from '../../core/embeddedLanguages/embeddedSupport';
+import {
+  findRegionsByWord,
+  forEachRegionOfType,
+} from '../../core/regions/findSpecificRegion';
+import {
+  AureliaProgram,
+  IAureliaComponent,
+} from '../../core/viewModel/AureliaProgram';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 
 export async function aureliaDefinitionFromViewModel(
@@ -17,8 +28,6 @@ export async function aureliaDefinitionFromViewModel(
   position: Position
 ): Promise<LocationLink[] | undefined> {
   const offset = document.offsetAt(position);
-  const sourceWord = getWordAtOffset(document.getText(), offset);
-  sourceWord; /*?*/
 
   const viewModelPath = UriUtils.toPath(document.uri);
   const targetProject = container
@@ -29,50 +38,126 @@ export async function aureliaDefinitionFromViewModel(
   const { aureliaProgram } = targetProject;
   if (!aureliaProgram) return;
 
+  const regularDefintions =
+    findRegularTypescriptDefinitions(aureliaProgram, viewModelPath, offset) ??
+    [];
+  const finalDefinitions: LocationLink[] = regularDefintions;
+
+  let sourceWord = getWordAtOffset(document.getText(), offset);
+  sourceWord; /*?*/
+  const targetComponent =
+    aureliaProgram.aureliaComponents.getOneBy('className', sourceWord) ??
+    aureliaProgram.aureliaComponents.getOneBy(
+      'viewModelFilePath',
+      viewModelPath
+    );
+  const targetMember = targetComponent?.classMembers?.find(
+    (member) => member.name === sourceWord
+  );
+
+  // Class Member
+  if (targetMember) {
+    const viewRegionDefinitions_ClassMembers = await getAureliaClassMemberDefinitions_SameView(
+      container,
+      aureliaProgram,
+      document,
+      sourceWord
+    );
+    finalDefinitions.push(...viewRegionDefinitions_ClassMembers);
+
+    // Bindable
+    const isBindable = targetMember.isBindable;
+    if (isBindable) {
+      const viewRegionDefinitions_Bindables = await getAureliaClassMemberDefinitions_OtherViewBindables(
+        aureliaProgram,
+        sourceWord
+      );
+      finalDefinitions.push(...viewRegionDefinitions_Bindables);
+    }
+  }
+  // Class
+  else if (targetComponent) {
+    const viewRegionDefinitions_Class: LocationLink[] = await getAureliaClassDefinitions(
+      aureliaProgram,
+      targetComponent
+    );
+
+    finalDefinitions.push(...viewRegionDefinitions_Class);
+  }
+
+  return finalDefinitions;
+}
+
+async function getAureliaClassDefinitions(
+  aureliaProgram: AureliaProgram,
+  targetComponent: IAureliaComponent
+) {
+  const viewRegionDefinitions_Class: LocationLink[] = [];
+  await forEachRegionOfType(
+    aureliaProgram,
+    ViewRegionType.CustomElement,
+    (region, document) => {
+      if (region.tagName !== targetComponent?.componentName) return;
+
+      const locationLink = createLocationLinkFromRegion(region, document);
+      if (!locationLink) return;
+      viewRegionDefinitions_Class.push(locationLink);
+    }
+  );
+  return viewRegionDefinitions_Class;
+}
+
+async function getAureliaClassMemberDefinitions_SameView(
+  container: Container,
+  aureliaProgram: AureliaProgram,
+  document: TextDocument,
+  sourceWord: string
+) {
   const documentSettings = container.get(DocumentSettings);
   const viewExtensions = documentSettings.getSettings().relatedFiles?.view;
-  if (!viewExtensions) return;
+  if (!viewExtensions) return [];
 
   const viewPath = getRelatedFilePath(
     UriUtils.toPath(document.uri),
     viewExtensions
   );
   const viewDocument = TextDocumentUtils.createHtmlFromPath(viewPath);
+  const viewRegionDefinitions_ClassMembers: LocationLink[] = [];
   const regions = await findRegionsByWord(
     aureliaProgram,
     viewDocument,
     sourceWord
   );
-  // regions;
-  // regions; /*?*/
 
-  const viewRegionDefinitions: LocationLink[] = [];
   for (let region of regions) {
-    if (!region.startLine) continue;
-    if (!region.startCol) continue;
-
-    const range = Range.create(
-      Position.create(region.startLine - 1, region.startCol),
-      Position.create(region.startLine, region.startCol)
-    );
-    const locationLink = LocationLink.create(
-      pathToFileURL(viewPath).toString(),
-      range,
-      range
-    );
-    viewRegionDefinitions.push(locationLink);
+    const locationLink = createLocationLinkFromRegion(region, viewDocument);
+    if (!locationLink) continue;
+    viewRegionDefinitions_ClassMembers.push(locationLink);
   }
 
-  const regularDefintions =
-    findRegularTypescriptDefinitions(aureliaProgram, viewModelPath, offset) ??
-    [];
+  return viewRegionDefinitions_ClassMembers;
+}
 
-  const finalDefinitions: LocationLink[] = [
-    ...viewRegionDefinitions,
-    ...regularDefintions,
-  ];
+async function getAureliaClassMemberDefinitions_OtherViewBindables(
+  aureliaProgram: AureliaProgram,
+  sourceWord: string
+) {
+  const viewRegionDefinitions_Bindables: LocationLink[] = [];
+  await forEachRegionOfType(
+    aureliaProgram,
+    ViewRegionType.CustomElement,
+    (region, document) => {
+      region.data?.forEach((subRegion) => {
+        if (subRegion.type !== ViewRegionType.BindableAttribute) return;
+        if (subRegion.regionValue !== sourceWord) return;
 
-  return finalDefinitions;
+        const locationLink = createLocationLinkFromRegion(subRegion, document);
+        if (!locationLink) return;
+        viewRegionDefinitions_Bindables.push(locationLink);
+      });
+    }
+  );
+  return viewRegionDefinitions_Bindables;
 }
 
 function findRegularTypescriptDefinitions(
@@ -116,4 +201,26 @@ function findRegularTypescriptDefinitions(
   });
 
   return definitions;
+}
+
+function createLocationLinkFromRegion(
+  region: ViewRegionInfo,
+  document: TextDocument
+) {
+  if (!region.startLine) return;
+  if (!region.startCol) return;
+  if (!region.endLine) return;
+  if (!region.endCol) return;
+
+  const range = Range.create(
+    Position.create(region.startLine - 1, region.startCol - 1),
+    Position.create(region.endLine - 1, region.endCol - 1)
+  );
+  const locationLink = LocationLink.create(
+    document.uri.toString(),
+    range,
+    range
+  );
+
+  return locationLink;
 }

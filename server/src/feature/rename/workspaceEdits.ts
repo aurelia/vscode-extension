@@ -50,28 +50,26 @@ export async function getAllChangesForOtherViews(
     forEachRegionOfType(
       aureliaProgram,
       ViewRegionType.CustomElement,
-      (regions, document) => {
-        regions.forEach((region) => {
-          if (region.tagName !== targetComponent?.componentName) return;
-          if (result[document.uri] === undefined) {
-            result[document.uri] = [];
-          }
+      (region, document) => {
+        if (region.tagName !== targetComponent?.componentName) return;
+        if (result[document.uri] === undefined) {
+          result[document.uri] = [];
+        }
 
-          if (region.subType === ViewRegionSubType.StartTag) {
-            // From Start tag sub region, just get location info of tag name
-            // (we account (multi-lined) attributes as well)
-            const range = getStartTagNameRange(region, document);
-            if (!range) return;
-
-            result[document.uri].push(TextEdit.replace(range, newName));
-            return;
-          }
-
-          const range = getRangeFromRegion(region);
+        if (region.subType === ViewRegionSubType.StartTag) {
+          // From Start tag sub region, just get location info of tag name
+          // (we account (multi-lined) attributes as well)
+          const range = getStartTagNameRange(region, document);
           if (!range) return;
 
           result[document.uri].push(TextEdit.replace(range, newName));
-        });
+          return;
+        }
+
+        const range = getRangeFromRegion(region);
+        if (!range) return;
+
+        result[document.uri].push(TextEdit.replace(range, newName));
       }
     );
     return result;

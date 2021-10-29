@@ -12,7 +12,8 @@ Feature: Definition in View Model
     And the number of defintions should be <NUM_DEFINTIONS>
 
     Examples:
-      | DESCRIPTION    | LINE | CODE                 | NUM_DEFINTIONS | TARGET_FILE_NAME    |
-      | Bindable       | 2    | `  @bindable \|foo;` | 5              | custom-element.html |
-      | Bindable       | 3    | `  @bindable \|bar;` | 2              | custom-element.html |
-      | Class Variable | 4    | `  \|qux;`           | 5              | custom-element.html |
+      | DESCRIPTION | LINE | CODE                 | NUM_DEFINTIONS | TARGET_FILE_NAME    |
+      # | Bindable    | 1    | `export class \|CustomElementCustomElement {` | 17             | custom-element-user.html |
+      | Bindable    | 2    | `  @bindable \|foo;` | 14             | custom-element.html |
+# | Bindable       | 3    | `  @bindable \|bar;`                        | 2              | custom-element.html |
+# | Class Variable | 4    | `  \|qux;`                                  | 5              | custom-element.html |

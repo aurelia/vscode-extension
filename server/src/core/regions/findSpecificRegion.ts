@@ -73,13 +73,13 @@ export async function findAllBindableAttributeRegions(
 export async function forEachRegionOfType<
   RegionType extends ViewRegionType,
   RegionDataType = RegionType extends ViewRegionType.CustomElement
-    ? ViewRegionInfo
+    ? ViewRegionInfo[]
     : any
 >(
   aureliaProgram: AureliaProgram,
   regionType: RegionType,
   forEachRegionsCallback: (
-    regions: ViewRegionInfo<RegionDataType>[],
+    region: ViewRegionInfo<RegionDataType>,
     document: TextDocument
   ) => void
 ): Promise<RegionsLookUp> {
@@ -99,7 +99,9 @@ export async function forEachRegionOfType<
       const finalRegions = regions.filter(
         (region) => region.type === regionType
       );
-      forEachRegionsCallback(finalRegions, document);
+      finalRegions.forEach((region) => {
+        forEachRegionsCallback(region, document);
+      });
     })
   );
 
