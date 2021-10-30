@@ -4,6 +4,7 @@ import {
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { SymbolInformation } from 'vscode-languageserver-types';
 
 import { onCompletion } from '../feature/completions/onCompletions';
 import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
@@ -14,6 +15,7 @@ import { onConnectionInitialized } from '../feature/initialization/initializatio
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
 import { onDocumentSymbol } from '../feature/symbols/onDocumentSymbol';
+import { onWorkspaceSymbol } from '../feature/symbols/onWorkspaceSymbol';
 import { Container } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
 import { LanguageModes } from './embeddedLanguages/languageModes';
@@ -119,7 +121,12 @@ export class AureliaServer {
     return symbols;
   }
 
-  // onWorkspaceSymbol() {}
+  onWorkspaceSymbol(query: string): SymbolInformation[] {
+    const symbols = onWorkspaceSymbol(this.container, query);
+
+    return symbols;
+  }
+
   // onCodeAction() {}
   // onCodeLens() {}
   // onCodeLensResolve() {}

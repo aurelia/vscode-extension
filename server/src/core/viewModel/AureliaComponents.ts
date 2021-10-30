@@ -8,6 +8,8 @@ import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
+import { parseDocumentRegions } from '../embeddedLanguages/embeddedSupport';
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 
 const logger = new Logger('aurelia-components');
 
@@ -62,6 +64,7 @@ export class AureliaComponents {
       }
     });
 
+    this.enhanceWithViewRegions(componentList);
     this.set(componentList);
     this.setBindables(componentList);
 
@@ -153,6 +156,19 @@ export class AureliaComponents {
 
   public getBindables(): IAureliaBindable[] {
     return this.bindables;
+  }
+
+  private async enhanceWithViewRegions(componentList: IAureliaComponent[]) {
+    componentList;
+    componentList.forEach(async (component) => {
+      component;
+      if (!component.viewFilePath) return;
+      const viewDocument = TextDocumentUtils.createHtmlFromPath(
+        component.viewFilePath
+      );
+      const regions = await parseDocumentRegions(viewDocument, componentList);
+      component.viewRegions = regions;
+    });
   }
 
   private logInfoAboutComponents(components: IAureliaComponent[]) {

@@ -78,7 +78,7 @@ type SymbolMap = Record<
   }
 >;
 
-function convertToSymbolName(region: ViewRegionInfo) {
+export function convertToSymbolName(region: ViewRegionInfo) {
   const regionType = region.type;
   if (!regionType) return;
   if (region.subType === ViewRegionSubType.EndTag) return;

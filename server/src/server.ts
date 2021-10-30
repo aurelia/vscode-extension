@@ -242,25 +242,10 @@ connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
   const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
   return symbols;
 });
-connection.onWorkspaceSymbol((params: WorkspaceSymbolParams) => {
+connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
   /* prettier-ignore */ console.log('TCL: params', params)
-  const range = Range.create(
-    { line: 0, character: 0 },
-    { line: 0, character: 0 }
-  );
-  const symbol = SymbolInformation.create(
-    'aurelia-au-wsp',
-    SymbolKind.Field,
-    range
-  );
-  // const symbol = DocumentSymbol.create(
-  //   'name',
-  //   'detail',
-  //   SymbolKind.Field,
-  //   Range.create({ line: 0, character: 0 }, { line: 0, character: 0 }),
-  //   Range.create({ line: 0, character: 0 }, { line: 0, character: 0 })
-  // );
-  return [symbol];
+  const workspaceSymbols = aureliaServer.onWorkspaceSymbol(params.query);
+  return workspaceSymbols;
 });
 
 connection.onHover(

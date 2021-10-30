@@ -216,8 +216,7 @@ export function parseDocumentRegions<RegionDataType = any>(
           const bindableAttributeRegion = createBindableAttributeRegion(
             attr,
             attrLocation,
-            tagName,
-            document
+            tagName
           );
           customElementBindableAttributeRegions.push(bindableAttributeRegion);
         } else if (isRepeatFor) {
@@ -919,8 +918,7 @@ function append(result: string, str: string, n: number): string {
 function createBindableAttributeRegion(
   attr: parse5.Attribute,
   attrLocation: parse5.Location,
-  tagName: string,
-  document: TextDocument
+  tagName: string
 ): ViewRegionInfo {
   AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST;
   const startOffset = attrLocation.startOffset;
