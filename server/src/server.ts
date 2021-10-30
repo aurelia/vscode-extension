@@ -11,6 +11,9 @@ import {
   CompletionList,
   TextDocumentChangeEvent,
   RenameParams,
+  DocumentSymbolParams,
+  WorkspaceSymbolParams,
+  Range,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -21,8 +24,11 @@ import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/AureliaServer';
 import { globalContainer } from './core/container';
 import {
+  DocumentSymbol,
   getLanguageModes,
   LanguageModes,
+  SymbolInformation,
+  SymbolKind,
 } from './core/embeddedLanguages/languageModes';
 import {
   ExtensionSettings,
@@ -77,6 +83,8 @@ connection.onInitialize(async (params: InitializeParams) => {
       // hoverProvider: true,
       // codeActionProvider: true,
       renameProvider: true,
+      documentSymbolProvider: true,
+      workspaceSymbolProvider: true,
     },
   };
   if (hasWorkspaceFolderCapability) {
@@ -227,6 +235,33 @@ connection.onDefinition(
     return null;
   }
 );
+
+connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
+  /* prettier-ignore */ console.log('TCL: params', params)
+
+  const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
+  return symbols;
+});
+connection.onWorkspaceSymbol((params: WorkspaceSymbolParams) => {
+  /* prettier-ignore */ console.log('TCL: params', params)
+  const range = Range.create(
+    { line: 0, character: 0 },
+    { line: 0, character: 0 }
+  );
+  const symbol = SymbolInformation.create(
+    'aurelia-au-wsp',
+    SymbolKind.Field,
+    range
+  );
+  // const symbol = DocumentSymbol.create(
+  //   'name',
+  //   'detail',
+  //   SymbolKind.Field,
+  //   Range.create({ line: 0, character: 0 }, { line: 0, character: 0 }),
+  //   Range.create({ line: 0, character: 0 }, { line: 0, character: 0 })
+  // );
+  return [symbol];
+});
 
 connection.onHover(
   async ({ position, textDocument }: TextDocumentPositionParams) => {

@@ -17,6 +17,7 @@ import {
   cliGenerateSteps,
   commonExtensionSteps,
 } from './step-definitions/initialization/on-initialized/detecting-on-init.spec';
+import { symbolSteps } from './step-definitions/capabilities/symbols/documentSymbols.spec';
 import { hydrateSteps } from './step-definitions/initialization/on-initialized/hydrate-on-init.spec';
 import { renameSteps } from './step-definitions/capabilities/rename/rename.spec';
 import { AureliaProjectsSteps } from './step-definitions/core/AureliaProjects.spec';
@@ -61,6 +62,7 @@ export function initCucumberTests(tagFilter: string = '@focus') {
     definitionSteps,
     completionSteps,
     completionValueConverterSteps,
+    symbolSteps,
     hoverSteps,
     renameSteps,
   ]);

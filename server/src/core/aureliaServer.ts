@@ -13,6 +13,7 @@ import { onHover } from '../feature/hover/onHover';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
+import { onDocumentSymbol } from '../feature/symbols/onDocumentSymbol';
 import { Container } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
 import { LanguageModes } from './embeddedLanguages/languageModes';
@@ -112,7 +113,12 @@ export class AureliaServer {
   // onImplementation() {}
   // onReferences() {}
   // onDocumentHighlight() {}
-  // onDocumentSymbol() {}
+
+  async onDocumentSymbol(documentUri: string) {
+    const symbols = await onDocumentSymbol(this.container, documentUri);
+    return symbols;
+  }
+
   // onWorkspaceSymbol() {}
   // onCodeAction() {}
   // onCodeLens() {}

@@ -3,5 +3,5 @@ ${foo}
 <div id.bind="bar"></div>
 <div repeat.for="fooElement of foo"></div>
 <span id.bind="qux.attr">${qux.interpol}</span>
-<p class="${useFoo(qux)}">${arr[qux]}</p>
+<p class="${useFoo(qux)}">${arr[qux] | hello}</p>
 ${foo.qux}
