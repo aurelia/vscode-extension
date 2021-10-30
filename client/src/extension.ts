@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { commands, workspace, ExtensionContext } from 'vscode';
 import {
+  Disposable,
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
@@ -67,6 +68,14 @@ export function activate(context: ExtensionContext) {
   );
 
   context.subscriptions.push(new RelatedFiles());
+  context.subscriptions.push(
+    Disposable.create(() => {
+      commands.registerTextEditorCommand(
+        'extension.au.refactor.component',
+        () => {}
+      );
+    })
+  );
 
   // Start the client. This will also launch the server
   client.start();

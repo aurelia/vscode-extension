@@ -14,6 +14,13 @@ import {
   DocumentSymbolParams,
   WorkspaceSymbolParams,
   Range,
+  CodeActionParams,
+  CodeAction,
+  Command,
+  ExecuteCommandParams,
+  WorkspaceEdit,
+  Position,
+  CodeActionKind,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -81,10 +88,11 @@ connection.onInitialize(async (params: InitializeParams) => {
       },
       definitionProvider: true,
       // hoverProvider: true,
-      // codeActionProvider: true,
+      codeActionProvider: true,
       renameProvider: true,
       documentSymbolProvider: true,
       workspaceSymbolProvider: true,
+      executeCommandProvider: { commands: ['extension.au.refactor.component'] },
     },
   };
   if (hasWorkspaceFolderCapability) {
@@ -265,9 +273,30 @@ connection.onHover(
   }
 );
 
-// connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-//   return null;
-// });
+connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
+  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
+  const kind = 'extension.au.refactor.component';
+  const codeAcion = CodeAction.create('Au: Create component', kind);
+  codeAcion.command = Command.create('Au: Command <<', kind, ['test-arg']);
+  const uri = UriUtils.toUri(
+    '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html'
+  );
+  const position = Position.create(0, 5);
+  const range = Range.create(position, position);
+  codeAcion.edit = {
+    changes: {
+      [uri]: [{ newText: 'hello', range }],
+    },
+  };
+  return [codeAcion];
+});
+
+connection.onExecuteCommand(
+  async (executeCommandParams: ExecuteCommandParams) => {
+    executeCommandParams;
+    return null;
+  }
+);
 
 connection.onRenameRequest(
   async ({ position, textDocument, newName }: RenameParams) => {
