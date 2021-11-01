@@ -2,10 +2,7 @@ import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  AureliaView,
-  AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST,
-} from '../../common/constants';
+import { AureliaView } from '../../common/constants';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
@@ -743,12 +740,14 @@ export function getRegionAtPosition(
   position: Position
 ): ViewRegionInfo | undefined {
   // document; /*?*/
-  // document.getText(); /*?*/
-  // position; /*?*/
+  document.getText(); /*?*/
+  position; /*?*/
   const offset = document.offsetAt(position);
-  // offset; /*?*/
+  offset; /*?*/
 
-  // regions; /*?*/
+  // ViewRegionUtils.getRegionFromPosition(region, position)
+
+  regions; /*?*/
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {
@@ -920,7 +919,6 @@ function createBindableAttributeRegion(
   attrLocation: parse5.Location,
   tagName: string
 ): ViewRegionInfo {
-  AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST;
   const startOffset = attrLocation.startOffset;
   /** Eg. >click.delegate="<increaseCounter()" */
   const onlyBindableName = getBindableNameFromAttritute(attr.name);

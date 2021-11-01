@@ -159,9 +159,7 @@ export class AureliaComponents {
   }
 
   private async enhanceWithViewRegions(componentList: IAureliaComponent[]) {
-    componentList;
     componentList.forEach(async (component) => {
-      component;
       if (!component.viewFilePath) return;
       const viewDocument = TextDocumentUtils.createHtmlFromPath(
         component.viewFilePath

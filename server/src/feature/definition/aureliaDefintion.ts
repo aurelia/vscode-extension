@@ -3,6 +3,7 @@ import { pathToFileURL } from 'url';
 import { LocationLink, Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { getWordAtOffset } from '../../common/documens/find-source-word';
+import { PositionUtils } from '../../common/documens/PositionUtils';
 import { getRelatedFilePath } from '../../common/documens/related';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
@@ -277,7 +278,7 @@ function getIsSourceDefinition(
     definition.targetUri;
 
     const { start, end } = definition.targetRange;
-    const _isIncludedPosition = isIncludedPosition(start, end, position);
+    const _isIncludedPosition = PositionUtils.isIncluded(start, end, position);
     const isSamePath = definition.targetUri === UriUtils.toUri(viewModelPath);
 
     const isSourceDefinition = _isIncludedPosition && isSamePath;
@@ -285,22 +286,4 @@ function getIsSourceDefinition(
   });
 
   return targetDefinition;
-}
-
-function isIncludedPosition(start: Position, end: Position, target: Position) {
-  const projectedStart = projectPosision(start);
-  const projectedEnd = projectPosision(end);
-  const projectedSources = projectPosision(target);
-  const isIncluded =
-    projectedStart <= projectedSources && projectedSources <= projectedEnd;
-
-  return isIncluded;
-}
-
-/**
- * Project 2dim line x character to a 1dim value
- */
-function projectPosision(position: Position) {
-  const projection = position.line * 100000 + position.character;
-  return projection;
 }

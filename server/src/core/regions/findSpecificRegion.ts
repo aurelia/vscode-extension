@@ -160,6 +160,54 @@ export async function findRegionsByWord(
   return targetRegions;
 }
 
+export async function findRegionsByWordV2(
+  regions: ViewRegionInfo[],
+  sourceWord: string
+): Promise<ViewRegionInfo[]> {
+  const targetRegions = regions.filter((region) => {
+    // 1. default case: .regionValue
+    const isDefault = region.regionValue === sourceWord;
+    if (isDefault) {
+      return true;
+    }
+
+    // 2. repeat-for regions
+    else if (region.type === ViewRegionType.RepeatFor) {
+      return isRepeatForIncludesWord(region, sourceWord);
+    }
+
+    // 3. Expressions
+    let expressionType;
+    // Interpolation
+    if (
+      region.type === ViewRegionType.AttributeInterpolation ||
+      region.type === ViewRegionType.TextInterpolation
+    ) {
+      expressionType = ExpressionType.Interpolation;
+    }
+    // None
+    else if (region.type === ViewRegionType.Attribute) {
+      expressionType = ExpressionType.None;
+    }
+
+    const parseInput = region.textValue ?? region.attributeValue ?? '';
+    const parsed = (parseExpression(
+      parseInput,
+      expressionType
+    ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
+      parsed,
+      ExpressionKind.AccessScope
+    );
+    const hasSourceWordInScope = accessScopes.find(
+      (accessScope) => accessScope.name === sourceWord
+    );
+    return hasSourceWordInScope;
+  });
+
+  return targetRegions;
+}
+
 function isRepeatForIncludesWord(
   region: ViewRegionInfo<any>,
   sourceWord: string

@@ -40,4 +40,4 @@ export function getBindableNameFromAttritute(input: string): string {
   return match[0];
 }
 
-getBindableNameFromAttritute('inter-bindable.bind');
+// getBindableNameFromAttritute('inter-bindable.bind');
