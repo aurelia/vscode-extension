@@ -2,6 +2,7 @@ import {
   AccessKeyedExpression,
   AccessMemberExpression,
   AccessScopeExpression,
+  BinaryExpression,
   BindingBehaviorExpression,
   CallMemberExpression,
   CallScopeExpression,
@@ -109,7 +110,7 @@ export class ParseExpressionUtil {
     if (parsed instanceof Interpolation) {
       parsed.expressions.forEach((expression) => {
         // ExpressionKind_Dev[expression.$kind]; /*?*/
-        // expression; /*?*/
+        expression; /*?*/
         // console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 
         findAllExpressionRecursive(
@@ -169,12 +170,11 @@ function findAllExpressionRecursive(
     const targetExpressions = expressionOrList.filter((expression) => {
       const targetExpression = isKindIncluded(targetKinds, expression.$kind);
       // Array can have children eg. AccessScopes
-      const shouldFlatten = options?.flatten;
-      if (!targetExpression && shouldFlatten) {
+      if (!targetExpression) {
         findAllExpressionRecursive(expression, targetKinds, collector, options);
       }
       // Special case, if we want CallScope AND AccessScope
-      else if (expression instanceof CallScopeExpression) {
+      else if (expression instanceof CallScopeExpression && options?.flatten) {
         findAllExpressionRecursive(
           expression.args as Writeable<IsAssign[]>,
           targetKinds,
@@ -251,12 +251,12 @@ function findAllExpressionRecursive(
     return;
   }
 
-  // .args
+  // .value
   else if (singleExpression instanceof PrimitiveLiteralExpression) {
     return;
   }
 
-  //
+  // .expression, .args
   else if (singleExpression instanceof ValueConverterExpression) {
     findAllExpressionRecursive(
       singleExpression.expression,
@@ -266,6 +266,23 @@ function findAllExpressionRecursive(
     );
     findAllExpressionRecursive(
       singleExpression.args as Writeable<IsAssign[]>,
+      targetKinds,
+      collector,
+      options
+    );
+    return;
+  }
+
+  // .left, .right
+  else if (singleExpression instanceof BinaryExpression) {
+    findAllExpressionRecursive(
+      singleExpression.left,
+      targetKinds,
+      collector,
+      options
+    );
+    findAllExpressionRecursive(
+      singleExpression.right,
       targetKinds,
       collector,
       options
