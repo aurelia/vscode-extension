@@ -72,21 +72,52 @@ export enum ExpressionKind_Dev {
   DestructuringAssignmentLeaf = 0b1000100000000_11001, // IsAssignable
 }
 
+interface ExpressionsOfKindOptions {
+  /**
+   * Flatten eg. AccessScope inside CallScope.
+   * Instead of
+   *      CallScopeExpression {
+   *        name: 'hello',
+   *        args: [ AccessScopeExpression { name: 'what', ancestor: 0 } ],
+   *        ancestor: 0
+   *      }
+   *  We get
+   *      AccessScopeExpression { name: 'what', ancestor: 0 },
+   *      CallScopeExpression {
+   *        name: 'hello',
+   *        args: [ AccessScopeExpression { name: 'what', ancestor: 0 } ],
+   *        ancestor: 0
+   *      }
+   *
+   * @example
+   *   Try with: `${repos | sort:direction.value:hello(what) | take:10}`
+   */
+  flatten?: boolean;
+}
+
 export class ParseExpressionUtil {
   static getAllExpressionsOfKind<
     TargetKind extends ExpressionKind,
     ReturnType extends KindToActualExpression<TargetKind>
-  >(parsed: Interpolation, targetKinds: TargetKind[]): ReturnType[] {
+  >(
+    parsed: Interpolation,
+    targetKinds: TargetKind[],
+    options?: ExpressionsOfKindOptions
+  ): ReturnType[] {
     let finalExpressions: ReturnType[] = [];
     // Interpolation
     if (parsed instanceof Interpolation) {
       parsed.expressions.forEach((expression) => {
-        expression; /*?*/
         // ExpressionKind_Dev[expression.$kind]; /*?*/
         // expression; /*?*/
         // console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 
-        findAllExpressionRecursive(expression, targetKinds, finalExpressions);
+        findAllExpressionRecursive(
+          expression,
+          targetKinds,
+          finalExpressions,
+          options
+        );
       });
 
       /*
@@ -99,7 +130,12 @@ export class ParseExpressionUtil {
     }
     // None
     else {
-      findAllExpressionRecursive(parsed, targetKinds, finalExpressions);
+      findAllExpressionRecursive(
+        parsed,
+        targetKinds,
+        finalExpressions,
+        options
+      );
     }
 
     return finalExpressions;
@@ -121,7 +157,8 @@ export class ParseExpressionUtil {
 function findAllExpressionRecursive(
   expressionOrList: IsExpression | IsExpression[],
   targetKinds: ExpressionKind[],
-  collector: unknown[]
+  collector: unknown[],
+  options?: ExpressionsOfKindOptions
 ) {
   if (expressionOrList === undefined) {
     return;
@@ -132,15 +169,17 @@ function findAllExpressionRecursive(
     const targetExpressions = expressionOrList.filter((expression) => {
       const targetExpression = isKindIncluded(targetKinds, expression.$kind);
       // Array can have children eg. AccessScopes
-      if (!targetExpression) {
-        findAllExpressionRecursive(expression, targetKinds, collector);
+      const shouldFlatten = options?.flatten;
+      if (!targetExpression && shouldFlatten) {
+        findAllExpressionRecursive(expression, targetKinds, collector, options);
       }
       // Special case, if we want CallScope AND AccessScope
       else if (expression instanceof CallScopeExpression) {
         findAllExpressionRecursive(
           expression.args as Writeable<IsAssign[]>,
           targetKinds,
-          collector
+          collector,
+          options
         );
       }
 
@@ -164,20 +203,40 @@ function findAllExpressionRecursive(
 
   // .object .name
   else if (singleExpression instanceof AccessMemberExpression) {
-    findAllExpressionRecursive(singleExpression.object, targetKinds, collector);
+    findAllExpressionRecursive(
+      singleExpression.object,
+      targetKinds,
+      collector,
+      options
+    );
     return;
   }
 
   // .object
   else if (singleExpression instanceof CallMemberExpression) {
-    findAllExpressionRecursive(singleExpression.object, targetKinds, collector);
+    findAllExpressionRecursive(
+      singleExpression.object,
+      targetKinds,
+      collector,
+      options
+    );
     return;
   }
 
   // .object .key
   else if (singleExpression instanceof AccessKeyedExpression) {
-    findAllExpressionRecursive(singleExpression.object, targetKinds, collector);
-    findAllExpressionRecursive(singleExpression.key, targetKinds, collector);
+    findAllExpressionRecursive(
+      singleExpression.object,
+      targetKinds,
+      collector,
+      options
+    );
+    findAllExpressionRecursive(
+      singleExpression.key,
+      targetKinds,
+      collector,
+      options
+    );
     return;
   }
 
@@ -186,7 +245,8 @@ function findAllExpressionRecursive(
     findAllExpressionRecursive(
       singleExpression.args as Writeable<IsAssign[]>,
       targetKinds,
-      collector
+      collector,
+      options
     );
     return;
   }
@@ -201,12 +261,14 @@ function findAllExpressionRecursive(
     findAllExpressionRecursive(
       singleExpression.expression,
       targetKinds,
-      collector
+      collector,
+      options
     );
     findAllExpressionRecursive(
       singleExpression.args as Writeable<IsAssign[]>,
       targetKinds,
-      collector
+      collector,
+      options
     );
     return;
   }
@@ -226,7 +288,7 @@ function isKindIncluded(
 }
 
 const parsed = parseExpression(
-  '${repos | sort:hello(what):direction.value | take:10}' /*?*/,
+  '${repos | sort:direction.value:hello(what) | take:10}' /*?*/,
   ExpressionType.Interpolation
 );
 const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
