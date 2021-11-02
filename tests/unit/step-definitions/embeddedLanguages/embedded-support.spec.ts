@@ -1,12 +1,16 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
+import { ViewRegionUtils } from '../../../../server/src/common/documens/ViewRegionUtils';
 
 import {
-  parseDocumentRegions,
   RepeatForRegionData,
   ViewRegionInfo,
   ViewRegionType,
 } from '../../../../server/src/core/embeddedLanguages/embeddedSupport';
-import { getRegionsOfType } from '../../../../server/src/core/regions/findSpecificRegion';
+import { RegionParser } from '../../../../server/src/core/regions/RegionParser';
+import {
+  AbstractRegion,
+  RepeatForRegion,
+} from '../../../../server/src/core/regions/ViewRegions';
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import { getTestDir } from '../../../common/files/get-test-dir';
 import {
@@ -18,7 +22,7 @@ import { MockTextDocuments } from '../../../common/mock-server/text-documents';
 const feature = loadFeature(
   `${getTestDir()}/unit/feature-files/embedded-support.feature`,
   {
-    // tagFilter: '@focus',
+    // er: '@focus',
   }
 );
 
@@ -40,7 +44,6 @@ defineFeature(feature, (test) => {
 
     then('the result should include Custom element bindable attributes', () => {
       const regionResults = shared.parsedRegions.filter((region) => {
-        region; /* ? */
         if (!region.data) return false;
         if (!Array.isArray(region.data)) return false;
 
@@ -64,7 +67,7 @@ defineFeature(feature, (test) => {
   });
 
   test('Parsing - Custom Element - Opening Tag', ({ given, when, then }) => {
-    const parsedRegions: ViewRegionInfo[] = [];
+    const parsedRegions: AbstractRegion[] = [];
     const shared = {
       workspaceRootUri: '',
       parsedRegions,
@@ -75,24 +78,24 @@ defineFeature(feature, (test) => {
     whenIParseTheFile(when, shared);
 
     then('the result should include Custom element opening tag', () => {
-      const regionResults = getRegionsOfType(
+      const regionResults = ViewRegionUtils.getRegionsOfType(
         shared.parsedRegions,
         ViewRegionType.CustomElement
       );
 
       const openingCustomElementTag = regionResults[0];
-      openingCustomElementTag; /*?*/
-      expect(openingCustomElementTag.startCol).toBe(4);
-      expect(openingCustomElementTag.startLine).toBe(3);
-      expect(openingCustomElementTag.startOffset).toBe(49);
-      expect(openingCustomElementTag.endCol).toBe(18);
-      expect(openingCustomElementTag.endLine).toBe(3);
-      expect(openingCustomElementTag.endOffset).toBe(63);
+      const { sourceCodeLocation } = openingCustomElementTag;
+      expect(sourceCodeLocation.startCol).toBe(4);
+      expect(sourceCodeLocation.startLine).toBe(3);
+      expect(sourceCodeLocation.startOffset).toBe(49);
+      expect(sourceCodeLocation.endCol).toBe(18);
+      expect(sourceCodeLocation.endLine).toBe(3);
+      expect(sourceCodeLocation.endOffset).toBe(63);
     });
   });
 
   test('Parsing - Custom Element - Closing Tag', ({ given, when, then }) => {
-    const parsedRegions: ViewRegionInfo[] = [];
+    const parsedRegions: AbstractRegion[] = [];
     const shared = {
       workspaceRootUri: '',
       parsedRegions,
@@ -103,24 +106,25 @@ defineFeature(feature, (test) => {
     whenIParseTheFile(when, shared);
 
     then('the result should include Custom element closing tag', () => {
-      const regionResults = getRegionsOfType(
+      const regionResults = ViewRegionUtils.getRegionsOfType(
         shared.parsedRegions,
         ViewRegionType.CustomElement
       );
 
       expect(regionResults.length).toBe(2);
       const closingCustomElementTag = regionResults[1];
-      expect(closingCustomElementTag.startCol).toBe(6);
-      expect(closingCustomElementTag.startLine).toBe(7);
-      expect(closingCustomElementTag.startOffset).toBe(113);
-      expect(closingCustomElementTag.endCol).toBe(20);
-      expect(closingCustomElementTag.endLine).toBe(7);
-      expect(closingCustomElementTag.endOffset).toBe(127);
+      const { sourceCodeLocation } = closingCustomElementTag;
+      expect(sourceCodeLocation.startCol).toBe(6);
+      expect(sourceCodeLocation.startLine).toBe(7);
+      expect(sourceCodeLocation.startOffset).toBe(113);
+      expect(sourceCodeLocation.endCol).toBe(20);
+      expect(sourceCodeLocation.endLine).toBe(7);
+      expect(sourceCodeLocation.endOffset).toBe(127);
     });
   });
 
   test('Parsing - Offsets', ({ given, when, then, and }) => {
-    const parsedRegions: ViewRegionInfo[] = [];
+    const parsedRegions: AbstractRegion[] = [];
     const shared = {
       workspaceRootUri: '',
       parsedRegions,
@@ -137,10 +141,16 @@ defineFeature(feature, (test) => {
     then(
       /^the result should have the correct (\d*) and (\d*) for the whole region$/,
       (startOffset: string, endOffset: string) => {
-        const target = getTargetRegion(shared.line);
+        const target = ViewRegionUtils.getTargetRegion(
+          shared.parsedRegions,
+          shared.line
+        );
 
-        if (target?.type === ViewRegionType.RepeatFor) {
-          const repeatForRegion = target as ViewRegionInfo<RepeatForRegionData>;
+        expect(target).toBeDefined();
+        if (!target) return;
+
+        if (RepeatForRegion.is(target)) {
+          const repeatForRegion = target;
           expect(repeatForRegion.data?.iterableStartOffset).toBe(
             Number(startOffset)
           );
@@ -148,15 +158,17 @@ defineFeature(feature, (test) => {
             Number(endOffset)
           );
         } else {
-          expect(target?.startOffset).toBe(Number(startOffset));
-          expect(target?.endOffset).toBe(Number(endOffset));
+          expect(target.sourceCodeLocation.startOffset).toBe(
+            Number(startOffset)
+          );
+          expect(target.sourceCodeLocation.endOffset).toBe(Number(endOffset));
         }
       }
     );
 
     function getTargetRegion(line: string) {
       const result = shared.parsedRegions.find((region) => {
-        return region.startLine === Number(line);
+        return region.sourceCodeLocation.startLine === Number(line);
       });
       return result;
     }
@@ -180,7 +192,8 @@ function whenIParseTheFile(when, shared) {
       .setActive(textDocumentPaths)
       .getActive();
 
-    const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
+    // const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
+    const parsedRegions = await RegionParser.parse(
       textDocument,
       // @ts-ignore
       [{ componentName: 'custom-element', viewFilePath: 'custom-element.html' }]

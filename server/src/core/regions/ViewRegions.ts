@@ -1,15 +1,16 @@
 import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
+import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 
 import {
-  ViewRegionType,
   ViewRegionSubType,
   RepeatForRegionData,
 } from '../embeddedLanguages/embeddedSupport';
+import { IViewRegionsVisitor } from './ViewRegionsVisitor';
 
-type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
-type RequiredBy<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+export type RequiredBy<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
 export interface ViewRegionInfoV2<RegionDataType = any> {
   //
@@ -25,6 +26,17 @@ export interface ViewRegionInfoV2<RegionDataType = any> {
   regionValue?: string;
   //
   data?: RegionDataType;
+}
+
+export enum ViewRegionType {
+  Attribute = 'Attribute',
+  AttributeInterpolation = 'AttributeInterpolation',
+  BindableAttribute = 'BindableAttribute',
+  CustomElement = 'CustomElement',
+  Html = 'html',
+  RepeatFor = 'RepeatFor',
+  TextInterpolation = 'TextInterpolation',
+  ValueConverter = 'ValueConverter',
 }
 
 type CustomElementRegionData = ViewRegionInfoV2[];
@@ -69,24 +81,32 @@ export class AbstractRegion implements ViewRegionInfoV2 {
     this.data = info.data;
   }
 
+  // region static
   static create(info: ViewRegionInfoV2) {
     return new AbstractRegion(info);
   }
 
-  static parse5Start(
-    startTag: SaxStream.StartTagToken,
-    attr: parse5.Attribute
-  ) {}
-  static parse5Interpolation(
-    startTag: SaxStream.StartTagToken,
-    attr: parse5.Attribute,
-    interpolationMatch: RegExpExecArray | null
-  ) {}
-  static parse5End(endTag: SaxStream.EndTagToken, attr: parse5.Attribute) {}
-  static parse5Text(
-    text: SaxStream.TextToken,
-    interpolationMatch: RegExpExecArray | null
-  ) {}
+  static is(region: AbstractRegion): any {}
+
+  // static parse5Start(
+  //   startTag: SaxStream.StartTagToken,
+  //   attr: parse5.Attribute
+  // ) {}
+  // static parse5Interpolation(
+  //   startTag: SaxStream.StartTagToken,
+  //   attr: parse5.Attribute,
+  //   interpolationMatch: RegExpExecArray | null
+  // ) {}
+  // static parse5End(endTag: SaxStream.EndTagToken, attr: parse5.Attribute) {}
+  // static parse5Text(
+  //   text: SaxStream.TextToken,
+  //   interpolationMatch: RegExpExecArray | null
+  // ) {}
+  // endregion public
+
+  // region public
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T | void {}
+  // endregion public
 }
 
 export class AttributeRegion extends AbstractRegion {
@@ -130,6 +150,10 @@ export class AttributeRegion extends AbstractRegion {
     });
 
     return viewRegion;
+  }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitAttribute(this);
   }
 }
 
@@ -188,6 +212,10 @@ export class AttributeInterpolationRegion extends AbstractRegion {
 
     return viewRegion;
   }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitAttributeInterpolation(this);
+  }
 }
 
 export class BindableAttributeRegion extends AbstractRegion {
@@ -230,6 +258,10 @@ export class BindableAttributeRegion extends AbstractRegion {
       tagName: startTag.tagName,
     });
     return viewRegion;
+  }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitBindableAttribute(this);
   }
 }
 
@@ -334,11 +366,16 @@ export class CustomElementRegion extends AbstractRegion {
     const bindableAttribute = BindableAttributeRegion.create(finalInfo);
     this.data.push(bindableAttribute);
   }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitCustomElement(this);
+  }
   // endregion public
 }
 
 export class RepeatForRegion extends AbstractRegion {
   public readonly type: ViewRegionType.RepeatFor;
+  public readonly data: RepeatForRegionData;
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
@@ -408,6 +445,14 @@ export class RepeatForRegion extends AbstractRegion {
 
     return repeatForViewRegion;
   }
+
+  static is(region: AbstractRegion): region is RepeatForRegion {
+    return region.type === ViewRegionType.RepeatFor;
+  }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitRepeatFor(this);
+  }
 }
 
 export class TextInterpolationRegion extends AbstractRegion {
@@ -460,8 +505,105 @@ export class TextInterpolationRegion extends AbstractRegion {
 
     return textRegion;
   }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitTextInterpolation(this);
+  }
 }
 
-function createRegionInfo(info: Partial<ViewRegionInfoV2>) {
+export class ValueConverterRegion extends AbstractRegion {
+  public readonly type: ViewRegionType.ValueConverter;
+
+  constructor(info: ViewRegionInfoV2) {
+    super(info);
+  }
+
+  static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
+    const finalInfo = createRegionInfo({
+      ...info,
+      type: ViewRegionType.ValueConverter,
+    });
+    return new ValueConverterRegion(finalInfo);
+  }
+
+  static parse5Start(
+    startTag: SaxStream.StartTagToken,
+    attr: parse5.Attribute
+  ) {
+    const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
+    if (!attrLocation) return [];
+
+    // 6.1. Split up repeat.for='repo of repos | sort:column.value:direction.value | take:10'
+    // Don't split || ("or")
+    const [initiatorText, ...valueConverterRegionsSplit] = attr.value.split(
+      /(?<!\|)\|(?!\|)/g
+    );
+
+    // 6.2. For each value converter
+    const valueConverterRegions: ValueConverterRegion[] = [];
+    valueConverterRegionsSplit.forEach((valueConverterViewText, index) => {
+      // 6.3. Split into name and arguments
+      const [
+        valueConverterName,
+        ...valueConverterArguments
+      ] = valueConverterViewText.split(':');
+
+      if (valueConverterRegionsSplit.length >= 2 && index >= 1) {
+        const dm = new DiagnosticMessages(
+          'Chained value converters not supported yet.'
+        );
+        dm.log();
+        dm.additionalLog('No infos for', valueConverterViewText);
+        return;
+      }
+
+      const startValueConverterLength =
+        attr.name.length /** repeat.for */ +
+        2 /** =' */ +
+        initiatorText.length /** repo of repos_ */ +
+        1; /** | */
+
+      const startColAdjust =
+        attrLocation.startCol /** indentation and to length attribute */ +
+        startValueConverterLength;
+
+      const endValueConverterLength =
+        startValueConverterLength + valueConverterViewText.length;
+
+      const endColAdjust = startColAdjust + valueConverterViewText.length;
+
+      // 6.4. Save the location
+      const updatedLocation: parse5.Location = {
+        ...attrLocation,
+        startOffset: attrLocation.startOffset + startValueConverterLength - 1, // [!] Don't include '|', because when we type |, we already want to  get completions
+        startCol: startColAdjust,
+        endOffset: attrLocation.startOffset + endValueConverterLength,
+        endCol: endColAdjust,
+      };
+
+      // 6.5. Create region with useful info
+      const valueConverterRegion = ValueConverterRegion.create({
+        attributeName: attr.name,
+        sourceCodeLocation: updatedLocation,
+        type: ViewRegionType.ValueConverter,
+        regionValue: attr.value,
+        data: {
+          initiatorText,
+          valueConverterName: valueConverterName.trim(),
+          valueConverterText: valueConverterArguments.join(':'),
+        },
+      });
+      valueConverterRegions.push(valueConverterRegion);
+    });
+
+    return valueConverterRegions;
+  }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitValueConverter(this);
+  }
+}
+
+export function createRegionInfo(info: Partial<ViewRegionInfoV2>) {
   return info as ViewRegionInfoV2;
 }

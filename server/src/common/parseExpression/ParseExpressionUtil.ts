@@ -29,7 +29,8 @@ export type KindToActualExpression<TargetKind extends ExpressionKind> =
         TargetKind extends ExpressionKind.CallScope ? CallScopeExpression :
           TargetKind extends ExpressionKind.CallMember ? CallMemberExpression :
             TargetKind extends ExpressionKind.PrimitiveLiteral ? PrimitiveLiteralExpression :
-              never;
+              TargetKind extends ExpressionKind.ValueConverter ? ValueConverterExpression :
+                never;
 
 export enum ExpressionKind_Dev {
   CallsFunction = 0b0000000000100_00000, // Calls a function (CallFunction, CallScope, CallMember, TaggedTemplate) -> needs a valid function object returning from its lefthandside's evaluate()
@@ -110,7 +111,7 @@ export class ParseExpressionUtil {
     if (parsed instanceof Interpolation) {
       parsed.expressions.forEach((expression) => {
         // ExpressionKind_Dev[expression.$kind]; /*?*/
-        expression; /*?*/
+        // expression; /*?*/
         // console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 
         findAllExpressionRecursive(
@@ -304,12 +305,16 @@ function isKindIncluded(
   return isKind;
 }
 
-const parsed = parseExpression(
-  '${repos | sort:direction.value:hello(what) | take:10}' /*?*/,
-  ExpressionType.Interpolation
-);
-const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
-  ExpressionKind.AccessScope,
-  ExpressionKind.CallScope,
-]);
-accessScopes; /*?*/
+// const input = '${repos || hello | sort:direction.value:hello(what) | take:10}';
+// const parsed = parseExpression(input /*?*/, ExpressionType.Interpolation);
+// const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
+//   ExpressionKind.AccessScope,
+//   ExpressionKind.CallScope,
+//   ExpressionKind.ValueConverter,
+// ]);
+
+// // accessScopes; /*?*/
+
+// const [initiatorText, ...valueConverterRegionsSplit] = input.split(
+//   /(?<!\|)\|(?!\|)/g
+// );/*?*/

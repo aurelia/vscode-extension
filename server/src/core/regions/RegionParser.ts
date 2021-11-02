@@ -1,23 +1,10 @@
-import {
-  ExpressionKind,
-  ExpressionType,
-  Interpolation,
-  parseExpression,
-} from '@aurelia/runtime';
-import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaView } from '../../common/constants';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { Logger } from '../../common/logging/logger';
-import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../feature/configuration/DocumentSettings';
-import {
-  ViewRegionInfo,
-  ViewRegionType,
-} from '../embeddedLanguages/embeddedSupport';
 import { IAureliaComponent } from '../viewModel/AureliaProgram';
-import { findRegionsByWordV2 } from './findSpecificRegion';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
@@ -27,6 +14,7 @@ import {
   RepeatForRegion,
   TextInterpolationRegion,
   ViewRegionInfoV2,
+  ValueConverterRegion,
 } from './ViewRegions';
 
 const logger = new Logger('RegionParser');
@@ -120,15 +108,12 @@ export class RegionParser {
         );
         // 6. Value converter region
         if (isValueConverterRegion) {
-          const parsed = parseExpression(
-            attr.value,
-            ExpressionType.Interpolation
+          const valueConverterRegion = ValueConverterRegion.parse5Start(
+            startTag,
+            attr
           );
-          const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
-            parsed,
-            ExpressionKind.ValueConverter
-          );
-          parsed; /*?*/
+          if (!valueConverterRegion) return;
+          viewRegions.push(...valueConverterRegion);
         }
       });
 
@@ -204,16 +189,6 @@ export class RegionParser {
   }
 }
 
-const path =
-  // '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/index.html';
-  '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/custom-element.html';
-const document = TextDocumentUtils.createHtmlFromPath(path);
-const result = RegionParser.parse(document, [
-  // @ts-ignore
-  { componentName: 'custom-element' },
-]);
-RegionParser.pretty(result, { ignoreKeys: ['sourceCodeLocation'] }); /*?*/
-
 function pickTruthyFields(
   anyObject: Record<string, any>,
   prettyOptions?: { ignoreKeys?: unknown[] }
@@ -235,3 +210,26 @@ function pickTruthyFields(
 
   return truthyFields;
 }
+
+const path =
+  // '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/index.html';
+  // '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/custom-element.html';
+  '/home/hdn/coding/repos/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/custom-element.html';
+const document = TextDocumentUtils.createHtmlFromPath(path);
+const result = RegionParser.parse(document, [
+  // @ts-ignore
+  { componentName: 'custom-element' },
+]);
+
+// const visitor: IViewRegionsVisitor = {
+//   visitValueConverter(region) {
+//     region.regionValue; /*?*/
+//   },
+//   visitAttributeInterpolation(region) {
+//     region.regionValue; /*?*/
+//   },
+// };
+
+// result.forEach((res) => res.accept(visitor));
+// RegionParser.pretty(result, { ignoreKeys: ['sourceCodeLocation'] }); /*?*/
+//  result/*?*/

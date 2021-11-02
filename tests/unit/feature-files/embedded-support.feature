@@ -25,5 +25,5 @@ Feature: Embedded support
       | Attribute Interpolation | `<div id="${foo}"></div>`                    | foo          | 18           | 22         | 2    |
       | Attribute               | `<div id.bind="bar"></div>`                  | foo          | 45           | 49         | 3    |
       | Repeat For              | `<div repeat.for="fooElement of foo"></div>` | foo          | 88           | 92         | 4    |
-      # TODO: replace parse5 with htmlparser2 (parse5 not uptodate, and bug with this case | Text Interpolation      | `${foo.qux}`                                     | foo          | 2            | 6          | 7    |
+# TODO: replace parse5 with htmlparser2 (parse5 not uptodate, and bug with this case | Text Interpolation      | `${foo.qux}`                                     | foo          | 2            | 6          | 7    |
 

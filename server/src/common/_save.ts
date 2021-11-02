@@ -1,3 +1,12 @@
+// type AllClassOfRegions =
+//   | AttributeRegion
+//   | AttributeInterpolationRegion
+//   | BindableAttributeRegion
+//   | CustomElementRegion
+//   | RepeatForRegion
+//   | TextInterpolationRegion
+//   | ValueConverterRegion;
+// ----
 // public updateManyViewModelClassMember(
 //   documents: TextDocument[],
 //   oldName: string,

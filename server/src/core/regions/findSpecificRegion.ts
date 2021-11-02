@@ -17,9 +17,12 @@ import {
 } from '../embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
+import { AbstractRegion, ViewRegionInfoV2 } from './ViewRegions';
+import { RegionParser } from './RegionParser';
+import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 
 type Uri = string;
-type RegionsLookUp = Record<Uri, ViewRegionInfo[]>;
+type RegionsLookUp = Record<Uri, ViewRegionInfoV2[]>;
 
 export async function findAllBindableAttributeRegions(
   aureliaProgram: AureliaProgram,
@@ -37,8 +40,10 @@ export async function findAllBindableAttributeRegions(
       const document = TextDocument.create(uri, 'html', 0, content);
       if (!document) return;
       // 1.1 Parse document, and find all Custom Element regions
-      const regions = await parseDocumentRegions(document, componentList);
-      const customElementRegions = getRegionsOfType<ViewRegionInfo[]>(
+      // const regions = await parseDocumentRegions(document, componentList);
+      const regions = await RegionParser.parse(document, componentList);
+      // const customElementRegions = getRegionsOfType<ViewRegionInfoV2[]>(
+      const customElementRegions = ViewRegionUtils.getRegionsOfType(
         regions,
         ViewRegionType.CustomElement
       );
@@ -147,10 +152,9 @@ export async function findRegionsByWord(
       parseInput,
       expressionType
     ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
-      parsed,
-      ExpressionKind.AccessScope
-    );
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
+      ExpressionKind.AccessScope,
+    ]);
     const hasSourceWordInScope = accessScopes.find(
       (accessScope) => accessScope.name === sourceWord
     );
@@ -195,10 +199,9 @@ export async function findRegionsByWordV2(
       parseInput,
       expressionType
     ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
-      parsed,
-      ExpressionKind.AccessScope
-    );
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
+      ExpressionKind.AccessScope,
+    ]);
     const hasSourceWordInScope = accessScopes.find(
       (accessScope) => accessScope.name === sourceWord
     );
@@ -219,7 +222,7 @@ function isRepeatForIncludesWord(
 }
 
 export function getRegionsOfType<RegionDataType>(
-  regions: ViewRegionInfo<RegionDataType>[],
+  regions: AbstractRegion[],
   regionType: ViewRegionType
 ) {
   return regions.filter((region) => region.type === regionType);
