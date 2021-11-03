@@ -1,9 +1,9 @@
 @scoped_for_testing
-Feature: Rename in View Model
+Feature: Rename in View Model.
   Background:
     Given the project is named "scoped-for-testing"
 
-  Scenario Outline: Variable in View Model
+  Scenario Outline: Variable in View Model.
     And I open VSCode with the following file "custom-element.ts"
     And I'm on the line <LINE> at character <CODE>
     When I trigger Rename to <NEW_WORD>
@@ -12,9 +12,9 @@ Feature: Rename in View Model
 
     Examples:
       | DESCRIPTION        | LINE | CODE                 | NEW_WORD |
-      | Text Interploation | 2    | `  @bindable \|foo;` | newNew  |
+      | Text Interploation | 2    | `  @bindable \|foo;` | newNew   |
 
-  Scenario Outline: Class in View Model
+  Scenario Outline: Class in View Model.
     And I open VSCode with the following file "custom-element.ts"
     And I'm on the line <LINE> at character <CODE>
     When I trigger Rename to <NEW_WORD>

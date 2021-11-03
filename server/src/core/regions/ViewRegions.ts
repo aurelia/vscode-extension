@@ -10,7 +10,7 @@ import {
 } from '../embeddedLanguages/embeddedSupport';
 import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
 import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
-import { AttributeLanguageService } from './languageServer/AttributeModeLanguageService';
+import { AttributeLanguageService } from './languageServer/AttributeLanguageService';
 import { BindableAttributeLanguageService } from './languageServer/BindableAttributeLanguageService';
 import { CustomElementLanguageService } from './languageServer/CustomElementLanguageService';
 import { RepeatForLanguageService } from './languageServer/RepeatForLanguageService';
@@ -189,6 +189,7 @@ export class AttributeRegion extends AbstractRegion {
 
     const viewRegion = AttributeRegion.create({
       attributeName: attr.name,
+      attributeValue: attr.value,
       sourceCodeLocation: updatedLocation,
       tagName: startTag.tagName,
       regionValue: attr.value,
@@ -235,18 +236,20 @@ export class AttributeInterpolationRegion extends AbstractRegion {
       interpolationMatch.index + // width:_
       2; // ${
 
+    const startOffset = attrLocation.startOffset + startInterpolationLength;
+    const startCol = attrLocation.startCol + startInterpolationLength;
+
     const interpolationValue = interpolationMatch[1];
-    /** Eg. >css="width: ${message}<px;" */
-    const endInterpolationLength =
-      attrLocation.startOffset +
-      startInterpolationLength +
-      Number(interpolationValue.length) + // message
-      1; // "embrace" end char
+    /** Eg. css="width: ${>message}<px;" */
+    const endInterpolationLength = Number(interpolationValue.length); // message
+    // 1; // "embrace" end char // need?
 
     const updatedLocation: parse5.Location = {
       ...attrLocation,
-      startOffset: attrLocation.startOffset + startInterpolationLength,
-      endOffset: endInterpolationLength,
+      startOffset,
+      startCol: startCol,
+      endOffset: startOffset + endInterpolationLength,
+      endCol: startCol + endInterpolationLength,
     };
 
     const viewRegion = AttributeInterpolationRegion.create({
@@ -303,6 +306,7 @@ export class BindableAttributeRegion extends AbstractRegion {
 
     const viewRegion = BindableAttributeRegion.create({
       attributeName: attr.name,
+      attributeValue: attr.value,
       sourceCodeLocation: updatedLocation,
       regionValue: onlyBindableName,
       tagName: startTag.tagName,

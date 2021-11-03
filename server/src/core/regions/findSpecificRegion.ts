@@ -120,7 +120,6 @@ export async function findRegionsByWord(
 ): Promise<AbstractRegion[]> {
   const componentList = aureliaProgram.aureliaComponents.getAll();
   const regions = RegionParser.parse(document, componentList);
-  document.getText()/*?*/
 
   const targetRegions = regions.filter((region) => {
     // 1. default case: .regionValue
@@ -148,9 +147,14 @@ export async function findRegionsByWord(
       expressionType = ExpressionType.None;
     }
 
-      expressionType/*?*/
-    const parseInput = region.textValue ?? region.attributeValue ?? '';
-     parseInput/*?*/
+    const parseInput =
+      region.textValue ?? region.attributeValue ?? region.regionValue ?? '';
+    // expressionType; /*?*/
+    // region.type; /*?*/
+    // parseInput; /*?*/
+    // region; /*?*/
+    if (parseInput === '') return;
+
     const parsed = (parseExpression(
       parseInput,
       expressionType

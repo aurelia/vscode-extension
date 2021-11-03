@@ -37,6 +37,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
 
   then('the word should be renamed', () => {
     expect(renamed?.changes).toBeDefined();
+    renamed?.changes; /*?*/
     if (renamed?.changes) {
       expect(Object.keys(renamed.changes).length).toBe(1);
     }
@@ -108,16 +109,17 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
 
       expect(change.length).toBeGreaterThan(1);
 
+      // start tag
       expect(change[0].range.start.character).toBe(3);
       expect(change[0].range.start.line).toBe(2);
       expect(change[0].range.end.character).toBe(17);
       expect(change[0].range.end.line).toBe(2);
 
-      // Class identifier
+      // end tag
       expect(change[1].range.start.character).toBe(5);
-      expect(change[1].range.start.line).toBe(6);
+      expect(change[1].range.start.line).toBe(7);
       expect(change[1].range.end.character).toBe(19);
-      expect(change[1].range.end.line).toBe(6);
+      expect(change[1].range.end.line).toBe(7);
       // expect(true).toBeFalsy();
     }
   );

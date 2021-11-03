@@ -143,6 +143,7 @@ export function performViewModelChanges(
       targetComponent.decoratorEndOffset
     );
     if (range) {
+       range/*?*/
       result[viewModelUri].push(
         TextEdit.replace(range, kebabCase(finalComponentName))
       );
@@ -158,6 +159,7 @@ export function performViewModelChanges(
       .findRenameLocations(classIdentifier);
     renameLocations.forEach((location) => {
       const range = getRangeFromLocation(location);
+       range/*?*/
       const referencePath = location.getSourceFile().getFilePath();
       const referenceUri = UriUtils.toUri(referencePath);
       if (!result[referenceUri]) result[referenceUri] = [];
@@ -216,6 +218,7 @@ export async function renameAllOtherRegionsInSameView(
   const result: WorkspaceEdit['changes'] = {};
 
   const regions = await findRegionsByWord(aureliaProgram, document, sourceWord);
+  regions; /*?*/
 
   const { uri } = document;
   result[uri] = [];

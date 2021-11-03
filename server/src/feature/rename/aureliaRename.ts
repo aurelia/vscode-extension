@@ -39,7 +39,9 @@ export async function aureliaRenameFromView(
 
   // 1. rename view model
   const offset = document.offsetAt(position);
+   offset/*?*/
   const sourceWord = findSourceWord(region, offset);
+   sourceWord/*?*/
 
   let viewModelPath = '';
 
@@ -153,7 +155,6 @@ export async function aureliaRenameFromViewModel(
     sourceWord,
     kebabCase(newName)
   );
-  // otherComponentChanges; /*?*/
 
   // Related View
   const viewExtensions = documentSettings.getSettings().relatedFiles?.view;

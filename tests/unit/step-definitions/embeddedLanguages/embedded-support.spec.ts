@@ -22,7 +22,7 @@ import { MockTextDocuments } from '../../../common/mock-server/text-documents';
 const feature = loadFeature(
   `${getTestDir()}/unit/feature-files/embedded-support.feature`,
   {
-    // er: '@focus',
+    // tagFilter: '@focus',
   }
 );
 
@@ -82,14 +82,19 @@ defineFeature(feature, (test) => {
         shared.parsedRegions,
         ViewRegionType.CustomElement
       );
+      // RegionParser.pretty(shared.parsedRegions, {
+      //   ignoreKeys: ['sourceCodeLocation', 'languageService', 'tagName'],
+      //   asTable: true,
+      //   maxColWidth: 12,
+      // }); /*?*/
 
       const openingCustomElementTag = regionResults[0];
       const { sourceCodeLocation } = openingCustomElementTag;
-      expect(sourceCodeLocation.startCol).toBe(4);
-      expect(sourceCodeLocation.startLine).toBe(3);
+      expect(sourceCodeLocation.startCol).toBe(3);
+      expect(sourceCodeLocation.startLine).toBe(2);
       expect(sourceCodeLocation.startOffset).toBe(49);
-      expect(sourceCodeLocation.endCol).toBe(18);
-      expect(sourceCodeLocation.endLine).toBe(3);
+      expect(sourceCodeLocation.endCol).toBe(17);
+      expect(sourceCodeLocation.endLine).toBe(2);
       expect(sourceCodeLocation.endOffset).toBe(63);
     });
   });
@@ -114,12 +119,12 @@ defineFeature(feature, (test) => {
       expect(regionResults.length).toBe(2);
       const closingCustomElementTag = regionResults[1];
       const { sourceCodeLocation } = closingCustomElementTag;
-      expect(sourceCodeLocation.startCol).toBe(6);
+      expect(sourceCodeLocation.startCol).toBe(5);
       expect(sourceCodeLocation.startLine).toBe(7);
-      expect(sourceCodeLocation.startOffset).toBe(113);
-      expect(sourceCodeLocation.endCol).toBe(20);
+      expect(sourceCodeLocation.startOffset).toBe(146);
+      expect(sourceCodeLocation.endCol).toBe(19);
       expect(sourceCodeLocation.endLine).toBe(7);
-      expect(sourceCodeLocation.endOffset).toBe(127);
+      expect(sourceCodeLocation.endOffset).toBe(160);
     });
   });
 
@@ -147,6 +152,7 @@ defineFeature(feature, (test) => {
         );
 
         expect(target).toBeDefined();
+         target/*?*/
         if (!target) return;
 
         if (RepeatForRegion.is(target)) {

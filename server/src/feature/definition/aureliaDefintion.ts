@@ -18,6 +18,7 @@ import {
   findRegionsByWord,
   forEachRegionOfType,
 } from '../../core/regions/findSpecificRegion';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import {
   AureliaProgram,
   IAureliaComponent,
@@ -97,7 +98,7 @@ export async function aureliaDefinitionFromViewModel(
   }
   // Class
   else if (targetComponent) {
-    const viewRegionDefinitions_Class: LocationLink[] = await getAureliaClassDefinitions(
+    const viewRegionDefinitions_Class: LocationLink[] = await getAureliaCustomElementDefinitions_OtherViews(
       aureliaProgram,
       targetComponent
     );
@@ -108,7 +109,7 @@ export async function aureliaDefinitionFromViewModel(
   return finalDefinitions;
 }
 
-async function getAureliaClassDefinitions(
+async function getAureliaCustomElementDefinitions_OtherViews(
   aureliaProgram: AureliaProgram,
   targetComponent: IAureliaComponent
 ) {
@@ -248,17 +249,15 @@ function createLocationLinkFromDocumentSpan(documentSpan: DocumentSpan) {
 }
 
 function createLocationLinkFromRegion(
-  region: ViewRegionInfo,
+  region: AbstractRegion,
   document: TextDocument
 ) {
-  if (!region.startLine) return;
-  if (!region.startCol) return;
-  if (!region.endLine) return;
-  if (!region.endCol) return;
+  if (!region.sourceCodeLocation) return;
+  const { startLine, startCol, endLine, endCol } = region.sourceCodeLocation;
 
   const range = Range.create(
-    Position.create(region.startLine - 1, region.startCol - 1),
-    Position.create(region.endLine - 1, region.endCol - 1)
+    Position.create(startLine, startCol),
+    Position.create(endLine, endCol)
   );
   const locationLink = LocationLink.create(
     document.uri.toString(),

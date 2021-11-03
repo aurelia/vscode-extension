@@ -19,6 +19,15 @@ import {
 
 const logger = new Logger('RegionParser');
 
+interface PrettyOptions<
+  Regions extends AbstractRegion[],
+  IgnoreKey extends keyof Regions[number]
+> {
+  ignoreKeys?: IgnoreKey[];
+  asTable?: boolean;
+  maxColWidth?: number;
+}
+
 export class RegionParser {
   static parse(
     document: TextDocument,
@@ -56,6 +65,7 @@ export class RegionParser {
       }
 
       const customElementBindableAttributeRegions: AbstractRegion[] = [];
+      const attributeRegions: AbstractRegion[] = [];
       startTag.attrs.forEach((attr) => {
         const isAttributeKeyword = AURELIA_ATTRIBUTES_KEYWORDS.some(
           (keyword) => {
@@ -67,9 +77,9 @@ export class RegionParser {
         // 2. Attributes
         if (isAttributeKeyword) {
           // TODO: Are "just" attributes interesting? Or are BindableAttributes enough?
-          const viewRegion = AttributeRegion.parse5(startTag, attr);
-          if (viewRegion) {
-            viewRegions.push(viewRegion);
+          const attributeRegion = AttributeRegion.parse5(startTag, attr);
+          if (attributeRegion) {
+            attributeRegions.push(attributeRegion);
           }
 
           // 7. BindableAttribute
@@ -120,7 +130,10 @@ export class RegionParser {
 
       // 4. Custom elements
       const isCustomElement = aureliaCustomElementNames.includes(tagName);
-      if (!isCustomElement) return;
+      if (!isCustomElement) {
+        viewRegions.push(...attributeRegions);
+        return;
+      }
 
       const customElementViewRegion = CustomElementRegion.parse5Start(startTag);
       if (!customElementViewRegion) return;
@@ -161,7 +174,10 @@ export class RegionParser {
   static pretty<
     Regions extends AbstractRegion[],
     IgnoreKey extends keyof Regions[number]
-  >(regions: AbstractRegion[], prettyOptions?: { ignoreKeys?: IgnoreKey[] }) {
+  >(
+    regions: AbstractRegion[],
+    prettyOptions?: PrettyOptions<Regions, IgnoreKey>
+  ) {
     const finalResult: Record<string, any>[] = [];
 
     regions.forEach((region) => {
@@ -186,8 +202,87 @@ export class RegionParser {
       finalResult.push(prettified);
     });
 
+    if (prettyOptions?.asTable) {
+      const asTable = objectToTable(finalResult, prettyOptions);
+      return asTable;
+    }
+
     return finalResult;
   }
+}
+
+function objectToTable<
+  Regions extends AbstractRegion[],
+  IgnoreKey extends keyof Regions[number]
+>(
+  objectList: Record<string, any>[],
+  prettyOptions?: PrettyOptions<Regions, IgnoreKey>
+) {
+  const EMPTY_PLACEHOLDER = '-';
+  const allPossibleKeysSet: Set<string> = new Set();
+  objectList.forEach((object) => {
+    Object.keys(object).forEach((key) => {
+      allPossibleKeysSet.add(key);
+    });
+  });
+  const allPossibleKeys = Array.from(allPossibleKeysSet);
+  // allPossibleKeys; /*?*/
+
+  const flattenedRows: string[][] = [];
+  objectList.forEach((result) => {
+    const withAllKeys: Record<string, string> = {};
+    // enrich with all keys, to allow normalized table
+    allPossibleKeys.forEach((possibleKey) => {
+      withAllKeys[possibleKey] = result[possibleKey] ?? EMPTY_PLACEHOLDER;
+    });
+
+    // collect
+    if (typeof withAllKeys.data === 'object') {
+      flattenedRows.push(Object.values(withAllKeys));
+      if (Array.isArray(withAllKeys.data)) {
+        (<Record<string, any>[]>withAllKeys.data).forEach((datum) => {
+          allPossibleKeys.forEach((possibleKey) => {
+            withAllKeys[possibleKey] = datum[possibleKey] ?? EMPTY_PLACEHOLDER;
+          });
+          flattenedRows.push(Object.values(withAllKeys));
+        });
+      } else {
+        flattenedRows.push(Object.values(withAllKeys.data));
+      }
+      return;
+    }
+    flattenedRows.push(Object.values(withAllKeys));
+  });
+  // flattenedRows; /*?*/
+  const final = [allPossibleKeys, ...flattenedRows] as string[][];
+
+  // find max in each column
+  const maxHeader = allPossibleKeys.map((headerColumn) => headerColumn.length);
+  const maxTracker = maxHeader;
+  flattenedRows.forEach((rowEntry) => {
+    rowEntry.forEach((rowValue, index) => {
+      maxTracker[index] = Math.max(maxTracker[index], rowValue.length);
+    });
+  });
+  const asTable = final.map((row) => {
+    const padded = row.map((entry, index) => {
+      let finalEntry = entry;
+      if (!entry) finalEntry = '-';
+      if (typeof entry !== 'string') finalEntry = '[object]';
+
+      if (prettyOptions?.maxColWidth !== undefined) {
+        finalEntry = finalEntry.substring(0, prettyOptions.maxColWidth);
+      }
+      const padWith = Math.min(
+        prettyOptions?.maxColWidth ?? Infinity,
+        maxTracker[index]
+      );
+      return finalEntry?.padEnd(padWith, ' ');
+    });
+    return padded.join(' | ');
+  });
+
+  return asTable;
 }
 
 function pickTruthyFields(

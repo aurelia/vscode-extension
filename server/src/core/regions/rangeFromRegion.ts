@@ -20,6 +20,10 @@ export function getRangeFromDocumentOffsets(
   const startPosition = document.positionAt(startOffset);
   const endPosition = document.positionAt(endOffset - 1);
   const range = Range.create(startPosition, endPosition);
+  if (document.uri.includes('custom-element.ts')) {
+    startOffset; /*?*/
+    range; /*?*/
+  }
   return range;
 }
 
@@ -64,8 +68,8 @@ function getRangeFromStandardRegion(region: AbstractRegion, range: any) {
   const { endCol } = sourceCodeLocation;
   const { endLine } = sourceCodeLocation;
 
-  const startPosition = Position.create(startLine - 1, startCol - 1);
-  const endPosition = Position.create(endLine - 1, endCol - 1);
+  const startPosition = Position.create(startLine, startCol);
+  const endPosition = Position.create(endLine, endCol);
   range = Range.create(startPosition, endPosition);
 
   return range;
@@ -116,14 +120,9 @@ export function getStartTagNameRange(
   const { startOffset } = sourceCodeLocation;
   const { tagName } = region;
 
-  const finalStartOffset = startOffset + 1; // +1 for "<" of tag
-  const endOffset = finalStartOffset + tagName.length + 1; // + 1, magic, because of all the offsetting we have to fix;
+  const endOffset = startOffset + tagName.length + 1; // + 1, magic, because of all the offsetting we have to fix;
 
-  const range = getRangeFromDocumentOffsets(
-    document,
-    finalStartOffset,
-    endOffset
-  );
+  const range = getRangeFromDocumentOffsets(document, startOffset, endOffset);
 
   return range;
 }

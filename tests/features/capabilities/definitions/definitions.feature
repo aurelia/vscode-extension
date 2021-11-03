@@ -1,10 +1,10 @@
 @cli_generated
-Feature: Definition in View
+Feature: Definition in View.
   Background:
     Given the project is named "cli-generated"
     And I open VSCode with the following file "compo-user.html"
 
-  Scenario Outline: Custom Element
+  Scenario Outline: Custom Element.
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition
     Then I should land in the file <TARGET_FILE_NAME>
@@ -23,7 +23,7 @@ Feature: Definition in View
 
 
   #
-  Scenario Outline: Value Converter
+  Scenario Outline: Value Converter.
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition
     Then I should land in the file <TARGET_FILE_NAME>
