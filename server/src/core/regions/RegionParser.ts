@@ -247,7 +247,8 @@ function objectToTable<
           flattenedRows.push(Object.values(withAllKeys));
         });
       } else {
-        flattenedRows.push(Object.values(withAllKeys.data));
+        // repeat for and VC
+        // flattenedRows.push(Object.values(withAllKeys.data));
       }
       return;
     }
@@ -261,9 +262,10 @@ function objectToTable<
   const maxTracker = maxHeader;
   flattenedRows.forEach((rowEntry) => {
     rowEntry.forEach((rowValue, index) => {
-      maxTracker[index] = Math.max(maxTracker[index], rowValue.length);
+      maxTracker[index] = Math.max(maxTracker[index], rowValue.length ?? 0);
     });
   });
+
   const asTable = final.map((row) => {
     const padded = row.map((entry, index) => {
       let finalEntry = entry;
@@ -277,6 +279,8 @@ function objectToTable<
         prettyOptions?.maxColWidth ?? Infinity,
         maxTracker[index]
       );
+      finalEntry = finalEntry.replace('\n', '[nl]');
+      // maxTracker; /*?*/
       return finalEntry?.padEnd(padWith, ' ');
     });
     return padded.join(' | ');

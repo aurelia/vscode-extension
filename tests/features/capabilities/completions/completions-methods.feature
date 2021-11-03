@@ -1,11 +1,10 @@
 @cli_generated
-Feature: Completions - Methods
+Feature: Completions - Methods.
   Background:
     Given the project is named "cli-generated"
     And I open VSCode with the following file "view-model-test.html"
 
-  #
-  Scenario Outline: Completions of class methods - empty brackets
+  Scenario Outline: Completions of class methods - empty brackets.
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
     When I trigger Suggestions
@@ -15,8 +14,7 @@ Feature: Completions - Methods
       | LINE | CODE                        | METHOD_NAME      |
       | 0    | `<div if.bind="f\|"></div>` | functionVariable |
 
-  #
-  Scenario Outline: Completions of class methods - argument completed
+  Scenario Outline: Completions of class methods - argument completed.
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
     When I trigger Suggestions

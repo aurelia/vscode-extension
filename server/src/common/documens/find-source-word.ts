@@ -12,7 +12,11 @@ export function findSourceWord(region: AbstractRegion, offset: number): string {
   if (region.sourceCodeLocation.startOffset === undefined) return '';
 
   // ?? ?? custom element
-  const input = region.regionValue || region.attributeValue || region.tagName;
+  const input =
+    region.regionValue ||
+    region.attributeValue ||
+    region.tagName ||
+    region.textValue;
   if (!input) return '';
 
   const normalizedOffset = Math.abs(

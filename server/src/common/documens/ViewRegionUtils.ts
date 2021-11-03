@@ -3,16 +3,19 @@ import {
   ViewRegionInfo,
   ViewRegionType,
 } from '../../core/embeddedLanguages/embeddedSupport';
+import { RegionParser } from '../../core/regions/RegionParser';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
   AttributeRegion,
+  AureliaHtmlRegion,
   BindableAttributeRegion,
   CustomElementRegion,
   RepeatForRegion,
   TextInterpolationRegion,
   ValueConverterRegion,
 } from '../../core/regions/ViewRegions';
+import { OffsetUtils } from './OffsetUtils';
 import { PositionUtils } from './PositionUtils';
 
 /* prettier-ignore */
@@ -45,6 +48,17 @@ export class ViewRegionUtils {
   }
 
   static findRegionAtPosition(regions: AbstractRegion[], position: Position) {
+    // RegionParser.pretty(regions, {
+    //   asTable: true,
+    //   ignoreKeys: [
+    //     'sourceCodeLocation',
+    //     'languageService',
+    //     'subType',
+    //     'tagName',
+    //   ],
+    //   maxColWidth: 12,
+    // }); /*?*/
+    regions; /*?*/
     let targetRegion: AbstractRegion | undefined;
 
     regions.find((region) => {
@@ -70,6 +84,65 @@ export class ViewRegionUtils {
 
     return targetRegion;
   }
+
+  static findRegionAtOffset(regions: AbstractRegion[], offset: number) {
+    const possibleRegions: AbstractRegion[] = [];
+
+    regions.forEach((region) => {
+      let possibleRegion = region;
+      if (CustomElementRegion.is(region)) {
+        const subTarget = this.findRegionAtOffset(region.data, offset);
+        if (subTarget) {
+          possibleRegions.push(subTarget);
+        }
+      }
+
+      const { startOffset, endOffset } = possibleRegion.sourceCodeLocation;
+      const isIncluded = OffsetUtils.isIncluded(startOffset, endOffset, offset);
+      if (isIncluded) {
+        possibleRegions.push(region);
+      }
+    });
+
+    possibleRegions; /*?*/
+    let targetRegion = findSmallestRegionAtOffset(possibleRegions, offset);
+
+    // if (targetRegion === undefined) {
+    //   targetRegion = AureliaHtmlRegion.create();
+    // }
+
+    return targetRegion;
+  }
 }
 
-// ViewRegionUtils.regionVisitor([ViewRegionType.CustomElement, (region) => {}]);
+/**
+ * {} - parent
+ * [] - child
+ * Assumption: Child always fully included in parent.
+ *
+ * {[        |     ]}
+ * {     [   |     ]}
+ * {     [   |  ]   }
+ * {[        |   ]  }
+ */
+function findSmallestRegionAtOffset(regions: AbstractRegion[], offset: number) {
+  /** Determine how small a region is. */
+  let smallestValue = Infinity;
+  let smallestRegionIndex = 0;
+  regions.forEach((region, index) => {
+    if (!region.sourceCodeLocation) return;
+    const { startOffset, endOffset } = region.sourceCodeLocation;
+
+    const startDelta = offset - startOffset;
+    const endDelta = endOffset - offset;
+    const deltaLength = endDelta + startDelta;
+
+    if (smallestValue > deltaLength) {
+      smallestValue = deltaLength;
+      smallestRegionIndex = index;
+    }
+  });
+
+  const result = regions[smallestRegionIndex];
+  return result;
+}

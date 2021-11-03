@@ -3,7 +3,6 @@ Feature: Definition in View Model.
   Background:
     Given the project is named "scoped-for-testing"
 
-  @focus
   Scenario Outline: Variable in View Model.
     And I open VSCode with the following file "custom-element.ts"
     And I'm on the line <LINE> at character <CODE>

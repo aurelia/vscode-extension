@@ -24,6 +24,7 @@ export async function givenImOnTheLineAtCharacter(
     );
   }
   position = Position.create(line, character);
+  position; /*?*/
 
   const {
     AureliaProjects,

@@ -1,10 +1,10 @@
 @cli_generated
-Feature: Completions
+Feature: Completions.
   Background:
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.html"
 
-  Scenario Outline: View Model
+  Scenario Outline: View Model.
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
     When I trigger Suggestions

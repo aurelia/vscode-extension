@@ -3,8 +3,9 @@ import { pathToFileURL } from 'url';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { LocationLink, Range } from 'vscode-languageserver';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
+import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 
-import { AsyncReturnType } from '../../common/global';
+import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
 import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 import { DocumentSettings } from '../configuration/DocumentSettings';
@@ -28,37 +29,30 @@ export async function onDefintion(
     return defintion;
   }
 
-  const isRefactor = true;
+  const aureliaProjects = container.get(AureliaProjects);
+  const targetProject = aureliaProjects.getFromUri(document.uri);
+  if (!targetProject) return;
+  const aureliaProgram = targetProject?.aureliaProgram;
+  if (!aureliaProgram) return;
 
-  let modeAndRegion: AsyncReturnType<
-    LanguageModes['getModeAndRegionAtPosition']
-  >;
-  try {
-    modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-      document,
-      position
-    );
-  } catch (error) {
-    console.log('TCL: error', error);
-  }
+  const targetComponent = aureliaProgram.aureliaComponents.getOneByFromDocument(
+    document
+  );
+  const regions = targetComponent?.viewRegions;
 
-  if (!modeAndRegion) return;
-  const { mode, region } = modeAndRegion;
-
-  if (!mode) return;
+  if (!regions) return;
+  const offset = document.offsetAt(position);
+  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
   if (!region) return;
+  const doDefinition = region.languageService.doDefinition;
 
-  const doDefinition = mode.doDefinition;
-
-  if (doDefinition !== undefined && isRefactor) {
-    let definition: AsyncReturnType<typeof doDefinition>;
-
-    try {
-      definition = await doDefinition(document, position, region);
-    } catch (error) {
-      console.log('TCL: error', error);
-      return;
-    }
+  if (doDefinition) {
+    const definition = await doDefinition(
+      aureliaProgram,
+      document,
+      position,
+      region
+    );
 
     if (!definition) return;
 

@@ -85,6 +85,7 @@ export class AureliaServer {
     languageModes: LanguageModes
   ) {
     const completions = await onCompletion(
+      this.container,
       textDocumentPosition,
       document,
       languageModes

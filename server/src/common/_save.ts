@@ -1,3 +1,26 @@
+// export class AureliaHtmlRegion extends AbstractRegion {
+//   public languageService: AureliaHtmlLanguageService;
+//   public readonly type: ViewRegionType.Html;
+
+//   constructor(info: ViewRegionInfoV2) {
+//     super(info);
+//     this.languageService = new AureliaHtmlLanguageService();
+//   }
+
+//   static create(info: Optional<ViewRegionInfoV2, 'type'>) {
+//     const finalInfo = convertToRegionInfo({
+//       ...info,
+//       type: ViewRegionType.AttributeInterpolation,
+//     });
+//     return new AttributeInterpolationRegion(finalInfo);
+//   }
+
+//   public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+//     return visitor.visitAureliaHtmlInterpolation(this);
+//   }
+// }
+
+// ----
 // type AllClassOfRegions =
 //   | AttributeRegion
 //   | AttributeInterpolationRegion

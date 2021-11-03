@@ -10,12 +10,11 @@ export class PositionUtils {
 
     return isIncluded;
   }
-
-  /**
-   * Project 2dim line x character to a 1dim value
-   */
 }
 
+/**
+ * Project 2dim line x character to a 1dim value
+ */
 function projectPosition(position: Position) {
   const projection = position.line * 100000 + position.character;
   return projection;

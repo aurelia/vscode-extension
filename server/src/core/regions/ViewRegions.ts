@@ -11,6 +11,7 @@ import {
 import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
 import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
 import { AttributeLanguageService } from './languageServer/AttributeLanguageService';
+import { AureliaHtmlLanguageService } from './languageServer/AureliaHtmlLanguageService';
 import { BindableAttributeLanguageService } from './languageServer/BindableAttributeLanguageService';
 import { CustomElementLanguageService } from './languageServer/CustomElementLanguageService';
 import { RepeatForLanguageService } from './languageServer/RepeatForLanguageService';
@@ -265,6 +266,35 @@ export class AttributeInterpolationRegion extends AbstractRegion {
 
   public accept<T>(visitor: IViewRegionsVisitor<T>): T {
     return visitor.visitAttributeInterpolation(this);
+  }
+}
+
+export class AureliaHtmlRegion extends AbstractRegion {
+  public languageService: AureliaHtmlLanguageService;
+  public readonly type: ViewRegionType.Html;
+
+  constructor(info: ViewRegionInfoV2) {
+    super(info);
+    this.languageService = new AureliaHtmlLanguageService();
+  }
+
+  static create() {
+    const finalInfo = convertToRegionInfo({
+      sourceCodeLocation: {
+        startLine: 0,
+        startCol: 0,
+        startOffset: 0,
+        endLine: 0,
+        endCol: 0,
+        endOffset: 0,
+      },
+      type: ViewRegionType.AttributeInterpolation,
+    });
+    return new AureliaHtmlRegion(finalInfo);
+  }
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitAureliaHtmlInterpolation(this);
   }
 }
 
@@ -536,31 +566,35 @@ export class TextInterpolationRegion extends AbstractRegion {
     return new TextInterpolationRegion(finalInfo);
   }
 
+  /**
+   * Text nodes often begin with `\n`, which makes finding by line/col harder.
+   * We thus, only modify offset.
+   */
   static parse5Text(
     text: SaxStream.TextToken,
     interpolationMatch: RegExpExecArray | null
   ) {
     if (interpolationMatch === null) return;
-    const attrLocation = text.sourceCodeLocation;
-    if (!attrLocation) return;
+    const textLocation = text.sourceCodeLocation;
+    if (!textLocation) return;
 
     /** Eg. \n\n  ${grammarRules.length} */
     const startInterpolationLength =
-      attrLocation.startOffset +
       interpolationMatch.index + // width:_
       2; // ${
 
+    const startOffset = textLocation.startOffset + startInterpolationLength;
     /** Eg. >css="width: ${message}<px;" */
     const interpolationValue = interpolationMatch[1];
     const endInterpolationLength =
-      startInterpolationLength +
       Number(interpolationValue.length) + // message
       1; // "embrace" end char
+    const endOffset = startOffset + endInterpolationLength;
 
     const updatedLocation: parse5.Location = {
-      ...attrLocation,
-      startOffset: startInterpolationLength,
-      endOffset: endInterpolationLength,
+      ...textLocation,
+      startOffset,
+      endOffset,
     };
 
     const textRegion = TextInterpolationRegion.create({
