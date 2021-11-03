@@ -135,14 +135,14 @@ export class AureliaServer {
   // onDocumentOnTypeFormatting() {}
 
   async onRenameRequest(
-    position: Position,
     document: TextDocument,
+    position: Position,
     newName: string,
     languageModes: LanguageModes
   ) {
     const renamed = await onRenameRequest(
-      position,
       document,
+      position,
       newName,
       languageModes,
       this.container

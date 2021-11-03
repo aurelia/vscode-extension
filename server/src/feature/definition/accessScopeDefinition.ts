@@ -13,6 +13,10 @@ import {
   ViewRegionType,
   RepeatForRegionData,
 } from '../../core/embeddedLanguages/embeddedSupport';
+import {
+  AbstractRegion,
+  RepeatForRegion,
+} from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DefinitionResult } from './getDefinition';
 
@@ -31,11 +35,11 @@ export function getAccessScopeDefinition(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
   position: Position,
-  region: ViewRegionInfo,
+  region: AbstractRegion,
   /**
    * All regions to also find definitions inside view itself
    */
-  regions?: ViewRegionInfo[]
+  regions?: AbstractRegion[]
 ): DefinitionResult | undefined {
   const offset = document.offsetAt(position);
   const goToSourceWord = findSourceWord(region, offset);
@@ -43,7 +47,7 @@ export function getAccessScopeDefinition(
   // 1.
   const repeatForRegions = regions?.filter(
     (_region) => _region.type === ViewRegionType.RepeatFor
-  ) as ViewRegionInfo<RepeatForRegionData>[];
+  ) as RepeatForRegion[];
   const targetRepeatForRegion = repeatForRegions.find(
     (repeatForRegion) => repeatForRegion.data?.iterator === goToSourceWord
   );
@@ -52,9 +56,9 @@ export function getAccessScopeDefinition(
     /** repeat.for="" */
 
     if (
-      targetRepeatForRegion?.startLine === undefined ||
-      targetRepeatForRegion.startOffset === undefined ||
-      targetRepeatForRegion.startCol === undefined
+      targetRepeatForRegion.sourceCodeLocation.startLine === undefined ||
+      targetRepeatForRegion.sourceCodeLocation.startOffset === undefined ||
+      targetRepeatForRegion.sourceCodeLocation.startCol === undefined
     ) {
       console.error(
         `RepeatFor-Region does not have a start (line). cSearched for ${goToSourceWord}`
@@ -64,8 +68,8 @@ export function getAccessScopeDefinition(
 
     return {
       lineAndCharacter: {
-        line: targetRepeatForRegion.startLine,
-        character: targetRepeatForRegion.startCol,
+        line: targetRepeatForRegion.sourceCodeLocation.startLine,
+        character: targetRepeatForRegion.sourceCodeLocation.startCol,
       } /** TODO: Find class declaration position. Currently default to top of file */,
       viewModelFilePath: UriUtils.toPath(document.uri),
     };
@@ -91,7 +95,7 @@ export function getAccessScopeDefinition(
 export function getAccessScopeViewModelDefinition(
   document: TextDocument,
   position: Position,
-  region: ViewRegionInfo,
+  region: AbstractRegion,
   aureliaProgram: AureliaProgram
 ): DefinitionResult | undefined {
   const offset = document.offsetAt(position);

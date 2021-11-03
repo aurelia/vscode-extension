@@ -6,7 +6,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { UriUtils } from '../../../server/src/common/view/uri-utils';
 import { AureliaProjects } from '../../../server/src/core/AureliaProjects';
-import { AureliaServer } from '../../../server/src/core/AureliaServer';
+import { AureliaServer } from '../../../server/src/core/aureliaServer';
 import { globalContainer } from '../../../server/src/core/container';
 import { createTsMorphProject } from '../../../server/src/core/tsMorph/AureliaTsMorph';
 import {

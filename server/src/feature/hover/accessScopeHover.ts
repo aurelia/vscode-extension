@@ -1,6 +1,6 @@
 import { TextDocument, Position } from 'vscode-languageserver';
 
-import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualLanguageService,
@@ -12,7 +12,7 @@ export async function getAccessScopeHover(
   document: TextDocument,
   position: Position,
   goToSourceWord: string,
-  attributeRegion: ViewRegionInfo
+  attributeRegion: AbstractRegion
 ): Promise<CustomHover | undefined> {
   const virtualLanguageService = await createVirtualLanguageService(
     aureliaProgram,

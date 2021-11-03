@@ -40,6 +40,7 @@ import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
 import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
@@ -173,17 +174,16 @@ async function getVirtualViewModelCompletion(
   aureliaProgram: AureliaProgram,
   textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region?: ViewRegionInfo
+  region?: AbstractRegion
 ): Promise<AureliaCompletionItem[]> {
   // 1. From the region get the part, that should be made virtual.
   const documentUri = textDocumentPosition.textDocument.uri;
 
   if (!region) return [];
-  if (!region.endOffset) return [];
+  if (!region.sourceCodeLocation) return [];
+  const { startOffset, endOffset } = region.sourceCodeLocation;
 
-  const virtualContent = document
-    .getText()
-    .slice(region.startOffset, region.endOffset - 1);
+  const virtualContent = document.getText().slice(startOffset, endOffset - 1);
 
   const {
     virtualSourcefile,
@@ -379,7 +379,7 @@ function enhanceMethodArguments(methodArguments: string[]): string {
 export async function getAureliaVirtualCompletions(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region: ViewRegionInfo,
+  region: AbstractRegion,
   aureliaProgram: AureliaProgram
 ): Promise<AureliaCompletionItem[]> {
   // Virtual file

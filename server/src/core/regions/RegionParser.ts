@@ -66,6 +66,7 @@ export class RegionParser {
 
         // 2. Attributes
         if (isAttributeKeyword) {
+          // TODO: Are "just" attributes interesting? Or are BindableAttributes enough?
           const viewRegion = AttributeRegion.parse5(startTag, attr);
           if (viewRegion) {
             viewRegions.push(viewRegion);
@@ -211,15 +212,15 @@ function pickTruthyFields(
   return truthyFields;
 }
 
-const path =
-  // '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/index.html';
-  // '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/custom-element.html';
-  '/home/hdn/coding/repos/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/custom-element.html';
-const document = TextDocumentUtils.createHtmlFromPath(path);
-const result = RegionParser.parse(document, [
-  // @ts-ignore
-  { componentName: 'custom-element' },
-]);
+// const path =
+//   // '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/index.html';
+//   // '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/custom-element.html';
+//   '/home/hdn/coding/repos/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/custom-element.html';
+// const document = TextDocumentUtils.createHtmlFromPath(path);
+// const result = RegionParser.parse(document, [
+//   // @ts-ignore
+//   { componentName: 'custom-element' },
+// ]);
 
 // const visitor: IViewRegionsVisitor = {
 //   visitValueConverter(region) {

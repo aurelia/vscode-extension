@@ -26,16 +26,16 @@ import {
   getAllChangesForOtherViews,
   renameAllOtherRegionsInSameView,
 } from './workspaceEdits';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 
 export async function aureliaRenameFromView(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
   position: Position,
   newName: string,
-  region: ViewRegionInfo
+  region: AbstractRegion
 ) {
-  if (!region.startCol) return;
-  if (!region.endCol) return;
+  if (!region.sourceCodeLocation) return;
 
   // 1. rename view model
   const offset = document.offsetAt(position);

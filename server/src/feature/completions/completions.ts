@@ -11,6 +11,7 @@ import {
 
 import { AureliaClassTypes } from '../../common/constants';
 import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import {
   IAureliaClassMember,
   IAureliaComponent,
@@ -90,11 +91,10 @@ export async function getBindablesCompletion(
   aureliaProgram: AureliaProgram,
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region?: ViewRegionInfo
+  region?: AbstractRegion
 ): Promise<CompletionItem[]> {
   if (!region) return [];
 
-  aureliaProgram.aureliaComponents.getAll();
   const bindableList = aureliaProgram.aureliaComponents.getBindables();
   const asCompletionItem = bindableList.map((bindable) => {
     const result = createCompletionItem(

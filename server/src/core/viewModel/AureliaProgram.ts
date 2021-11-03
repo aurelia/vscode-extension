@@ -10,6 +10,7 @@ import {
   IAureliaProjectSetting,
 } from '../../feature/configuration/DocumentSettings';
 import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
+import { AbstractRegion } from '../regions/ViewRegions';
 import { TsMorphProject } from '../tsMorph/AureliaTsMorph';
 import { AureliaComponents } from './AureliaComponents';
 
@@ -51,7 +52,7 @@ export interface IAureliaComponent {
   /** ******** Class Members */
   classMembers?: IAureliaClassMember[];
   /** ******** View */
-  viewRegions?: ViewRegionInfo[];
+  viewRegions: AbstractRegion[];
 }
 
 export interface IAureliaBindable {
@@ -80,7 +81,7 @@ export class AureliaProgram {
 
   public constructor(public readonly documentSettings: DocumentSettings) {
     // /* prettier-ignore */ console.log('TCL: AureliaProgram -> constructor -> constructor')
-    this.aureliaComponents = new AureliaComponents();
+    this.aureliaComponents = new AureliaComponents(documentSettings);
     this.tsMorphProject = new TsMorphProject(documentSettings);
   }
 

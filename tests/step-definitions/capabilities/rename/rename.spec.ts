@@ -18,7 +18,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
 
     renamed = await myMockServer
       .getAureliaServer()
-      .onRenameRequest(position, document, newWord, languageModes);
+      .onRenameRequest(document, position, newWord, languageModes);
   });
 
   then('the View model variable should be renamed', () => {

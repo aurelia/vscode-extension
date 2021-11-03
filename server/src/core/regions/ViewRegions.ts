@@ -1,5 +1,6 @@
 import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
+import { Position } from 'vscode-languageserver-textdocument';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 
@@ -7,6 +8,14 @@ import {
   ViewRegionSubType,
   RepeatForRegionData,
 } from '../embeddedLanguages/embeddedSupport';
+import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
+import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
+import { AttributeLanguageService } from './languageServer/AttributeModeLanguageService';
+import { BindableAttributeLanguageService } from './languageServer/BindableAttributeLanguageService';
+import { CustomElementLanguageService } from './languageServer/CustomElementLanguageService';
+import { RepeatForLanguageService } from './languageServer/RepeatForLanguageService';
+import { TextInterpolationLanguageService } from './languageServer/TextInterpolationLanguageService';
+import { ValueConverterLanguageService } from './languageServer/ValueConverterLanguageService';
 import { IViewRegionsVisitor } from './ViewRegionsVisitor';
 
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
@@ -39,7 +48,29 @@ export enum ViewRegionType {
   ValueConverter = 'ValueConverter',
 }
 
-type CustomElementRegionData = ViewRegionInfoV2[];
+type CustomElementRegionData = AbstractRegion[];
+
+/**
+ * TODO: how to deal with the second valCon?           ___v___
+ *
+ * repo of repos | sort:column.value:direction.value | take:10
+ * _____________   _________________________________
+ *     ^initiatorText     ^valueConverterText
+ */
+export interface ValueConverterRegionData {
+  /**
+   * ```
+   * >repo of repos< | sort:column.value:direction.value | take:10
+   * ```
+   *
+   * TODO: Should initiatro text be only first part or all for `| take:10`?
+   */
+  initiatorText: string;
+  /** ```repo of repos | >sort<:column.value:direction.value | take:10``` */
+  valueConverterName: string;
+  /** ``` repo of repos | sort:>column.value:direction.value< | take:10 ``` */
+  valueConverterText: string;
+}
 
 interface SourceCodeLocation {
   startOffset: number;
@@ -50,7 +81,8 @@ interface SourceCodeLocation {
   endLine: number;
 }
 
-export class AbstractRegion implements ViewRegionInfoV2 {
+export abstract class AbstractRegion implements ViewRegionInfoV2 {
+  public languageService: AbstractRegionLanguageService;
   //
   public type: ViewRegionType;
   public subType?: any;
@@ -82,9 +114,7 @@ export class AbstractRegion implements ViewRegionInfoV2 {
   }
 
   // region static
-  static create(info: ViewRegionInfoV2) {
-    return new AbstractRegion(info);
-  }
+  static create(info: ViewRegionInfoV2) {}
 
   static is(region: AbstractRegion): any {}
 
@@ -106,18 +136,33 @@ export class AbstractRegion implements ViewRegionInfoV2 {
 
   // region public
   public accept<T>(visitor: IViewRegionsVisitor<T>): T | void {}
+
+  public getStartPosition(): Position {
+    return {
+      line: this.sourceCodeLocation.startLine,
+      character: this.sourceCodeLocation.startCol,
+    };
+  }
+  public getEndPosition(): Position {
+    return {
+      line: this.sourceCodeLocation.endLine,
+      character: this.sourceCodeLocation.endCol,
+    };
+  }
   // endregion public
 }
 
 export class AttributeRegion extends AbstractRegion {
+  public languageService: AttributeLanguageService;
   public readonly type: ViewRegionType.Attribute;
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
+    this.languageService = new AttributeLanguageService();
   }
 
   static create(info: Optional<ViewRegionInfoV2, 'type'>) {
-    const finalInfo = createRegionInfo({
+    const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.Attribute,
     });
@@ -158,14 +203,16 @@ export class AttributeRegion extends AbstractRegion {
 }
 
 export class AttributeInterpolationRegion extends AbstractRegion {
+  public languageService: AttributeInterpolationLanguageService;
   public readonly type: ViewRegionType.AttributeInterpolation;
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
+    this.languageService = new AttributeInterpolationLanguageService();
   }
 
   static create(info: Optional<ViewRegionInfoV2, 'type'>) {
-    const finalInfo = createRegionInfo({
+    const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.AttributeInterpolation,
     });
@@ -219,14 +266,17 @@ export class AttributeInterpolationRegion extends AbstractRegion {
 }
 
 export class BindableAttributeRegion extends AbstractRegion {
+  public languageService: BindableAttributeLanguageService;
   public readonly type: ViewRegionType.BindableAttribute;
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
+
+    this.languageService = new BindableAttributeLanguageService();
   }
 
   static create(info: Optional<ViewRegionInfoV2, 'type'>) {
-    const finalInfo = createRegionInfo({
+    const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.BindableAttribute,
     });
@@ -266,17 +316,19 @@ export class BindableAttributeRegion extends AbstractRegion {
 }
 
 export class CustomElementRegion extends AbstractRegion {
+  public languageService: CustomElementLanguageService;
   public readonly type: ViewRegionType.CustomElement;
 
   public data: CustomElementRegionData = [];
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
+    this.languageService = new CustomElementLanguageService();
   }
 
   // region static
   static create(info: Optional<ViewRegionInfoV2, 'type'>) {
-    const finalInfo = createRegionInfo({
+    const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.CustomElement,
     });
@@ -291,6 +343,10 @@ export class CustomElementRegion extends AbstractRegion {
   static createEnd(info: Optional<ViewRegionInfoV2, 'type'>) {
     info.subType = ViewRegionSubType.EndTag;
     return CustomElementRegion.create(info);
+  }
+
+  static is(region: AbstractRegion): region is CustomElementRegion {
+    return region.type === ViewRegionType.CustomElement;
   }
 
   static parse5Start(startTag: SaxStream.StartTagToken) {
@@ -374,15 +430,17 @@ export class CustomElementRegion extends AbstractRegion {
 }
 
 export class RepeatForRegion extends AbstractRegion {
+  public languageService: RepeatForLanguageService;
   public readonly type: ViewRegionType.RepeatFor;
   public readonly data: RepeatForRegionData;
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
+    this.languageService = new RepeatForLanguageService();
   }
 
   static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
-    const finalInfo = createRegionInfo({
+    const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.RepeatFor,
     });
@@ -456,14 +514,18 @@ export class RepeatForRegion extends AbstractRegion {
 }
 
 export class TextInterpolationRegion extends AbstractRegion {
+  public languageService: TextInterpolationLanguageService;
+
   public readonly type: ViewRegionType.TextInterpolation;
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
+
+    this.languageService = new TextInterpolationLanguageService();
   }
 
   static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
-    const finalInfo = createRegionInfo({
+    const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.TextInterpolation,
     });
@@ -512,18 +574,27 @@ export class TextInterpolationRegion extends AbstractRegion {
 }
 
 export class ValueConverterRegion extends AbstractRegion {
+  public languageService: ValueConverterLanguageService;
+  public data: ValueConverterRegionData;
   public readonly type: ViewRegionType.ValueConverter;
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
+    this.languageService = new ValueConverterLanguageService();
   }
 
   static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
-    const finalInfo = createRegionInfo({
+    const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.ValueConverter,
     });
     return new ValueConverterRegion(finalInfo);
+  }
+
+  static is(
+    region: AbstractRegion | undefined
+  ): region is ValueConverterRegion {
+    return region?.type === ViewRegionType.ValueConverter;
   }
 
   static parse5Start(
@@ -604,6 +675,14 @@ export class ValueConverterRegion extends AbstractRegion {
   }
 }
 
-export function createRegionInfo(info: Partial<ViewRegionInfoV2>) {
+function convertToRegionInfo(info: Partial<ViewRegionInfoV2>) {
+  // Convert to zero-based (col and line from parse5 is one-based)
+  if (info.sourceCodeLocation) {
+    info.sourceCodeLocation.startCol -= 1;
+    info.sourceCodeLocation.startLine -= 1;
+    info.sourceCodeLocation.endCol -= 1;
+    info.sourceCodeLocation.endLine -= 1;
+  }
+
   return info as ViewRegionInfoV2;
 }

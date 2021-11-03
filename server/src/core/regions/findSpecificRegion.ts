@@ -17,12 +17,12 @@ import {
 } from '../embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
-import { AbstractRegion, ViewRegionInfoV2 } from './ViewRegions';
+import { AbstractRegion, RepeatForRegion } from './ViewRegions';
 import { RegionParser } from './RegionParser';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 
 type Uri = string;
-type RegionsLookUp = Record<Uri, ViewRegionInfoV2[]>;
+type RegionsLookUp = Record<Uri, AbstractRegion[]>;
 
 export async function findAllBindableAttributeRegions(
   aureliaProgram: AureliaProgram,
@@ -78,13 +78,13 @@ export async function findAllBindableAttributeRegions(
 export async function forEachRegionOfType<
   RegionType extends ViewRegionType,
   RegionDataType = RegionType extends ViewRegionType.CustomElement
-    ? ViewRegionInfo[]
+    ? AbstractRegion[]
     : any
 >(
   aureliaProgram: AureliaProgram,
   regionType: RegionType,
   forEachRegionsCallback: (
-    region: ViewRegionInfo<RegionDataType>,
+    region: AbstractRegion,
     document: TextDocument
   ) => void
 ): Promise<RegionsLookUp> {
@@ -100,7 +100,7 @@ export async function forEachRegionOfType<
       const document = TextDocument.create(uri, 'html', 0, content);
       if (!document) return;
       // 1.1 Parse document, and find all Custom Element regions
-      const regions = await parseDocumentRegions(document, componentList);
+      const regions = RegionParser.parse(document, componentList);
       const finalRegions = regions.filter(
         (region) => region.type === regionType
       );
@@ -117,9 +117,10 @@ export async function findRegionsByWord(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
   sourceWord: string
-): Promise<ViewRegionInfo[]> {
+): Promise<AbstractRegion[]> {
   const componentList = aureliaProgram.aureliaComponents.getAll();
-  const regions = await parseDocumentRegions(document, componentList);
+  const regions = RegionParser.parse(document, componentList);
+  document.getText()/*?*/
 
   const targetRegions = regions.filter((region) => {
     // 1. default case: .regionValue
@@ -129,7 +130,7 @@ export async function findRegionsByWord(
     }
 
     // 2. repeat-for regions
-    else if (region.type === ViewRegionType.RepeatFor) {
+    else if (RepeatForRegion.is(region)) {
       return isRepeatForIncludesWord(region, sourceWord);
     }
 
@@ -147,7 +148,9 @@ export async function findRegionsByWord(
       expressionType = ExpressionType.None;
     }
 
+      expressionType/*?*/
     const parseInput = region.textValue ?? region.attributeValue ?? '';
+     parseInput/*?*/
     const parsed = (parseExpression(
       parseInput,
       expressionType
@@ -165,9 +168,9 @@ export async function findRegionsByWord(
 }
 
 export async function findRegionsByWordV2(
-  regions: ViewRegionInfo[],
+  regions: AbstractRegion[],
   sourceWord: string
-): Promise<ViewRegionInfo[]> {
+): Promise<AbstractRegion[]> {
   const targetRegions = regions.filter((region) => {
     // 1. default case: .regionValue
     const isDefault = region.regionValue === sourceWord;
@@ -176,7 +179,7 @@ export async function findRegionsByWordV2(
     }
 
     // 2. repeat-for regions
-    else if (region.type === ViewRegionType.RepeatFor) {
+    else if (RepeatForRegion.is(region)) {
       return isRepeatForIncludesWord(region, sourceWord);
     }
 
@@ -212,11 +215,10 @@ export async function findRegionsByWordV2(
 }
 
 function isRepeatForIncludesWord(
-  region: ViewRegionInfo<any>,
+  repeatForRegion: RepeatForRegion,
   sourceWord: string
 ) {
-  const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
-  const isTargetIterable = repeatForRegion.data?.iterableName === sourceWord;
+  const isTargetIterable = repeatForRegion.data.iterableName === sourceWord;
 
   return isTargetIterable;
 }

@@ -61,6 +61,10 @@ export class AureliaProjects {
     return target;
   }
 
+  public getFromUri(uri: string): IAureliaProject | undefined {
+    return this.getFromPath(uri);
+  }
+
   /**
    * [PERF]: 2.5s
    */

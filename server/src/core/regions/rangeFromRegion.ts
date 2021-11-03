@@ -7,6 +7,7 @@ import {
   ViewRegionType,
   RepeatForRegionData,
 } from '../embeddedLanguages/embeddedSupport';
+import { AbstractRegion, RepeatForRegion } from './ViewRegions';
 
 export function getRangeFromDocumentOffsets(
   document: TextDocument,
@@ -23,7 +24,7 @@ export function getRangeFromDocumentOffsets(
 }
 
 export function getRangeFromRegion(
-  region: ViewRegionInfo,
+  region: AbstractRegion,
   document?: TextDocument
 ): Range | undefined {
   let range;
@@ -37,48 +38,43 @@ export function getRangeFromRegion(
 }
 
 function getRangeFromRegionViaDocument(
-  region: ViewRegionInfo,
+  region: AbstractRegion,
   document: TextDocument
 ) {
-  if (!region.startOffset) return;
-  if (!region.endOffset) return;
-
+  if (!region.sourceCodeLocation) return;
+  const { sourceCodeLocation } = region;
+  const { startOffset } = sourceCodeLocation;
+  const { endOffset } = sourceCodeLocation;
   let range;
 
-  if (region.type === ViewRegionType.RepeatFor) {
+  if (RepeatForRegion.is(region)) {
     range = getRangeFromRepeatForRegion(region, document);
   } else {
-    range = getRangeFromDocumentOffsets(
-      document,
-      region.startOffset,
-      region.endOffset
-    );
+    range = getRangeFromDocumentOffsets(document, startOffset, endOffset);
   }
 
   return range;
 }
 
-function getRangeFromStandardRegion(region: ViewRegionInfo, range: any) {
-  if (!region.startCol) return;
-  if (!region.startLine) return;
-  if (!region.endCol) return;
-  if (!region.endLine) return;
+function getRangeFromStandardRegion(region: AbstractRegion, range: any) {
+  if (!region.sourceCodeLocation) return;
+  const { sourceCodeLocation } = region;
+  const { startCol } = sourceCodeLocation;
+  const { startLine } = sourceCodeLocation;
+  const { endCol } = sourceCodeLocation;
+  const { endLine } = sourceCodeLocation;
 
-  const startPosition = Position.create(
-    region.startLine - 1,
-    region.startCol - 1
-  );
-  const endPosition = Position.create(region.endLine - 1, region.endCol - 1);
+  const startPosition = Position.create(startLine - 1, startCol - 1);
+  const endPosition = Position.create(endLine - 1, endCol - 1);
   range = Range.create(startPosition, endPosition);
 
   return range;
 }
 
 function getRangeFromRepeatForRegion(
-  region: ViewRegionInfo,
+  repeatForRegion: RepeatForRegion,
   document: TextDocument
 ): any {
-  const repeatForRegion = region as ViewRegionInfo<RepeatForRegionData>;
   if (!repeatForRegion.data) return;
 
   const range = getRangeFromDocumentOffsets(
@@ -112,14 +108,13 @@ export function getRangeFromLocation(location: RenameLocation) {
 }
 
 export function getStartTagNameRange(
-  region: ViewRegionInfo,
+  region: AbstractRegion,
   document: TextDocument
 ) {
-  const { startCol, startOffset, startLine, tagName } = region;
-  if (!startCol) return;
-  if (!startOffset) return;
-  if (!startLine) return;
-  if (!tagName) return;
+  if (!region.sourceCodeLocation) return;
+  const { sourceCodeLocation } = region;
+  const { startOffset } = sourceCodeLocation;
+  const { tagName } = region;
 
   const finalStartOffset = startOffset + 1; // +1 for "<" of tag
   const endOffset = finalStartOffset + tagName.length + 1; // + 1, magic, because of all the offsetting we have to fix;

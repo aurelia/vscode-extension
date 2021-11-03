@@ -10,6 +10,9 @@ import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
 import { parseDocumentRegions } from '../embeddedLanguages/embeddedSupport';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
+import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
+import { AbstractRegion } from '../regions/ViewRegions';
+import { RegionParser } from '../regions/RegionParser';
 
 const logger = new Logger('aurelia-components');
 
@@ -17,6 +20,8 @@ export class AureliaComponents {
   private components: IAureliaComponent[] = [];
   private bindables: IAureliaBindable[] = [];
   private checker: ts.TypeChecker;
+
+  constructor(public readonly documentSettings: DocumentSettings) {}
 
   public init(program: ts.Program, filePaths: string[]): void {
     if (filePaths.length === 0) {
@@ -93,6 +98,50 @@ export class AureliaComponents {
     return target;
   }
 
+  public getOneByFromDocument(document: TextDocument) {
+    const target = this.getAll().find((component) => {
+      if (this.isViewDocument(document)) {
+        if (!component.viewFilePath) return;
+        if (component.viewFilePath !== UriUtils.toPath(document.uri)) return;
+        return this.getOneBy(
+          'viewFilePath',
+          UriUtils.toPath(component.viewFilePath)
+        );
+      } else if (this.isViewModelDocument(document)) {
+        if (component.viewModelFilePath !== UriUtils.toPath(document.uri))
+          return;
+        return this.getOneBy(
+          'viewModelFilePath',
+          UriUtils.toPath(component.viewModelFilePath)
+        );
+      }
+    });
+
+    return target;
+  }
+
+  private isViewDocument(document: TextDocument) {
+    const viewExtensions = this.documentSettings.getSettings().relatedFiles
+      ?.view;
+    if (!viewExtensions) return;
+
+    const target = viewExtensions.find((extension) =>
+      document.uri.endsWith(extension)
+    );
+    return target;
+  }
+
+  private isViewModelDocument(document: TextDocument) {
+    const viewModelExtensions = this.documentSettings.getSettings().relatedFiles
+      ?.script;
+    if (!viewModelExtensions) return;
+
+    const target = viewModelExtensions.find((extension) =>
+      document.uri.endsWith(extension)
+    );
+    return target;
+  }
+
   /**
    * Note: Difference to #getOneBy.
    *   Could relate to pointer to object.
@@ -158,13 +207,13 @@ export class AureliaComponents {
     return this.bindables;
   }
 
-  private async enhanceWithViewRegions(componentList: IAureliaComponent[]) {
-    componentList.forEach(async (component) => {
+  private enhanceWithViewRegions(componentList: IAureliaComponent[]) {
+    componentList.forEach((component) => {
       if (!component.viewFilePath) return;
       const viewDocument = TextDocumentUtils.createHtmlFromPath(
         component.viewFilePath
       );
-      const regions = await parseDocumentRegions(viewDocument, componentList);
+      const regions = RegionParser.parse(viewDocument, componentList);
       component.viewRegions = regions;
     });
   }

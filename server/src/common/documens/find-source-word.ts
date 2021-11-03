@@ -1,4 +1,5 @@
 import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { whiteSpaceRegex, WORD_SEPARATORS } from '../constants';
 
 interface WordInfo {
@@ -7,14 +8,16 @@ interface WordInfo {
   word: string;
 }
 
-export function findSourceWord(region: ViewRegionInfo, offset: number): string {
-  if (region.startOffset === undefined) return '';
+export function findSourceWord(region: AbstractRegion, offset: number): string {
+  if (region.sourceCodeLocation.startOffset === undefined) return '';
 
   // ?? ?? custom element
   const input = region.regionValue || region.attributeValue || region.tagName;
   if (!input) return '';
 
-  const normalizedOffset = Math.abs(region.startOffset - offset);
+  const normalizedOffset = Math.abs(
+    region.sourceCodeLocation.startOffset - offset
+  );
   const word = getWordAtOffset(input, normalizedOffset);
 
   return word;

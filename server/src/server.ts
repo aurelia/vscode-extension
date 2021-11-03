@@ -28,7 +28,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import 'reflect-metadata';
 
 import { AureliaProjects } from './core/AureliaProjects';
-import { AureliaServer } from './core/AureliaServer';
+import { AureliaServer } from './core/aureliaServer';
 import { globalContainer } from './core/container';
 import {
   DocumentSymbol,
@@ -306,8 +306,8 @@ connection.onRenameRequest(
       throw new Error('No document found');
     }
     const renamed = await aureliaServer.onRenameRequest(
-      position,
       document,
+      position,
       newName,
       languageModes
     );

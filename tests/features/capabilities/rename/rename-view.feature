@@ -13,7 +13,6 @@ Feature: Rename in View
       | DESCRIPTION      | LINE | CODE          | NEW_WORD |
       | Normal Attribute | 5    | `    \|id=""` | new-new  |
 
-  @focus
   Scenario Outline: Rename Bindable attribute
     And I open VSCode with the following file "other-custom-element-user.html"
     And I'm on the line <LINE> at character <CODE>
@@ -25,6 +24,7 @@ Feature: Rename in View
       | DESCRIPTION        | LINE | CODE                | NEW_WORD |
       | Bindable Attribute | 3    | `    \|foo.bind=""` | new-new  |
 
+  @focus
   Scenario Outline: Rename variable in View
     And I open VSCode with the following file "custom-element.html"
     And I'm on the line <LINE> at character <CODE>
@@ -34,7 +34,7 @@ Feature: Rename in View
 
     Examples:
       | DESCRIPTION        | LINE | CODE                                           | NEW_WORD |
-      | Text Interploation | 0    | `${\|foo}`                                     | new-new  |
-      | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  |
-      | View model         | 2    | `<div id.bind="\|foo"></div>`                  | new-new  |
-      | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  |
+      # | Text Interploation | 0    | `${\|foo}`                                     | new-new  |
+      # | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  |
+      | View model         | 3    | `<div id.bind="\|bar"></div>`                  | new-new  |
+      # | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  |

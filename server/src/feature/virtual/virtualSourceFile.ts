@@ -2,7 +2,7 @@ import { ts } from 'ts-morph';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
 
-import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 
 export const VIRTUAL_SOURCE_FILENAME = 'virtual.ts';
@@ -26,7 +26,7 @@ interface VirtualLanguageServiceOptions {
   /**
    * Extract data from given region.
    */
-  region?: ViewRegionInfo;
+  region?: AbstractRegion;
   /**
    * Content to be passed into virtual file.
    */
@@ -66,11 +66,10 @@ export async function createVirtualLanguageService(
   let virtualContent: string = '';
   if (options.region) {
     const region = options.region;
-    if (!region.endOffset) return;
+    if (!region.sourceCodeLocation) return;
+    const { startOffset, endOffset } = region.sourceCodeLocation;
 
-    virtualContent = document
-      .getText()
-      .slice(region.startOffset, region.endOffset - 1);
+    virtualContent = document.getText().slice(startOffset, endOffset - 1);
   } else if (options.virtualContent !== undefined) {
     virtualContent = options.virtualContent;
   }

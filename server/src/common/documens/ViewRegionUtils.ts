@@ -13,6 +13,7 @@ import {
   TextInterpolationRegion,
   ValueConverterRegion,
 } from '../../core/regions/ViewRegions';
+import { PositionUtils } from './PositionUtils';
 
 /* prettier-ignore */
 export type TypeToClass<TargetType extends ViewRegionType> =
@@ -23,7 +24,7 @@ export type TypeToClass<TargetType extends ViewRegionType> =
           TargetType extends ViewRegionType.RepeatFor ? RepeatForRegion :
             TargetType extends ViewRegionType.TextInterpolation ? TextInterpolationRegion :
               TargetType extends ViewRegionType.ValueConverter ? ValueConverterRegion :
-                never;
+never;
 
 export class ViewRegionUtils {
   static getRegionsOfType<
@@ -43,9 +44,32 @@ export class ViewRegionUtils {
     return result;
   }
 
-  static getRegionFromPosition(region: ViewRegionInfo, position: Position) {}
+  static findRegionAtPosition(regions: AbstractRegion[], position: Position) {
+    let targetRegion: AbstractRegion | undefined;
 
-  static regionVisitor(region: ViewRegionInfo, position: Position) {}
+    regions.find((region) => {
+      let possibleRegion = region;
+      if (CustomElementRegion.is(region)) {
+        const subTarget = this.findRegionAtPosition(region.data, position);
+        if (subTarget) {
+          possibleRegion = subTarget;
+        }
+      }
+
+      const start = possibleRegion.getStartPosition();
+      const end = possibleRegion.getEndPosition();
+      const isIncluded = PositionUtils.isIncluded(start, end, position);
+
+      if (isIncluded) {
+        targetRegion = possibleRegion;
+      }
+
+      return isIncluded;
+    });
+    if (!targetRegion) return;
+
+    return targetRegion;
+  }
 }
 
 // ViewRegionUtils.regionVisitor([ViewRegionType.CustomElement, (region) => {}]);

@@ -4,6 +4,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaView } from '../../common/constants';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
+import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
@@ -740,14 +741,11 @@ export function getRegionAtPosition(
   position: Position
 ): ViewRegionInfo | undefined {
   // document; /*?*/
-  document.getText(); /*?*/
-  position; /*?*/
+  // document.getText(); /*?*/
+  // position; /*?*/
   const offset = document.offsetAt(position);
-  offset; /*?*/
+  // offset; /*?*/
 
-  // ViewRegionUtils.getRegionFromPosition(region, position)
-
-  regions; /*?*/
   const potentialRegions = regions.filter((region) => {
     if (region.startOffset! <= offset) {
       if (offset <= region.endOffset!) {
