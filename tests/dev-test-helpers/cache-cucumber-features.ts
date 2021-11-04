@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { loadFeatures } from 'jest-cucumber';
+
 import { getTestDir } from '../common/files/get-test-dir';
 
 const TEST_PATH = getTestDir();
