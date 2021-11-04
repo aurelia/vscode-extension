@@ -1,9 +1,9 @@
 import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
 import { Position } from 'vscode-languageserver-textdocument';
+
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
-
 import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
 import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
 import { AttributeLanguageService } from './languageServer/AttributeLanguageService';

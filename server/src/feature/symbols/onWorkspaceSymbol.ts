@@ -1,6 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 import { Range } from 'vscode-languageserver-protocol';
 import { Position, SymbolInformation } from 'vscode-languageserver-types';
+
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
@@ -37,12 +38,12 @@ function createWorkspaceSymbol(
 
   const symbolName = `Au: ${converted.value}`;
   const start: Position = {
-    line: region.sourceCodeLocation.startLine! - 1,
-    character: region.sourceCodeLocation.startCol! - 1,
+    line: region.sourceCodeLocation.startLine - 1,
+    character: region.sourceCodeLocation.startCol - 1,
   };
   const end: Position = {
-    line: region.sourceCodeLocation.endLine! - 1,
-    character: region.sourceCodeLocation.endCol! - 1,
+    line: region.sourceCodeLocation.endLine - 1,
+    character: region.sourceCodeLocation.endCol - 1,
   };
   const range = Range.create(start, end);
   const symbolInformation = SymbolInformation.create(

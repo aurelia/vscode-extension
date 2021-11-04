@@ -24,7 +24,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
   then('the View model variable should be renamed', () => {
     expect(renamed?.changes).toBeDefined();
     if (renamed?.changes) {
-      renamed.changes; /*?*/
+      renamed.changes; /* ? */
       const viewModelChanges = Object.keys(renamed.changes).some(
         (filePaths) => {
           const result = filePaths.includes('custom-element.ts');
@@ -37,7 +37,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
 
   then('the word should be renamed', () => {
     expect(renamed?.changes).toBeDefined();
-    renamed?.changes; /*?*/
+    renamed?.changes; /* ? */
     if (renamed?.changes) {
       expect(Object.keys(renamed.changes).length).toBe(1);
     }

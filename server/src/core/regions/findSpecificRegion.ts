@@ -9,14 +9,14 @@ import {
 } from '@aurelia/runtime';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaProgram } from '../viewModel/AureliaProgram';
-import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
-import { AbstractRegion, RepeatForRegion, ViewRegionType } from './ViewRegions';
-import { RegionParser } from './RegionParser';
 import {
   TypeToClass,
   ViewRegionUtils,
 } from '../../common/documens/ViewRegionUtils';
+import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
+import { AureliaProgram } from '../viewModel/AureliaProgram';
+import { RegionParser } from './RegionParser';
+import { AbstractRegion, RepeatForRegion, ViewRegionType } from './ViewRegions';
 
 type Uri = string;
 type RegionsLookUp = Record<Uri, AbstractRegion[]>;

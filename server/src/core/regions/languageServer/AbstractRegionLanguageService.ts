@@ -6,6 +6,7 @@ import {
   WorkspaceEdit,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { AureliaCompletionItem } from '../../../feature/completions/virtualCompletion';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { CustomHover } from '../../../feature/virtual/virtualSourceFile';

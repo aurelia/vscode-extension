@@ -1,7 +1,7 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { DocumentSymbol } from 'vscode-languageserver';
-import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 
+import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { myMockServer } from '../new-common/project.step';
 
 export const symbolSteps: StepDefinitions = ({ when, then }) => {
@@ -16,7 +16,7 @@ export const symbolSteps: StepDefinitions = ({ when, then }) => {
     expect(symbols).toBeDefined();
 
     if (symbols) {
-      symbols; /*?*/
+      symbols; /* ? */
       // expect(true).toBeFalsy();
     }
   });

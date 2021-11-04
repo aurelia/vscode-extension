@@ -42,21 +42,21 @@ export async function onCompletion(
     document,
     aureliaProgram.aureliaComponents.getAll()
   );
-  regions; /*?*/
+  regions; /* ? */
   // aureliaProgram.aureliaComponents.getAll().map((c) => c.componentName); /*?*/
 
   // if (regions.length === 0) return [];
-  document.getText(); /*?*/
+  document.getText(); /* ? */
   const { position } = _textDocumentPosition;
   const offset = document.offsetAt(position);
-  offset; /*?*/
-  let region = ViewRegionUtils.findRegionAtOffset(regions, offset);
-  region; /*?*/
+  offset; /* ? */
+  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
+  region; /* ? */
 
   const text = document.getText();
-  text; /*?*/
+  text; /* ? */
   const triggerCharacter = text.substring(offset - 1, offset);
-  triggerCharacter; /*?*/
+  triggerCharacter; /* ? */
   let accumulateCompletions: CompletionItem[] = [];
 
   if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {

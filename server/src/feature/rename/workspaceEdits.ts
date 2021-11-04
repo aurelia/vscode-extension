@@ -21,10 +21,10 @@ import {
   getRangeFromRegion,
   getStartTagNameRange,
 } from '../../core/regions/rangeFromRegion';
+import { ViewRegionSubType, ViewRegionType } from '../../core/regions/ViewRegions';
 import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { getCustomElementDecorator } from '../../core/viewModel/getAureliaComponentList';
-import { ViewRegionSubType, ViewRegionType } from '../../core/regions/ViewRegions';
 
 const logger = new Logger('workspaceEdits');
 
@@ -140,7 +140,7 @@ export function performViewModelChanges(
       targetComponent.decoratorEndOffset
     );
     if (range) {
-      range; /*?*/
+      range; /* ? */
       result[viewModelUri].push(
         TextEdit.replace(range, kebabCase(finalComponentName))
       );
@@ -156,7 +156,7 @@ export function performViewModelChanges(
       .findRenameLocations(classIdentifier);
     renameLocations.forEach((location) => {
       const range = getRangeFromLocation(location);
-      range; /*?*/
+      range; /* ? */
       const referencePath = location.getSourceFile().getFilePath();
       const referenceUri = UriUtils.toUri(referencePath);
       if (!result[referenceUri]) result[referenceUri] = [];
@@ -215,7 +215,7 @@ export async function renameAllOtherRegionsInSameView(
   const result: WorkspaceEdit['changes'] = {};
 
   const regions = await findRegionsByWord(aureliaProgram, document, sourceWord);
-  regions; /*?*/
+  regions; /* ? */
 
   const { uri } = document;
   result[uri] = [];

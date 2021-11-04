@@ -1,6 +1,6 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
-import { ViewRegionUtils } from '../../../../server/src/common/documens/ViewRegionUtils';
 
+import { ViewRegionUtils } from '../../../../server/src/common/documens/ViewRegionUtils';
 import { RegionParser } from '../../../../server/src/core/regions/RegionParser';
 import {
   AbstractRegion,
@@ -138,7 +138,7 @@ defineFeature(feature, (test) => {
         );
 
         expect(target).toBeDefined();
-        target; /*?*/
+        target; /* ? */
         if (!target) return;
 
         if (RepeatForRegion.is(target)) {

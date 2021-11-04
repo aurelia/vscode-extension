@@ -1,7 +1,9 @@
-import { DocumentSpan } from 'ts-morph';
 import { pathToFileURL } from 'url';
+
+import { DocumentSpan } from 'ts-morph';
 import { LocationLink, Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { getWordAtOffset } from '../../common/documens/find-source-word';
 import { PositionUtils } from '../../common/documens/PositionUtils';
 import { getRelatedFilePath } from '../../common/documens/related';
@@ -59,8 +61,8 @@ export async function aureliaDefinitionFromViewModel(
     finalDefinitions.push(...regularReferences);
   }
 
-  let sourceWord = getWordAtOffset(document.getText(), offset);
-  sourceWord; /*?*/
+  const sourceWord = getWordAtOffset(document.getText(), offset);
+  sourceWord; /* ? */
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneBy('className', sourceWord) ??
     aureliaProgram.aureliaComponents.getOneBy(
@@ -145,7 +147,7 @@ async function getAureliaClassMemberDefinitions_SameView(
     sourceWord
   );
 
-  for (let region of regions) {
+  for (const region of regions) {
     const locationLink = createLocationLinkFromRegion(region, viewDocument);
     if (!locationLink) continue;
     viewRegionDefinitions_ClassMembers.push(locationLink);

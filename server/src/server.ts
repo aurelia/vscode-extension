@@ -25,6 +25,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 // We need to import this to include reflect functionality
 import 'reflect-metadata';
 
+import { UriUtils } from './common/view/uri-utils';
 import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/aureliaServer';
 import { globalContainer } from './core/container';
@@ -32,7 +33,6 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
-import { UriUtils } from './common/view/uri-utils';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -74,7 +74,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
+        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':', '|'],
       },
       definitionProvider: true,
       // hoverProvider: true,
@@ -225,13 +225,13 @@ connection.onDefinition(
 );
 
 connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
-  /* prettier-ignore */ console.log('TCL: params', params)
+  /* prettier-ignore */ console.log('TCL: params', params);
 
   const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
   return symbols;
 });
 connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
-  /* prettier-ignore */ console.log('TCL: params', params)
+  /* prettier-ignore */ console.log('TCL: params', params);
   const workspaceSymbols = aureliaServer.onWorkspaceSymbol(params.query);
   return workspaceSymbols;
 });
@@ -253,7 +253,7 @@ connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
 // );
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
+  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams);
   const kind = 'extension.au.refactor.component';
   const codeAcion = CodeAction.create('Au: Create component', kind);
   codeAcion.command = Command.create('Au: Command <<', kind, ['test-arg']);

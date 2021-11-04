@@ -28,8 +28,8 @@ import {
   AureliaDecorator,
   AureliaViewModel,
 } from '../../common/constants';
-import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 import { Optional } from '../regions/ViewRegions';
+import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,

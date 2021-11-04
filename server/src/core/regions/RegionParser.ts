@@ -1,5 +1,6 @@
 import SaxStream from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { AureliaView } from '../../common/constants';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { Logger } from '../../common/logging/logger';

@@ -1,4 +1,5 @@
 import { Position } from 'vscode-languageserver-types';
+
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
@@ -53,7 +54,7 @@ export class ViewRegionUtils {
     //   ],
     //   maxColWidth: 12,
     // }); /*?*/
-    regions; /*?*/
+    regions; /* ? */
     let targetRegion: AbstractRegion | undefined;
 
     regions.find((region) => {
@@ -84,7 +85,7 @@ export class ViewRegionUtils {
     const possibleRegions: AbstractRegion[] = [];
 
     regions.forEach((region) => {
-      let possibleRegion = region;
+      const possibleRegion = region;
       if (CustomElementRegion.is(region)) {
         const subTarget = this.findRegionAtOffset(region.data, offset);
         if (subTarget) {
@@ -99,8 +100,8 @@ export class ViewRegionUtils {
       }
     });
 
-    possibleRegions; /*?*/
-    let targetRegion = findSmallestRegionAtOffset(possibleRegions, offset);
+    possibleRegions; /* ? */
+    const targetRegion = findSmallestRegionAtOffset(possibleRegions, offset);
 
     // if (targetRegion === undefined) {
     //   targetRegion = AureliaHtmlRegion.create();

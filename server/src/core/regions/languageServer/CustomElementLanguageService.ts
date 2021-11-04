@@ -9,8 +9,8 @@ import { getBindablesCompletion } from '../../../feature/completions/completions
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { getVirtualDefinition } from '../../../feature/definition/virtualDefinition';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 import { AbstractRegion } from '../ViewRegions';
+import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class CustomElementLanguageService
   implements AbstractRegionLanguageService {

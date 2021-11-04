@@ -1,9 +1,10 @@
+import { Position, TextDocument } from 'vscode-languageserver-textdocument';
+
 import { Logger } from '../../../common/logging/logger';
 import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 import { AbstractRegion } from '../ViewRegions';
-import { Position, TextDocument } from 'vscode-languageserver-textdocument';
+import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 const logger = new Logger('getBindableAttributeMode');
 

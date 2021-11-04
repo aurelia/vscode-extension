@@ -4,6 +4,7 @@ Feature: Definition in View.
     Given the project is named "cli-generated"
     And I open VSCode with the following file "compo-user.html"
 
+  @focus
   Scenario Outline: Custom Element.
     Given I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition
@@ -18,6 +19,7 @@ Feature: Definition in View.
       | Attribute               | 29   | `    <label repeat.for="\|rule of grammarRules">` | compo-user.ts    |
       | Attribute               | 29   | `    <label repeat.for="rule of \|grammarRules">` | compo-user.ts    |
       | Text interpolation      | 32   | `      ${\|rule.id}-${rule.saying}`               | compo-user.html  |
+
   # TODO: after refac to bindable attributes | Bindable Attribute           | 20   | `            \|inter-bindable.bind="increaseCounter()"` | my-compo.ts      |
   # TODO: after refac to bindable attributes | Bindable Attribute           | 21   | `            \|string-bindable.bind="grammarRules"` | my-compo.ts      |
 

@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
 
+import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
 import { UriUtils } from '../view/uri-utils';
 
 export class TextDocumentUtils {

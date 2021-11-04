@@ -291,7 +291,7 @@ function findAllExpressionRecursive(
     return;
   }
 
-  singleExpression; /*?*/
+  singleExpression; /* ? */
   /* prettier-ignore */ throw new Error(`Unconsumed. Was: '${ExpressionKind_Dev[expressionOrList.$kind]}'`);
 }
 

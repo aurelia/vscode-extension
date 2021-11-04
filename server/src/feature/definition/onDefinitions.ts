@@ -2,9 +2,9 @@ import { pathToFileURL } from 'url';
 
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { LocationLink, Range } from 'vscode-languageserver';
+
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
-
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
 import { DocumentSettings } from '../configuration/DocumentSettings';

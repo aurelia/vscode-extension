@@ -16,8 +16,8 @@ export function getRangeFromDocumentOffsets(
   const endPosition = document.positionAt(endOffset - 1);
   const range = Range.create(startPosition, endPosition);
   if (document.uri.includes('custom-element.ts')) {
-    startOffset; /*?*/
-    range; /*?*/
+    startOffset; /* ? */
+    range; /* ? */
   }
   return range;
 }
