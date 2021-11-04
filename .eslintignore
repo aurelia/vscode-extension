@@ -1,7 +1,12 @@
 node_modules/**
 client/node_modules/**
 client/out/**
+
 server/node_modules/**
 server/out/**
+
 tests/testFixture
+tests/minimal-jest
+
+wallaby.config.js
 _code-dep
