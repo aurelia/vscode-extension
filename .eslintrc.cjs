@@ -17,6 +17,7 @@ module.exports = {
     project: path.join(thisDir, 'tsconfig.eslint.json'),
     sourceType: 'module',
     tsconfigRootDir: thisDir,
+    extraFileExtensions: ['.cjs']
   },
   env: {
     es6: true,

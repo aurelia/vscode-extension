@@ -10,4 +10,5 @@ tests/minimal-jest
 
 wallaby.config.js
 jest.config.js
+.eslintrc.cjs
 _code-dep
