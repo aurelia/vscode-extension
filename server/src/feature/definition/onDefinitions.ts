@@ -7,14 +7,12 @@ import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaDefinitionFromViewModel } from './aureliaDefintion';
 
 export async function onDefintion(
   document: TextDocument,
   position: Position,
-  languageModes: LanguageModes,
   container: Container
 ): Promise<LocationLink[] | undefined> {
   const documentSettings = container.get(DocumentSettings);

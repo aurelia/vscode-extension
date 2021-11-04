@@ -11,10 +11,6 @@ import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { AureliaProjects } from '../../core/AureliaProjects';
-import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
-import { RegionParser } from '../../core/regions/RegionParser';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
-import { RegionLanguageServerVisitor } from '../../core/regions/visitors/RegionLanguageServerVisitor';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaRenameFromViewModel } from './aureliaRename';
 
@@ -22,7 +18,6 @@ export async function onRenameRequest(
   document: TextDocument,
   position: Position,
   newName: string,
-  languageModes: LanguageModes,
   container: Container
 ): Promise<WorkspaceEdit | undefined> {
   const documentSettings = container.get(DocumentSettings);
@@ -53,7 +48,7 @@ export async function onRenameRequest(
   if (!regions) return;
 
   const region = ViewRegionUtils.findRegionAtPosition(regions, position);
-   region/*?*/
+  region; /*?*/
   if (!region) return normalRename(position, document, newName);
   const doRename = region.languageService.doRename;
 

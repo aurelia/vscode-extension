@@ -4,20 +4,17 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaClassTypes, AureliaViewModel } from '../../../common/constants';
 import { ViewRegionUtils } from '../../../common/documens/ViewRegionUtils';
 import { createValueConverterCompletion } from '../../../feature/completions/completions';
-import { getVirtualViewModelCompletionSupplyContent } from '../../../feature/completions/virtualCompletion';
+import {
+  AureliaCompletionItem,
+  getVirtualViewModelCompletionSupplyContent,
+} from '../../../feature/completions/virtualCompletion';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import {
-  ValueConverterRegionData,
-  parseDocumentRegions,
-  getRegionAtPosition,
-} from '../../embeddedLanguages/embeddedSupport';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+  AureliaProgram,
+  IAureliaComponent,
+} from '../../viewModel/AureliaProgram';
 import { RegionParser } from '../RegionParser';
-import {
-  AbstractRegion,
-  ValueConverterRegion,
-  ViewRegionType,
-} from '../ViewRegions';
+import { AbstractRegion, ValueConverterRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class ValueConverterLanguageService
@@ -78,26 +75,25 @@ async function onValueConverterCompletion(
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
   aureliaProgram: AureliaProgram
-) {
+): Promise<AureliaCompletionItem[]> {
   const componentList = aureliaProgram.aureliaComponents.getAll();
   const regions = RegionParser.parse(document, componentList);
   const targetRegion = ViewRegionUtils.findRegionAtPosition(
     regions,
     _textDocumentPosition.position
   );
-  if (!targetRegion) return;
+  if (!targetRegion) return [];
 
   if (!ValueConverterRegion.is(targetRegion)) return [];
 
   // Find value converter sourcefile
-  const valueConverterRegion = targetRegion;
   const targetValueConverterComponent = aureliaProgram.aureliaComponents
     .getAll()
     .filter((component) => component.type === AureliaClassTypes.VALUE_CONVERTER)
     .find(
       (valueConverterComponent) =>
         valueConverterComponent.valueConverterName ===
-        valueConverterRegion.data?.valueConverterName
+        targetRegion.data?.valueConverterName
     );
 
   if (!targetValueConverterComponent?.sourceFile) return [];
@@ -108,7 +104,7 @@ async function onValueConverterCompletion(
      * Aurelia interface method name, that handles interaction with view
      */
     AureliaViewModel.TO_VIEW,
-    targetValueConverterComponent?.sourceFile,
+    targetValueConverterComponent.sourceFile,
     'SortValueConverter',
     {
       customEnhanceMethodArguments: enhanceValueConverterViewArguments,

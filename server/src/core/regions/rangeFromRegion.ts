@@ -2,11 +2,6 @@ import { RenameLocation } from 'ts-morph';
 import { Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  ViewRegionInfo,
-  ViewRegionType,
-  RepeatForRegionData,
-} from '../embeddedLanguages/embeddedSupport';
 import { AbstractRegion, RepeatForRegion } from './ViewRegions';
 
 export function getRangeFromDocumentOffsets(

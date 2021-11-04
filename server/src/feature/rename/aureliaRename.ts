@@ -14,10 +14,6 @@ import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import {
-  ViewRegionInfo,
-  ViewRegionType,
-} from '../../core/embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import {
@@ -26,7 +22,7 @@ import {
   getAllChangesForOtherViews,
   renameAllOtherRegionsInSameView,
 } from './workspaceEdits';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
+import { AbstractRegion, ViewRegionType } from '../../core/regions/ViewRegions';
 
 export async function aureliaRenameFromView(
   aureliaProgram: AureliaProgram,
@@ -39,9 +35,9 @@ export async function aureliaRenameFromView(
 
   // 1. rename view model
   const offset = document.offsetAt(position);
-   offset/*?*/
+  offset; /*?*/
   const sourceWord = findSourceWord(region, offset);
-   sourceWord/*?*/
+  sourceWord; /*?*/
 
   let viewModelPath = '';
 

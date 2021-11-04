@@ -4,10 +4,6 @@ import { Position } from 'vscode-languageserver-textdocument';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 
-import {
-  ViewRegionSubType,
-  RepeatForRegionData,
-} from '../embeddedLanguages/embeddedSupport';
 import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
 import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
 import { AttributeLanguageService } from './languageServer/AttributeLanguageService';
@@ -49,7 +45,21 @@ export enum ViewRegionType {
   ValueConverter = 'ValueConverter',
 }
 
+export enum ViewRegionSubType {
+  StartTag = 'StartTag',
+  EndTag = 'EndTag',
+}
+
 type CustomElementRegionData = AbstractRegion[];
+
+export interface RepeatForRegionData {
+  /** repeat.for="num of >numbers<" */
+  iterableName: string;
+  iterableStartOffset: number;
+  iterableEndOffset: number;
+  /** repeat.for=">num< of numbers" */
+  iterator: string;
+}
 
 /**
  * TODO: how to deal with the second valCon?           ___v___

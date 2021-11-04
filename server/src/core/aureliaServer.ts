@@ -18,7 +18,6 @@ import { onDocumentSymbol } from '../feature/symbols/onDocumentSymbol';
 import { onWorkspaceSymbol } from '../feature/symbols/onWorkspaceSymbol';
 import { Container } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
-import { LanguageModes } from './embeddedLanguages/languageModes';
 
 export class AureliaServer {
   constructor(
@@ -69,26 +68,19 @@ export class AureliaServer {
   }
 
   // sendDiagnostics() {}
-  async onHover(
-    documentContent: string,
-    position: Position,
-    filePath: string,
-    languageModes: LanguageModes
-  ) {
-    const hovered = onHover(documentContent, position, filePath, languageModes);
-    return hovered;
+  async onHover(documentContent: string, position: Position, filePath: string) {
+    // const hovered = onHover(documentContent, position, filePath);
+    // return hovered;
   }
 
   async onCompletion(
     textDocumentPosition: TextDocumentPositionParams,
-    document: TextDocument,
-    languageModes: LanguageModes
+    document: TextDocument
   ) {
     const completions = await onCompletion(
       this.container,
       textDocumentPosition,
-      document,
-      languageModes
+      document
     );
 
     return completions;
@@ -98,17 +90,8 @@ export class AureliaServer {
   // onSignatureHelp() {}
   // onDeclaration() {}
 
-  async onDefinition(
-    document: TextDocument,
-    position: Position,
-    languageModes: LanguageModes
-  ) {
-    const definition = await onDefintion(
-      document,
-      position,
-      languageModes,
-      this.container
-    );
+  async onDefinition(document: TextDocument, position: Position) {
+    const definition = await onDefintion(document, position, this.container);
     return definition;
   }
 
@@ -138,14 +121,12 @@ export class AureliaServer {
   async onRenameRequest(
     document: TextDocument,
     position: Position,
-    newName: string,
-    languageModes: LanguageModes
+    newName: string
   ) {
     const renamed = await onRenameRequest(
       document,
       position,
       newName,
-      languageModes,
       this.container
     );
     return renamed;

@@ -15,6 +15,7 @@ import {
   TextInterpolationRegion,
   ViewRegionInfoV2,
   ValueConverterRegion,
+  Optional,
 } from './ViewRegions';
 
 const logger = new Logger('RegionParser');
@@ -31,7 +32,7 @@ interface PrettyOptions<
 export class RegionParser {
   static parse(
     document: TextDocument,
-    componentList: IAureliaComponent[]
+    componentList: Optional<IAureliaComponent, 'viewRegions'>[]
   ): AbstractRegion[] {
     const saxStream = new SaxStream({ sourceCodeLocationInfo: true });
 

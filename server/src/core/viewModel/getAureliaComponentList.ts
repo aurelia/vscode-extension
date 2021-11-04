@@ -29,12 +29,13 @@ import {
   AureliaViewModel,
 } from '../../common/constants';
 import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
+import { Optional } from '../regions/ViewRegions';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker
-): IAureliaComponent | undefined {
-  let result: IAureliaComponent | undefined;
+): Optional<IAureliaComponent, 'viewRegions'> | undefined {
+  let result: Optional<IAureliaComponent, 'viewRegions'> | undefined;
   let targetClassDeclaration: ts.ClassDeclaration | undefined;
 
   sourceFile.forEachChild((node) => {

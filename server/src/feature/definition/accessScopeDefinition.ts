@@ -9,13 +9,9 @@ import { getRelatedFilePath } from '../../common/documens/related';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import {
-  ViewRegionInfo,
-  ViewRegionType,
-  RepeatForRegionData,
-} from '../../core/embeddedLanguages/embeddedSupport';
-import {
   AbstractRegion,
   RepeatForRegion,
+  ViewRegionType,
 } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DefinitionResult } from './getDefinition';
@@ -100,7 +96,7 @@ export function getAccessScopeViewModelDefinition(
 ): DefinitionResult | undefined {
   const offset = document.offsetAt(position);
   const goToSourceWord = findSourceWord(region, offset);
-   goToSourceWord/*?*/
+  goToSourceWord; /*?*/
 
   const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
     'viewFilePath',

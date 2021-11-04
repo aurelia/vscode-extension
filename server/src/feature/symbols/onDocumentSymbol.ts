@@ -4,12 +4,13 @@ import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
+import { RegionParser } from '../../core/regions/RegionParser';
 import {
-  parseDocumentRegions,
-  ViewRegionInfo,
+  AbstractRegion,
+  CustomElementRegion,
   ViewRegionSubType,
   ViewRegionType,
-} from '../../core/embeddedLanguages/embeddedSupport';
+} from '../../core/regions/ViewRegions';
 
 const ATTRIBUTE_INTERPOLATION_LENGTH = 10;
 
@@ -30,7 +31,7 @@ export async function onDocumentSymbol(
   if (!aureliaProgram) return [];
 
   const componentList = aureliaProgram.aureliaComponents.getAll();
-  const regions = await parseDocumentRegions(document, componentList);
+  const regions = RegionParser.parse(document, componentList);
 
   const finalSymbols: DocumentSymbol[] = [];
   regions.forEach((region) => {
@@ -42,18 +43,18 @@ export async function onDocumentSymbol(
   return finalSymbols;
 }
 
-function createAureliaDocumentSymbol(region: ViewRegionInfo) {
+function createAureliaDocumentSymbol(region: AbstractRegion) {
   const converted = convertToSymbolName(region);
   if (!converted) return;
 
   const symbolName = `Au: ${converted.value}`;
   const start: Position = {
-    line: region.startLine! - 1,
-    character: region.startCol! - 1,
+    line: region.sourceCodeLocation.startLine! - 1,
+    character: region.sourceCodeLocation.startCol! - 1,
   };
   const end: Position = {
-    line: region.endLine! - 1,
-    character: region.endCol! - 1,
+    line: region.sourceCodeLocation.endLine! - 1,
+    character: region.sourceCodeLocation.endCol! - 1,
   };
 
   const symbol = DocumentSymbol.create(
@@ -78,7 +79,7 @@ type SymbolMap = Record<
   }
 >;
 
-export function convertToSymbolName(region: ViewRegionInfo) {
+export function convertToSymbolName(region: AbstractRegion) {
   const regionType = region.type;
   if (!regionType) return;
   if (region.subType === ViewRegionSubType.EndTag) return;
@@ -123,10 +124,10 @@ export function convertToSymbolName(region: ViewRegionInfo) {
     }, //
   };
 
-  if (regionType === ViewRegionType.CustomElement) {
+  if (CustomElementRegion.is(region)) {
     if (region.data?.length) {
       const finalChildrenSymbol: DocumentSymbol[] = [];
-      (<ViewRegionInfo[]>region.data)?.forEach((subRegion) => {
+      region.data.forEach((subRegion) => {
         if (subRegion.type !== ViewRegionType.BindableAttribute) return;
         const symbol = createAureliaDocumentSymbol(subRegion);
         if (!symbol) return;

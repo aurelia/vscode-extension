@@ -1,12 +1,9 @@
 import { Position } from 'vscode-languageserver';
 
-import { AsyncReturnType } from '../../../../server/src/common/global';
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
-import { getLanguageModes } from '../../../../server/src/core/embeddedLanguages/languageModes';
 import { testError } from '../../../common/errors/TestErrors';
 import { myMockServer } from './project.step';
 
-export let languageModes: AsyncReturnType<typeof getLanguageModes>;
 export let position: Position;
 export let codeForCharacter;
 
@@ -24,22 +21,13 @@ export async function givenImOnTheLineAtCharacter(
     );
   }
   position = Position.create(line, character);
-  position; /*?*/
 
-  const {
-    AureliaProjects,
-    DocumentSettings,
-  } = myMockServer.getContainerDirectly();
+  const { AureliaProjects } = myMockServer.getContainerDirectly();
   const tsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
   const targetProject = AureliaProjects.getBy(tsConfigPath);
   if (!targetProject) return;
   const { aureliaProgram } = targetProject;
   if (!aureliaProgram) return;
-
-  languageModes = await getLanguageModes(
-    aureliaProgram,
-    DocumentSettings.getSettings()
-  );
 }
 
 export function removeCursorFromCode(code: string): string {

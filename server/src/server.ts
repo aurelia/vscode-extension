@@ -18,9 +18,7 @@ import {
   CodeAction,
   Command,
   ExecuteCommandParams,
-  WorkspaceEdit,
   Position,
-  CodeActionKind,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -30,13 +28,6 @@ import 'reflect-metadata';
 import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/aureliaServer';
 import { globalContainer } from './core/container';
-import {
-  DocumentSymbol,
-  getLanguageModes,
-  LanguageModes,
-  SymbolInformation,
-  SymbolKind,
-} from './core/embeddedLanguages/languageModes';
 import {
   ExtensionSettings,
   settingsName,
@@ -50,7 +41,6 @@ export const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-let languageModes: LanguageModes;
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
@@ -138,11 +128,6 @@ connection.onInitialized(async () => {
     const aureliaProjects = globalContainer.get(AureliaProjects);
     const targetProject = aureliaProjects.getBy(tsConfigPath);
     if (!targetProject) return;
-    const { aureliaProgram } = targetProject;
-
-    if (aureliaProgram) {
-      languageModes = await getLanguageModes(aureliaProgram, extensionSettings);
-    }
 
     hasServerInitialized = true;
   }
@@ -208,8 +193,7 @@ connection.onCompletion(
 
     const completions = await aureliaServer.onCompletion(
       _textDocumentPosition,
-      document,
-      languageModes
+      document
     );
 
     return completions;
@@ -230,11 +214,7 @@ connection.onDefinition(
     const document = documents.get(documentUri); // <
     if (!document) return null;
 
-    const definition = await aureliaServer.onDefinition(
-      document,
-      position,
-      languageModes
-    );
+    const definition = await aureliaServer.onDefinition(document, position);
 
     if (definition) {
       return definition;
@@ -256,22 +236,21 @@ connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
   return workspaceSymbols;
 });
 
-connection.onHover(
-  async ({ position, textDocument }: TextDocumentPositionParams) => {
-    const documentUri = textDocument.uri.toString();
-    const document = documents.get(documentUri); // <
-    if (!document) return null;
+// connection.onHover(
+//   async ({ position, textDocument }: TextDocumentPositionParams) => {
+//     const documentUri = textDocument.uri.toString();
+//     const document = documents.get(documentUri); // <
+//     if (!document) return null;
 
-    const hovered = await aureliaServer.onHover(
-      document.getText(),
-      position,
-      documentUri,
-      languageModes
-    );
+//     const hovered = await aureliaServer.onHover(
+//       document.getText(),
+//       position,
+//       documentUri,
+//     );
 
-    return hovered;
-  }
-);
+//     return hovered;
+//   }
+// );
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
   /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams)
@@ -309,7 +288,6 @@ connection.onRenameRequest(
       document,
       position,
       newName,
-      languageModes
     );
 
     if (renamed) {

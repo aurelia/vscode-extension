@@ -1,19 +1,14 @@
 import { Position } from 'vscode-languageserver-types';
 import {
-  ViewRegionInfo,
-  ViewRegionType,
-} from '../../core/embeddedLanguages/embeddedSupport';
-import { RegionParser } from '../../core/regions/RegionParser';
-import {
   AbstractRegion,
   AttributeInterpolationRegion,
   AttributeRegion,
-  AureliaHtmlRegion,
   BindableAttributeRegion,
   CustomElementRegion,
   RepeatForRegion,
   TextInterpolationRegion,
   ValueConverterRegion,
+  ViewRegionType,
 } from '../../core/regions/ViewRegions';
 import { OffsetUtils } from './OffsetUtils';
 import { PositionUtils } from './PositionUtils';

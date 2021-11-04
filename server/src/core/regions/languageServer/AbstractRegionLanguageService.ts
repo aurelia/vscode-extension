@@ -9,7 +9,6 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaCompletionItem } from '../../../feature/completions/virtualCompletion';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { CustomHover } from '../../../feature/virtual/virtualSourceFile';
-import { ViewRegionInfo } from '../../embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 

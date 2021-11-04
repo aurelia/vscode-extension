@@ -1,13 +1,17 @@
 import { StepDefinitions } from 'jest-cucumber';
-import { CompletionList } from 'vscode-html-languageservice';
+import {
+  CompletionList,
+  Position,
+  TextDocument,
+} from 'vscode-html-languageservice';
+import { TextDocumentPositionParams } from 'vscode-languageserver-protocol';
 
 import { Logger } from '../../../server/src/common/logging/logger';
-import { createTextDocumentPositionParams } from '../../../server/src/core/embeddedLanguages/languageModes';
 import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
 } from '../../../server/src/feature/completions/virtualCompletion';
-import { position, languageModes } from './new-common/file.step';
+import { position } from './new-common/file.step';
 import { myMockServer } from './new-common/project.step';
 
 const logger = new Logger('[Test] Completions');
@@ -30,7 +34,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
 
     completions = await myMockServer
       .getAureliaServer()
-      .onCompletion(textDocumentPositionParams, document, languageModes);
+      .onCompletion(textDocumentPositionParams, document);
   });
 
   then('I should get the correct suggestions', () => {
@@ -71,3 +75,17 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     }
   );
 };
+
+export function createTextDocumentPositionParams(
+  document: TextDocument,
+  position: Position
+): TextDocumentPositionParams {
+  const textDocument: TextDocumentPositionParams = {
+    textDocument: {
+      uri: document.uri,
+    },
+    position,
+  };
+
+  return textDocument;
+}

@@ -3,7 +3,7 @@ import { WorkspaceEdit } from 'vscode-languageserver';
 
 import { Logger } from '../../../../server/src/common/logging/logger';
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
-import { languageModes, position } from '../new-common/file.step';
+import { position } from '../new-common/file.step';
 import { myMockServer } from '../new-common/project.step';
 
 const logger = new Logger('rename.spec');
@@ -18,7 +18,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
 
     renamed = await myMockServer
       .getAureliaServer()
-      .onRenameRequest(document, position, newWord, languageModes);
+      .onRenameRequest(document, position, newWord);
   });
 
   then('the View model variable should be renamed', () => {

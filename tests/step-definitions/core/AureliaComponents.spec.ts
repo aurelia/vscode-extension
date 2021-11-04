@@ -1,11 +1,12 @@
 import { StepDefinitions } from 'jest-cucumber';
+import { Optional } from '../../../server/src/core/regions/ViewRegions';
 
 import { IAureliaComponent } from '../../../server/src/core/viewModel/AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from '../../../server/src/core/viewModel/getAureliaComponentList';
 import { myMockServer } from '../capabilities/new-common/project.step';
 
 export const IAureliaComponentSteps: StepDefinitions = ({ when, then }) => {
-  let targetComponent: IAureliaComponent | undefined;
+  let targetComponent: Optional<IAureliaComponent, 'viewRegions'> | undefined;
 
   when('I call AureliaComponents#init', () => {
     const mockProgram = myMockServer.createMockProgram();

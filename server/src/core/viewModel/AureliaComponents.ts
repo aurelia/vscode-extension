@@ -8,11 +8,10 @@ import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
-import { parseDocumentRegions } from '../embeddedLanguages/embeddedSupport';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
-import { AbstractRegion } from '../regions/ViewRegions';
 import { RegionParser } from '../regions/RegionParser';
+import { Optional } from '../regions/ViewRegions';
 
 const logger = new Logger('aurelia-components');
 
@@ -29,6 +28,10 @@ export class AureliaComponents {
     }
 
     const componentList: IAureliaComponent[] = [];
+    const componentListWithoutRegions: Optional<
+      IAureliaComponent,
+      'viewRegions'
+    >[] = [];
     if (!this.checker) {
       this.checker = program.getTypeChecker();
     }
@@ -56,7 +59,7 @@ export class AureliaComponents {
             this.checker
           );
           if (!componentInfo) return;
-          componentList.push(componentInfo);
+          componentListWithoutRegions.push(componentInfo);
 
           break;
         }
@@ -69,7 +72,7 @@ export class AureliaComponents {
       }
     });
 
-    this.enhanceWithViewRegions(componentList);
+    this.enhanceWithViewRegions(componentListWithoutRegions);
     this.set(componentList);
     this.setBindables(componentList);
 
@@ -182,7 +185,10 @@ export class AureliaComponents {
       UriUtils.toPath(document.uri)
     );
 
-    this.components[targetIndex] = componentInfo;
+    this.components[targetIndex] = {
+      ...this.components[targetIndex],
+      ...componentInfo,
+    };
   }
 
   public setBindables(components: IAureliaComponent[]): void {
@@ -207,7 +213,9 @@ export class AureliaComponents {
     return this.bindables;
   }
 
-  private enhanceWithViewRegions(componentList: IAureliaComponent[]) {
+  private enhanceWithViewRegions(
+    componentList: Optional<IAureliaComponent, 'viewRegions'>[]
+  ) {
     componentList.forEach((component) => {
       if (!component.viewFilePath) return;
       const viewDocument = TextDocumentUtils.createHtmlFromPath(

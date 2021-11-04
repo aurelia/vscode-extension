@@ -7,8 +7,6 @@ export class OffsetUtils {
     targetOffset: number
   ) {
     const result = startOffset <= targetOffset && targetOffset <= endOffset;
-    startOffset; /*?*/
-    endOffset; /*?*/
     return result;
   }
 }

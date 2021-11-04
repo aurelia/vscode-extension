@@ -11,10 +11,6 @@ import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import {
-  ViewRegionSubType,
-  ViewRegionType,
-} from '../../core/embeddedLanguages/embeddedSupport';
-import {
   findAllBindableAttributeRegions,
   findRegionsByWord,
   forEachRegionOfType,
@@ -28,6 +24,7 @@ import {
 import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { getCustomElementDecorator } from '../../core/viewModel/getAureliaComponentList';
+import { ViewRegionSubType, ViewRegionType } from '../../core/regions/ViewRegions';
 
 const logger = new Logger('workspaceEdits');
 
@@ -143,7 +140,7 @@ export function performViewModelChanges(
       targetComponent.decoratorEndOffset
     );
     if (range) {
-       range/*?*/
+      range; /*?*/
       result[viewModelUri].push(
         TextEdit.replace(range, kebabCase(finalComponentName))
       );
@@ -159,7 +156,7 @@ export function performViewModelChanges(
       .findRenameLocations(classIdentifier);
     renameLocations.forEach((location) => {
       const range = getRangeFromLocation(location);
-       range/*?*/
+      range; /*?*/
       const referencePath = location.getSourceFile().getFilePath();
       const referenceUri = UriUtils.toUri(referencePath);
       if (!result[referenceUri]) result[referenceUri] = [];

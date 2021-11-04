@@ -10,7 +10,6 @@ import {
 } from 'vscode-languageserver';
 
 import { AureliaClassTypes } from '../../common/constants';
-import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import {
   IAureliaClassMember,

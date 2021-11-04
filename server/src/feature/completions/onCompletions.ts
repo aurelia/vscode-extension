@@ -13,7 +13,6 @@ import { Logger } from '../../common/logging/logger';
 import { checkInsideTag } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { LanguageModes } from '../../core/embeddedLanguages/languageModes';
 import { AbstractRegionLanguageService } from '../../core/regions/languageServer/AbstractRegionLanguageService';
 import { AureliaHtmlLanguageService } from '../../core/regions/languageServer/AureliaHtmlLanguageService';
 import { RegionParser } from '../../core/regions/RegionParser';
@@ -27,18 +26,8 @@ const logger = new Logger('on-completions');
 export async function onCompletion(
   container: Container,
   _textDocumentPosition: TextDocumentPositionParams,
-  document: TextDocument,
-  languageModes: LanguageModes
+  document: TextDocument
 ) {
-  // const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-  //   document,
-  //   _textDocumentPosition.position
-  // );
-
-  // if (!modeAndRegion) return [];
-  // const { mode } = modeAndRegion;
-
-  // if (!mode) return [];
   const aureliaProjects = container.get(AureliaProjects);
   const targetProject = aureliaProjects.getFromUri(document.uri);
   if (!targetProject) return [];

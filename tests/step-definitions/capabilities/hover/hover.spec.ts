@@ -2,7 +2,7 @@ import { StepDefinitions } from 'jest-cucumber';
 
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { CustomHover } from '../../../../server/src/feature/virtual/virtualSourceFile';
-import { position, languageModes } from '../new-common/file.step';
+import { position } from '../new-common/file.step';
 import { myMockServer } from '../new-common/project.step';
 
 export const hoverSteps: StepDefinitions = ({ when, then }) => {
@@ -11,14 +11,9 @@ export const hoverSteps: StepDefinitions = ({ when, then }) => {
   when('I execute Hover', async () => {
     const document = myMockServer.textDocuments.getActive();
 
-    hover = await myMockServer
-      .getAureliaServer()
-      .onHover(
-        document.getText(),
-        position,
-        UriUtils.toPath(document.uri),
-        languageModes
-      );
+    // hover = await myMockServer
+    //   .getAureliaServer()
+    //   .onHover(document.getText(), position, UriUtils.toPath(document.uri));
   });
 
   then('I should see hover details', () => {

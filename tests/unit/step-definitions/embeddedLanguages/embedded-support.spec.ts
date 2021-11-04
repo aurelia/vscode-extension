@@ -1,15 +1,11 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import { ViewRegionUtils } from '../../../../server/src/common/documens/ViewRegionUtils';
 
-import {
-  RepeatForRegionData,
-  ViewRegionInfo,
-  ViewRegionType,
-} from '../../../../server/src/core/embeddedLanguages/embeddedSupport';
 import { RegionParser } from '../../../../server/src/core/regions/RegionParser';
 import {
   AbstractRegion,
   RepeatForRegion,
+  ViewRegionType,
 } from '../../../../server/src/core/regions/ViewRegions';
 import { getPathsFromFileNames } from '../../../common/file-path-mocks';
 import { getTestDir } from '../../../common/files/get-test-dir';
@@ -32,7 +28,7 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    const parsedRegions: ViewRegionInfo[] = [];
+    const parsedRegions: AbstractRegion[] = [];
     const shared = {
       workspaceRootUri: '',
       parsedRegions,
@@ -43,20 +39,10 @@ defineFeature(feature, (test) => {
     whenIParseTheFile(when, shared);
 
     then('the result should include Custom element bindable attributes', () => {
-      const regionResults = shared.parsedRegions.filter((region) => {
-        if (!region.data) return false;
-        if (!Array.isArray(region.data)) return false;
-
-        const temp = region.data.filter(
-          (attribute) => attribute.type === ViewRegionType.BindableAttribute
-        );
-
-        if (temp && temp?.length > 0) {
-          return true;
-        }
-
-        return false;
-      });
+      const regionResults = ViewRegionUtils.getRegionsOfType(
+        shared.parsedRegions,
+        ViewRegionType.CustomElement
+      );
 
       expect(regionResults.length).toBeGreaterThan(0);
       const result = regionResults[0].data?.find(
@@ -152,7 +138,7 @@ defineFeature(feature, (test) => {
         );
 
         expect(target).toBeDefined();
-         target/*?*/
+        target; /*?*/
         if (!target) return;
 
         if (RepeatForRegion.is(target)) {

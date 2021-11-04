@@ -3,7 +3,7 @@ import { Range } from 'vscode-languageserver-protocol';
 import { Position, SymbolInformation } from 'vscode-languageserver-types';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
-import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { convertToSymbolName } from './onDocumentSymbol';
 
 export function onWorkspaceSymbol(container: Container, query: string) {
@@ -30,19 +30,19 @@ export function onWorkspaceSymbol(container: Container, query: string) {
 
 function createWorkspaceSymbol(
   uri: string,
-  region: ViewRegionInfo<any>
+  region: AbstractRegion
 ): SymbolInformation | undefined {
   const converted = convertToSymbolName(region);
   if (!converted) return;
 
   const symbolName = `Au: ${converted.value}`;
   const start: Position = {
-    line: region.startLine! - 1,
-    character: region.startCol! - 1,
+    line: region.sourceCodeLocation.startLine! - 1,
+    character: region.sourceCodeLocation.startCol! - 1,
   };
   const end: Position = {
-    line: region.endLine! - 1,
-    character: region.endCol! - 1,
+    line: region.sourceCodeLocation.endLine! - 1,
+    character: region.sourceCodeLocation.endCol! - 1,
   };
   const range = Range.create(start, end);
   const symbolInformation = SymbolInformation.create(

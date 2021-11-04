@@ -10,15 +10,10 @@ import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
 import {
-  ViewRegionInfo,
-  ViewRegionSubType,
-  ViewRegionType,
-} from '../../core/embeddedLanguages/embeddedSupport';
-import {
   findRegionsByWord,
   forEachRegionOfType,
 } from '../../core/regions/findSpecificRegion';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
+import { AbstractRegion, ViewRegionType } from '../../core/regions/ViewRegions';
 import {
   AureliaProgram,
   IAureliaComponent,

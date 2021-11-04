@@ -9,17 +9,14 @@ import {
 } from '@aurelia/runtime';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  ViewRegionInfo,
-  parseDocumentRegions,
-  ViewRegionType,
-  RepeatForRegionData,
-} from '../embeddedLanguages/embeddedSupport';
 import { AureliaProgram } from '../viewModel/AureliaProgram';
 import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
-import { AbstractRegion, RepeatForRegion } from './ViewRegions';
+import { AbstractRegion, RepeatForRegion, ViewRegionType } from './ViewRegions';
 import { RegionParser } from './RegionParser';
-import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
+import {
+  TypeToClass,
+  ViewRegionUtils,
+} from '../../common/documens/ViewRegionUtils';
 
 type Uri = string;
 type RegionsLookUp = Record<Uri, AbstractRegion[]>;
@@ -84,7 +81,8 @@ export async function forEachRegionOfType<
   aureliaProgram: AureliaProgram,
   regionType: RegionType,
   forEachRegionsCallback: (
-    region: AbstractRegion,
+    region: TypeToClass<RegionType>,
+    // region: AbstractRegion,
     document: TextDocument
   ) => void
 ): Promise<RegionsLookUp> {
@@ -101,8 +99,9 @@ export async function forEachRegionOfType<
       if (!document) return;
       // 1.1 Parse document, and find all Custom Element regions
       const regions = RegionParser.parse(document, componentList);
-      const finalRegions = regions.filter(
-        (region) => region.type === regionType
+      const finalRegions = ViewRegionUtils.getRegionsOfType(
+        regions,
+        regionType
       );
       finalRegions.forEach((region) => {
         forEachRegionsCallback(region, document);

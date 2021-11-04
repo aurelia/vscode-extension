@@ -39,7 +39,6 @@ import {
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import { AsyncReturnType } from '../../common/global';
 import { Logger } from '../../common/logging/logger';
-import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
@@ -275,7 +274,7 @@ export function getVirtualViewModelCompletionSupplyContent(
     customizeEnhanceDocumentation
   );
 
-  return (result as unknown) as AureliaCompletionItem[];
+  return result;
 }
 
 function enhanceCompletionItemDocumentation(

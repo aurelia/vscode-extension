@@ -9,7 +9,6 @@ import {
   DocumentSettings,
   IAureliaProjectSetting,
 } from '../../feature/configuration/DocumentSettings';
-import { ViewRegionInfo } from '../embeddedLanguages/embeddedSupport';
 import { AbstractRegion } from '../regions/ViewRegions';
 import { TsMorphProject } from '../tsMorph/AureliaTsMorph';
 import { AureliaComponents } from './AureliaComponents';

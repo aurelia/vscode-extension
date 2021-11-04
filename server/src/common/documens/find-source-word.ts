@@ -1,4 +1,3 @@
-import { ViewRegionInfo } from '../../core/embeddedLanguages/embeddedSupport';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { whiteSpaceRegex, WORD_SEPARATORS } from '../constants';
 
