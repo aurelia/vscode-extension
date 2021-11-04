@@ -100,7 +100,7 @@ export class RelatedFiles implements Disposable {
       return;
     }
 
-    let relatedFile: string;
+    let relatedFile: string = '';
     const fileName = editor.document.fileName;
     const extension = path.extname(fileName).toLowerCase();
     const fileExtensionsConfig = this.getRelatedFilePathExtensions();
@@ -155,7 +155,7 @@ export class RelatedFiles implements Disposable {
    * @returns targetFile
    */
   private getRelatedFilePath(fullPath: string, relatedExts: string[]): string {
-    let targetFile: string;
+    let targetFile: string = '';
     try {
       relatedExts.forEach((ext) => {
         const fileName = `${path.basename(

@@ -228,7 +228,8 @@ connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
 });
 connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
   /* prettier-ignore */ console.log('TCL: params', params);
-  const workspaceSymbols = aureliaServer.onWorkspaceSymbol(params.query);
+  // const workspaceSymbols = aureliaServer.onWorkspaceSymbol(params.query);
+  const workspaceSymbols = aureliaServer.onWorkspaceSymbol();
   return workspaceSymbols;
 });
 
