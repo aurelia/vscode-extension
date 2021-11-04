@@ -17,7 +17,6 @@ import {
   CodeActionParams,
   CodeAction,
   Command,
-  ExecuteCommandParams,
   Position,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -44,9 +43,9 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
-let hasDiagnosticRelatedInformationCapability: boolean = false;
+// let hasDiagnosticRelatedInformationCapability: boolean = false;
 
-let hasServerInitialized = false;
+// let hasServerInitialized = false;
 let aureliaServer: AureliaServer;
 
 connection.onInitialize(async (params: InitializeParams) => {
@@ -57,16 +56,14 @@ connection.onInitialize(async (params: InitializeParams) => {
   // Does the client support the `workspace/configuration` request?
   // If not, we will fall back using global settings
   hasConfigurationCapability = !!(
-    capabilities.workspace && !!capabilities.workspace.configuration
+    capabilities.workspace && Boolean(capabilities.workspace.configuration)
   );
   hasWorkspaceFolderCapability = !!(
-    capabilities.workspace && !!capabilities.workspace.workspaceFolders
+    capabilities.workspace && Boolean(capabilities.workspace.workspaceFolders)
   );
-  hasDiagnosticRelatedInformationCapability = !!(
-    capabilities.textDocument &&
-    capabilities.textDocument.publishDiagnostics &&
-    capabilities.textDocument.publishDiagnostics.relatedInformation
-  );
+  // hasDiagnosticRelatedInformationCapability = Boolean(
+  //   capabilities.textDocument?.publishDiagnostics?.relatedInformation
+  // );
 
   const result: InitializeResult = {
     capabilities: {
@@ -74,7 +71,8 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [' ', '.', '[', '"', '\'', '{', '<', ':', '|'],
+        // eslint-disable-next-line @typescript-eslint/quotes
+        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
       },
       definitionProvider: true,
       // hoverProvider: true,
@@ -96,6 +94,7 @@ connection.onInitialize(async (params: InitializeParams) => {
   return result;
 });
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 connection.onInitialized(async () => {
   console.log('[server.ts] 2. onInitialized');
 
@@ -129,7 +128,7 @@ connection.onInitialized(async () => {
     const targetProject = aureliaProjects.getBy(tsConfigPath);
     if (!targetProject) return;
 
-    hasServerInitialized = true;
+    // hasServerInitialized = true;
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
@@ -138,7 +137,7 @@ connection.onInitialized(async () => {
   }
 });
 
-connection.onDidChangeConfiguration((change) => {
+connection.onDidChangeConfiguration(() => {
   console.log('[server.ts] onDidChangeConfiguration');
 
   // if (hasConfigurationCapability) {
@@ -152,10 +151,7 @@ connection.onDidChangeConfiguration((change) => {
   // void createAureliaWatchProgram(aureliaProgram);
 });
 
-connection.onDidOpenTextDocument((param) => {
-  param;
-  /* prettier-ignore */ console.log('TCL: param', param);
-});
+// connection.onDidOpenTextDocument(() => {});
 
 // Only keep settings for open documents
 // documents.onDidClose((e) => {
@@ -271,8 +267,8 @@ connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
 });
 
 connection.onExecuteCommand(
-  async (executeCommandParams: ExecuteCommandParams) => {
-    executeCommandParams;
+  // async (executeCommandParams: ExecuteCommandParams) => {
+  async () => {
     return null;
   }
 );
@@ -287,7 +283,7 @@ connection.onRenameRequest(
     const renamed = await aureliaServer.onRenameRequest(
       document,
       position,
-      newName,
+      newName
     );
 
     if (renamed) {

@@ -26,7 +26,7 @@ export type TypeToClass<TargetType extends ViewRegionType> =
 never;
 
 export class ViewRegionUtils {
-  static getRegionsOfType<
+  public static getRegionsOfType<
     TargetKind extends ViewRegionType,
     ReturnType extends TypeToClass<TargetKind>
   >(regions: AbstractRegion[], regionType: TargetKind): ReturnType[] {
@@ -36,14 +36,17 @@ export class ViewRegionUtils {
     return targetRegions as ReturnType[];
   }
 
-  static getTargetRegion(regions: AbstractRegion[], line: string) {
+  public static getTargetRegion(regions: AbstractRegion[], line: string) {
     const result = regions.find((region) => {
       return region.sourceCodeLocation.startLine === Number(line);
     });
     return result;
   }
 
-  static findRegionAtPosition(regions: AbstractRegion[], position: Position) {
+  public static findRegionAtPosition(
+    regions: AbstractRegion[],
+    position: Position
+  ) {
     // RegionParser.pretty(regions, {
     //   asTable: true,
     //   ignoreKeys: [
@@ -54,7 +57,6 @@ export class ViewRegionUtils {
     //   ],
     //   maxColWidth: 12,
     // }); /*?*/
-    regions; /* ? */
     let targetRegion: AbstractRegion | undefined;
 
     regions.find((region) => {
@@ -81,14 +83,14 @@ export class ViewRegionUtils {
     return targetRegion;
   }
 
-  static findRegionAtOffset(regions: AbstractRegion[], offset: number) {
+  public static findRegionAtOffset(regions: AbstractRegion[], offset: number) {
     const possibleRegions: AbstractRegion[] = [];
 
     regions.forEach((region) => {
       const possibleRegion = region;
       if (CustomElementRegion.is(region)) {
         const subTarget = this.findRegionAtOffset(region.data, offset);
-        if (subTarget) {
+        if (subTarget !== undefined) {
           possibleRegions.push(subTarget);
         }
       }
@@ -100,7 +102,6 @@ export class ViewRegionUtils {
       }
     });
 
-    possibleRegions; /* ? */
     const targetRegion = findSmallestRegionAtOffset(possibleRegions, offset);
 
     // if (targetRegion === undefined) {
@@ -126,7 +127,7 @@ function findSmallestRegionAtOffset(regions: AbstractRegion[], offset: number) {
   let smallestValue = Infinity;
   let smallestRegionIndex = 0;
   regions.forEach((region, index) => {
-    if (!region.sourceCodeLocation) return;
+    if (region.sourceCodeLocation === undefined) return;
     const { startOffset, endOffset } = region.sourceCodeLocation;
 
     const startDelta = offset - startOffset;

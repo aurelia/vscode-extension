@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -13,7 +18,7 @@ import {
 export class RelatedFiles implements Disposable {
   private readonly disposables: Disposable[] = [];
 
-  public constructor() {
+  constructor() {
     this.disposables.push(
       commands.registerTextEditorCommand(
         'extension.auOpenRelated',
@@ -131,7 +136,7 @@ export class RelatedFiles implements Disposable {
       /**
        * '.spec' is not recognized as an file extension.
        * Thus, `replace`, so we are able to switch from, eg. 'unit' to 'style'.
-       * */
+       */
       const fileName = editor.document.fileName.replace('.spec', '');
       const relatedFile = this.getRelatedFilePath(fileName, switchToExtensions);
       if (relatedFile) {

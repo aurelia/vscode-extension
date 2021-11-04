@@ -13,7 +13,7 @@ const CACHE_FILE_PATH = path.resolve(
 
 export type ParsedFeatures = ReturnType<typeof loadFeatures>;
 
-export function createFeatureCache(features: ParsedFeatures) {
+export function createFeatureCache(features: ParsedFeatures): void {
   fs.writeFileSync(CACHE_FILE_PATH, JSON.stringify(features));
 }
 

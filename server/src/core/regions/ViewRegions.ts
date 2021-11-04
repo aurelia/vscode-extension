@@ -18,7 +18,7 @@ import { IViewRegionsVisitor } from './ViewRegionsVisitor';
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 export type RequiredBy<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
-export interface ViewRegionInfoV2<RegionDataType = any> {
+export interface ViewRegionInfoV2<RegionDataType = unknown> {
   //
   type: ViewRegionType;
   subType?: ViewRegionSubType;
@@ -50,6 +50,7 @@ export enum ViewRegionSubType {
   EndTag = 'EndTag',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CustomElementRegionData = AbstractRegion[];
 
 export interface RepeatForRegionData {
@@ -96,7 +97,7 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
   public languageService: AbstractRegionLanguageService;
   //
   public type: ViewRegionType;
-  public subType?: any;
+  public subType?: ViewRegionSubType;
   //
   public sourceCodeLocation: SourceCodeLocation;
   //
@@ -125,28 +126,35 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
   }
 
   // region static
-  static create(info: ViewRegionInfoV2) {}
+  public static create(info: ViewRegionInfoV2) {
+    return info;
+  }
 
-  static is(region: AbstractRegion): any {}
+  public static is(region: AbstractRegion): unknown {
+    return region;
+  }
 
-  // static parse5Start(
+  // public static parse5Start(
   //   startTag: SaxStream.StartTagToken,
   //   attr: parse5.Attribute
   // ) {}
-  // static parse5Interpolation(
+  // public static parse5Interpolation(
   //   startTag: SaxStream.StartTagToken,
   //   attr: parse5.Attribute,
   //   interpolationMatch: RegExpExecArray | null
   // ) {}
-  // static parse5End(endTag: SaxStream.EndTagToken, attr: parse5.Attribute) {}
-  // static parse5Text(
+  // public static parse5End(endTag: SaxStream.EndTagToken, attr: parse5.Attribute) {}
+  // public static parse5Text(
   //   text: SaxStream.TextToken,
   //   interpolationMatch: RegExpExecArray | null
   // ) {}
   // endregion public
 
   // region public
-  public accept<T>(visitor: IViewRegionsVisitor<T>): T | void {}
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T | void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    visitor;
+  }
 
   public getStartPosition(): Position {
     return {
@@ -172,7 +180,7 @@ export class AttributeRegion extends AbstractRegion {
     this.languageService = new AttributeLanguageService();
   }
 
-  static create(info: Optional<ViewRegionInfoV2, 'type'>) {
+  public static create(info: Optional<ViewRegionInfoV2, 'type'>) {
     const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.Attribute,
@@ -180,7 +188,10 @@ export class AttributeRegion extends AbstractRegion {
     return new AttributeRegion(finalInfo);
   }
 
-  static parse5(startTag: SaxStream.StartTagToken, attr: parse5.Attribute) {
+  public static parse5(
+    startTag: SaxStream.StartTagToken,
+    attr: parse5.Attribute
+  ) {
     const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
     if (!attrLocation) return;
 
@@ -223,7 +234,7 @@ export class AttributeInterpolationRegion extends AbstractRegion {
     this.languageService = new AttributeInterpolationLanguageService();
   }
 
-  static create(info: Optional<ViewRegionInfoV2, 'type'>) {
+  public static create(info: Optional<ViewRegionInfoV2, 'type'>) {
     const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.AttributeInterpolation,
@@ -231,7 +242,7 @@ export class AttributeInterpolationRegion extends AbstractRegion {
     return new AttributeInterpolationRegion(finalInfo);
   }
 
-  static parse5Interpolation(
+  public static parse5Interpolation(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute,
     interpolationMatch: RegExpExecArray | null
@@ -288,7 +299,7 @@ export class AureliaHtmlRegion extends AbstractRegion {
     this.languageService = new AureliaHtmlLanguageService();
   }
 
-  static create() {
+  public static create() {
     const finalInfo = convertToRegionInfo({
       sourceCodeLocation: {
         startLine: 0,
@@ -318,7 +329,7 @@ export class BindableAttributeRegion extends AbstractRegion {
     this.languageService = new BindableAttributeLanguageService();
   }
 
-  static create(info: Optional<ViewRegionInfoV2, 'type'>) {
+  public static create(info: Optional<ViewRegionInfoV2, 'type'>) {
     const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.BindableAttribute,
@@ -326,7 +337,7 @@ export class BindableAttributeRegion extends AbstractRegion {
     return new BindableAttributeRegion(finalInfo);
   }
 
-  static parse5Start(
+  public static parse5Start(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute
   ) {
@@ -370,35 +381,35 @@ export class CustomElementRegion extends AbstractRegion {
     this.languageService = new CustomElementLanguageService();
   }
 
-  // region static
-  static create(info: Optional<ViewRegionInfoV2, 'type'>) {
+  // region public static
+  public static create(info: Optional<ViewRegionInfoV2, 'type'>) {
     const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.CustomElement,
     });
     return new CustomElementRegion(finalInfo);
   }
-  static createStart(
+  public static createStart(
     info: RequiredBy<ViewRegionInfoV2, 'sourceCodeLocation' | 'tagName'>
   ) {
     info.subType = ViewRegionSubType.StartTag;
     return CustomElementRegion.create(info);
   }
-  static createEnd(info: Optional<ViewRegionInfoV2, 'type'>) {
+  public static createEnd(info: Optional<ViewRegionInfoV2, 'type'>) {
     info.subType = ViewRegionSubType.EndTag;
     return CustomElementRegion.create(info);
   }
 
-  static is(region: AbstractRegion): region is CustomElementRegion {
+  public static is(region: AbstractRegion): region is CustomElementRegion {
     return region.type === ViewRegionType.CustomElement;
   }
 
-  static parse5Start(startTag: SaxStream.StartTagToken) {
+  public static parse5Start(startTag: SaxStream.StartTagToken) {
     const tagName = startTag.tagName;
     const { sourceCodeLocation } = startTag;
     if (!sourceCodeLocation) return;
 
-    const { startLine, startCol, startOffset, endOffset } = sourceCodeLocation;
+    const { startLine, startCol, startOffset } = sourceCodeLocation;
     const finalStartCol = startCol + 1; // + 1 for "<" of closing tag
     const finalStartOffset = startOffset + 1; // + 1 for < of closing tag
     const finalEndCol = finalStartCol + tagName.length;
@@ -419,7 +430,7 @@ export class CustomElementRegion extends AbstractRegion {
 
     return viewRegion;
   }
-  static parse5End(endTag: SaxStream.EndTagToken) {
+  public static parse5End(endTag: SaxStream.EndTagToken) {
     const { sourceCodeLocation } = endTag;
     if (!sourceCodeLocation) return;
 
@@ -443,14 +454,14 @@ export class CustomElementRegion extends AbstractRegion {
 
     return customElementViewRegion;
   }
-  // endregion static
+  // endregion public static
 
   // region public
   public getBindableAttributes(): ViewRegionInfoV2[] {
     const bindableAttributeRegions = this.data?.filter(
       (subRegion) => subRegion.type === ViewRegionType.BindableAttribute
     );
-    if (!bindableAttributeRegions) return [];
+    if (bindableAttributeRegions === undefined) return [];
 
     return bindableAttributeRegions;
   }
@@ -483,7 +494,7 @@ export class RepeatForRegion extends AbstractRegion {
     this.languageService = new RepeatForLanguageService();
   }
 
-  static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
+  public static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
     const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.RepeatFor,
@@ -491,7 +502,7 @@ export class RepeatForRegion extends AbstractRegion {
     return new RepeatForRegion(finalInfo);
   }
 
-  static parse5Start(
+  public static parse5Start(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute
   ) {
@@ -520,7 +531,6 @@ export class RepeatForRegion extends AbstractRegion {
       startCol: startColAdjust,
       endOffset: endInterpolationLength,
     };
-    // eslint-disable-next-line no-inner-declarations
     function getRepeatForData() {
       const [iterator, ofKeyword, iterable] = attr.value.split(' ');
       const iterableStartOffset =
@@ -548,7 +558,7 @@ export class RepeatForRegion extends AbstractRegion {
     return repeatForViewRegion;
   }
 
-  static is(region: AbstractRegion): region is RepeatForRegion {
+  public static is(region: AbstractRegion): region is RepeatForRegion {
     return region.type === ViewRegionType.RepeatFor;
   }
 
@@ -568,7 +578,7 @@ export class TextInterpolationRegion extends AbstractRegion {
     this.languageService = new TextInterpolationLanguageService();
   }
 
-  static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
+  public static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
     const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.TextInterpolation,
@@ -580,7 +590,7 @@ export class TextInterpolationRegion extends AbstractRegion {
    * Text nodes often begin with `\n`, which makes finding by line/col harder.
    * We thus, only modify offset.
    */
-  static parse5Text(
+  public static parse5Text(
     text: SaxStream.TextToken,
     interpolationMatch: RegExpExecArray | null
   ) {
@@ -631,7 +641,7 @@ export class ValueConverterRegion extends AbstractRegion {
     this.languageService = new ValueConverterLanguageService();
   }
 
-  static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
+  public static create(info: Optional<ViewRegionInfoV2, 'type' | 'tagName'>) {
     const finalInfo = convertToRegionInfo({
       ...info,
       type: ViewRegionType.ValueConverter,
@@ -639,13 +649,13 @@ export class ValueConverterRegion extends AbstractRegion {
     return new ValueConverterRegion(finalInfo);
   }
 
-  static is(
+  public static is(
     region: AbstractRegion | undefined
   ): region is ValueConverterRegion {
     return region?.type === ViewRegionType.ValueConverter;
   }
 
-  static parse5Start(
+  public static parse5Start(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute
   ) {
@@ -654,18 +664,15 @@ export class ValueConverterRegion extends AbstractRegion {
 
     // 6.1. Split up repeat.for='repo of repos | sort:column.value:direction.value | take:10'
     // Don't split || ("or")
-    const [initiatorText, ...valueConverterRegionsSplit] = attr.value.split(
-      /(?<!\|)\|(?!\|)/g
-    );
+    const [initiatorText, ...valueConverterRegionsSplit] =
+      attr.value.split(/(?<!\|)\|(?!\|)/g);
 
     // 6.2. For each value converter
     const valueConverterRegions: ValueConverterRegion[] = [];
     valueConverterRegionsSplit.forEach((valueConverterViewText, index) => {
       // 6.3. Split into name and arguments
-      const [
-        valueConverterName,
-        ...valueConverterArguments
-      ] = valueConverterViewText.split(':');
+      const [valueConverterName, ...valueConverterArguments] =
+        valueConverterViewText.split(':');
 
       if (valueConverterRegionsSplit.length >= 2 && index >= 1) {
         const dm = new DiagnosticMessages(

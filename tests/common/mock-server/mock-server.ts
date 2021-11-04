@@ -1,4 +1,4 @@
-import path = require('path');
+import * as path from 'path';
 
 import { Container } from 'aurelia-dependency-injection';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
@@ -49,7 +49,7 @@ export class MockServer {
     this.DocumentSettings = this.container.get(DocumentSettings);
   }
 
-  log(pluck: (input: MockServer) => any): MockServer {
+  public log(pluck: (input: MockServer) => unknown): MockServer {
     /* prettier-ignore */
     const logValue = pluck(this);
     console.log('TCL: MockConnection -> log -> input', logValue);
@@ -57,7 +57,7 @@ export class MockServer {
   }
 
   public createMockProgram(filePath?: string) {
-    if (!filePath) {
+    if (filePath === undefined) {
       filePath = this.getActiveFilePath();
     }
 
@@ -124,7 +124,7 @@ export class MockServer {
   /**
    * Goal: Can access data, after method called
    */
-  async onConnectionInitialized(
+  public async onConnectionInitialized(
     aureliaProject: Partial<IAureliaProjectSetting>
   ) {
     await this.aureliaServer.onConnectionInitialized(
@@ -144,7 +144,7 @@ export class MockServer {
    * 2. Init AureliaProject
    * 3. Hydrate AureliaProject
    */
-  async onConnectionDidChangeContent(
+  public async onConnectionDidChangeContent(
     change: TextDocumentChangeEvent<TextDocument>
   ) {
     await this.aureliaServer.onConnectionDidChangeContent(change);

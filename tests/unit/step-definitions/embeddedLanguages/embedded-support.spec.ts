@@ -1,4 +1,4 @@
-import { defineFeature, loadFeature } from 'jest-cucumber';
+import { defineFeature, DefineStepFunction, loadFeature } from 'jest-cucumber';
 
 import { ViewRegionUtils } from '../../../../server/src/common/documens/ViewRegionUtils';
 import { RegionParser } from '../../../../server/src/core/regions/RegionParser';
@@ -22,6 +22,11 @@ const feature = loadFeature(
   }
 );
 
+interface Shared {
+  workspaceRootUri: string;
+  parsedRegions: AbstractRegion[];
+}
+
 defineFeature(feature, (test) => {
   test('Parsing - Custom Element - Bindable Attribute', ({
     given,
@@ -29,7 +34,7 @@ defineFeature(feature, (test) => {
     then,
   }) => {
     const parsedRegions: AbstractRegion[] = [];
-    const shared = {
+    const shared: Shared = {
       workspaceRootUri: '',
       parsedRegions,
     };
@@ -138,7 +143,6 @@ defineFeature(feature, (test) => {
         );
 
         expect(target).toBeDefined();
-        target; /* ? */
         if (!target) return;
 
         if (RepeatForRegion.is(target)) {
@@ -157,23 +161,16 @@ defineFeature(feature, (test) => {
         }
       }
     );
-
-    function getTargetRegion(line: string) {
-      const result = shared.parsedRegions.find((region) => {
-        return region.sourceCodeLocation.startLine === Number(line);
-      });
-      return result;
-    }
   });
 });
 
-function givenImInTheProject(given, shared) {
+function givenImInTheProject(given: DefineStepFunction, shared: Shared) {
   given(/^I'm in the project "(.*)"$/, (projectName: FixtureNames) => {
     shared.workspaceRootUri = getFixtureUri(projectName);
   });
 }
 
-function whenIParseTheFile(when, shared) {
+function whenIParseTheFile(when: DefineStepFunction, shared: Shared) {
   when(/^I parse the file "(.*)"$/, async (fileName: string) => {
     const textDocumentPaths = getPathsFromFileNames(shared.workspaceRootUri, [
       fileName,
@@ -185,8 +182,9 @@ function whenIParseTheFile(when, shared) {
       .getActive();
 
     // const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
-    const parsedRegions = await RegionParser.parse(
+    const parsedRegions = RegionParser.parse(
       textDocument,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       [{ componentName: 'custom-element', viewFilePath: 'custom-element.html' }]
     );

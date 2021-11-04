@@ -11,10 +11,11 @@ import { MockServer } from '../../../common/mock-server/mock-server';
 const testContainer = new Container();
 const logger = new Logger('Project steps');
 
+// eslint-disable-next-line import/no-mutable-exports
 export let myMockServer: MockServer;
 let _WORKSPACE_URI_CACHE = '';
 
-export function theProjectIsNamed(projectName: FixtureNames) {
+export function theProjectIsNamed(projectName: FixtureNames): void {
   logger.log('/^the project is named "(.*)"$/', { reset: true });
   // /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', { logPerf: true, reset: true, });
   testError.verifyProjectName(projectName);
@@ -36,7 +37,7 @@ export function theProjectIsNamed(projectName: FixtureNames) {
 
 export async function givenIOpenVsCodeWithTheFollowingFiles(
   textDocumentPaths: string[]
-) {
+): Promise<void> {
   const mockTextDocuments = myMockServer.textDocuments
     .mock(textDocumentPaths)
     .setActive(textDocumentPaths)

@@ -9,7 +9,6 @@ import {
   AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER,
 } from '../../common/constants';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
-import { Logger } from '../../common/logging/logger';
 import { checkInsideTag } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
@@ -21,7 +20,7 @@ import {
   createAureliaTemplateAttributeCompletions,
 } from './createAureliaTemplateAttributeCompletions';
 
-const logger = new Logger('on-completions');
+// const logger = new Logger('on-completions');
 
 export async function onCompletion(
   container: Container,
@@ -34,29 +33,23 @@ export async function onCompletion(
   const aureliaProgram = targetProject?.aureliaProgram;
   if (!aureliaProgram) return [];
 
-  const targetComponent = aureliaProgram.aureliaComponents.getOneByFromDocument(
-    document
-  );
+  // const targetComponent =
+  //   aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   // const regions = targetComponent?.viewRegions;
   const regions = RegionParser.parse(
     document,
     aureliaProgram.aureliaComponents.getAll()
   );
-  regions; /* ? */
   // aureliaProgram.aureliaComponents.getAll().map((c) => c.componentName); /*?*/
 
   // if (regions.length === 0) return [];
   document.getText(); /* ? */
   const { position } = _textDocumentPosition;
   const offset = document.offsetAt(position);
-  offset; /* ? */
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
-  region; /* ? */
 
   const text = document.getText();
-  text; /* ? */
   const triggerCharacter = text.substring(offset - 1, offset);
-  triggerCharacter; /* ? */
   let accumulateCompletions: CompletionItem[] = [];
 
   if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {
@@ -64,7 +57,8 @@ export async function onCompletion(
     const isInsideTag = await checkInsideTag(document, offset);
 
     if (isNotRegion && isInsideTag) {
-      const atakCompletions = createAureliaTemplateAttributeKeywordCompletions();
+      const atakCompletions =
+        createAureliaTemplateAttributeKeywordCompletions();
       return atakCompletions;
     }
   } else if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER) {
@@ -84,7 +78,7 @@ export async function onCompletion(
   }
 
   let languageService: AbstractRegionLanguageService;
-  if (!region) {
+  if (region === undefined) {
     languageService = new AureliaHtmlLanguageService();
   } else {
     languageService = region.languageService;
@@ -95,13 +89,13 @@ export async function onCompletion(
   if (doComplete !== undefined) {
     let completions: CompletionItem[] = [CompletionItem.create('')];
     try {
-      completions = ((await doComplete(
+      completions = (await doComplete(
         aureliaProgram,
         document,
         _textDocumentPosition,
         triggerCharacter,
         region
-      )) as unknown) as CompletionItem[];
+      )) as unknown as CompletionItem[];
     } catch (error) {
       console.log('TCL: error', error);
     }

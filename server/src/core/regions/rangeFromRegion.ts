@@ -9,16 +9,12 @@ export function getRangeFromDocumentOffsets(
   startOffset: number | undefined,
   endOffset: number | undefined
 ) {
-  if (!startOffset) return;
-  if (!endOffset) return;
+  if (startOffset === undefined) return;
+  if (endOffset === undefined) return;
 
   const startPosition = document.positionAt(startOffset);
   const endPosition = document.positionAt(endOffset - 1);
   const range = Range.create(startPosition, endPosition);
-  if (document.uri.includes('custom-element.ts')) {
-    startOffset; /* ? */
-    range; /* ? */
-  }
   return range;
 }
 
@@ -30,7 +26,7 @@ export function getRangeFromRegion(
   if (document) {
     range = getRangeFromRegionViaDocument(region, document);
   } else {
-    range = getRangeFromStandardRegion(region, range);
+    range = getRangeFromStandardRegion(region);
   }
 
   return range;
@@ -40,7 +36,7 @@ function getRangeFromRegionViaDocument(
   region: AbstractRegion,
   document: TextDocument
 ) {
-  if (!region.sourceCodeLocation) return;
+  if (region.sourceCodeLocation === undefined) return;
   const { sourceCodeLocation } = region;
   const { startOffset } = sourceCodeLocation;
   const { endOffset } = sourceCodeLocation;
@@ -55,8 +51,8 @@ function getRangeFromRegionViaDocument(
   return range;
 }
 
-function getRangeFromStandardRegion(region: AbstractRegion, range: any) {
-  if (!region.sourceCodeLocation) return;
+function getRangeFromStandardRegion(region: AbstractRegion) {
+  if (region.sourceCodeLocation === undefined) return;
   const { sourceCodeLocation } = region;
   const { startCol } = sourceCodeLocation;
   const { startLine } = sourceCodeLocation;
@@ -65,7 +61,7 @@ function getRangeFromStandardRegion(region: AbstractRegion, range: any) {
 
   const startPosition = Position.create(startLine, startCol);
   const endPosition = Position.create(endLine, endCol);
-  range = Range.create(startPosition, endPosition);
+  const range = Range.create(startPosition, endPosition);
 
   return range;
 }
@@ -73,8 +69,8 @@ function getRangeFromStandardRegion(region: AbstractRegion, range: any) {
 function getRangeFromRepeatForRegion(
   repeatForRegion: RepeatForRegion,
   document: TextDocument
-): any {
-  if (!repeatForRegion.data) return;
+) {
+  if (repeatForRegion.data === undefined) return;
 
   const range = getRangeFromDocumentOffsets(
     document,
@@ -110,7 +106,7 @@ export function getStartTagNameRange(
   region: AbstractRegion,
   document: TextDocument
 ) {
-  if (!region.sourceCodeLocation) return;
+  if (region.sourceCodeLocation === undefined) return;
   const { sourceCodeLocation } = region;
   const { startOffset } = sourceCodeLocation;
   const { tagName } = region;

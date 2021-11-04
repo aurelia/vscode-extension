@@ -2,14 +2,14 @@ import { getPathsFromFileNames } from '../file-path-mocks';
 import { FixtureNames, FIXTURE_NAMES } from '../fixtures/get-fixture-dir';
 
 export class TestError extends Error {
-  message: string;
+  public message: string;
 
   constructor(message?: string) {
-    const finalMessage = `[TestError] ${message}`;
+    const finalMessage = `[TestError] ${message ?? ''}`;
     super(finalMessage);
   }
 
-  log(message: string): void {
+  public log(message: string): void {
     console.log(`[TestError] ${message}`);
   }
 
@@ -19,7 +19,7 @@ export class TestError extends Error {
     }
   }
 
-  public verifyFileInProject(uri, fileName: string): void {
+  public verifyFileInProject(uri: string, fileName: string): void {
     const paths = getPathsFromFileNames(uri, [fileName]);
     const fileDoesNotExist = paths.some((path) => path === undefined);
 

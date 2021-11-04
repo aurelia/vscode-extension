@@ -7,7 +7,8 @@ import { AureliaProjects } from '../../core/AureliaProjects';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { convertToSymbolName } from './onDocumentSymbol';
 
-export function onWorkspaceSymbol(container: Container, query: string) {
+// export function onWorkspaceSymbol(container: Container, query: string) {
+export function onWorkspaceSymbol(container: Container) {
   const finalWorkspaceSymbols: SymbolInformation[] = [];
   const aureliaProjects = container.get(AureliaProjects);
   aureliaProjects.getAll().forEach((aureliaProject) => {
@@ -15,7 +16,7 @@ export function onWorkspaceSymbol(container: Container, query: string) {
       .getAll()
       .forEach((component) => {
         component.viewRegions?.forEach((region) => {
-          if (!component.viewFilePath) return;
+          if (component.viewFilePath === undefined) return;
 
           const viewUri = UriUtils.toUri(component.viewFilePath);
           const symbol = createWorkspaceSymbol(viewUri, region);

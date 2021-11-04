@@ -27,7 +27,7 @@ export interface IAureliaProject {
 export class AureliaProjects {
   private readonly aureliaProjects: IAureliaProject[] = [];
 
-  public constructor(public readonly documentSettings: DocumentSettings) {}
+  constructor(public readonly documentSettings: DocumentSettings) {}
 
   public async initAndVerify(extensionSettings: ExtensionSettings) {
     const packageJsonPaths = getPackageJsonPaths(extensionSettings);
@@ -151,7 +151,7 @@ export class AureliaProjects {
     const aureliaProjects = this.getAll();
 
     /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    aureliaProjects.forEach(async ({ tsConfigPath, aureliaProgram }) => {
+    aureliaProjects.every(async ({ tsConfigPath, aureliaProgram }) => {
       const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
       if (!shouldActivate) return;
 
@@ -201,11 +201,13 @@ function getShouldActivate(documentsPaths: string[], tsConfigPath: string) {
 }
 
 function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+  const packageJson = JSON.parse(
+    fs.readFileSync(packageJsonPath, 'utf-8')
+  ) as Record<string, Record<string, string>>;
   const dep = packageJson['dependencies'];
-  if (!dep) return false;
+  if (dep === undefined) return false;
   const devDep = packageJson['devDependencies'];
-  if (!devDep) return false;
+  if (devDep === undefined) return false;
 
   const isAuV1App = dep['aurelia-framework'] !== undefined;
   const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;

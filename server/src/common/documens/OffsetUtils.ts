@@ -1,7 +1,5 @@
-import { Position } from 'vscode-languageserver-textdocument';
-
 export class OffsetUtils {
-  static isIncluded(
+  public static isIncluded(
     startOffset: number,
     endOffset: number,
     targetOffset: number

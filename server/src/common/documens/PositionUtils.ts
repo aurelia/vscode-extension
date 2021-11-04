@@ -1,7 +1,7 @@
 import { Position } from 'vscode-languageserver-textdocument';
 
 export class PositionUtils {
-  static isIncluded(start: Position, end: Position, target: Position) {
+  public static isIncluded(start: Position, end: Position, target: Position) {
     const projectedStart = projectPosition(start);
     const projectedEnd = projectPosition(end);
     const projectedSources = projectPosition(target);

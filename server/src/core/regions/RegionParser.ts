@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SaxStream from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaView } from '../../common/constants';
-import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { Logger } from '../../common/logging/logger';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../feature/configuration/DocumentSettings';
 import { IAureliaComponent } from '../viewModel/AureliaProgram';
@@ -31,7 +31,7 @@ interface PrettyOptions<
 }
 
 export class RegionParser {
-  static parse(
+  public static parse(
     document: TextDocument,
     componentList: Optional<IAureliaComponent, 'viewRegions'>[]
   ): AbstractRegion[] {
@@ -55,7 +55,7 @@ export class RegionParser {
      * 6. Value converter region (value | take:10)
      * 7. BindableAttribute x
      */
-    // eslint-disable-next-line max-lines-per-function
+
     saxStream.on('startTag', (startTag) => {
       // 0. Prep
       const tagName = startTag.tagName;
@@ -63,6 +63,7 @@ export class RegionParser {
       // 1. Template Tag
       const isTemplateTag = tagName === AureliaView.TEMPLATE_TAG_NAME;
       if (isTemplateTag) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         hasTemplateTag = true;
       }
 
@@ -125,7 +126,7 @@ export class RegionParser {
             startTag,
             attr
           );
-          if (!valueConverterRegion) return;
+          if (valueConverterRegion === undefined) return;
           viewRegions.push(...valueConverterRegion);
         }
       });
@@ -173,26 +174,27 @@ export class RegionParser {
     return viewRegions;
   }
 
-  static pretty<
+  public static pretty<
     Regions extends AbstractRegion[],
     IgnoreKey extends keyof Regions[number]
   >(
     regions: AbstractRegion[],
     prettyOptions?: PrettyOptions<Regions, IgnoreKey>
   ) {
-    const finalResult: Record<string, any>[] = [];
+    const finalResult: Record<string, unknown>[] = [];
 
     regions.forEach((region) => {
-      const prettified: Record<string, any> = pickTruthyFields(
+      const prettified: Record<string, unknown> = pickTruthyFields(
         region,
         prettyOptions
       );
 
       // .data[]
       if (Array.isArray(region.data)) {
-        const pretty_data: Record<string, any>[] = [];
+        const pretty_data: Record<string, unknown>[] = [];
         region.data.forEach((subRegion) => {
           const pretty_subRegionData = pickTruthyFields(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             subRegion,
             prettyOptions
           );
@@ -204,7 +206,7 @@ export class RegionParser {
       finalResult.push(prettified);
     });
 
-    if (prettyOptions?.asTable) {
+    if (prettyOptions?.asTable !== undefined) {
       const asTable = objectToTable(finalResult, prettyOptions);
       return asTable;
     }
@@ -235,6 +237,7 @@ function objectToTable<
     const withAllKeys: Record<string, string> = {};
     // enrich with all keys, to allow normalized table
     allPossibleKeys.forEach((possibleKey) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       withAllKeys[possibleKey] = result[possibleKey] ?? EMPTY_PLACEHOLDER;
     });
 
@@ -242,8 +245,10 @@ function objectToTable<
     if (typeof withAllKeys.data === 'object') {
       flattenedRows.push(Object.values(withAllKeys));
       if (Array.isArray(withAllKeys.data)) {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         (<Record<string, any>[]>withAllKeys.data).forEach((datum) => {
           allPossibleKeys.forEach((possibleKey) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             withAllKeys[possibleKey] = datum[possibleKey] ?? EMPTY_PLACEHOLDER;
           });
           flattenedRows.push(Object.values(withAllKeys));
@@ -293,7 +298,7 @@ function objectToTable<
 
 function pickTruthyFields(
   anyObject: Record<string, any>,
-  prettyOptions?: { ignoreKeys?: unknown[] }
+  prettyOptions?: { ignoreKeys?: any[] }
 ) {
   const truthyFields: Record<string, any> = {};
 
@@ -301,10 +306,11 @@ function pickTruthyFields(
     const regionInfo = value as ViewRegionInfoV2;
     if (regionInfo === undefined) return;
     if (prettyOptions?.ignoreKeys) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const shouldIgnoreKey = prettyOptions.ignoreKeys.find(
         (ignore) => ignore === key
       );
-      if (shouldIgnoreKey) return;
+      if (shouldIgnoreKey !== undefined) return;
     }
 
     truthyFields[key] = regionInfo;

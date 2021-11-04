@@ -13,7 +13,7 @@ import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class AttributeInterpolationLanguageService
   implements AbstractRegionLanguageService {
-  async doComplete(
+  public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
@@ -34,7 +34,7 @@ export class AttributeInterpolationLanguageService
 
     return [];
   }
-  async doDefinition(
+  public async doDefinition(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -52,7 +52,7 @@ export class AttributeInterpolationLanguageService
       regions
     );
   }
-  async doHover(
+  public async doHover(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -68,7 +68,7 @@ export class AttributeInterpolationLanguageService
     );
   }
 
-  async doRename(
+  public async doRename(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,

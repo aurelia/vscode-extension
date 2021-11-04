@@ -10,7 +10,6 @@ import { onCompletion } from '../feature/completions/onCompletions';
 import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
 import { onDefintion } from '../feature/definition/onDefinitions';
-import { onHover } from '../feature/hover/onHover';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
@@ -27,7 +26,7 @@ export class AureliaServer {
     initDependencyInjection(container, extensionSettings);
   }
 
-  async onConnectionInitialized(
+  public async onConnectionInitialized(
     extensionSettings: ExtensionSettings,
     activeDocuments: TextDocument[] = []
   ): Promise<void> {
@@ -38,7 +37,7 @@ export class AureliaServer {
     );
   }
 
-  async onConnectionDidChangeContent(
+  public async onConnectionDidChangeContent(
     change: TextDocumentChangeEvent<TextDocument>
   ): Promise<void> {
     await onConnectionDidChangeContent(this.container, change);
@@ -63,17 +62,21 @@ export class AureliaServer {
   // onWillSaveTextDocument() {}
   // onWillSaveTextDocumentWaitUntil() {}
 
-  async onDidSave(change: TextDocumentChangeEvent<TextDocument>) {
+  public async onDidSave(change: TextDocumentChangeEvent<TextDocument>) {
     await onDidSave(this.container, change);
   }
 
   // sendDiagnostics() {}
-  async onHover(documentContent: string, position: Position, filePath: string) {
+  public async onHover(
+    // documentContent: string,
+    // position: Position,
+    // filePath: string
+  ) {
     // const hovered = onHover(documentContent, position, filePath);
     // return hovered;
   }
 
-  async onCompletion(
+  public async onCompletion(
     textDocumentPosition: TextDocumentPositionParams,
     document: TextDocument
   ) {
@@ -90,7 +93,7 @@ export class AureliaServer {
   // onSignatureHelp() {}
   // onDeclaration() {}
 
-  async onDefinition(document: TextDocument, position: Position) {
+  public async onDefinition(document: TextDocument, position: Position) {
     const definition = await onDefintion(document, position, this.container);
     return definition;
   }
@@ -100,13 +103,14 @@ export class AureliaServer {
   // onReferences() {}
   // onDocumentHighlight() {}
 
-  async onDocumentSymbol(documentUri: string) {
+  public async onDocumentSymbol(documentUri: string) {
     const symbols = await onDocumentSymbol(this.container, documentUri);
     return symbols;
   }
 
-  onWorkspaceSymbol(query: string): SymbolInformation[] {
-    const symbols = onWorkspaceSymbol(this.container, query);
+  public onWorkspaceSymbol(): SymbolInformation[] {
+    // const symbols = onWorkspaceSymbol(this.container, query);
+    const symbols = onWorkspaceSymbol(this.container);
 
     return symbols;
   }
@@ -118,7 +122,7 @@ export class AureliaServer {
   // onDocumentRangeFormatting() {}
   // onDocumentOnTypeFormatting() {}
 
-  async onRenameRequest(
+  public async onRenameRequest(
     document: TextDocument,
     position: Position,
     newName: string

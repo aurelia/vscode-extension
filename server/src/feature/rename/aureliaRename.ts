@@ -31,13 +31,13 @@ export async function aureliaRenameFromView(
   newName: string,
   region: AbstractRegion
 ) {
-  if (!region.sourceCodeLocation) return;
+  if (region.sourceCodeLocation === undefined) return;
 
   // 1. rename view model
   const offset = document.offsetAt(position);
-  offset; /* ? */
+  // offset; /* ? */
   const sourceWord = findSourceWord(region, offset);
-  sourceWord; /* ? */
+  // sourceWord; /* ? */
 
   let viewModelPath = '';
 
@@ -80,7 +80,7 @@ export async function aureliaRenameFromView(
   const uri = pathToFileURL(viewFilePath).toString();
   const content = fs.readFileSync(viewFilePath, 'utf-8');
   const viewDocument = TextDocument.create(uri, 'html', 0, content);
-  if (!viewDocument) return;
+  if (viewDocument === undefined) return;
 
   const otherChangesInsideSameView = await renameAllOtherRegionsInSameView(
     aureliaProgram,

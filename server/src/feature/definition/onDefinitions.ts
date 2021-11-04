@@ -33,15 +33,14 @@ export async function onDefintion(
   const aureliaProgram = targetProject?.aureliaProgram;
   if (!aureliaProgram) return;
 
-  const targetComponent = aureliaProgram.aureliaComponents.getOneByFromDocument(
-    document
-  );
+  const targetComponent =
+    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   const regions = targetComponent?.viewRegions;
 
   if (!regions) return;
   const offset = document.offsetAt(position);
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
-  if (!region) return;
+  if (region === undefined) return;
   const doDefinition = region.languageService.doDefinition;
 
   if (doDefinition) {

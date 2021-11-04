@@ -62,7 +62,6 @@ export async function aureliaDefinitionFromViewModel(
   }
 
   const sourceWord = getWordAtOffset(document.getText(), offset);
-  sourceWord; /* ? */
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneBy('className', sourceWord) ??
     aureliaProgram.aureliaComponents.getOneBy(
@@ -75,30 +74,33 @@ export async function aureliaDefinitionFromViewModel(
 
   // Class Member
   if (targetMember) {
-    const viewRegionDefinitions_ClassMembers = await getAureliaClassMemberDefinitions_SameView(
-      container,
-      aureliaProgram,
-      document,
-      sourceWord
-    );
+    const viewRegionDefinitions_ClassMembers =
+      await getAureliaClassMemberDefinitions_SameView(
+        container,
+        aureliaProgram,
+        document,
+        sourceWord
+      );
     finalDefinitions.push(...viewRegionDefinitions_ClassMembers);
 
     // Bindable
     const isBindable = targetMember.isBindable;
     if (isBindable) {
-      const viewRegionDefinitions_Bindables = await getAureliaClassMemberDefinitions_OtherViewBindables(
-        aureliaProgram,
-        sourceWord
-      );
+      const viewRegionDefinitions_Bindables =
+        await getAureliaClassMemberDefinitions_OtherViewBindables(
+          aureliaProgram,
+          sourceWord
+        );
       finalDefinitions.push(...viewRegionDefinitions_Bindables);
     }
   }
   // Class
   else if (targetComponent) {
-    const viewRegionDefinitions_Class: LocationLink[] = await getAureliaCustomElementDefinitions_OtherViews(
-      aureliaProgram,
-      targetComponent
-    );
+    const viewRegionDefinitions_Class: LocationLink[] =
+      await getAureliaCustomElementDefinitions_OtherViews(
+        aureliaProgram,
+        targetComponent
+      );
 
     finalDefinitions.push(...viewRegionDefinitions_Class);
   }
@@ -191,7 +193,7 @@ function findRegularTypescriptDefinitions(
     .getLanguageService()
     .getDefinitionsAtPosition(sourceFile, offset);
 
-  sourceDefinitions.find((definition) => {
+  sourceDefinitions.forEach((definition) => {
     const locationLink = createLocationLinkFromDocumentSpan(definition);
     finalDefinitions.push(locationLink);
   });
@@ -249,7 +251,7 @@ function createLocationLinkFromRegion(
   region: AbstractRegion,
   document: TextDocument
 ) {
-  if (!region.sourceCodeLocation) return;
+  if (region.sourceCodeLocation === undefined) return;
   const { startLine, startCol, endLine, endCol } = region.sourceCodeLocation;
 
   const range = Range.create(
@@ -271,8 +273,6 @@ function getIsSourceDefinition(
   position: Position
 ) {
   const targetDefinition = definitions.find((definition) => {
-    definition.targetUri;
-
     const { start, end } = definition.targetRange;
     const _isIncludedPosition = PositionUtils.isIncluded(start, end, position);
     const isSamePath = definition.targetUri === UriUtils.toUri(viewModelPath);

@@ -26,7 +26,7 @@ export class AureliaComponents {
     if (filePaths.length === 0) {
       logger.log('Error: No Aurelia files found.');
     }
-    if (!this.checker) {
+    if (this.checker === undefined) {
       this.checker = program.getTypeChecker();
     }
 
@@ -103,28 +103,31 @@ export class AureliaComponents {
   public getOneByFromDocument(document: TextDocument) {
     const target = this.getAll().find((component) => {
       if (this.isViewDocument(document)) {
-        if (!component.viewFilePath) return;
-        if (component.viewFilePath !== UriUtils.toPath(document.uri)) return;
+        if (component.viewFilePath === undefined) return false;
+        if (component.viewFilePath !== UriUtils.toPath(document.uri))
+          return false;
         return this.getOneBy(
           'viewFilePath',
           UriUtils.toPath(component.viewFilePath)
         );
       } else if (this.isViewModelDocument(document)) {
         if (component.viewModelFilePath !== UriUtils.toPath(document.uri))
-          return;
+          return false;
         return this.getOneBy(
           'viewModelFilePath',
           UriUtils.toPath(component.viewModelFilePath)
         );
       }
+
+      return false;
     });
 
     return target;
   }
 
   private isViewDocument(document: TextDocument) {
-    const viewExtensions = this.documentSettings.getSettings().relatedFiles
-      ?.view;
+    const viewExtensions =
+      this.documentSettings.getSettings().relatedFiles?.view;
     if (!viewExtensions) return;
 
     const target = viewExtensions.find((extension) =>
@@ -134,8 +137,8 @@ export class AureliaComponents {
   }
 
   private isViewModelDocument(document: TextDocument) {
-    const viewModelExtensions = this.documentSettings.getSettings().relatedFiles
-      ?.script;
+    const viewModelExtensions =
+      this.documentSettings.getSettings().relatedFiles?.script;
     if (!viewModelExtensions) return;
 
     const target = viewModelExtensions.find((extension) =>
@@ -217,7 +220,7 @@ export class AureliaComponents {
   ) {
     const enhanced = [...componentList];
     enhanced.forEach((component) => {
-      if (!component.viewFilePath) return;
+      if (component.viewFilePath === undefined) return;
       const viewDocument = TextDocumentUtils.createHtmlFromPath(
         component.viewFilePath
       );

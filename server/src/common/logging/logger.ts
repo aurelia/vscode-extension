@@ -1,4 +1,4 @@
-import { blueBright, bgWhite, bold, underline } from 'colorette';
+import { blueBright, bgWhite, bold } from 'colorette';
 import { Logger as Culogger } from 'culog';
 
 import { PerformanceMeasure } from './performance-measure';
@@ -35,14 +35,15 @@ export class Logger {
   private readonly performanceMeasure?: PerformanceMeasure;
 
   constructor(
+    // eslint-disable-next-line default-param-last
     scope: string = 'Aurelia',
     private readonly options: ILogOptions = DEFAULT_LOG_OPTIONS
   ) {
     this.culogger = new Culogger({ scope });
-    const isJest = __dirname.includes('vscode-extension/server/');
-    const isWallaby =
-      __dirname.includes('wallabyjs') && __dirname.includes('instrumented');
-    const log = !isJest && !isWallaby;
+    // const isJest = __dirname.includes('vscode-extension/server/');
+    // const isWallaby =
+    //   __dirname.includes('wallabyjs') && __dirname.includes('instrumented');
+    // const log = !isJest && !isWallaby;
     // const log = true;
 
     this.culogger.overwriteDefaultLogOtpions({
@@ -52,20 +53,20 @@ export class Logger {
       // logScope: false,
     });
 
-    if (this.options.measurePerf) {
+    if (this.options.measurePerf !== undefined) {
       this.performanceMeasure = performanceMeasure;
     }
   }
 
-  log(message: string, options?: ILogOptions) {
+  public log(message: string, options?: ILogOptions) {
     const localOptions = {
       ...this.options,
       ...options,
     };
 
-    if (localOptions.measurePerf) {
-      if (localOptions.focusedPerf) {
-        if (localOptions.logPerf) {
+    if (localOptions.measurePerf !== undefined) {
+      if (localOptions.focusedPerf !== undefined) {
+        if (localOptions.logPerf !== undefined) {
           this.getPerformanceMeasure()?.performance.mark(message);
           this.getPerformanceMeasure()?.continousMeasuring(message, {
             reset: localOptions.reset,
@@ -79,7 +80,7 @@ export class Logger {
       }
     }
 
-    if (localOptions.highlight) {
+    if (localOptions.highlight !== undefined) {
       console.log(
         bold(blueBright(bgWhite('------------ v HIGHLIGHT v ------------')))
       );
@@ -105,7 +106,7 @@ export class Logger {
       logLevel: 'INFO',
       log,
     });
-    if (loggedMessage) {
+    if (loggedMessage !== undefined) {
       console.log(loggedMessage[0]);
       if (loggedMessage.length > 1) {
         console.log('There are more log messages');
@@ -113,8 +114,11 @@ export class Logger {
     }
   }
 
-  getPerformanceMeasure() {
-    if (this.options.measurePerf && this.performanceMeasure === undefined) {
+  public getPerformanceMeasure() {
+    if (
+      this.options.measurePerf !== undefined &&
+      this.performanceMeasure === undefined
+    ) {
       throw new Error(
         'Performance measuring not active. To acitve set this.optinos.measuerPerf = true.'
       );

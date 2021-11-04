@@ -3,7 +3,6 @@ import 'reflect-metadata';
 import { ts } from 'ts-morph';
 
 import { AureliaClassTypes } from '../../common/constants';
-import { Logger } from '../../common/logging/logger';
 import {
   defaultProjectOptions,
   DocumentSettings,
@@ -13,7 +12,7 @@ import { AbstractRegion } from '../regions/ViewRegions';
 import { TsMorphProject } from '../tsMorph/AureliaTsMorph';
 import { AureliaComponents } from './AureliaComponents';
 
-const logger = new Logger('AureliaProgram');
+// const logger = new Logger('AureliaProgram');
 
 export interface IAureliaClassMember {
   name: string;
@@ -36,12 +35,12 @@ export interface IAureliaComponent {
   viewModelFilePath: string;
   /**
    * export class >Sort<ValueConverter {} --> sort
-   * */
+   */
   valueConverterName?: string;
   /**
    * \@customElement(">component-name<")
    * export class >ComponentName< {} --> component-name
-   * */
+   */
   componentName?: string;
   decoratorComponentName?: string;
   decoratorStartOffset?: number;
@@ -78,7 +77,7 @@ export class AureliaProgram {
   private aureliaSourceFiles?: ts.SourceFile[] | undefined;
   private filePaths: string[] = [];
 
-  public constructor(public readonly documentSettings: DocumentSettings) {
+  constructor(public readonly documentSettings: DocumentSettings) {
     // /* prettier-ignore */ console.log('TCL: AureliaProgram -> constructor -> constructor')
     this.aureliaComponents = new AureliaComponents(documentSettings);
     this.tsMorphProject = new TsMorphProject(documentSettings);
@@ -101,7 +100,7 @@ export class AureliaProgram {
    * from the watcher which will listen to IO changes in the tsconfig.
    */
   public getProgram(): ts.Program {
-    if (!this.builderProgram) {
+    if (this.builderProgram === undefined) {
       throw new Error('No Program');
     }
     return this.builderProgram;
@@ -139,7 +138,7 @@ export class AureliaProgram {
   }
 
   private determineFilePaths(projectOptions: IAureliaProjectSetting): void {
-    if (projectOptions.rootDirectory) {
+    if (projectOptions.rootDirectory !== undefined) {
       this.filePaths = getUserConfiguredFilePaths(projectOptions);
       return;
     }
@@ -147,7 +146,7 @@ export class AureliaProgram {
     const sourceFiles = this.getAureliaSourceFiles();
     if (!sourceFiles) return;
     const filePaths = sourceFiles.map((file) => file.fileName);
-    if (!filePaths) return;
+    if (filePaths === undefined) return;
     this.filePaths = filePaths;
   }
 }
@@ -156,7 +155,7 @@ function getUserConfiguredFilePaths(
   options: IAureliaProjectSetting = defaultProjectOptions
 ): string[] {
   const { rootDirectory, exclude, include } = options;
-  const targetSourceDirectory = rootDirectory || ts.sys.getCurrentDirectory();
+  const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
   const finalExcludes = getFinalExcludes(exclude);
   const finalIncludes = getFinalIncludes(include);
   const paths = ts.sys.readDirectory(

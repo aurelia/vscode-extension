@@ -1,11 +1,11 @@
-import { Position, TextDocument } from 'vscode-languageserver';
+// import { Position, TextDocument } from 'vscode-languageserver';
 
-import { findSourceWord } from '../../common/documens/find-source-word';
+// import { findSourceWord } from '../../common/documens/find-source-word';
 
 export async function onHover(
-  documentContent: string,
-  position: Position,
-  filePath: string
+  // documentContent: string,
+  // position: Position,
+  // filePath: string
 ) {
   return;
   // const document = TextDocument.create(filePath, 'html', 0, documentContent);

@@ -96,7 +96,6 @@ export function getAccessScopeViewModelDefinition(
 ): DefinitionResult | undefined {
   const offset = document.offsetAt(position);
   const goToSourceWord = findSourceWord(region, offset);
-  goToSourceWord; /* ? */
 
   const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
     'viewFilePath',

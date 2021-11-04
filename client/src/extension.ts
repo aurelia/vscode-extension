@@ -72,6 +72,7 @@ export function activate(context: ExtensionContext) {
     Disposable.create(() => {
       commands.registerTextEditorCommand(
         'extension.au.refactor.component',
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {}
       );
     })
@@ -90,7 +91,7 @@ export function activate(context: ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
-  if (!client) {
+  if (client === undefined) {
     return undefined;
   }
   return client.stop();

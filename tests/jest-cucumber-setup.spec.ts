@@ -1,11 +1,10 @@
 import { Container } from 'aurelia-dependency-injection';
 import { loadFeatures, autoBindSteps } from 'jest-cucumber';
+import { ParsedFeature } from 'jest-cucumber/dist/src/models';
 
-import { Logger } from '../server/src/common/logging/logger';
 import {
   createFeatureCache,
   readFeatureCache,
-  resetFeatureCache,
 } from './dev-test-helpers/cache-cucumber-features';
 import { minimalSteps } from './minimal-jest/minimal.spec';
 import { commonCapabilitiesStep } from './step-definitions/capabilities/common/common-capabilities.spec';
@@ -27,11 +26,11 @@ import { hydrateSteps } from './step-definitions/initialization/on-initialized/h
 //
 
 export const testContainer = new Container();
-const logger = new Logger('[Test] Detecting');
+// const logger = new Logger('[Test] Detecting');
 const useCache = false;
 
-export function initCucumberTests(tagFilter: string = '@focus') {
-  let features;
+export function initCucumberTests(tagFilter: string = '@focus'): void {
+  let features: ParsedFeature[] | undefined;
   if (useCache) {
     features = readFeatureCache();
   } else {
@@ -45,6 +44,8 @@ export function initCucumberTests(tagFilter: string = '@focus') {
     });
     createFeatureCache(features);
   }
+
+  if (!features) return;
 
   autoBindSteps(features, [
     minimalSteps,

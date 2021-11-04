@@ -21,10 +21,12 @@ import {
   getRangeFromRegion,
   getStartTagNameRange,
 } from '../../core/regions/rangeFromRegion';
-import { ViewRegionSubType, ViewRegionType } from '../../core/regions/ViewRegions';
+import {
+  ViewRegionSubType,
+  ViewRegionType,
+} from '../../core/regions/ViewRegions';
 import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
-import { getCustomElementDecorator } from '../../core/viewModel/getAureliaComponentList';
 
 const logger = new Logger('workspaceEdits');
 
@@ -44,7 +46,7 @@ export async function getAllChangesForOtherViews(
   // 2.1 Find rename locations - Custom element tag
   const isCustomElement = className === sourceWord;
   if (isCustomElement) {
-    forEachRegionOfType(
+    await forEachRegionOfType(
       aureliaProgram,
       ViewRegionType.CustomElement,
       (region, document) => {
@@ -82,7 +84,7 @@ export async function getAllChangesForOtherViews(
     regions.forEach((region) => {
       const range = getRangeFromRegion(region);
       if (!range) return;
-      if (!result[uri]) result[uri] = [];
+      if (result[uri] === undefined) result[uri] = [];
 
       result[uri].push(TextEdit.replace(range, kebabCase(newName)));
     });
@@ -140,7 +142,6 @@ export function performViewModelChanges(
       targetComponent.decoratorEndOffset
     );
     if (range) {
-      range; /* ? */
       result[viewModelUri].push(
         TextEdit.replace(range, kebabCase(finalComponentName))
       );
@@ -156,10 +157,11 @@ export function performViewModelChanges(
       .findRenameLocations(classIdentifier);
     renameLocations.forEach((location) => {
       const range = getRangeFromLocation(location);
-      range; /* ? */
       const referencePath = location.getSourceFile().getFilePath();
       const referenceUri = UriUtils.toUri(referencePath);
-      if (!result[referenceUri]) result[referenceUri] = [];
+      if (result[referenceUri] === undefined) result[referenceUri] = [];
+      if (result === undefined) return;
+
       result[referenceUri].push(TextEdit.replace(range, finalNewName));
     });
 
@@ -200,7 +202,7 @@ export function getViewModelPathFromTagName(
 
   /**
    * 1. Triggered on <|my-component>
-   * */
+   */
   if (typeof targetAureliaFile?.fileName === 'string') {
     return targetAureliaFile.fileName;
   }
@@ -215,7 +217,6 @@ export async function renameAllOtherRegionsInSameView(
   const result: WorkspaceEdit['changes'] = {};
 
   const regions = await findRegionsByWord(aureliaProgram, document, sourceWord);
-  regions; /* ? */
 
   const { uri } = document;
   result[uri] = [];

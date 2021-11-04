@@ -6,7 +6,7 @@ import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
 import { UriUtils } from '../view/uri-utils';
 
 export class TextDocumentUtils {
-  static createFromPath(
+  public static createFromPath(
     path: string,
     languageId: 'html' | 'typescript' | 'javascript' = 'html'
   ): TextDocument {
@@ -21,7 +21,7 @@ export class TextDocumentUtils {
     return document;
   }
 
-  static createHtmlFromPath(path: string): TextDocument {
+  public static createHtmlFromPath(path: string): TextDocument {
     const content = fs.readFileSync(path, 'utf-8');
     const document = TextDocument.create(
       UriUtils.toUri(path),

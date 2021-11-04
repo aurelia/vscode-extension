@@ -9,9 +9,8 @@ import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
-export class RepeatForLanguageService
-  implements AbstractRegionLanguageService {
-  async doComplete(
+export class RepeatForLanguageService implements AbstractRegionLanguageService {
+  public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
@@ -32,7 +31,7 @@ export class RepeatForLanguageService
 
     return [];
   }
-  async doDefinition(
+  public async doDefinition(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -46,7 +45,7 @@ export class RepeatForLanguageService
     );
   }
 
-  async doRename(
+  public async doRename(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,

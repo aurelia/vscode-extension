@@ -104,7 +104,7 @@ export class DocumentSettings {
 
     const include = this.extensionSettings.aureliaProject?.include;
     logger.debug(['Include paths globs: '], { logLevel: 'INFO' });
-    if (include?.length) {
+    if (include !== undefined) {
       logger.debug([include.join(', ')], { logLevel: 'INFO' });
     } else {
       logger.debug(['No includes provided.'], { logLevel: 'INFO' });
@@ -148,7 +148,8 @@ export class DocumentSettings {
       return Promise.resolve(this.globalSettings);
     }
     let result = this.settingsMap.get(resource);
-    if (!result) {
+    if (result === undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       result = await this.connection.workspace.getConfiguration({
         section: settingsName,
       });

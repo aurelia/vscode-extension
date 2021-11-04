@@ -35,18 +35,18 @@ export async function findAllBindableAttributeRegions(
       const uri = pathToFileURL(path).toString();
       const content = fs.readFileSync(path, 'utf-8');
       const document = TextDocument.create(uri, 'html', 0, content);
-      if (!document) return;
+      if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
       // const regions = await parseDocumentRegions(document, componentList);
-      const regions = await RegionParser.parse(document, componentList);
+      const regions = RegionParser.parse(document, componentList);
       // const customElementRegions = getRegionsOfType<ViewRegionInfoV2[]>(
       const customElementRegions = ViewRegionUtils.getRegionsOfType(
         regions,
         ViewRegionType.CustomElement
       );
       // 1.2 Find all Custom Element with target bindable
-      const customElementRegionsWithTargetBindable = customElementRegions.forEach(
-        (region) => {
+      const customElementRegionsWithTargetBindable =
+        customElementRegions.forEach((region) => {
           const targetBindableAttribute = region.data?.find((attribute) => {
             if (attribute.regionValue === bindableName) {
               // 1.2.1 Init
@@ -61,8 +61,7 @@ export async function findAllBindableAttributeRegions(
           });
 
           return targetBindableAttribute;
-        }
-      );
+        });
       // 1.3 TODO: Multiple CE can have same attribute name
 
       return customElementRegionsWithTargetBindable;
@@ -72,12 +71,7 @@ export async function findAllBindableAttributeRegions(
   return regionsLookUp;
 }
 
-export async function forEachRegionOfType<
-  RegionType extends ViewRegionType,
-  RegionDataType = RegionType extends ViewRegionType.CustomElement
-    ? AbstractRegion[]
-    : any
->(
+export async function forEachRegionOfType<RegionType extends ViewRegionType>(
   aureliaProgram: AureliaProgram,
   regionType: RegionType,
   forEachRegionsCallback: (
@@ -96,7 +90,7 @@ export async function forEachRegionOfType<
       const uri = pathToFileURL(path).toString();
       const content = fs.readFileSync(path, 'utf-8');
       const document = TextDocument.create(uri, 'html', 0, content);
-      if (!document) return;
+      if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
       const regions = RegionParser.parse(document, componentList);
       const finalRegions = ViewRegionUtils.getRegionsOfType(
@@ -152,12 +146,12 @@ export async function findRegionsByWord(
     // region.type; /*?*/
     // parseInput; /*?*/
     // region; /*?*/
-    if (parseInput === '') return;
+    if (parseInput === '') return false;
 
-    const parsed = (parseExpression(
+    const parsed = parseExpression(
       parseInput,
       expressionType
-    ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
       ExpressionKind.AccessScope,
     ]);
@@ -201,10 +195,10 @@ export async function findRegionsByWordV2(
     }
 
     const parseInput = region.textValue ?? region.attributeValue ?? '';
-    const parsed = (parseExpression(
+    const parsed = parseExpression(
       parseInput,
       expressionType
-    ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
       ExpressionKind.AccessScope,
     ]);
@@ -226,7 +220,7 @@ function isRepeatForIncludesWord(
   return isTargetIterable;
 }
 
-export function getRegionsOfType<RegionDataType>(
+export function getRegionsOfType(
   regions: AbstractRegion[],
   regionType: ViewRegionType
 ) {

@@ -1,16 +1,16 @@
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { BindableAttributeLanguageService } from '../languageServer/BindableAttributeLanguageService';
-import {
-  AttributeRegion,
-  AttributeInterpolationRegion,
-  BindableAttributeRegion,
-  CustomElementRegion,
-  RepeatForRegion,
-  TextInterpolationRegion,
-  ValueConverterRegion,
-  AureliaHtmlRegion,
-} from '../ViewRegions';
-import { IViewRegionsVisitor } from '../ViewRegionsVisitor';
+// import { AureliaProgram } from '../../viewModel/AureliaProgram';
+// import { BindableAttributeLanguageService } from '../languageServer/BindableAttributeLanguageService';
+// import {
+//   AttributeRegion,
+//   AttributeInterpolationRegion,
+//   BindableAttributeRegion,
+//   CustomElementRegion,
+//   RepeatForRegion,
+//   TextInterpolationRegion,
+//   ValueConverterRegion,
+//   AureliaHtmlRegion,
+// } from '../ViewRegions';
+// import { IViewRegionsVisitor } from '../ViewRegionsVisitor';
 
 // export class RegionLanguageServerVisitor implements IViewRegionsVisitor<void> {
 //   constructor(public aureliaProgram: AureliaProgram) {}

@@ -4,8 +4,8 @@ import { testError } from '../../common/errors/TestErrors';
 import { getPathsFromFileNames } from '../../common/file-path-mocks';
 import { myMockServer } from '../capabilities/new-common/project.step';
 
-export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
-  when(/^I open the file "(.*)"$/, (fileName: string) => {
+export const contentChangeSteps: StepDefinitions = ({ when }) => {
+  when(/^I open the file "(.*)"$/, async (fileName: string) => {
     const uri = myMockServer.getWorkspaceUri();
     testError.verifyFileInProject(uri, fileName);
 
@@ -17,10 +17,10 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
       .getActive();
     const aureliaServer = myMockServer.getAureliaServer();
 
-    aureliaServer.onConnectionDidChangeContent({ document });
+    await aureliaServer.onConnectionDidChangeContent({ document });
   });
 
-  when(/^I change the file "(.*)"$/, (fileName: string) => {
+  when(/^I change the file "(.*)"$/, async (fileName: string) => {
     const uri = myMockServer.getWorkspaceUri();
     testError.verifyFileInProject(uri, fileName);
 
@@ -31,6 +31,6 @@ export const contentChangeSteps: StepDefinitions = ({ when, then }) => {
       .findAndChange(textDocumentPaths[0])
       .getAll();
     const aureliaServer = myMockServer.getAureliaServer();
-    aureliaServer.onConnectionDidChangeContent({ document });
+    await aureliaServer.onConnectionDidChangeContent({ document });
   });
 };

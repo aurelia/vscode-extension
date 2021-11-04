@@ -54,12 +54,8 @@ export function createCompletionItem(
 export function createClassCompletionItem(
   aureliaComponent: IAureliaComponent
 ): CompletionItem {
-  const {
-    documentation,
-    componentName,
-    className,
-    viewFilePath,
-  } = aureliaComponent;
+  const { documentation, componentName, className, viewFilePath } =
+    aureliaComponent;
   const finalName = componentName ?? className;
   const result: CompletionItem = {
     documentation: {
@@ -104,6 +100,7 @@ export async function getBindablesCompletion(
   });
 
   return asCompletionItem.filter((bindable) => {
+    // eslint-disable-next-line
     return kebabCase(bindable.data.elementName) === region.tagName;
   });
 }

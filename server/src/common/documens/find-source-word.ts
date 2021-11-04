@@ -12,11 +12,13 @@ export function findSourceWord(region: AbstractRegion, offset: number): string {
 
   // ?? ?? custom element
   const input =
+    // eslint-disable-next-line
     region.regionValue ||
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     region.attributeValue ||
     region.tagName ||
     region.textValue;
-  if (!input) return '';
+  if (input === undefined) return '';
 
   const normalizedOffset = Math.abs(
     region.sourceCodeLocation.startOffset - offset
@@ -56,7 +58,7 @@ export function getWordAtOffset(input: string, offset: number): string {
 //   useFoo() {
 //     this.foo;
 //   }
-// } `;
+// }`;
 // getWordAtOffset(input, 106); /*?*/
 
 export function getWordInfoAtOffset(input: string, offset: number): WordInfo {

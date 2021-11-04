@@ -3,17 +3,12 @@ import {
   AccessMemberExpression,
   AccessScopeExpression,
   BinaryExpression,
-  BindingBehaviorExpression,
   CallMemberExpression,
   CallScopeExpression,
   ExpressionKind,
-  ExpressionType,
-  ForOfStatement,
   Interpolation,
   IsAssign,
-  IsBindingBehavior,
   IsExpression,
-  parseExpression,
   PrimitiveLiteralExpression,
   ValueConverterExpression,
 } from '@aurelia/runtime';
@@ -98,7 +93,7 @@ interface ExpressionsOfKindOptions {
 }
 
 export class ParseExpressionUtil {
-  static getAllExpressionsOfKind<
+  public static getAllExpressionsOfKind<
     TargetKind extends ExpressionKind,
     ReturnType extends KindToActualExpression<TargetKind>
   >(
@@ -143,14 +138,14 @@ export class ParseExpressionUtil {
     return finalExpressions;
   }
 
-  static getFirstExpressionByKind<
+  public static getFirstExpressionByKind<
     TargetKind extends ExpressionKind,
     ReturnType extends KindToActualExpression<TargetKind>
   >(parsed: IsExpression, targetKinds: TargetKind[]): ReturnType {
     const finalExpressions = ParseExpressionUtil.getAllExpressionsOfKind<
       TargetKind,
       ReturnType
-    >(<Interpolation>parsed, targetKinds);
+    >(parsed as Interpolation, targetKinds);
     const target = finalExpressions[0];
     return target;
   }
@@ -175,7 +170,10 @@ function findAllExpressionRecursive(
         findAllExpressionRecursive(expression, targetKinds, collector, options);
       }
       // Special case, if we want CallScope AND AccessScope
-      else if (expression instanceof CallScopeExpression && options?.flatten) {
+      else if (
+        expression instanceof CallScopeExpression &&
+        options?.flatten !== undefined
+      ) {
         findAllExpressionRecursive(
           expression.args as Writeable<IsAssign[]>,
           targetKinds,
@@ -291,6 +289,7 @@ function findAllExpressionRecursive(
     return;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   singleExpression; /* ? */
   /* prettier-ignore */ throw new Error(`Unconsumed. Was: '${ExpressionKind_Dev[expressionOrList.$kind]}'`);
 }

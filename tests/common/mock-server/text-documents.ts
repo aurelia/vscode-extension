@@ -16,9 +16,9 @@ export class MockTextDocuments {
   private readonly CHANGE = 'changes-';
   private readonly INITIAL = '0123';
 
-  private readonly workspaceRootUri: any;
+  private readonly workspaceRootUri: string;
 
-  constructor(workspaceRootUri) {
+  constructor(workspaceRootUri: string) {
     this.workspaceRootUri = workspaceRootUri;
   }
 
@@ -66,7 +66,10 @@ export class MockTextDocuments {
     return textDocument;
   }
 
-  public change(targetDocument: TextDocument | undefined, change: string) {
+  public change(
+    targetDocument: TextDocument | undefined,
+    change: string
+  ): void {
     if (!targetDocument) return;
 
     const startPosition: Position = { line: 0, character: 0 };
@@ -118,7 +121,7 @@ export class MockTextDocuments {
     this.setMany(textDocuments);
   }
 
-  mock(
+  public mock(
     filePaths: string[] = [],
     options: { isUri?: boolean; isRelative?: boolean } = {
       isUri: false,
@@ -152,10 +155,10 @@ export class MockTextDocuments {
     options: { isUri?: boolean; isRelative?: boolean },
     fileUris: string[]
   ): string[] {
-    if (options.isRelative) {
+    if (options.isRelative !== undefined) {
       fileUris = this.changeToRelative(fileUris);
     }
-    if (!options.isUri) {
+    if (options.isUri !== undefined) {
       fileUris = this.convertToFileUri(fileUris);
     }
     return fileUris;

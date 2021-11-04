@@ -4,7 +4,9 @@ import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { testError } from '../../../common/errors/TestErrors';
 import { myMockServer } from './project.step';
 
+// eslint-disable-next-line import/no-mutable-exports
 export let position: Position;
+// eslint-disable-next-line import/no-mutable-exports
 export let codeForCharacter;
 
 const CURSOR_CHARACTER = '|';
@@ -13,7 +15,7 @@ const CURSOR_CHARACTER_1 = '>>|<<';
 export async function givenImOnTheLineAtCharacter(
   codeWithCursor: string,
   line: number
-) {
+): Promise<void> {
   const character = findCursorCharacterPosition(codeWithCursor);
   if (character === -1) {
     testError.log(

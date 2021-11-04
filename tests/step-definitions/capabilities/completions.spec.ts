@@ -16,6 +16,7 @@ import { myMockServer } from './new-common/project.step';
 
 const logger = new Logger('[Test] Completions');
 
+// eslint-disable-next-line import/no-mutable-exports
 export let completions: AureliaCompletionItem[] | CompletionList = [];
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
@@ -32,6 +33,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
       throw new Error('Not AureliaCompletionItem[]');
     }
 
+    // eslint-disable-next-line require-atomic-updates
     completions = await myMockServer
       .getAureliaServer()
       .onCompletion(textDocumentPositionParams, document);
@@ -69,6 +71,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
         );
 
         expect(target?.insertText).toEqual(
+          // eslint-disable-next-line no-template-curly-in-string
           'methodWithArgs(${1:first}, ${2:second})'
         );
       }

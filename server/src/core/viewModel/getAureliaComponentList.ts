@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 
 import { kebabCase } from 'lodash';
-import { SyntaxKind, ts } from 'ts-morph';
+import { ts } from 'ts-morph';
 
 import { getElementNameFromClassDeclaration } from '../../common/className';
 import {
@@ -177,7 +177,8 @@ export function getClassDecoratorInfos(
     };
 
     decorator.expression.forEachChild((decoratorChild) => {
-      const childName = decoratorChild.getText() as AureliaClassDecoratorPossibilites;
+      const childName =
+        decoratorChild.getText() as AureliaClassDecoratorPossibilites;
       const isAureliaDecorator = aureliaDecorators.includes(childName);
 
       if (isAureliaDecorator) {

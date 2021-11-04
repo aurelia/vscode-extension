@@ -10,7 +10,7 @@ const logger = new Logger('rename.spec');
 
 let renamed: WorkspaceEdit | undefined;
 
-export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
+export const renameSteps: StepDefinitions = ({ and, when, then }) => {
   when(/^I trigger Rename to (.*)$/, async (newWord: string) => {
     /* prettier-ignore */ logger.log('I trigger Suggestions',{logPerf:true});
 
@@ -24,7 +24,6 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
   then('the View model variable should be renamed', () => {
     expect(renamed?.changes).toBeDefined();
     if (renamed?.changes) {
-      renamed.changes; /* ? */
       const viewModelChanges = Object.keys(renamed.changes).some(
         (filePaths) => {
           const result = filePaths.includes('custom-element.ts');
@@ -37,7 +36,6 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
 
   then('the word should be renamed', () => {
     expect(renamed?.changes).toBeDefined();
-    renamed?.changes; /* ? */
     if (renamed?.changes) {
       expect(Object.keys(renamed.changes).length).toBe(1);
     }
@@ -56,7 +54,7 @@ export const renameSteps: StepDefinitions = ({ given, and, when, then }) => {
           renamed.changes
         ).filter(([fileName]) => fileName.endsWith('.html'));
 
-        if (!targetChanges) return;
+        if (!targetChanges.length) return;
         targetChanges.forEach(([fileName, change]) => {
           // same component
           if (fileName.includes('custom-element.html')) {

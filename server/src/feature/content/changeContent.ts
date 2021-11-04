@@ -1,12 +1,10 @@
 import { Container } from 'aurelia-dependency-injection';
-import { Logger } from 'culog';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { uriToPath } from '../../common/uriToPath';
 import { AureliaProjects } from '../../core/AureliaProjects';
 
-const logger = new Logger({ scope: 'change-content' });
+// const logger = new Logger({ scope: 'change-content' });
 
 export async function onConnectionDidChangeContent(
   container: Container,

@@ -42,15 +42,16 @@ interface VirtualLanguageServiceOptions {
   startAtBeginningOfMethodInVirtualFile?: boolean;
 }
 
-const DEFAULT_VIRTUAL_LANGUAGE_SERVICE_OPTIONS: VirtualLanguageServiceOptions = {};
+const DEFAULT_VIRTUAL_LANGUAGE_SERVICE_OPTIONS: VirtualLanguageServiceOptions =
+  {};
 
 /**
  * Leaned on ts.LanguageService.
  */
 export interface VirtualLanguageService {
-  getCompletionsAtPosition: () => any;
-  getCompletionEntryDetails: () => any;
-  getDefinitionAtPosition: () => any;
+  getCompletionsAtPosition: () => void;
+  getCompletionEntryDetails: () => void;
+  getDefinitionAtPosition: () => readonly ts.DefinitionInfo[] | undefined;
   getQuickInfoAtPosition: () => CustomHover | undefined;
 }
 
@@ -66,7 +67,7 @@ export async function createVirtualLanguageService(
   let virtualContent: string = '';
   if (options.region) {
     const region = options.region;
-    if (!region.sourceCodeLocation) return;
+    if (region.sourceCodeLocation === undefined) return;
     const { startOffset, endOffset } = region.sourceCodeLocation;
 
     virtualContent = document.getText().slice(startOffset, endOffset - 1);
@@ -79,18 +80,20 @@ export async function createVirtualLanguageService(
   }
 
   // 2. Create virtual file
-  let { virtualSourcefile, virtualCursorIndex } = createVirtualFileWithContent(
+  const virtualFileWithContent = createVirtualFileWithContent(
     aureliaProgram,
     documentUri,
     virtualContent
-  )!;
+  );
+  const { virtualSourcefile } = virtualFileWithContent!;
+  let { virtualCursorIndex } = virtualFileWithContent!;
 
-  if (options.startAtBeginningOfMethodInVirtualFile) {
+  if (options.startAtBeginningOfMethodInVirtualFile !== undefined) {
     virtualCursorIndex -= virtualContent.length - 1; // -1 to start at beginning of method name;
   }
 
   const program = aureliaProgram.getProgram();
-  if (!program) return;
+  if (program === undefined) return;
 
   const languageService = getVirtualLangagueService(virtualSourcefile, program);
 
@@ -150,8 +153,6 @@ function getQuickInfoAtPosition(
    * Workaround: The normal ls.getQuickInfoAtPosition returns for objects and arrays just
    * `{}`, that's why we go through `getDefinitionAtPosition`.
    */
-  virtualSourcefile.getText(); /* ? */
-  virtualCursorIndex; /* ? */
   const defintion = languageService.getDefinitionAtPosition(
     virtualSourcefile.fileName,
     virtualCursorIndex
@@ -388,14 +389,12 @@ export function createVirtualFileWithContent(
     99
   );
 
-  const {
-    virtualCursorIndex,
-    virtualSourcefile,
-  } = createVirtualViewModelSourceFile(
-    virtualViewModelSourceFile,
-    content,
-    customElementClassName
-  );
+  const { virtualCursorIndex, virtualSourcefile } =
+    createVirtualViewModelSourceFile(
+      virtualViewModelSourceFile,
+      content,
+      customElementClassName
+    );
 
   return {
     virtualCursorIndex,

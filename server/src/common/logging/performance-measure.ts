@@ -98,7 +98,7 @@ export class PerformanceMeasure {
     message: string,
     options?: IPerformanceMeasureOptions
   ): void {
-    if (options?.reset) {
+    if (options?.reset !== undefined) {
       this.measureList = [];
       this.durationList = [];
     }

@@ -14,10 +14,11 @@ export class DiagnosticMessages {
     const targetMessage = diagnosticMessagesData[this.message];
     const consoleMessage = `[${targetMessage.category}] ${this.message} ${this.diagnosticCodeForMessage}`;
 
-    // console.log(consoleMessage);
+    console.log(consoleMessage);
   }
 
-  public additionalLog(message: string, data: any): void {
-    // console.log(`${message}: ${data} ${this.diagnosticCodeForMessage}`);
+  public additionalLog(message: string, data: unknown): void {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    console.log(`${message}: ${data} ${this.diagnosticCodeForMessage}`);
   }
 }

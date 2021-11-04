@@ -7,6 +7,7 @@ import {
 } from '../new-common/file.step';
 import { myMockServer } from '../new-common/project.step';
 
+// eslint-disable-next-line import/no-mutable-exports
 export let code = '';
 
 const logger = new Logger('[Test] Common capabilities');
@@ -29,7 +30,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
      * @param line - 0 based
      */
     async (line: number, codeWithCursor: string) => {
-      /* prettier-ignore */ logger.log('/^I\'m on the line (\d+) at character (.*)$/',{logPerf: true});
+      /* prettier-ignore */ logger.log('/^I\'m on the line (d+) at character (.*)$/',{logPerf: true});
 
       code = removeCursorFromCode(codeWithCursor);
 

@@ -14,7 +14,6 @@ import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 
 export interface AbstractRegionLanguageService {
-  getId?(): string;
   doValidation?(
     aureliaProgram: AureliaProgram,
     document: TextDocument

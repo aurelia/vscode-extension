@@ -13,8 +13,9 @@ import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class CustomElementLanguageService
-  implements AbstractRegionLanguageService {
-  async doComplete(
+  implements AbstractRegionLanguageService
+{
+  public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
@@ -33,18 +34,15 @@ export class CustomElementLanguageService
     return [];
   }
 
-  async doDefinition(
+  public async doDefinition(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
     customElementRegion: AbstractRegion
   ): Promise<DefinitionResult | undefined> {
     document.getText(); /* ? */
-    position; /* ? */
     const offset = document.offsetAt(position);
-    offset; /* ? */
     const goToSourceWord = findSourceWord(customElementRegion, offset);
-    goToSourceWord; /* ? */
 
     const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
     aureliaSourceFiles?.map((file) => file.fileName); /* ? */
@@ -54,7 +52,7 @@ export class CustomElementLanguageService
 
     /**
      * 1. Triggered on <|my-component>
-     * */
+     */
     if (typeof targetAureliaFile?.fileName === 'string') {
       return {
         lineAndCharacter: {

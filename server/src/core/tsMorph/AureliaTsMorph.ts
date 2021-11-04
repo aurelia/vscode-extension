@@ -11,11 +11,12 @@ export class TsMorphProject {
 
   private readonly tsconfigPath: string = '';
 
-  public constructor(public readonly documentSettings: DocumentSettings) {
+  constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();
     const targetSourceDirectory = getTargetSourceDirectory(settings);
 
     this.tsconfigPath =
+      // eslint-disable-next-line
       settings.pathToTsConfig ||
       (ts.findConfigFile(
         /* searchPath */ UriUtils.toPath(targetSourceDirectory),
@@ -25,18 +26,17 @@ export class TsMorphProject {
         '');
   }
 
-  create(): Project {
-    let compilerSettings = {} as ts.CompilerOptions;
-    compilerSettings = {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ESNext,
-      // outDir: 'dist',
-      // emitDecoratorMetadata: true,
-      // experimentalDecorators: true,
-      // lib: ['es2017.object', 'es7', 'dom'],
-      sourceMap: true,
-      rootDir: '.',
-    };
+  public create(): Project {
+    // const compilerSettings: ts.CompilerOptions = {
+    //   module: ts.ModuleKind.CommonJS,
+    //   target: ts.ScriptTarget.ESNext,
+    //   // outDir: 'dist',
+    //   // emitDecoratorMetadata: true,
+    //   // experimentalDecorators: true,
+    //   // lib: ['es2017.object', 'es7', 'dom'],
+    //   sourceMap: true,
+    //   rootDir: '.',
+    // };
 
     const project = createTsMorphProject({
       // customCompilerOptions: {
@@ -61,7 +61,7 @@ export class TsMorphProject {
 
 function getTargetSourceDirectory(settings: ExtensionSettings) {
   let targetSourceDirectory = '';
-  if (settings?.aureliaProject?.rootDirectory) {
+  if (settings?.aureliaProject?.rootDirectory !== undefined) {
     targetSourceDirectory = settings.aureliaProject.rootDirectory;
   } else {
     targetSourceDirectory = ts.sys.getCurrentDirectory();
@@ -84,7 +84,7 @@ export function createTsMorphProject(
     compilerOptions: customCompilerOptions,
   });
 
-  if (tsConfigPath) {
+  if (tsConfigPath !== undefined) {
     project.addSourceFilesFromTsConfig(tsConfigPath);
   }
 

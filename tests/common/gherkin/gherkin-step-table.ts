@@ -5,7 +5,7 @@ export type StepTable<HeaderName extends string = ''> = Record<
 
 export type FileNameStepTable = StepTable<'fileName'>;
 
-export function getTableValues(stepTable: StepTable<any>): string[] {
-  const values = stepTable.flatMap(Object.values);
+export function getTableValues(stepTable: StepTable<unknown>): string[] {
+  const values = stepTable.flatMap(Object.values) as string[];
   return values;
 }

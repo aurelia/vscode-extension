@@ -12,8 +12,9 @@ import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class TextInterpolationLanguageService
-  implements AbstractRegionLanguageService {
-  async doComplete(
+  implements AbstractRegionLanguageService
+{
+  public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
@@ -35,15 +36,16 @@ export class TextInterpolationLanguageService
     return [];
   }
 
-  async doDefinition(
+  public async doDefinition(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
     region: AbstractRegion
   ): Promise<DefinitionResult | undefined> {
-    const regions = aureliaProgram.aureliaComponents.getOneByFromDocument(
-      document
-    )?.viewRegions;
+    const regions =
+      aureliaProgram.aureliaComponents.getOneByFromDocument(
+        document
+      )?.viewRegions;
     const definition = getAccessScopeDefinition(
       aureliaProgram,
       document,
@@ -54,7 +56,7 @@ export class TextInterpolationLanguageService
     return definition;
   }
 
-  async doHover(
+  public async doHover(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -70,7 +72,7 @@ export class TextInterpolationLanguageService
     );
   }
 
-  async doRename(
+  public async doRename(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,

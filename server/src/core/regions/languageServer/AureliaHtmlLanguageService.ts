@@ -4,19 +4,16 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaClassTypes } from '../../../common/constants';
 import { createComponentCompletionList } from '../../../feature/completions/completions';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
-import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
-export class AureliaHtmlLanguageService implements AbstractRegionLanguageService {
-  getId() {
-    return 'html';
-  }
-  async doComplete(
+export class AureliaHtmlLanguageService
+  implements AbstractRegionLanguageService
+{
+  public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
-    triggerCharacter: string | undefined,
-    region?: AbstractRegion
+    triggerCharacter: string | undefined
   ) {
     if (triggerCharacter === '<') {
       const aureliaComponents = aureliaProgram.aureliaComponents
@@ -24,13 +21,11 @@ export class AureliaHtmlLanguageService implements AbstractRegionLanguageService
         .filter(
           (component) => component.type === AureliaClassTypes.CUSTOM_ELEMENT
         );
-      const componentCompletions = createComponentCompletionList(
-        aureliaComponents
-      );
+      const componentCompletions =
+        createComponentCompletionList(aureliaComponents);
 
       return componentCompletions;
     }
     return [];
   }
 }
-

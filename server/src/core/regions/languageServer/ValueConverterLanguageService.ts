@@ -9,22 +9,19 @@ import {
   getVirtualViewModelCompletionSupplyContent,
 } from '../../../feature/completions/virtualCompletion';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
-import {
-  AureliaProgram,
-  IAureliaComponent,
-} from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { RegionParser } from '../RegionParser';
 import { AbstractRegion, ValueConverterRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class ValueConverterLanguageService
-  implements AbstractRegionLanguageService {
-  async doComplete(
+  implements AbstractRegionLanguageService
+{
+  public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     _textDocumentPosition: TextDocumentPositionParams,
-    triggerCharacter: string | undefined,
-    region?: AbstractRegion
+    triggerCharacter: string | undefined
   ) {
     if (triggerCharacter === ':') {
       const completions = await onValueConverterCompletion(
@@ -32,16 +29,15 @@ export class ValueConverterLanguageService
         document,
         aureliaProgram
       );
-      if (!completions) return [];
+      if (completions === undefined) return [];
       return completions;
     }
 
-    const valueConverterCompletion = createValueConverterCompletion(
-      aureliaProgram
-    );
+    const valueConverterCompletion =
+      createValueConverterCompletion(aureliaProgram);
     return valueConverterCompletion;
   }
-  async doDefinition(
+  public async doDefinition(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -122,6 +118,7 @@ async function onValueConverterCompletion(
  * Convert Value Converter's `toView` to view format.
  *
  * @example
+ *
  * ```ts
  * // TakeValueConverter
  *   toView(array, count)
@@ -130,11 +127,10 @@ async function onValueConverterCompletion(
  * ```html
  *   array | take:count
  * ```
- *
  */
 function enhanceValueConverterViewArguments(methodArguments: string[]) {
   // 1. Omit the first argument, because that's piped to the method
-  const [_, ...viewArguments] = methodArguments;
+  const [, ...viewArguments] = methodArguments;
 
   // 2. prefix with :
   const result = viewArguments

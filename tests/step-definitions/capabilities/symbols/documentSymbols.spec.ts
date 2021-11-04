@@ -14,10 +14,5 @@ export const symbolSteps: StepDefinitions = ({ when, then }) => {
 
   then(/^I should get (.*) of symbols$/, () => {
     expect(symbols).toBeDefined();
-
-    if (symbols) {
-      symbols; /* ? */
-      // expect(true).toBeFalsy();
-    }
   });
 };

@@ -13,8 +13,6 @@ import {
   ViewRegionType,
 } from '../../core/regions/ViewRegions';
 
-const ATTRIBUTE_INTERPOLATION_LENGTH = 10;
-
 export async function onDocumentSymbol(
   container: Container,
   documentUri: string
@@ -76,7 +74,7 @@ type SymbolMap = Record<
     label: string;
     icon: SymbolKind;
     value: string;
-    children?: any[];
+    children?: DocumentSymbol[];
   }
 >;
 
@@ -84,6 +82,9 @@ export function convertToSymbolName(region: AbstractRegion) {
   const regionType = region.type;
   if (!regionType) return;
   if (region.subType === ViewRegionSubType.EndTag) return;
+  if (region.attributeName === undefined) return;
+  if (region.attributeValue === undefined) return;
+  if (region.regionValue === undefined) return;
 
   const attributeValue = `${region.attributeName}="${region.attributeValue}"`;
   const symbolMap: SymbolMap = {
@@ -116,7 +117,8 @@ export function convertToSymbolName(region: AbstractRegion) {
     TextInterpolation: {
       label: 't-inpol',
       icon: SymbolKind.TypeParameter,
-      value: '\$\{region.regionValue\}',
+      // eslint-disable-next-line no-useless-escape
+      value: `\$\{${region.regionValue}\}`,
     }, //
     ValueConverter: {
       label: 'vc',

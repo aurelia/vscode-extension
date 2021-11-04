@@ -38,7 +38,6 @@ import {
 
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import { AsyncReturnType } from '../../common/global';
-import { Logger } from '../../common/logging/logger';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
@@ -48,7 +47,7 @@ import {
   VIRTUAL_METHOD_NAME,
 } from '../virtual/virtualSourceFile';
 
-const logger = new Logger('virtualCompletion');
+// const logger = new Logger('virtualCompletion');
 
 const PARAMETER_NAME = 'parameterName';
 
@@ -61,7 +60,7 @@ export function getVirtualCompletion(
   positionOfAutocomplete: number
 ) {
   const program = aureliaProgram.getProgram();
-  if (!program) {
+  if (program === undefined) {
     throw new Error('Need program');
   }
 
@@ -96,7 +95,8 @@ export function getVirtualCompletion(
       );
     })
     .filter((result) => {
-      return !result?.name.includes(VIRTUAL_METHOD_NAME);
+      if (result === undefined) return false;
+      return !result.name.includes(VIRTUAL_METHOD_NAME);
     });
 
   return { virtualCompletions, virtualCompletionEntryDetails };
@@ -127,6 +127,7 @@ export function createProgram(
  `
   );
   const { options, errors } = ts.convertCompilerOptionsFromJson(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     tsConfigJson.config.compilerOptions,
     '.'
   );
@@ -179,29 +180,17 @@ async function getVirtualViewModelCompletion(
   const documentUri = textDocumentPosition.textDocument.uri;
 
   if (!region) return [];
-  if (!region.sourceCodeLocation) return [];
+  if (region.sourceCodeLocation === undefined) return [];
   const { startOffset, endOffset } = region.sourceCodeLocation;
 
   const virtualContent = document.getText().slice(startOffset, endOffset - 1);
 
-  const {
-    virtualSourcefile,
-    virtualCursorIndex,
-  } = createVirtualFileWithContent(
-    aureliaProgram,
-    documentUri,
-    virtualContent
-  )!;
+  const { virtualSourcefile, virtualCursorIndex } =
+    createVirtualFileWithContent(aureliaProgram, documentUri, virtualContent)!;
 
   // 4. Use TLS
-  const {
-    virtualCompletions,
-    virtualCompletionEntryDetails,
-  } = getVirtualCompletion(
-    aureliaProgram,
-    virtualSourcefile,
-    virtualCursorIndex
-  );
+  const { virtualCompletions, virtualCompletionEntryDetails } =
+    getVirtualCompletion(aureliaProgram, virtualSourcefile, virtualCursorIndex);
 
   const entryDetailsMap: EntryDetailsMap = {};
 
@@ -247,23 +236,15 @@ export function getVirtualViewModelCompletionSupplyContent(
     targetSourceFile?.getText(),
     99
   );
-  const {
-    virtualSourcefile,
-    virtualCursorIndex,
-  } = createVirtualViewModelSourceFile(
-    virtualViewModelSourceFile,
-    virtualContent,
-    viewModelClassName
-  );
+  const { virtualSourcefile, virtualCursorIndex } =
+    createVirtualViewModelSourceFile(
+      virtualViewModelSourceFile,
+      virtualContent,
+      viewModelClassName
+    );
 
-  const {
-    virtualCompletions,
-    virtualCompletionEntryDetails,
-  } = getVirtualCompletion(
-    aureliaProgram,
-    virtualSourcefile,
-    virtualCursorIndex
-  );
+  const { virtualCompletions, virtualCompletionEntryDetails } =
+    getVirtualCompletion(aureliaProgram, virtualSourcefile, virtualCursorIndex);
 
   const entryDetailsMap: EntryDetailsMap = {};
 
@@ -284,12 +265,10 @@ function enhanceCompletionItemDocumentation(
   customizeEnhanceDocumentation: CustomizeEnhanceDocumentation = DEFAULT_CUSTOMIZE_ENHANCE_DOCUMENTATION
 ) {
   const kindMap = {
-    [ts.ScriptElementKind[
-      'memberVariableElement'
-    ] as ts.ScriptElementKind]: CompletionItemKind.Field,
-    [ts.ScriptElementKind[
-      'memberFunctionElement'
-    ] as ts.ScriptElementKind]: CompletionItemKind.Method,
+    [ts.ScriptElementKind['memberVariableElement'] as ts.ScriptElementKind]:
+      CompletionItemKind.Field,
+    [ts.ScriptElementKind['memberFunctionElement'] as ts.ScriptElementKind]:
+      CompletionItemKind.Method,
   };
 
   virtualCompletionEntryDetails.reduce((acc, entryDetail) => {
@@ -322,7 +301,7 @@ function enhanceCompletionItemDocumentation(
     /** Default value is just the method name */
     let insertMethodTextWithArguments = tsCompletion.name;
 
-    if (isMethod) {
+    if (isMethod !== undefined) {
       if (customizeEnhanceDocumentation?.omitMethodNameAndBrackets === true) {
         insertMethodTextWithArguments = createArgCompletion(entryDetail);
       } else {
@@ -333,7 +312,7 @@ function enhanceCompletionItemDocumentation(
     }
 
     let insertText: string;
-    if (isMethod) {
+    if (isMethod !== undefined) {
       insertText = insertMethodTextWithArguments;
     } else {
       insertText = tsCompletion.name.replace(/^\$/g, '\\$');
