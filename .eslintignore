@@ -9,4 +9,5 @@ tests/testFixture
 tests/minimal-jest
 
 wallaby.config.js
+jest.config.js
 _code-dep
