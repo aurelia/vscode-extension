@@ -1,5 +1,6 @@
 import { DocumentSymbol, Range } from 'vscode-languageserver';
 import { Position, SymbolKind } from 'vscode-languageserver-types';
+
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
@@ -49,12 +50,12 @@ function createAureliaDocumentSymbol(region: AbstractRegion) {
 
   const symbolName = `Au: ${converted.value}`;
   const start: Position = {
-    line: region.sourceCodeLocation.startLine! - 1,
-    character: region.sourceCodeLocation.startCol! - 1,
+    line: region.sourceCodeLocation.startLine,
+    character: region.sourceCodeLocation.startCol,
   };
   const end: Position = {
-    line: region.sourceCodeLocation.endLine! - 1,
-    character: region.sourceCodeLocation.endCol! - 1,
+    line: region.sourceCodeLocation.endLine,
+    character: region.sourceCodeLocation.endCol,
   };
 
   const symbol = DocumentSymbol.create(
@@ -115,7 +116,7 @@ export function convertToSymbolName(region: AbstractRegion) {
     TextInterpolation: {
       label: 't-inpol',
       icon: SymbolKind.TypeParameter,
-      value: `\$\{region.regionValue\}`,
+      value: '\$\{region.regionValue\}',
     }, //
     ValueConverter: {
       label: 'vc',

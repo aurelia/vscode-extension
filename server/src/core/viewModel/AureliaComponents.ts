@@ -4,14 +4,14 @@ import { ts } from '@ts-morph/common';
 import { Project } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
-import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
-import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
-import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
 import { RegionParser } from '../regions/RegionParser';
 import { Optional } from '../regions/ViewRegions';
+import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
+import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
 
 const logger = new Logger('aurelia-components');
 
@@ -26,15 +26,14 @@ export class AureliaComponents {
     if (filePaths.length === 0) {
       logger.log('Error: No Aurelia files found.');
     }
+    if (!this.checker) {
+      this.checker = program.getTypeChecker();
+    }
 
-    const componentList: IAureliaComponent[] = [];
     const componentListWithoutRegions: Optional<
       IAureliaComponent,
       'viewRegions'
     >[] = [];
-    if (!this.checker) {
-      this.checker = program.getTypeChecker();
-    }
 
     filePaths.forEach((path) => {
       const isDTs = Path.basename(path).endsWith('.d.ts');
@@ -72,11 +71,11 @@ export class AureliaComponents {
       }
     });
 
-    this.enhanceWithViewRegions(componentListWithoutRegions);
-    this.set(componentList);
-    this.setBindables(componentList);
+    const enhanced = this.enhanceWithViewRegions(componentListWithoutRegions);
+    this.set(enhanced);
+    this.setBindables(enhanced);
 
-    this.logInfoAboutComponents(componentList);
+    this.logInfoAboutComponents(enhanced);
   }
 
   public set(components: IAureliaComponent[]): void {
@@ -216,7 +215,8 @@ export class AureliaComponents {
   private enhanceWithViewRegions(
     componentList: Optional<IAureliaComponent, 'viewRegions'>[]
   ) {
-    componentList.forEach((component) => {
+    const enhanced = [...componentList];
+    enhanced.forEach((component) => {
       if (!component.viewFilePath) return;
       const viewDocument = TextDocumentUtils.createHtmlFromPath(
         component.viewFilePath
@@ -224,6 +224,8 @@ export class AureliaComponents {
       const regions = RegionParser.parse(viewDocument, componentList);
       component.viewRegions = regions;
     });
+
+    return enhanced as IAureliaComponent[];
   }
 
   private logInfoAboutComponents(components: IAureliaComponent[]) {
