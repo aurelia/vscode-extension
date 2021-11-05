@@ -4,6 +4,7 @@ client/out/**
 
 server/node_modules/**
 server/out/**
+server/src/common/@aurelia-runtime-patch
 
 tests/testFixture
 tests/minimal-jest
