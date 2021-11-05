@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import { pathToFileURL } from 'url';
 
+import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   ExpressionKind,
   ExpressionType,
   Interpolation,
   parseExpression,
-} from '@aurelia/runtime';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-
+} from '../../common/@aurelia-runtime-patch/src';
 import {
   TypeToClass,
   ViewRegionUtils,
@@ -111,6 +111,7 @@ export async function findRegionsByWord(
   document: TextDocument,
   sourceWord: string
 ): Promise<AbstractRegion[]> {
+  sourceWord; /* ? */
   const componentList = aureliaProgram.aureliaComponents.getAll();
   const regions = RegionParser.parse(document, componentList);
 
@@ -127,90 +128,31 @@ export async function findRegionsByWord(
     }
 
     // 3. Expressions
-    let expressionType;
-    // Interpolation
-    if (
-      region.type === ViewRegionType.AttributeInterpolation ||
-      region.type === ViewRegionType.TextInterpolation
-    ) {
-      expressionType = ExpressionType.Interpolation;
-    }
-    // None
-    else if (region.type === ViewRegionType.Attribute) {
-      expressionType = ExpressionType.None;
-    }
-
-    const parseInput =
-      region.textValue ?? region.attributeValue ?? region.regionValue ?? '';
-    // expressionType; /*?*/
-    // region.type; /*?*/
-    // parseInput; /*?*/
-    // region; /*?*/
+    let parseInput =
+      region.regionValue ?? region.attributeValue ?? region.textValue ?? '';
     if (parseInput === '') return false;
 
-    const parsed = parseExpression(
+    if (parseInput.startsWith('${')) {
+      parseInput = parseInput.replace('${', '');
+    }
+    if (parseInput.endsWith('}')) {
+      parseInput = parseInput.substring(0, parseInput.length - 1);
+    }
+
+    const expressionsWithName = ParseExpressionUtil.getAllExpressionsByName(
       parseInput,
-      expressionType
-    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
-      ExpressionKind.AccessScope,
-    ]);
-    const hasSourceWordInScope = accessScopes.find(
-      (accessScope) => accessScope.name === sourceWord
+      sourceWord
     );
+    const hasSourceWordInScope = expressionsWithName.length > 0;
     return hasSourceWordInScope;
   });
 
   return targetRegions;
 }
 
-export async function findRegionsByWordV2(
-  regions: AbstractRegion[],
-  sourceWord: string
-): Promise<AbstractRegion[]> {
-  const targetRegions = regions.filter((region) => {
-    // 1. default case: .regionValue
-    const isDefault = region.regionValue === sourceWord;
-    if (isDefault) {
-      return true;
-    }
-
-    // 2. repeat-for regions
-    else if (RepeatForRegion.is(region)) {
-      return isRepeatForIncludesWord(region, sourceWord);
-    }
-
-    // 3. Expressions
-    let expressionType;
-    // Interpolation
-    if (
-      region.type === ViewRegionType.AttributeInterpolation ||
-      region.type === ViewRegionType.TextInterpolation
-    ) {
-      expressionType = ExpressionType.Interpolation;
-    }
-    // None
-    else if (region.type === ViewRegionType.Attribute) {
-      expressionType = ExpressionType.None;
-    }
-
-    const parseInput = region.textValue ?? region.attributeValue ?? '';
-    const parsed = parseExpression(
-      parseInput,
-      expressionType
-    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
-      ExpressionKind.AccessScope,
-    ]);
-    const hasSourceWordInScope = accessScopes.find(
-      (accessScope) => accessScope.name === sourceWord
-    );
-    return hasSourceWordInScope;
-  });
-
-  return targetRegions;
-}
-
+/**
+ * TODO: repeat.for for "...of <more-complex>"
+ */
 function isRepeatForIncludesWord(
   repeatForRegion: RepeatForRegion,
   sourceWord: string

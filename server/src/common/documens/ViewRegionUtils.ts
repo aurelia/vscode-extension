@@ -36,8 +36,17 @@ export class ViewRegionUtils {
     return targetRegions as ReturnType[];
   }
 
-  public static getTargetRegion(regions: AbstractRegion[], line: string) {
+  public static getTargetRegionByLine(regions: AbstractRegion[], line: string) {
     const result = regions.find((region) => {
+      return region.sourceCodeLocation.startLine === Number(line);
+    });
+    return result;
+  }
+  public static getManyTargetsRegionByLine(
+    regions: AbstractRegion[],
+    line: string
+  ) {
+    const result = regions.filter((region) => {
       return region.sourceCodeLocation.startLine === Number(line);
     });
     return result;

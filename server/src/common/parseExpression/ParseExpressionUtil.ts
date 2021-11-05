@@ -6,12 +6,14 @@ import {
   CallMemberExpression,
   CallScopeExpression,
   ExpressionKind,
+  ExpressionType,
   Interpolation,
   IsAssign,
   IsExpression,
+  parseExpression,
   PrimitiveLiteralExpression,
   ValueConverterExpression,
-} from '@aurelia/runtime';
+} from '../@aurelia-runtime-patch/src';
 import '@aurelia/metadata';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
@@ -93,6 +95,70 @@ interface ExpressionsOfKindOptions {
 }
 
 export class ParseExpressionUtil {
+  /**
+   * V2: pass input (parsing internal)
+   * V1: pass parsed (parsing external)
+   */
+  public static getAllExpressionsOfKindV2<
+    TargetKind extends ExpressionKind,
+    ReturnType extends KindToActualExpression<TargetKind>
+  >(
+    input: string,
+    targetKinds: TargetKind[],
+    options?: ExpressionsOfKindOptions
+  ): ReturnType[] {
+    let finalExpressions: ReturnType[] = [];
+
+    if (input === '') return [];
+
+    if (input.startsWith('${')) {
+      input = input.replace('${', '');
+    }
+    if (input.endsWith('}')) {
+      input = input.substring(0, input.length - 1);
+    }
+
+    const parsed = parseExpression(
+      input,
+      ExpressionType.None
+    ) as unknown as Interpolation;
+
+    // Interpolation
+    if (parsed instanceof Interpolation) {
+      parsed.expressions.forEach((expression) => {
+        // ExpressionKind_Dev[expression.$kind]; /*?*/
+        // expression; /*?*/
+        // console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+
+        findAllExpressionRecursive(
+          expression,
+          targetKinds,
+          finalExpressions,
+          options
+        );
+      });
+
+      /*
+       * CONSIDER: Does this make sense for AccessMember?
+       * Eg. for `foo.bar.qux` we return [..."bar", ..."qux"]
+       */
+      if (finalExpressions[0] instanceof AccessMemberExpression) {
+        finalExpressions = finalExpressions.reverse();
+      }
+    }
+    // None
+    else {
+      findAllExpressionRecursive(
+        parsed,
+        targetKinds,
+        finalExpressions,
+        options
+      );
+    }
+
+    return finalExpressions;
+  }
+
   public static getAllExpressionsOfKind<
     TargetKind extends ExpressionKind,
     ReturnType extends KindToActualExpression<TargetKind>
@@ -148,6 +214,22 @@ export class ParseExpressionUtil {
     >(parsed as Interpolation, targetKinds);
     const target = finalExpressions[0];
     return target;
+  }
+
+  public static getAllExpressionsByName(input: string, targetName: string) {
+    const parsed = parseExpression(
+      input,
+      ExpressionType.None
+    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    // const finalExpressionKind: ExpressionKind[] = [ExpressionKind.AccessScope];
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
+      ExpressionKind.AccessScope,
+    ]);
+    const hasSourceWordInScope = accessScopes.filter(
+      (accessScope) => accessScope.name === targetName
+    );
+
+    return hasSourceWordInScope;
   }
 }
 

@@ -2,7 +2,12 @@ import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
 import { Position } from 'vscode-languageserver-textdocument';
 
+import {
+  AccessScopeExpression,
+  ExpressionKind,
+} from '../../common/@aurelia-runtime-patch/src';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
+import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
 import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
@@ -31,6 +36,7 @@ export interface ViewRegionInfoV2<RegionDataType = unknown> {
   textValue?: string;
   regionValue?: string;
   //
+  accessScopes?: AccessScopeExpression[];
   data?: RegionDataType;
 }
 
@@ -107,6 +113,7 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
   public textValue?: string;
   public regionValue?: string;
   //
+  public accessScopes?: AccessScopeExpression[];
   public data?: unknown;
 
   constructor(info: ViewRegionInfoV2) {
@@ -122,6 +129,7 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
     this.textValue = info.textValue;
     this.regionValue = info.regionValue;
     //
+    this.accessScopes = info.accessScopes;
     this.data = info.data;
   }
 
@@ -174,6 +182,7 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
 export class AttributeRegion extends AbstractRegion {
   public languageService: AttributeLanguageService;
   public readonly type: ViewRegionType.Attribute;
+  public readonly accessScopes?: AccessScopeExpression[];
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
@@ -209,11 +218,17 @@ export class AttributeRegion extends AbstractRegion {
       endOffset: lastCharIndex,
     };
 
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
+      attr.value,
+      [ExpressionKind.AccessScope]
+    );
+
     const viewRegion = AttributeRegion.create({
       attributeName: attr.name,
       attributeValue: attr.value,
       sourceCodeLocation: updatedLocation,
       tagName: startTag.tagName,
+      accessScopes,
       regionValue: attr.value,
     });
 
@@ -228,6 +243,7 @@ export class AttributeRegion extends AbstractRegion {
 export class AttributeInterpolationRegion extends AbstractRegion {
   public languageService: AttributeInterpolationLanguageService;
   public readonly type: ViewRegionType.AttributeInterpolation;
+  public readonly accessScopes: AccessScopeExpression[];
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
@@ -274,11 +290,17 @@ export class AttributeInterpolationRegion extends AbstractRegion {
       endCol: startCol + endInterpolationLength,
     };
 
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
+      interpolationValue,
+      [ExpressionKind.AccessScope]
+    );
+
     const viewRegion = AttributeInterpolationRegion.create({
       attributeName: attr.name,
       attributeValue: attr.value,
       sourceCodeLocation: updatedLocation,
       tagName: startTag.tagName,
+      accessScopes,
       regionValue: interpolationMatch[1],
     });
 
@@ -571,6 +593,7 @@ export class TextInterpolationRegion extends AbstractRegion {
   public languageService: TextInterpolationLanguageService;
 
   public readonly type: ViewRegionType.TextInterpolation;
+  public readonly accessScopes: AccessScopeExpression[];
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
@@ -617,10 +640,16 @@ export class TextInterpolationRegion extends AbstractRegion {
       endOffset,
     };
 
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
+      interpolationValue,
+      [ExpressionKind.AccessScope]
+    );
+
     const textRegion = TextInterpolationRegion.create({
       regionValue: interpolationValue,
       sourceCodeLocation: updatedLocation,
       textValue: text.text,
+      accessScopes,
     });
 
     return textRegion;

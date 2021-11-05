@@ -11,8 +11,9 @@ Feature: Rename in View Model.
     And all other components, that also use the Bindable should be renamed
 
     Examples:
-      | DESCRIPTION        | LINE | CODE                 | NEW_WORD |
-      | Text Interploation | 2    | `  @bindable \|foo;` | newNew   |
+      | DESCRIPTION        | LINE | CODE    | NEW_WORD |
+      # | Text Interploation | 2    | `  @bindable \|foo;` | newNew   |
+      | Text Interploation | 4    | `  \|qux` | newNew   |
 
   Scenario Outline: Class in View Model.
     And I open VSCode with the following file "custom-element.ts"

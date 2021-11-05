@@ -32,6 +32,8 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
       );
       expect(viewModelChanges).toBe(true);
     }
+
+    expect(true).toBeFalsy();
   });
 
   then('the word should be renamed', () => {

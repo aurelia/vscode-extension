@@ -68,6 +68,12 @@ export function activate(context: ExtensionContext) {
   );
 
   context.subscriptions.push(new RelatedFiles());
+
+  // context.subscriptions.push(
+  //   commands.registerCommand('extension.aurelia.reinitializeExtension', () => {
+  //     console.log('ok');
+  //   })
+  // );
   context.subscriptions.push(
     Disposable.create(() => {
       commands.registerTextEditorCommand(

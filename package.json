@@ -44,6 +44,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "extension.aurelia.reinitializeExtension",
+        "title": "Reinitialize Extension",
+        "category": "Aurelia"
+      },
+      {
         "command": "aurelia.getAureliaComponents",
         "title": "[Au] Show Aurelia Components parsed by the extension",
         "category": "Aurelia"

@@ -44,6 +44,7 @@ defineFeature(feature, (test) => {
     whenIParseTheFile(when, shared);
 
     then('the result should include Custom element bindable attributes', () => {
+      shared.parsedRegions; /* ? */
       const regionResults = ViewRegionUtils.getRegionsOfType(
         shared.parsedRegions,
         ViewRegionType.CustomElement
@@ -137,7 +138,7 @@ defineFeature(feature, (test) => {
     then(
       /^the result should have the correct (\d*) and (\d*) for the whole region$/,
       (startOffset: string, endOffset: string) => {
-        const target = ViewRegionUtils.getTargetRegion(
+        const target = ViewRegionUtils.getTargetRegionByLine(
           shared.parsedRegions,
           shared.line
         );
@@ -159,6 +160,42 @@ defineFeature(feature, (test) => {
           );
           expect(target.sourceCodeLocation.endOffset).toBe(Number(endOffset));
         }
+      }
+    );
+  });
+
+  test('Parsing - Access Scopes', ({ given, when, then, and }) => {
+    const parsedRegions: AbstractRegion[] = [];
+    const shared = {
+      workspaceRootUri: '',
+      parsedRegions,
+      line: '',
+    };
+    givenImInTheProject(given, shared);
+
+    whenIParseTheFile(when, shared);
+
+    and(/^I'm on line (\d)$/, (line: string) => {
+      shared.line = line;
+    });
+
+    then(
+      /^the result should have the following Access scopes (.*)$/,
+      (accessScopesRaw: string) => {
+        const expectedNames = accessScopesRaw.split(';');
+
+        const targets = ViewRegionUtils.getManyTargetsRegionByLine(
+          shared.parsedRegions,
+          shared.line
+        );
+
+        targets.forEach((target, index) => {
+          expect(target?.accessScopes).toBeDefined();
+          if (!target?.accessScopes) return;
+
+          const names = target.accessScopes.map((scope) => scope.name);
+          expect(names).toEqual(expectedNames[index].split(','));
+        });
       }
     );
   });

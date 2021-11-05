@@ -12,12 +12,11 @@ import {
   TextDocumentChangeEvent,
   RenameParams,
   DocumentSymbolParams,
-  WorkspaceSymbolParams,
   Range,
-  CodeActionParams,
   CodeAction,
   Command,
   Position,
+  ExecuteCommandParams,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -37,6 +36,12 @@ import {
 // Also include all preview / proposed LSP features.
 export const connection = createConnection(ProposedFeatures.all);
 
+const AURELIA_COMMANDS = [
+  'extension.au.refactor.component',
+  'extension.aurelia.reinitializeExtension',
+] as const;
+type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
+
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -45,7 +50,7 @@ let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 // let hasDiagnosticRelatedInformationCapability: boolean = false;
 
-// let hasServerInitialized = false;
+let hasServerInitialized = false;
 let aureliaServer: AureliaServer;
 
 connection.onInitialize(async (params: InitializeParams) => {
@@ -80,7 +85,11 @@ connection.onInitialize(async (params: InitializeParams) => {
       renameProvider: true,
       documentSymbolProvider: true,
       workspaceSymbolProvider: true,
-      executeCommandProvider: { commands: ['extension.au.refactor.component'] },
+      executeCommandProvider: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        commands: AURELIA_COMMANDS,
+      },
     },
   };
   if (hasWorkspaceFolderCapability) {
@@ -128,7 +137,7 @@ connection.onInitialized(async () => {
     const targetProject = aureliaProjects.getBy(tsConfigPath);
     if (!targetProject) return;
 
-    // hasServerInitialized = true;
+    hasServerInitialized = true;
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
@@ -221,13 +230,13 @@ connection.onDefinition(
 );
 
 connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
-  /* prettier-ignore */ console.log('TCL: params', params);
-
+  if (hasServerInitialized === false) return;
   const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
   return symbols;
 });
-connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
-  /* prettier-ignore */ console.log('TCL: params', params);
+// connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
+connection.onWorkspaceSymbol(async () => {
+  if (hasServerInitialized === false) return;
   // const workspaceSymbols = aureliaServer.onWorkspaceSymbol(params.query);
   const workspaceSymbols = aureliaServer.onWorkspaceSymbol();
   return workspaceSymbols;
@@ -249,8 +258,8 @@ connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
 //   }
 // );
 
-connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  /* prettier-ignore */ console.log('TCL: codeActionParams', codeActionParams);
+// connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
+connection.onCodeAction(async () => {
   const kind = 'extension.au.refactor.component';
   const codeAcion = CodeAction.create('Au: Create component', kind);
   codeAcion.command = Command.create('Au: Command <<', kind, ['test-arg']);
@@ -268,8 +277,36 @@ connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
 });
 
 connection.onExecuteCommand(
-  // async (executeCommandParams: ExecuteCommandParams) => {
-  async () => {
+  async (executeCommandParams: ExecuteCommandParams) => {
+    const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
+    switch (command) {
+      case 'extension.aurelia.reinitializeExtension': {
+        const workspaceFolders =
+          await connection.workspace.getWorkspaceFolders();
+        if (workspaceFolders === null) return;
+
+        const workspaceRootUri = workspaceFolders[0].uri;
+        const extensionSettings = (await connection.workspace.getConfiguration({
+          section: settingsName,
+        })) as ExtensionSettings;
+
+        extensionSettings.aureliaProject = {
+          rootDirectory: workspaceRootUri,
+        };
+
+        aureliaServer = new AureliaServer(globalContainer, extensionSettings);
+        await aureliaServer.onConnectionInitialized(
+          extensionSettings,
+          documents.all()
+        );
+
+        break;
+      }
+      default: {
+        console.log('no command');
+      }
+    }
+    // async () => {
     return null;
   }
 );

@@ -80,7 +80,7 @@ export class Logger {
       }
     }
 
-    if (localOptions.highlight !== undefined) {
+    if (localOptions.highlight === true) {
       console.log(
         bold(blueBright(bgWhite('------------ v HIGHLIGHT v ------------')))
       );
