@@ -238,8 +238,10 @@ export class ParseExpressionUtil {
       const isAccessOrCallScope =
         accessScope.$kind === ExpressionKind.AccessScope ||
         accessScope.$kind === ExpressionKind.CallScope;
-      if (!isAccessOrCallScope) return false;
-      return accessScope.name === targetName;
+      if (isAccessOrCallScope) {
+        return accessScope.name === targetName;
+      }
+      return false;
     });
 
     return hasSourceWordInScope;

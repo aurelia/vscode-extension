@@ -106,7 +106,6 @@ export async function findRegionsByWord(
   viewDocument: TextDocument,
   sourceWord: string
 ): Promise<AbstractRegion[]> {
-  sourceWord; /* ? */
   const componentList = aureliaProgram.aureliaComponents.getAll();
   const regions = RegionParser.parse(viewDocument, componentList);
 
