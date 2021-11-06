@@ -21,6 +21,13 @@ export class TextDocumentUtils {
     return document;
   }
 
+  public static createHtmlFromUri({ uri }: { uri: string }): TextDocument {
+    const content = fs.readFileSync(UriUtils.toPath(uri), 'utf-8');
+    const document = TextDocument.create(uri, 'html', 0, content);
+
+    return document;
+  }
+
   public static createHtmlFromPath(path: string): TextDocument {
     const content = fs.readFileSync(path, 'utf-8');
     const document = TextDocument.create(

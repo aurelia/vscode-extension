@@ -18,22 +18,22 @@ Feature: Rename in View.
     And I'm on the line <LINE> at character <CODE>
     When I trigger Rename to <NEW_WORD>
     Then the View model variable should be renamed
-    And all other components, that also use the Bindable should be renamed
+    And all other components <NUM_OTHER_COMPONENTS>
 
     Examples:
-      | DESCRIPTION        | LINE | CODE                | NEW_WORD |
-      | Bindable Attribute | 3    | `    \|foo.bind=""` | new-new  |
+      | DESCRIPTION        | LINE | CODE                | NEW_WORD | NUM_OTHER_COMPONENTS |
+      | Bindable Attribute | 3    | `    \|foo.bind=""` | new-new  | 4                    |
 
   Scenario Outline: Rename variable in View.
     And I open VSCode with the following file "custom-element.html"
     And I'm on the line <LINE> at character <CODE>
     When I trigger Rename to <NEW_WORD>
     Then the View model variable should be renamed
-    And all other components, that also use the Bindable should be renamed
+    And all other components <NUM_OTHER_COMPONENTS>
 
     Examples:
-      | DESCRIPTION        | LINE | CODE                                           | NEW_WORD |
-      | Text Interploation | 0    | `${\|foo}`                                     | new-new  |
-      | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  |
-      | View model         | 2    | `<div id.bind="\|bar"></div>`                  | new-new  |
-      | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  |
+      | DESCRIPTION        | LINE | CODE                                           | NEW_WORD | NUM_OTHER_COMPONENTS |
+      | Text Interploation | 0    | `${\|foo}`                                     | new-new  | 4                    |
+      | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  | 4                    |
+      | View model         | 2    | `<div id.bind="\|bar"></div>`                  | new-new  | 4                    |
+      | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  | 4                    |

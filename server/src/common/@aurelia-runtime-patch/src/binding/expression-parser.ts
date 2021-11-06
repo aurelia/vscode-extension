@@ -1667,7 +1667,7 @@ function parseInterpolation(
   state: ParserState,
   startOffset = 0
 ): Interpolation {
-  const parts = [];
+  const parts: string[] = [];
   const expressions: (IsBindingBehavior | Interpolation)[] = [];
   const length = state.length;
   let result = '';

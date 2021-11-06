@@ -4,6 +4,7 @@ import { Position } from 'vscode-languageserver-textdocument';
 
 import {
   AccessScopeExpression,
+  CallScopeExpression,
   ExpressionKind,
 } from '../../common/@aurelia-runtime-patch/src';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
@@ -36,7 +37,7 @@ export interface ViewRegionInfoV2<RegionDataType = unknown> {
   textValue?: string;
   regionValue?: string;
   //
-  accessScopes?: AccessScopeExpression[];
+  accessScopes?: (AccessScopeExpression | CallScopeExpression)[];
   data?: RegionDataType;
 }
 
@@ -113,7 +114,7 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
   public textValue?: string;
   public regionValue?: string;
   //
-  public accessScopes?: AccessScopeExpression[];
+  public accessScopes?: ViewRegionInfoV2['accessScopes'];
   public data?: unknown;
 
   constructor(info: ViewRegionInfoV2) {
@@ -212,15 +213,17 @@ export class AttributeRegion extends AbstractRegion {
     /** Eg. click.delegate="increaseCounter()>"< */
     const lastCharIndex = attrLocation.endOffset;
 
+    const startOffset = attrLocation.startOffset + attrNameLength;
     const updatedLocation: parse5.Location = {
       ...attrLocation,
-      startOffset: attrLocation.startOffset + attrNameLength,
+      startOffset,
       endOffset: lastCharIndex,
     };
 
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
       attr.value,
-      [ExpressionKind.AccessScope]
+      [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+      { startOffset }
     );
 
     const viewRegion = AttributeRegion.create({
@@ -292,7 +295,8 @@ export class AttributeInterpolationRegion extends AbstractRegion {
 
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
       interpolationValue,
-      [ExpressionKind.AccessScope]
+      [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+      { startOffset }
     );
 
     const viewRegion = AttributeInterpolationRegion.create({
@@ -303,6 +307,7 @@ export class AttributeInterpolationRegion extends AbstractRegion {
       accessScopes,
       regionValue: interpolationMatch[1],
     });
+    // viewRegion; /* ? */
 
     return viewRegion;
   }
@@ -642,7 +647,8 @@ export class TextInterpolationRegion extends AbstractRegion {
 
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
       interpolationValue,
-      [ExpressionKind.AccessScope]
+      [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+      { startOffset }
     );
 
     const textRegion = TextInterpolationRegion.create({

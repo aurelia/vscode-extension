@@ -3,12 +3,7 @@ import { pathToFileURL } from 'url';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  ExpressionKind,
-  ExpressionType,
-  Interpolation,
-  parseExpression,
-} from '../../common/@aurelia-runtime-patch/src';
+import { ExpressionKind } from '../../common/@aurelia-runtime-patch/src';
 import {
   TypeToClass,
   ViewRegionUtils,
@@ -108,12 +103,12 @@ export async function forEachRegionOfType<RegionType extends ViewRegionType>(
 
 export async function findRegionsByWord(
   aureliaProgram: AureliaProgram,
-  document: TextDocument,
+  viewDocument: TextDocument,
   sourceWord: string
 ): Promise<AbstractRegion[]> {
   sourceWord; /* ? */
   const componentList = aureliaProgram.aureliaComponents.getAll();
-  const regions = RegionParser.parse(document, componentList);
+  const regions = RegionParser.parse(viewDocument, componentList);
 
   const targetRegions = regions.filter((region) => {
     // 1. default case: .regionValue
@@ -141,7 +136,8 @@ export async function findRegionsByWord(
 
     const expressionsWithName = ParseExpressionUtil.getAllExpressionsByName(
       parseInput,
-      sourceWord
+      sourceWord,
+      [ExpressionKind.AccessScope, ExpressionKind.CallScope]
     );
     const hasSourceWordInScope = expressionsWithName.length > 0;
     return hasSourceWordInScope;

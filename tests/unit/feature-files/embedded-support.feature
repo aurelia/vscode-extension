@@ -31,13 +31,12 @@ Feature: Embedded support
     When I parse the file "custom-element.html"
     And I'm on line <LINE>
     Then the result should have the following Access scopes <ACCESS_SCOPES>
+    And the result should have the correct <START> and <END> scope location
 
     Examples:
-      | DESCRIPTION             | LINE | CODE                                                | ACCESS_SCOPES |
-      | Text Interpolation      | 0    | `${foo}`                                            | foo           |
-      | Attribute Interpolation | 1    | `<div id="${foo}"></div>`                           | foo           |
-      | Attribute               | 2    | `<div id.bind="bar"></div>`                         | bar           |
-      | Many                    | 4    | `<span id.bind="qux.attr">${qux.interpol}</span>`   | qux;qux       |
-      | Many                    | 5    | `<p class="${useFoo(qux)}">${arr[qux] \|hello}</p>` | qux;arr,qux   |
-# TODO: replace parse5 with htmlparser2 (parse5 not uptodate, and bug with this case | Text Interpolation      | `${foo.qux}`                                     | foo          | 2            | 6          | 6    |
-
+      | DESCRIPTION             | LINE | CODE                                                | ACCESS_SCOPES      | START           | END             |
+      | Text Interpolation      | 0    | `${foo}`                                            | foo                | 2               | 5               |
+      | Attribute Interpolation | 1    | `<div id="${foo}"></div>`                           | foo                | 18              | 21              |
+      | Attribute               | 2    | `<div id.bind="bar"></div>`                         | bar                | 45              | 48              |
+      | Many                    | 4    | `<span id.bind="qux.attr">${qux.interpol}</span>`   | qux;qux            | 115;127         | 118;130         |
+      | Many                    | 5    | `<p class="${useFoo(qux)}">${arr[qux] \|hello}</p>` | useFoo,qux;arr,qux | 160,167;176,180 | 166,170;179,183 |

@@ -162,7 +162,6 @@ export async function aureliaRenameFromViewModel(
   );
 
   const viewDocument = TextDocumentUtils.createHtmlFromPath(viewPath);
-  viewDocument.getText();
   const otherChangesInsideSameView = await renameAllOtherRegionsInSameView(
     aureliaProgram,
     viewDocument,

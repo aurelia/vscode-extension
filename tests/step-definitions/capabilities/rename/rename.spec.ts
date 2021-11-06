@@ -32,8 +32,6 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
       );
       expect(viewModelChanges).toBe(true);
     }
-
-    expect(true).toBeFalsy();
   });
 
   then('the word should be renamed', () => {
@@ -43,32 +41,31 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
     }
   });
 
-  and(
-    'all other components, that also use the Bindable should be renamed',
-    () => {
-      expect(renamed?.changes).toBeDefined();
-      // renamed; /*?*/
-      if (renamed?.changes) {
-        expect(Object.keys(renamed.changes).length).toBeGreaterThan(4);
+  and(/^all other components (.*)$/, (numOtherComponents: string) => {
+    expect(renamed?.changes).toBeDefined();
+    // renamed; /*?*/
+    if (renamed?.changes) {
+      expect(Object.keys(renamed.changes).length).toBe(
+        Number(numOtherComponents)
+      );
 
-        // TODO: Expect kebab case
-        const targetChanges = Object.entries(
-          renamed.changes
-        ).filter(([fileName]) => fileName.endsWith('.html'));
+      // TODO: Expect kebab case
+      const targetChanges = Object.entries(renamed.changes).filter(
+        ([fileName]) => fileName.endsWith('.html')
+      );
 
-        if (!targetChanges.length) return;
-        targetChanges.forEach(([fileName, change]) => {
-          // same component
-          if (fileName.includes('custom-element.html')) {
-            expect(change[0].newText).toBe('newNew');
-            // other components
-          } else {
-            expect(change[0].newText).toBe('new-new');
-          }
-        });
-      }
+      if (!targetChanges.length) return;
+      targetChanges.forEach(([fileName, change]) => {
+        // same component
+        if (fileName.includes('custom-element.html')) {
+          expect(change[0].newText).toBe('newNew');
+          // other components
+        } else {
+          expect(change[0].newText).toBe('new-new');
+        }
+      });
     }
-  );
+  });
 
   then('the View model class should be renamed', () => {
     expect(renamed?.changes).toBeDefined();
@@ -102,7 +99,7 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
     'all other components, that also use the Custom Element should be renamed',
     () => {
       const change = getRenameChangeFromFilePath({
-        filePath: 'other-custom-element-user.html',
+        filePathOrFragment: 'other-custom-element-user.html',
       });
 
       if (!change) return;
@@ -123,16 +120,30 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
       // expect(true).toBeFalsy();
     }
   );
+
+  and(
+    /^only the Access scope should be renamed (.*) (.*)$/,
+    (scopeStart: string, scopeEnd: string) => {
+      const change = getRenameChangeFromFilePath({
+        filePathOrFragment: 'custom-element.html',
+      });
+      change; /* ? */
+
+      if (change === undefined) return;
+      expect(change[0].range.start.character).toBe(Number(scopeStart));
+      expect(change[0].range.end.character).toBe(Number(scopeEnd));
+    }
+  );
 };
 
 function getRenameChangeFromFilePath({
   uri,
-  filePath,
+  filePathOrFragment,
 }: {
   uri?: string;
-  filePath?: string;
+  filePathOrFragment?: string;
 }) {
-  const finalTargetPath = filePath ?? UriUtils.toPath(uri ?? '');
+  const finalTargetPath = filePathOrFragment ?? UriUtils.toPath(uri ?? '');
   if (!finalTargetPath) return;
   if (!renamed?.changes) return;
 

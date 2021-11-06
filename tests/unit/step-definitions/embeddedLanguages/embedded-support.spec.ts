@@ -198,6 +198,33 @@ defineFeature(feature, (test) => {
         });
       }
     );
+
+    and(
+      /^the result should have the correct (.*) and (.*) scope location$/,
+      (startRaw: string, endRaw: string) => {
+        const expectedStart = startRaw.split(';');
+        const expectedEnd = endRaw.split(';');
+        // shared.line;/* ? */
+        // shared.parsedRegions;/* ? */
+        const targets = ViewRegionUtils.getManyTargetsRegionByLine(
+          shared.parsedRegions,
+          shared.line
+        );
+
+        targets.forEach((target, index) => {
+          expect(target?.accessScopes).toBeDefined();
+          if (!target?.accessScopes) return;
+
+          const expectedScopeStart = expectedStart[index].split(',');
+          const expectedScopeEnd = expectedEnd[index].split(',');
+          target.accessScopes.forEach((scope, scopeIndex) => {
+            const { start, end } = scope.nameLocation;
+            expect(start).toBe(Number(expectedScopeStart[scopeIndex]));
+            expect(end).toBe(Number(expectedScopeEnd[scopeIndex]));
+          });
+        });
+      }
+    );
   });
 });
 

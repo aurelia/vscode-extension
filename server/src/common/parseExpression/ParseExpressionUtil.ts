@@ -92,6 +92,10 @@ interface ExpressionsOfKindOptions {
    *   Try with: `${repos | sort:direction.value:hello(what) | take:10}`
    */
   flatten?: boolean;
+  /**
+   * To be added to expression parsers location
+   */
+  startOffset: number;
 }
 
 export class ParseExpressionUtil {
@@ -120,7 +124,8 @@ export class ParseExpressionUtil {
 
     const parsed = parseExpression(
       input,
-      ExpressionType.None
+      ExpressionType.None,
+      options?.startOffset
     ) as unknown as Interpolation;
 
     // Interpolation
@@ -216,18 +221,26 @@ export class ParseExpressionUtil {
     return target;
   }
 
-  public static getAllExpressionsByName(input: string, targetName: string) {
+  public static getAllExpressionsByName<TargetKind extends ExpressionKind>(
+    input: string,
+    targetName: string,
+    targetKinds: TargetKind[]
+  ): KindToActualExpression<TargetKind>[] {
     const parsed = parseExpression(
       input,
       ExpressionType.None
     ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
-    // const finalExpressionKind: ExpressionKind[] = [ExpressionKind.AccessScope];
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [
-      ExpressionKind.AccessScope,
-    ]);
-    const hasSourceWordInScope = accessScopes.filter(
-      (accessScope) => accessScope.name === targetName
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
+      parsed,
+      targetKinds
     );
+    const hasSourceWordInScope = accessScopes.filter((accessScope) => {
+      const isAccessOrCallScope =
+        accessScope.$kind === ExpressionKind.AccessScope ||
+        accessScope.$kind === ExpressionKind.CallScope;
+      if (!isAccessOrCallScope) return false;
+      return accessScope.name === targetName;
+    });
 
     return hasSourceWordInScope;
   }

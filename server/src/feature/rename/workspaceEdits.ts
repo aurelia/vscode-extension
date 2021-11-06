@@ -16,6 +16,7 @@ import {
   forEachRegionOfType,
 } from '../../core/regions/findSpecificRegion';
 import {
+  getRangesForAccessScopeFromRegionByName,
   getRangeFromDocumentOffsets,
   getRangeFromLocation,
   getRangeFromRegion,
@@ -210,21 +211,32 @@ export function getViewModelPathFromTagName(
 
 export async function renameAllOtherRegionsInSameView(
   aureliaProgram: AureliaProgram,
-  document: TextDocument,
+  viewDocument: TextDocument,
   sourceWord: string,
   newName: string
 ) {
   const result: WorkspaceEdit['changes'] = {};
 
-  const regions = await findRegionsByWord(aureliaProgram, document, sourceWord);
+  const regions = await findRegionsByWord(
+    aureliaProgram,
+    viewDocument,
+    sourceWord
+  );
 
-  const { uri } = document;
+  const { uri } = viewDocument;
   result[uri] = [];
   regions.forEach((region) => {
-    const range = getRangeFromRegion(region, document);
-    if (!range) return;
+    const accessScopeRanges = getRangesForAccessScopeFromRegionByName(
+      viewDocument,
+      region,
+      sourceWord
+    );
 
-    result[uri].push(TextEdit.replace(range, camelCase(newName)));
+    accessScopeRanges?.forEach((range) => {
+      if (range === undefined) return;
+
+      result[uri].push(TextEdit.replace(range, camelCase(newName)));
+    });
   });
 
   return result;

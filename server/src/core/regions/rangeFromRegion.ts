@@ -2,7 +2,29 @@ import { RenameLocation } from 'ts-morph';
 import { Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { AbstractRegion, RepeatForRegion } from './ViewRegions';
+
+export function getRangesForAccessScopeFromRegionByName(
+  document: TextDocument,
+  region: AbstractRegion,
+  targetName: string
+): Range[] | undefined {
+  const targetAccessScopes = region.accessScopes?.filter(
+    (scope) => scope.name === targetName
+  );
+  const viewDocument = TextDocumentUtils.createHtmlFromUri(document);
+  const resultRanges = targetAccessScopes?.map((scope) => {
+    const { start, end } = scope.nameLocation;
+    const startPosition = viewDocument.positionAt(start);
+    const endPosition = viewDocument.positionAt(end);
+    const range = Range.create(startPosition, endPosition);
+
+    return range;
+  });
+
+  return resultRanges;
+}
 
 export function getRangeFromDocumentOffsets(
   document: TextDocument,
@@ -117,3 +139,12 @@ export function getStartTagNameRange(
 
   return range;
 }
+
+// function getRangeFromScopeLocaton(
+//   start: SourceCodeLocation,
+//   end: SourceCodeLocation
+// ) {
+//   const startPosition = Position.create(startLine, startCol);
+//   const endPosition = Position.create(endLine, endCol);
+//   const range = Range.create(startPosition, endPosition);
+// }
