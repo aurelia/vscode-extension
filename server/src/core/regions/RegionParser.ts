@@ -296,6 +296,48 @@ function objectToTable<
   return asTable;
 }
 
+export function prettyTable<
+  Regions extends AbstractRegion[],
+  IgnoreKey extends keyof Regions[number]
+>(
+  allPossibleKeys: string[],
+  flattenedRows: string[][],
+  prettyOptions?: PrettyOptions<Regions, IgnoreKey>
+) {
+  const final = [allPossibleKeys, ...flattenedRows];
+
+  // find max in each column
+  const maxHeader = allPossibleKeys.map((headerColumn) => headerColumn.length);
+  const maxTracker = maxHeader;
+  flattenedRows.forEach((rowEntry) => {
+    rowEntry.forEach((rowValue, index) => {
+      maxTracker[index] = Math.max(maxTracker[index], rowValue.length ?? 0);
+    });
+  });
+
+  const asTable = final.map((row) => {
+    const padded = row.map((entry, index) => {
+      let finalEntry = entry;
+      if (!entry) finalEntry = '-';
+      if (typeof entry !== 'string') finalEntry = '[object]';
+
+      if (prettyOptions?.maxColWidth !== undefined) {
+        finalEntry = finalEntry.substring(0, prettyOptions.maxColWidth);
+      }
+      const padWith = Math.min(
+        prettyOptions?.maxColWidth ?? Infinity,
+        maxTracker[index]
+      );
+      finalEntry = finalEntry.replace('\n', '[nl]');
+      // maxTracker; /*?*/
+      return finalEntry?.padEnd(padWith, ' ');
+    });
+    return padded.join(' | ');
+  });
+
+  return asTable;
+}
+
 function pickTruthyFields(
   anyObject: Record<string, any>,
   prettyOptions?: { ignoreKeys?: any[] }
