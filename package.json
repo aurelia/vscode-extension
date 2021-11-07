@@ -224,7 +224,7 @@
   "devDependencies": {
     "@code-dependency/cli": "^0.5.0",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
-    "@sucrase/jest-plugin": "^2.1.1",
+    "@sucrase/jest-plugin": "^2.2.0",
     "@swc/cli": "^0.1.50",
     "@swc/core": "^1.2.91",
     "@swc/jest": "^0.2.4",
