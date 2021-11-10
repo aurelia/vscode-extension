@@ -5,6 +5,7 @@ import {
   BinaryExpression,
   CallMemberExpression,
   CallScopeExpression,
+  ConditionalExpression,
   ExpressionKind,
   ExpressionType,
   Interpolation,
@@ -12,6 +13,7 @@ import {
   IsExpression,
   parseExpression,
   PrimitiveLiteralExpression,
+  UnaryExpression,
   ValueConverterExpression,
 } from '../@aurelia-runtime-patch/src';
 import '@aurelia/metadata';
@@ -27,7 +29,9 @@ export type KindToActualExpression<TargetKind extends ExpressionKind> =
           TargetKind extends ExpressionKind.CallMember ? CallMemberExpression :
             TargetKind extends ExpressionKind.PrimitiveLiteral ? PrimitiveLiteralExpression :
               TargetKind extends ExpressionKind.ValueConverter ? ValueConverterExpression :
-                never;
+                TargetKind extends ExpressionKind.Conditional ? ConditionalExpression :
+                  TargetKind extends ExpressionKind.Unary ? UnaryExpression :
+never;
 
 export enum ExpressionKind_Dev {
   CallsFunction = 0b0000000000100_00000, // Calls a function (CallFunction, CallScope, CallMember, TaggedTemplate) -> needs a valid function object returning from its lefthandside's evaluate()
@@ -122,11 +126,11 @@ export class ParseExpressionUtil {
       input = input.substring(0, input.length - 1);
     }
 
-    const parsed = parseExpression(
+    const parsed = (parseExpression(
       input,
       ExpressionType.None,
       options?.startOffset
-    ) as unknown as Interpolation;
+    ) as unknown) as Interpolation;
 
     // Interpolation
     if (parsed instanceof Interpolation) {
@@ -226,10 +230,10 @@ export class ParseExpressionUtil {
     targetName: string,
     targetKinds: TargetKind[]
   ): KindToActualExpression<TargetKind>[] {
-    const parsed = parseExpression(
+    const parsed = (parseExpression(
       input,
       ExpressionType.None
-    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
       parsed,
       targetKinds
@@ -383,6 +387,42 @@ function findAllExpressionRecursive(
       collector,
       options
     );
+    return;
+  }
+
+  // .condition .yes .no
+  else if (singleExpression instanceof ConditionalExpression) {
+    findAllExpressionRecursive(
+      singleExpression.condition,
+      targetKinds,
+      collector,
+      options
+    );
+    findAllExpressionRecursive(
+      singleExpression.yes,
+      targetKinds,
+      collector,
+      options
+    );
+    findAllExpressionRecursive(
+      singleExpression.no,
+      targetKinds,
+      collector,
+      options
+    );
+
+    return;
+  }
+
+  // .expression (.operation)
+  else if (singleExpression instanceof UnaryExpression) {
+    findAllExpressionRecursive(
+      singleExpression.expression,
+      targetKinds,
+      collector,
+      options
+    );
+
     return;
   }
 

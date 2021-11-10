@@ -67,18 +67,17 @@ export class AureliaServer {
   }
 
   // sendDiagnostics() {}
-  public async onHover(
-    // documentContent: string,
-    // position: Position,
-    // filePath: string
-  ) {
+  public async onHover() // documentContent: string,
+  // position: Position,
+  // filePath: string
+  {
     // const hovered = onHover(documentContent, position, filePath);
     // return hovered;
   }
 
   public async onCompletion(
-    textDocumentPosition: TextDocumentPositionParams,
-    document: TextDocument
+    document: TextDocument,
+    textDocumentPosition: TextDocumentPositionParams
   ) {
     const completions = await onCompletion(
       this.container,

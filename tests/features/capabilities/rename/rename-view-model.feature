@@ -3,7 +3,6 @@ Feature: Rename in View Model.
   Background:
     Given the project is named "scoped-for-testing"
 
-  @focus
   Scenario Outline: Variable in View Model.
     And I open VSCode with the following file "custom-element.ts"
     And I'm on the line <LINE> at character <CODE>
@@ -14,7 +13,7 @@ Feature: Rename in View Model.
 
     Examples:
       | DESCRIPTION | LINE | CODE                 | NEW_WORD | NUM_OTHER_COMPONENTS | SCOPE_START | SCOPE_END |
-      | Bindable    | 2    | `  @bindable \|foo;` | newNew   | 4                    | 0           | 0         |
+      | Bindable    | 2    | `  @bindable \|foo;` | newNew   | 5                    | 2           | 5         |
       | Variable    | 4    | `  \|qux`            | newNew   | 2                    | 15          | 18        |
       | Method      | 6    | `  \|useFoo() {`     | newNew   | 2                    | 12          | 18        |
 

@@ -1,7 +1,7 @@
 import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
+import { aureliaVirtualComplete_vNext } from '../../../feature/completions/virtualCompletion2';
 import { getAccessScopeDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { getAccessScopeHover } from '../../../feature/hover/accessScopeHover';
@@ -19,15 +19,12 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
     triggerCharacter?: string,
     region?: AbstractRegion
   ) {
-    if (!region) return [];
-
-    const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
-      _textDocumentPosition,
+    const completions = aureliaVirtualComplete_vNext(
+      aureliaProgram,
       document,
-      region,
-      aureliaProgram
+      region
     );
-    return aureliaVirtualCompletions;
+    return completions;
   }
 
   public async doDefinition(
@@ -36,10 +33,9 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
     position: Position,
     region: AbstractRegion
   ): Promise<DefinitionResult | undefined> {
-    const regions =
-      aureliaProgram.aureliaComponents.getOneByFromDocument(
-        document
-      )?.viewRegions;
+    const regions = aureliaProgram.aureliaComponents.getOneByFromDocument(
+      document
+    )?.viewRegions;
 
     return getAccessScopeDefinition(
       aureliaProgram,

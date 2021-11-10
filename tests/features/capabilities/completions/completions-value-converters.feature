@@ -9,7 +9,7 @@ Feature: Completions - Value converters
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
     When I trigger Suggestions
-    Then I should get the correct suggestions for Value converters
+    Then I should get the correct Value converters suggestions
 
     Examples:
       | LINE | CODE                               |

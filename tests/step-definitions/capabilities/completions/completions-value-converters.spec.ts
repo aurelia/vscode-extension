@@ -4,7 +4,7 @@ import { isAureliaCompletionItem } from '../../../../server/src/feature/completi
 import { completions } from '../completions.spec';
 
 export const completionValueConverterSteps: StepDefinitions = ({ then }) => {
-  then('I should get the correct suggestions for Value converters', () => {
+  then('I should get the correct Value converters suggestions', () => {
     if (isAureliaCompletionItem(completions)) {
       const valueConverterName = 'sort';
       const target = completions.find(

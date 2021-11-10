@@ -197,8 +197,8 @@ connection.onCompletion(
     }
 
     const completions = await aureliaServer.onCompletion(
-      _textDocumentPosition,
-      document
+      document,
+      _textDocumentPosition
     );
 
     return completions;
@@ -281,8 +281,7 @@ connection.onExecuteCommand(
     const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
     switch (command) {
       case 'extension.aurelia.reinitializeExtension': {
-        const workspaceFolders =
-          await connection.workspace.getWorkspaceFolders();
+        const workspaceFolders = await connection.workspace.getWorkspaceFolders();
         if (workspaceFolders === null) return;
 
         const workspaceRootUri = workspaceFolders[0].uri;

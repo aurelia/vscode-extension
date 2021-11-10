@@ -22,7 +22,7 @@ Feature: Rename in View.
 
     Examples:
       | DESCRIPTION        | LINE | CODE                | NEW_WORD | NUM_OTHER_COMPONENTS |
-      | Bindable Attribute | 3    | `    \|foo.bind=""` | new-new  | 4                    |
+      | Bindable Attribute | 3    | `    \|foo.bind=""` | new-new  | 5                    |
 
   Scenario Outline: Rename variable in View.
     And I open VSCode with the following file "custom-element.html"
@@ -33,7 +33,7 @@ Feature: Rename in View.
 
     Examples:
       | DESCRIPTION        | LINE | CODE                                           | NEW_WORD | NUM_OTHER_COMPONENTS |
-      | Text Interploation | 0    | `${\|foo}`                                     | new-new  | 4                    |
-      | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  | 4                    |
-      | View model         | 2    | `<div id.bind="\|bar"></div>`                  | new-new  | 4                    |
-      | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  | 4                    |
+      | Text Interploation | 0    | `${\|foo}`                                     | new-new  | 5                    |
+      | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  | 5                    |
+      | View model         | 2    | `<div id.bind="\|bar"></div>`                  | new-new  | 5                    |
+      | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  | 5                    |

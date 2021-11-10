@@ -76,7 +76,7 @@ export function createTsMorphProject(
     tsConfigPath?: string;
   } = {
     customCompilerOptions: {},
-    tsConfigPath: '',
+    tsConfigPath: undefined,
   }
 ) {
   const { customCompilerOptions, tsConfigPath } = customProjectSettings;

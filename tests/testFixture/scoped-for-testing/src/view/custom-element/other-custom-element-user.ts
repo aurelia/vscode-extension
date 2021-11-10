@@ -3,13 +3,11 @@ export interface OtherInterface {
     other: string;
   };
 }
-
 export class OtherCustomElementCustomElement {
-  @bindable otherFoo;
+  @bindable otherFoo: string[];
   @bindable otherBar;
-  otherQux: OtherInterface;
-
-  otherUseFoo() {
-    this.foo;
+  otherQux: OtherInterface[];
+  otherUseQux() {
+    this.otherQux[0];
   }
 }

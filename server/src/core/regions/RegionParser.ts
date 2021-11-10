@@ -178,9 +178,12 @@ export class RegionParser {
     Regions extends AbstractRegion[],
     IgnoreKey extends keyof Regions[number]
   >(
-    regions: AbstractRegion[],
+    regions?: AbstractRegion[],
     prettyOptions?: PrettyOptions<Regions, IgnoreKey>
   ) {
+    if (!regions) return 'no regions';
+    if (regions?.length === 0) return 'no regions';
+
     const finalResult: Record<string, unknown>[] = [];
 
     regions.forEach((region) => {

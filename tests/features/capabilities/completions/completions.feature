@@ -8,14 +8,15 @@ Feature: Completions.
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
     When I trigger Suggestions
-    Then I should get the correct suggestions
+    Then I should get the correct suggestions <SUGGESTION>
 
     Examples:
-      | DESCRIPTION         | LINE | CODE                                           |
-      | View model          | 0    | `<div click.delegate="\|"></div>`              |
-      | View model          | 0    | `<div class="${m\|}"></div>`                   |
-      | View model          | 0    | `<div css="width: ${m\|}px;"></div>`           |
-      | View model (object) | 0    | `<div if.bind="minimalInterfaceVar.\|"></div>` |
-      | Custom element      | 0    | `<div></div><\|`                               |
-      | Bindable            | 0    | `<minimal-component \|></minimal-component>`   |
+      | DESCRIPTION         | LINE | CODE                                           | SUGGESTION |
+      | View model          | 0    | `<div click.delegate="\|"></div>`              | minimalVar |
+      | View model          | 0    | `<div class="${m\|}"></div>`                   | minimalVar |
+      | View model          | 0    | `<div css="width: ${m\|}px;"></div>`           | minimalVar |
+      | View model (object) | 0    | `<div if.bind="minimalInterfaceVar.\|"></div>` | field      |
+      | Custom element      | 0    | `<div></div><\|`                               | compo-user |
+
+# TODO | Bindable    | 0    | `<minimal-component \|></minimal-component>` | minimalVar |
 # TODO: Aurelia Attribute Keywords | 0    | `<div \|></div>` |

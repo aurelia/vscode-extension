@@ -23,24 +23,45 @@ import type {
 export const propertyAccessor = new PropertyAccessor();
 
 export interface IObjectObservationAdapter {
-  getObserver(object: unknown, propertyName: string, descriptor: PropertyDescriptor, requestor: IObserverLocator): AccessorOrObserver | null;
+  getObserver(
+    object: unknown,
+    propertyName: string,
+    descriptor: PropertyDescriptor,
+    requestor: IObserverLocator
+  ): AccessorOrObserver | null;
 }
 
 export interface IObserverLocator extends ObserverLocator {}
-export const IObserverLocator = DI.createInterface<IObserverLocator>('IObserverLocator', x => x.singleton(ObserverLocator));
+export const IObserverLocator = DI.createInterface<IObserverLocator>(
+  'IObserverLocator',
+  (x) => x.singleton(ObserverLocator)
+);
 
 export interface INodeObserverLocator {
   handles(obj: unknown, key: PropertyKey, requestor: IObserverLocator): boolean;
-  getObserver(obj: object, key: PropertyKey, requestor: IObserverLocator): IAccessor | IObserver;
-  getAccessor(obj: object, key: PropertyKey, requestor: IObserverLocator): IAccessor | IObserver;
+  getObserver(
+    obj: object,
+    key: PropertyKey,
+    requestor: IObserverLocator
+  ): IAccessor | IObserver;
+  getAccessor(
+    obj: object,
+    key: PropertyKey,
+    requestor: IObserverLocator
+  ): IAccessor | IObserver;
 }
-export const INodeObserverLocator = DI
-  .createInterface<INodeObserverLocator>('INodeObserverLocator', x => x.cachedCallback(handler => {
-    handler.getAll(ILogger).forEach(logger => {
-      logger.error('Using default INodeObserverLocator implementation. Will not be able to observe nodes (HTML etc...).');
-    });
-    return new DefaultNodeObserverLocator();
-  }));
+export const INodeObserverLocator = DI.createInterface<INodeObserverLocator>(
+  'INodeObserverLocator',
+  (x) =>
+    x.cachedCallback((handler) => {
+      handler.getAll(ILogger).forEach((logger) => {
+        logger.error(
+          'Using default INodeObserverLocator implementation. Will not be able to observe nodes (HTML etc...).'
+        );
+      });
+      return new DefaultNodeObserverLocator();
+    })
+);
 
 class DefaultNodeObserverLocator implements INodeObserverLocator {
   public handles(): boolean {
@@ -72,7 +93,7 @@ export class ObserverLocator {
 
   public constructor(
     private readonly _dirtyChecker: IDirtyChecker,
-    private readonly _nodeObserverLocator: INodeObserverLocator,
+    private readonly _nodeObserverLocator: INodeObserverLocator
   ) {}
 
   public addAdapter(adapter: IObjectObservationAdapter): void {
@@ -80,41 +101,65 @@ export class ObserverLocator {
   }
 
   public getObserver(obj: object, key: PropertyKey): IObserver {
-    return (obj as IObservable).$observers?.[key as string] as IObserver | undefined
-      ?? this._cache((obj as IObservable), key as string, this.createObserver((obj as IObservable), key as string)) as IObserver;
+    return (
+      ((obj as IObservable).$observers?.[key as string] as
+        | IObserver
+        | undefined) ||
+      (this._cache(
+        obj as IObservable,
+        key as string,
+        this.createObserver(obj as IObservable, key as string)
+      ) as IObserver)
+    );
   }
 
   public getAccessor(obj: object, key: string): AccessorOrObserver {
-    const cached = (obj as IObservable).$observers?.[key] as AccessorOrObserver | undefined;
+    const cached = (obj as IObservable).$observers?.[key] as
+      | AccessorOrObserver
+      | undefined;
     if (cached !== void 0) {
       return cached;
     }
     if (this._nodeObserverLocator.handles(obj, key, this)) {
-      return this._nodeObserverLocator.getAccessor(obj, key, this) as AccessorOrObserver;
+      return this._nodeObserverLocator.getAccessor(
+        obj,
+        key,
+        this
+      ) as AccessorOrObserver;
     }
 
     return propertyAccessor;
   }
 
-  public getArrayObserver(observedArray: unknown[]): ICollectionObserver<CollectionKind.array> {
+  public getArrayObserver(
+    observedArray: unknown[]
+  ): ICollectionObserver<CollectionKind.array> {
     return getArrayObserver(observedArray);
   }
 
-  public getMapObserver(observedMap: Map<unknown, unknown>): ICollectionObserver<CollectionKind.map>  {
+  public getMapObserver(
+    observedMap: Map<unknown, unknown>
+  ): ICollectionObserver<CollectionKind.map> {
     return getMapObserver(observedMap);
   }
 
-  public getSetObserver(observedSet: Set<unknown>): ICollectionObserver<CollectionKind.set>  {
+  public getSetObserver(
+    observedSet: Set<unknown>
+  ): ICollectionObserver<CollectionKind.set> {
     return getSetObserver(observedSet);
   }
 
   private createObserver(obj: IObservable, key: string): AccessorOrObserver {
     if (!(obj instanceof Object)) {
-      return new PrimitiveObserver(obj as unknown as Primitive, key);
+      return new PrimitiveObserver((obj as unknown) as Primitive, key);
     }
 
     if (this._nodeObserverLocator.handles(obj, key, this)) {
-      return this._nodeObserverLocator.getObserver(obj, key, this) as AccessorOrObserver;
+      return this._nodeObserverLocator.getObserver(
+        obj,
+        key,
+        this
+      ) as AccessorOrObserver;
     }
 
     switch (key) {
@@ -153,14 +198,27 @@ export class ObserverLocator {
 
     // If the descriptor does not have a 'value' prop, it must have a getter and/or setter
     if (pd !== void 0 && !hasOwnProp.call(pd, 'value')) {
-      let obs: AccessorOrObserver | undefined | null = this._getAdapterObserver(obj, key, pd);
+      let obs: AccessorOrObserver | undefined | null = this._getAdapterObserver(
+        obj,
+        key,
+        pd
+      );
       if (obs == null) {
-        obs = (pd.get?.getObserver ?? pd.set?.getObserver)?.(obj, this) as AccessorOrObserver;
+        obs = (pd.get?.getObserver ?? pd.set?.getObserver)?.(
+          obj,
+          this
+        ) as AccessorOrObserver;
       }
 
       return obs == null
         ? pd.configurable
-          ? ComputedObserver.create(obj, key, pd, this, /* AOT: not true for IE11 */ true)
+          ? ComputedObserver.create(
+              obj,
+              key,
+              pd,
+              this,
+              /* AOT: not true for IE11 */ true
+            )
           : this._dirtyChecker.createProperty(obj, key)
         : obs;
     }
@@ -170,7 +228,11 @@ export class ObserverLocator {
     return new SetterObserver(obj, key);
   }
 
-  private _getAdapterObserver(obj: IObservable, propertyName: string, pd: PropertyDescriptor): AccessorOrObserver | null {
+  private _getAdapterObserver(
+    obj: IObservable,
+    propertyName: string,
+    pd: PropertyDescriptor
+  ): AccessorOrObserver | null {
     if (this._adapters.length > 0) {
       for (const adapter of this._adapters) {
         const observer = adapter.getObserver(obj, propertyName, pd, this);
@@ -182,7 +244,11 @@ export class ObserverLocator {
     return null;
   }
 
-  private _cache(obj: IObservable, key: string, observer: AccessorOrObserver): AccessorOrObserver {
+  private _cache(
+    obj: IObservable,
+    key: string,
+    observer: AccessorOrObserver
+  ): AccessorOrObserver {
     if (observer.doNotCache === true) {
       return observer;
     }
@@ -190,13 +256,15 @@ export class ObserverLocator {
       def(obj, '$observers', { value: { [key]: observer } });
       return observer;
     }
-    return obj.$observers[key] = observer;
+    return (obj.$observers[key] = observer);
   }
 }
 
 export type RepeatableCollection = Collection | null | undefined | number;
 
-export function getCollectionObserver(collection: RepeatableCollection): CollectionObserver | undefined {
+export function getCollectionObserver(
+  collection: RepeatableCollection
+): CollectionObserver | undefined {
   let obs: CollectionObserver | undefined;
   if (collection instanceof Array) {
     obs = getArrayObserver(collection);

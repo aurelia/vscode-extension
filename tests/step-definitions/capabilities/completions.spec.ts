@@ -36,17 +36,23 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     // eslint-disable-next-line require-atomic-updates
     completions = await myMockServer
       .getAureliaServer()
-      .onCompletion(textDocumentPositionParams, document);
+      .onCompletion(document, textDocumentPositionParams);
   });
 
-  then('I should get the correct suggestions', () => {
+  then(/^I should get the correct suggestions (.*)$/, (suggestion: string) => {
     /* prettier-ignore */ logger.log('I should get the correct suggestion',{logPerf:true});
 
+    completions; /*?*/
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);
-    }
 
-    // expect(true).toBeFalsy();
+      const target = completions.find((completion) =>
+        completion.label.includes(suggestion)
+      );
+
+      expect(target?.label).toContain(suggestion);
+      expect(target?.insertText).toContain(suggestion);
+    }
   });
 
   then(

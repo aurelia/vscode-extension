@@ -7,6 +7,7 @@ import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
+import { RegionParser } from '../../core/regions/RegionParser';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaDefinitionFromViewModel } from './aureliaDefintion';
 
@@ -33,12 +34,14 @@ export async function onDefintion(
   const aureliaProgram = targetProject?.aureliaProgram;
   if (!aureliaProgram) return;
 
-  const targetComponent =
-    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
+  const targetComponent = aureliaProgram.aureliaComponents.getOneByFromDocument(
+    document
+  );
   const regions = targetComponent?.viewRegions;
-
   if (!regions) return;
+
   const offset = document.offsetAt(position);
+  offset; /*?*/
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
   if (region === undefined) return;
   const doDefinition = region.languageService.doDefinition;
