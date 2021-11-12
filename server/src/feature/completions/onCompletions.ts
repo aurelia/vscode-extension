@@ -1,3 +1,4 @@
+import { getLanguageService } from 'vscode-html-languageservice';
 import {
   TextDocumentPositionParams,
   CompletionItem,
@@ -88,14 +89,27 @@ export async function onCompletion(
     const isNotRegion = region === undefined;
     const isInsideTag = await checkInsideTag(document, offset);
 
+    // TODO
+    const htmlLanguageService = getLanguageService();
+    const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
+    const htmlLSResult = htmlLanguageService.doComplete(
+      document,
+      position,
+      htmlDocument
+    );
+
     if (isInsideTag) {
       ataCompletions = createAureliaTemplateAttributeCompletions();
 
+      const completionsWithStandardHtml = [
+        ...ataCompletions,
+        ...htmlLSResult.items,
+      ];
       if (isNotRegion) {
-        return ataCompletions;
+        return completionsWithStandardHtml;
       }
 
-      accumulateCompletions = ataCompletions;
+      accumulateCompletions = completionsWithStandardHtml;
     }
   }
 
