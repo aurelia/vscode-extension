@@ -44,13 +44,16 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
 
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);
+      completions; /* ? */
 
       const target = completions.find((completion) =>
         completion.label.includes(suggestion)
       );
 
       expect(target?.label).toContain(suggestion);
-      expect(target?.insertText).toContain(suggestion);
+      if (target?.insertText !== undefined) {
+        expect(target.insertText).toContain(suggestion);
+      }
     }
   });
 

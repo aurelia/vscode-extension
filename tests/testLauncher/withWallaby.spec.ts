@@ -1,6 +1,6 @@
 import { initCucumberTests } from '../jest-cucumber-setup.spec';
 
-// initCucumberTests();
+initCucumberTests();
 // initCucumberTests('@core');
 // initCucumberTests('@cli_generated');
 // initCucumberTests('@cli_generated and @focus');
