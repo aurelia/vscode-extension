@@ -5,7 +5,7 @@
     "outDir": "out",
     "rootDir": "..",
     "sourceMap": true,
-    "lib": ["es2019", "ES2021.String"],
+    "lib": ["es2019"],
     "strictPropertyInitialization": false,
     "declaration": true,
     "resolveJsonModule": true,

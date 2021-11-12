@@ -13,7 +13,7 @@ module.exports = {
     'plugin:import/typescript',
   ],
   parserOptions: {
-    ecmaVersion: 2019,
+    ecmaVersion: 2020,
     project: path.join(thisDir, 'tsconfig.eslint.json'),
     sourceType: 'module',
     tsconfigRootDir: thisDir,
