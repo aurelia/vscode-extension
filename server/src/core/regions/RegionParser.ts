@@ -20,6 +20,7 @@ import {
 } from './ViewRegions';
 
 const logger = new Logger('RegionParser');
+const OBJECT_PLACEHOLDER = '[o]';
 
 interface PrettyOptions<
   Regions extends AbstractRegion[],
@@ -280,7 +281,7 @@ function objectToTable<
     const padded = row.map((entry, index) => {
       let finalEntry = entry;
       if (!entry) finalEntry = '-';
-      if (typeof entry !== 'string') finalEntry = '[object]';
+      if (typeof entry !== 'string') finalEntry = OBJECT_PLACEHOLDER;
 
       if (prettyOptions?.maxColWidth !== undefined) {
         finalEntry = finalEntry.substring(0, prettyOptions.maxColWidth);
@@ -322,7 +323,7 @@ export function prettyTable<
     const padded = row.map((entry, index) => {
       let finalEntry = entry;
       if (!entry) finalEntry = '-';
-      if (typeof entry !== 'string') finalEntry = '[object]';
+      if (typeof entry !== 'string') finalEntry = OBJECT_PLACEHOLDER;
 
       if (prettyOptions?.maxColWidth !== undefined) {
         finalEntry = finalEntry.substring(0, prettyOptions.maxColWidth);

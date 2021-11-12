@@ -42,7 +42,6 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   then(/^I should get the correct suggestions (.*)$/, (suggestion: string) => {
     /* prettier-ignore */ logger.log('I should get the correct suggestion',{logPerf:true});
 
-    completions; /*?*/
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);
 

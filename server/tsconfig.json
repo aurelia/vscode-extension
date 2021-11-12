@@ -2,7 +2,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "target": "es6",
-    "lib": ["ES2021.String"],
+    "lib": ["ES2021"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,

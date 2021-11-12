@@ -46,6 +46,7 @@ export async function onCompletion(
     );
   } catch (error) {
     /* prettier-ignore */ console.log('TCL: error', error)
+    /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack)
   }
 
   // regions; /*?*/
@@ -78,7 +79,8 @@ export async function onCompletion(
     const isInsideTag = await checkInsideTag(document, offset);
 
     if (isNotRegion && isInsideTag) {
-      const atakCompletions = createAureliaTemplateAttributeKeywordCompletions();
+      const atakCompletions =
+        createAureliaTemplateAttributeKeywordCompletions();
       return atakCompletions;
     }
   } else if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER) {
@@ -109,13 +111,13 @@ export async function onCompletion(
   if (doComplete !== undefined) {
     let completions: CompletionItem[] = [CompletionItem.create('')];
     try {
-      completions = ((await doComplete(
+      completions = (await doComplete(
         aureliaProgram,
         document,
         _textDocumentPosition,
         triggerCharacter,
         region
-      )) as unknown) as CompletionItem[];
+      )) as unknown as CompletionItem[];
     } catch (error) {
       (error as Error).stack;
       console.log('TCL: error', error);

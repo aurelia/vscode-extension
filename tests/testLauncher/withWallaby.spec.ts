@@ -2,7 +2,7 @@ import { initCucumberTests } from '../jest-cucumber-setup.spec';
 
 // initCucumberTests();
 // initCucumberTests('@core');
-initCucumberTests('@cli_generated');
+// initCucumberTests('@cli_generated');
 // initCucumberTests('@cli_generated and @focus');
 // initCucumberTests('@scoped_for_testing');
 // initCucumberTests('@scoped_for_testing and @focus');

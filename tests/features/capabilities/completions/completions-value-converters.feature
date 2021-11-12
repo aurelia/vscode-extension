@@ -4,7 +4,7 @@ Feature: Completions - Value converters
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.html"
 
-  #
+  @focus
   Scenario Outline: Completions for Value converters
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>

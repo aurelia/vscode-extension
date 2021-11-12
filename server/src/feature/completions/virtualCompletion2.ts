@@ -47,11 +47,10 @@ export function aureliaVirtualComplete_vNext(
 
   // 1. Component
   const project = aureliaProgram.tsMorphProject.project;
-  const tsConfigPath = aureliaProgram.documentSettings.getSettings()
-    .aureliaProject?.rootDirectory;
-  const targetComponent = aureliaProgram.aureliaComponents.getOneByFromDocument(
-    document
-  );
+  const tsConfigPath =
+    aureliaProgram.documentSettings.getSettings().aureliaProject?.rootDirectory;
+  const targetComponent =
+    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   if (!targetComponent) return [];
 
   // 2. Virtual copy with content
@@ -82,7 +81,6 @@ export function aureliaVirtualComplete_vNext(
       `this.${accessScopeName}`
     );
   });
-  virtualContent; /*?*/
 
   // 2.1.2 Defalut to class members
   if (virtualContent === undefined) {
@@ -146,12 +144,10 @@ function enhanceCompletionItemDocumentation(
   customizeEnhanceDocumentation: CustomizeEnhanceDocumentation = DEFAULT_CUSTOMIZE_ENHANCE_DOCUMENTATION
 ) {
   const kindMap = {
-    [ts.ScriptElementKind[
-      'memberVariableElement'
-    ] as ts.ScriptElementKind]: CompletionItemKind.Field,
-    [ts.ScriptElementKind[
-      'memberFunctionElement'
-    ] as ts.ScriptElementKind]: CompletionItemKind.Method,
+    [ts.ScriptElementKind['memberVariableElement'] as ts.ScriptElementKind]:
+      CompletionItemKind.Field,
+    [ts.ScriptElementKind['memberFunctionElement'] as ts.ScriptElementKind]:
+      CompletionItemKind.Method,
   };
 
   virtualCompletionEntryDetails.reduce((acc, entryDetail) => {

@@ -193,72 +193,13 @@ const codes = {
   /* [$0-9A-Za_a-z] */
   AsciiIdPart: [0x24, 0, 0x30, 0x3a, 0x41, 0x5b, 0x5f, 0, 0x61, 0x7b],
   IdStart: /* IdentifierStart */ [
-    0x24,
-    0,
-    0x41,
-    0x5b,
-    0x5f,
-    0,
-    0x61,
-    0x7b,
-    0xaa,
-    0,
-    0xba,
-    0,
-    0xc0,
-    0xd7,
-    0xd8,
-    0xf7,
-    0xf8,
-    0x2b9,
-    0x2e0,
-    0x2e5,
-    0x1d00,
-    0x1d26,
-    0x1d2c,
-    0x1d5d,
-    0x1d62,
-    0x1d66,
-    0x1d6b,
-    0x1d78,
-    0x1d79,
-    0x1dbf,
-    0x1e00,
-    0x1f00,
-    0x2071,
-    0,
-    0x207f,
-    0,
-    0x2090,
-    0x209d,
-    0x212a,
-    0x212c,
-    0x2132,
-    0,
-    0x214e,
-    0,
-    0x2160,
-    0x2189,
-    0x2c60,
-    0x2c80,
-    0xa722,
-    0xa788,
-    0xa78b,
-    0xa7af,
-    0xa7b0,
-    0xa7b8,
-    0xa7f7,
-    0xa800,
-    0xab30,
-    0xab5b,
-    0xab5c,
-    0xab65,
-    0xfb00,
-    0xfb07,
-    0xff21,
-    0xff3b,
-    0xff41,
-    0xff5b,
+    0x24, 0, 0x41, 0x5b, 0x5f, 0, 0x61, 0x7b, 0xaa, 0, 0xba, 0, 0xc0, 0xd7,
+    0xd8, 0xf7, 0xf8, 0x2b9, 0x2e0, 0x2e5, 0x1d00, 0x1d26, 0x1d2c, 0x1d5d,
+    0x1d62, 0x1d66, 0x1d6b, 0x1d78, 0x1d79, 0x1dbf, 0x1e00, 0x1f00, 0x2071, 0,
+    0x207f, 0, 0x2090, 0x209d, 0x212a, 0x212c, 0x2132, 0, 0x214e, 0, 0x2160,
+    0x2189, 0x2c60, 0x2c80, 0xa722, 0xa788, 0xa78b, 0xa7af, 0xa7b0, 0xa7b8,
+    0xa7f7, 0xa800, 0xab30, 0xab5b, 0xab5c, 0xab65, 0xfb00, 0xfb07, 0xff21,
+    0xff3b, 0xff41, 0xff5b,
   ],
   Digit: /* DecimalNumber */ [0x30, 0x3a],
   Skip: /* Skippable */ [0, 0x21, 0x7f, 0xa1],
@@ -825,7 +766,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
   }
 
   state._assignable = Precedence.Binary > minPrecedence;
-  let result = (void 0 as unknown) as IsExpressionOrStatement;
+  let result = void 0 as unknown as IsExpressionOrStatement;
 
   if (state._currentToken & Token.UnaryOp) {
     /**
@@ -1401,11 +1342,12 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
    */
   while (consumeOpt(state, Token.Bar)) {
     if (state._currentToken === Token.EOF) {
-      if (true /**/)
-        throw new Error(
-          `Expected identifier to come after ValueConverter operator: '${state.ip}'`
-        );
-      else throw new Error(`AUR0159:${state.ip}`);
+      if (true /**/) {
+        // TODO: For diagnostic throw?
+        // throw new Error(
+        //   `Expected identifier to come after ValueConverter operator: '${state.ip}'`
+        // );
+      } else throw new Error(`AUR0159:${state.ip}`);
     }
     const name = state._tokenValue as string;
     nextToken(state);
