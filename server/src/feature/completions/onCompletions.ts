@@ -45,8 +45,8 @@ export async function onCompletion(
       aureliaProgram.aureliaComponents.getAll()
     );
   } catch (error) {
-    /* prettier-ignore */ console.log('TCL: error', error)
-    /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack)
+    /* prettier-ignore */ console.log('TCL: error', error);
+    /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }
 
   // regions; /*?*/
@@ -60,7 +60,7 @@ export async function onCompletion(
       'accessScopes',
       'tagName',
     ],
-  }); /*?*/
+  }); /* ? */
   // aureliaProgram.aureliaComponents.getAll().map((c) => c.componentName); /*?*/
 
   // if (regions.length === 0) return [];
@@ -119,9 +119,8 @@ export async function onCompletion(
         region
       )) as unknown as CompletionItem[];
     } catch (error) {
-      (error as Error).stack;
       console.log('TCL: error', error);
-      /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack)
+      /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
     }
 
     accumulateCompletions.push(...completions);

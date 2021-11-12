@@ -198,6 +198,10 @@ export class AttributeRegion extends AbstractRegion {
     return new AttributeRegion(finalInfo);
   }
 
+  public static is(region: AbstractRegion): region is CustomElementRegion {
+    return region.type === ViewRegionType.Attribute;
+  }
+
   public static parse5(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute
@@ -259,6 +263,10 @@ export class AttributeInterpolationRegion extends AbstractRegion {
       type: ViewRegionType.AttributeInterpolation,
     });
     return new AttributeInterpolationRegion(finalInfo);
+  }
+
+  public static is(region: AbstractRegion): region is CustomElementRegion {
+    return region.type === ViewRegionType.AttributeInterpolation;
   }
 
   public static parse5Interpolation(
@@ -362,6 +370,10 @@ export class BindableAttributeRegion extends AbstractRegion {
       type: ViewRegionType.BindableAttribute,
     });
     return new BindableAttributeRegion(finalInfo);
+  }
+
+  public static is(region: AbstractRegion): region is CustomElementRegion {
+    return region.type === ViewRegionType.BindableAttribute;
   }
 
   public static parse5Start(
@@ -612,6 +624,10 @@ export class TextInterpolationRegion extends AbstractRegion {
       type: ViewRegionType.TextInterpolation,
     });
     return new TextInterpolationRegion(finalInfo);
+  }
+
+  public static is(region: AbstractRegion): region is CustomElementRegion {
+    return region.type === ViewRegionType.TextInterpolation;
   }
 
   /**

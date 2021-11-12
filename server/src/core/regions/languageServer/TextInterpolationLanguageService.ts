@@ -1,7 +1,7 @@
 import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
+import { aureliaVirtualComplete_vNext } from '../../../feature/completions/virtualCompletion2';
 import { getAccessScopeDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { getAccessScopeHover } from '../../../feature/hover/accessScopeHover';
@@ -21,19 +21,12 @@ export class TextInterpolationLanguageService
     triggerCharacter?: string,
     region?: AbstractRegion
   ) {
-    if (!region) return [];
-
-    const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
-      _textDocumentPosition,
+    const completions = aureliaVirtualComplete_vNext(
+      aureliaProgram,
       document,
-      region,
-      aureliaProgram
+      region
     );
-    if (aureliaVirtualCompletions.length > 0) {
-      return aureliaVirtualCompletions;
-    }
-
-    return [];
+    return completions;
   }
 
   public async doDefinition(

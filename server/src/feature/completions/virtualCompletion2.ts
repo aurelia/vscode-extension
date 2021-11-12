@@ -5,10 +5,12 @@ import {
   MarkupKind,
   InsertTextFormat,
 } from 'vscode-languageserver';
+
 import { AureliaLSP } from '../../common/constants';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
+  TextInterpolationRegion,
 } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { AureliaCompletionItem } from './virtualCompletion';
@@ -48,7 +50,8 @@ export function aureliaVirtualComplete_vNext(
   // 1. Component
   const project = aureliaProgram.tsMorphProject.project;
   const tsConfigPath =
-    aureliaProgram.documentSettings.getSettings().aureliaProject?.rootDirectory;
+    aureliaProgram.documentSettings.getSettings().aureliaProject
+      ?.rootDirectory ?? '';
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   if (!targetComponent) return [];
@@ -58,26 +61,32 @@ export function aureliaVirtualComplete_vNext(
     targetComponent.viewModelFilePath
   );
   const COPY_PATH = `${tsConfigPath}/copy.ts`;
-  const copy = sourceFile.copy(COPY_PATH);
+  const copy = sourceFile.copy(COPY_PATH, { overwrite: true });
   const myClass = copy.getClass(targetComponent?.className);
 
   // 2.1 Convert view content to view model
-  if (!region.accessScopes) return [];
+  if (!region.accessScopes) {
+    project.removeSourceFile(copy);
+    return [];
+  }
 
   // 2.1.1 Add `this.`
-  let virtualContent: string | undefined = undefined;
+  let virtualContent: string | undefined;
   const accessScopeNames = region.accessScopes.map((scope) => scope.name);
-  region; /*?*/
-  let viewInput: string | undefined = undefined;
-  if (AttributeInterpolationRegion.is(region)) {
+  let viewInput: string | undefined;
+  if (
+    AttributeInterpolationRegion.is(region) === true ||
+    TextInterpolationRegion.is(region) === true
+  ) {
     viewInput = region.regionValue;
   } else {
     viewInput = region.attributeValue;
   }
 
   accessScopeNames.forEach((accessScopeName) => {
-    virtualContent = viewInput?.replaceAll(
-      accessScopeName,
+    const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
+    virtualContent = viewInput?.replace(
+      replaceRegexp,
       `this.${accessScopeName}`
     );
   });
@@ -94,7 +103,10 @@ export function aureliaVirtualComplete_vNext(
     statements: [targetStatementText],
   });
   const targetStatement = virMethod?.getStatements()[0]; // we only add one statement
-  if (!targetStatement) return [];
+  if (!targetStatement) {
+    project.removeSourceFile(copy);
+    return [];
+  }
   const finalTargetStatementText = `${targetStatement.getFullText()}${COMPLETIONS_ID}`;
   const targetPos = finalTargetStatementText?.indexOf(COMPLETIONS_ID);
   const finalPos = targetStatement.getPos() + targetPos;
@@ -102,16 +114,23 @@ export function aureliaVirtualComplete_vNext(
   const languageService = project.getLanguageService().compilerObject;
   // Completions
   const virtualCompletions = languageService
-    .getCompletionsAtPosition(COPY_PATH, finalPos, {})
+    .getCompletionsAtPosition(
+      COPY_PATH.replace('file:///', 'file:/'),
+      finalPos,
+      {}
+    )
     ?.entries.filter((result) => {
       return !result?.name.includes(VIRTUAL_METHOD_NAME);
     });
-  if (!virtualCompletions) return [];
+  if (!virtualCompletions) {
+    project.removeSourceFile(copy);
+    return [];
+  }
 
   const virtualCompletionEntryDetails = virtualCompletions
     .map((completion) => {
       return languageService.getCompletionEntryDetails(
-        COPY_PATH,
+        COPY_PATH.replace('file:///', 'file:/'),
         finalPos,
         completion.name,
         undefined,
