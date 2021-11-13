@@ -30,6 +30,7 @@ export interface ViewRegionInfoV2<RegionDataType = unknown> {
   subType?: ViewRegionSubType;
   //
   sourceCodeLocation: SourceCodeLocation;
+  startTagLocation?: SourceCodeLocation;
   //
   tagName: string;
   attributeName?: string;
@@ -107,6 +108,7 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
   public subType?: ViewRegionSubType;
   //
   public sourceCodeLocation: SourceCodeLocation;
+  public startTagLocation?: SourceCodeLocation;
   //
   public tagName: string;
   public attributeName?: string;
@@ -123,6 +125,7 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
     this.subType = info.subType;
     //
     this.sourceCodeLocation = info.sourceCodeLocation;
+    this.startTagLocation = info.startTagLocation;
     //
     this.tagName = info.tagName;
     this.attributeName = info.attributeName;
@@ -412,6 +415,7 @@ export class BindableAttributeRegion extends AbstractRegion {
 export class CustomElementRegion extends AbstractRegion {
   public languageService: CustomElementLanguageService;
   public readonly type: ViewRegionType.CustomElement;
+  public startTagLocation: SourceCodeLocation;
 
   public data: CustomElementRegionData = [];
 
@@ -429,7 +433,10 @@ export class CustomElementRegion extends AbstractRegion {
     return new CustomElementRegion(finalInfo);
   }
   public static createStart(
-    info: RequiredBy<ViewRegionInfoV2, 'sourceCodeLocation' | 'tagName'>
+    info: RequiredBy<
+      ViewRegionInfoV2,
+      'sourceCodeLocation' | 'startTagLocation' | 'tagName'
+    >
   ) {
     info.subType = ViewRegionSubType.StartTag;
     return CustomElementRegion.create(info);
@@ -465,6 +472,14 @@ export class CustomElementRegion extends AbstractRegion {
     const viewRegion = CustomElementRegion.createStart({
       tagName,
       sourceCodeLocation: onlyOpeningTagLocation,
+      startTagLocation: {
+        startCol: sourceCodeLocation.startCol,
+        startLine: sourceCodeLocation.startLine,
+        startOffset: sourceCodeLocation.startOffset,
+        endCol: sourceCodeLocation.endCol,
+        endLine: sourceCodeLocation.endLine,
+        endOffset: sourceCodeLocation.endOffset,
+      },
     });
 
     return viewRegion;
@@ -788,6 +803,12 @@ function convertToRegionInfo(info: Partial<ViewRegionInfoV2>) {
     info.sourceCodeLocation.startLine -= 1;
     info.sourceCodeLocation.endCol -= 1;
     info.sourceCodeLocation.endLine -= 1;
+  }
+  if (info.startTagLocation) {
+    info.startTagLocation.startCol -= 1;
+    info.startTagLocation.startLine -= 1;
+    info.startTagLocation.endCol -= 1;
+    info.startTagLocation.endLine -= 1;
   }
 
   return info as ViewRegionInfoV2;

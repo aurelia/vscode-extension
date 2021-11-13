@@ -6,11 +6,15 @@ Feature: Embedded support
     When I parse the file "other-custom-element-user.html"
     Then the result should include Custom element bindable attributes
 
-  Scenario: Parsing - Custom Element - Opening Tag
+  Scenario: Parsing - Custom Element - Whole Opening Tag
     When I parse the file "other-custom-element-user.html"
     Then the result should include Custom element opening tag
 
-  Scenario: Parsing - Custom Element - Closing Tag
+  Scenario: Parsing - Custom Element - Opening Tag name
+    When I parse the file "other-custom-element-user.html"
+    Then the result should include Custom element opening tag
+
+  Scenario: Parsing - Custom Element - Closing Tag name
     When I parse the file "other-custom-element-user.html"
     Then the result should include Custom element closing tag
 

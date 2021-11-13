@@ -40,11 +40,9 @@ export async function onCompletion(
   // );
   // const regions = targetComponent?.viewRegions;
   let regions: AbstractRegion[] = [];
+  const allComponents = aureliaProgram.aureliaComponents.getAll();
   try {
-    regions = RegionParser.parse(
-      document,
-      aureliaProgram.aureliaComponents.getAll()
-    );
+    regions = RegionParser.parse(document, allComponents);
   } catch (error) {
     /* prettier-ignore */ console.log('TCL: error', error);
     /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
@@ -60,16 +58,17 @@ export async function onCompletion(
       'subType',
       'accessScopes',
       'tagName',
+      'startTagLocation',
     ],
-  }); /* ? */
-  // aureliaProgram.aureliaComponents.getAll().map((c) => c.componentName); /*?*/
+  });
+  // aureliaProgram.aureliaComponents.getAll().map((c) => c.componentName); /* ? */
 
-  // if (regions.length === 0) return [];
+  if (regions.length === 0) return [];
   // document.getText(); /* ? */
   const { position } = _textDocumentPosition;
   const offset = document.offsetAt(position);
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
-  // region; /*?*/
+  // region; /* ? */
 
   const text = document.getText();
   const triggerCharacter = text.substring(offset - 1, offset);
@@ -121,7 +120,6 @@ export async function onCompletion(
   }
 
   const doComplete = languageService.doComplete;
-  // const doComplete = mode.doComplete;
   if (doComplete !== undefined) {
     let completions: CompletionItem[] = [CompletionItem.create('')];
     try {

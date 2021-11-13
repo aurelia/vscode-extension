@@ -44,7 +44,6 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
 
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);
-      completions; /* ? */
 
       const target = completions.find((completion) =>
         completion.label.includes(suggestion)

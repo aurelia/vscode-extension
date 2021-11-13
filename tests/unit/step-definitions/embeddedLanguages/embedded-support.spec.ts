@@ -18,7 +18,7 @@ import { MockTextDocuments } from '../../../common/mock-server/text-documents';
 const feature = loadFeature(
   `${getTestDir()}/unit/feature-files/embedded-support.feature`,
   {
-    // tagFilter: '@focus',
+    tagFilter: '@focus',
   }
 );
 
@@ -58,7 +58,48 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('Parsing - Custom Element - Opening Tag', ({ given, when, then }) => {
+  test('Parsing - Custom Element - Whole Opening Tag', ({
+    given,
+    when,
+    then,
+  }) => {
+    const parsedRegions: AbstractRegion[] = [];
+    const shared = {
+      workspaceRootUri: '',
+      parsedRegions,
+    };
+
+    givenImInTheProject(given, shared);
+
+    whenIParseTheFile(when, shared);
+
+    then('the result should include Custom element opening tag', () => {
+      const regionResults = ViewRegionUtils.getRegionsOfType(
+        shared.parsedRegions,
+        ViewRegionType.CustomElement
+      );
+      // RegionParser.pretty(shared.parsedRegions, {
+      //   ignoreKeys: ['sourceCodeLocation', 'languageService', 'tagName'],
+      //   asTable: true,
+      //   maxColWidth: 12,
+      // }); /*?*/
+
+      const openingCustomElementTag = regionResults[0];
+      const { startTagLocation } = openingCustomElementTag;
+      expect(startTagLocation.startLine).toBe(2);
+      expect(startTagLocation.startCol).toBe(2);
+      expect(startTagLocation.startOffset).toBe(48);
+      expect(startTagLocation.endLine).toBe(7);
+      expect(startTagLocation.endCol).toBe(3);
+      expect(startTagLocation.endOffset).toBe(144);
+    });
+  });
+
+  test('Parsing - Custom Element - Opening Tag name', ({
+    given,
+    when,
+    then,
+  }) => {
     const parsedRegions: AbstractRegion[] = [];
     const shared = {
       workspaceRootUri: '',
@@ -91,7 +132,11 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('Parsing - Custom Element - Closing Tag', ({ given, when, then }) => {
+  test('Parsing - Custom Element - Closing Tag name', ({
+    given,
+    when,
+    then,
+  }) => {
     const parsedRegions: AbstractRegion[] = [];
     const shared = {
       workspaceRootUri: '',

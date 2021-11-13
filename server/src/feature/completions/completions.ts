@@ -99,10 +99,11 @@ export async function getBindablesCompletion(
     return result;
   });
 
-  return asCompletionItem.filter((bindable) => {
+  const targetBindables = asCompletionItem.filter((bindable) => {
     // eslint-disable-next-line
     return kebabCase(bindable.data.elementName) === region.tagName;
   });
+  return targetBindables;
 }
 
 export function createValueConverterCompletion(
