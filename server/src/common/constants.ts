@@ -109,6 +109,11 @@ export const AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST = [
   'trigger',
 ] as const;
 
+export enum AureliaVersion {
+  V1 = 'V1',
+  V2 = 'V2',
+}
+
 export enum AureliaClassTypes {
   CUSTOM_ELEMENT = 'CustomElement',
   VALUE_CONVERTER = 'ValueConverter',
