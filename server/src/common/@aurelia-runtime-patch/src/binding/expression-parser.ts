@@ -996,12 +996,15 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
         break;
       default:
         if (state.index >= state.length) {
-          if (true /**/)
-            throw new Error(`Unexpected end of expression: '${state.ip}'`);
-          else throw new Error(`AUR0155:${state.ip}`);
+          if (true /**/) {
+            // TODO: For diagnostic throw?
+            // throw new Error(`Unexpected end of expression: '${state.ip}'`);
+          } else throw new Error(`AUR0155:${state.ip}`);
         } else {
-          if (true /**/) throw new Error(`Unconsumed token: '${state.ip}'`);
-          else throw new Error(`AUR0156:${state.ip}`);
+          if (true /**/) {
+            // TODO: For diagnostic throw?
+            // throw new Error(`Unconsumed token: '${state.ip}'`);
+          } else throw new Error(`AUR0156:${state.ip}`);
         }
     }
 

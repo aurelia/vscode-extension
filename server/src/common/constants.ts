@@ -151,3 +151,9 @@ export const WORD_SEPARATORS = '`~!@#%^&*()=+[{]}|;:\'",.<>/?'; // removed -,$
 export const WORD_SEPARATORS_REGEX_STRING =
   '\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\|\\;\\:\'\\"\\,\\.\\<\\>\\/\\?';
 export const whiteSpaceRegex = /[\s\r\n\t]/;
+
+export const AURELIA_COMMANDS = [
+  'extension.au.refactor.component',
+  'extension.aurelia.reinitializeExtension',
+] as const;
+export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];

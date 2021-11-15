@@ -12,17 +12,15 @@ import {
   TextDocumentChangeEvent,
   RenameParams,
   DocumentSymbolParams,
-  Range,
-  CodeAction,
-  Command,
-  Position,
   ExecuteCommandParams,
 } from 'vscode-languageserver';
+import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 // We need to import this to include reflect functionality
 import 'reflect-metadata';
 
+import { AURELIA_COMMANDS, AURELIA_COMMANDS_KEYS } from './common/constants';
 import { UriUtils } from './common/view/uri-utils';
 import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/aureliaServer';
@@ -35,12 +33,6 @@ import {
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 export const connection = createConnection(ProposedFeatures.all);
-
-const AURELIA_COMMANDS = [
-  'extension.au.refactor.component',
-  'extension.aurelia.reinitializeExtension',
-] as const;
-type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -258,22 +250,12 @@ connection.onWorkspaceSymbol(async () => {
 //   }
 // );
 
-// connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-connection.onCodeAction(async () => {
-  const kind = 'extension.au.refactor.component';
-  const codeAcion = CodeAction.create('Au: Create component', kind);
-  codeAcion.command = Command.create('Au: Command <<', kind, ['test-arg']);
-  const uri = UriUtils.toUri(
-    '/Users/hdn/Desktop/aurelia-vscode-extension/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html'
-  );
-  const position = Position.create(0, 5);
-  const range = Range.create(position, position);
-  codeAcion.edit = {
-    changes: {
-      [uri]: [{ newText: 'hello', range }],
-    },
-  };
-  return [codeAcion];
+connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
+  const codeAction = await aureliaServer.onCodeAction(codeActionParams);
+
+  if (codeAction) {
+    return codeAction;
+  }
 });
 
 connection.onExecuteCommand(
@@ -281,7 +263,8 @@ connection.onExecuteCommand(
     const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
     switch (command) {
       case 'extension.aurelia.reinitializeExtension': {
-        const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+        const workspaceFolders =
+          await connection.workspace.getWorkspaceFolders();
         if (workspaceFolders === null) return;
 
         const workspaceRootUri = workspaceFolders[0].uri;

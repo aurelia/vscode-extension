@@ -3,9 +3,11 @@ import {
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
+import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { SymbolInformation } from 'vscode-languageserver-types';
 
+import { onCodeAction } from '../feature/codeAction/onCodeAction';
 import { onCompletion } from '../feature/completions/onCompletions';
 import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
@@ -67,10 +69,8 @@ export class AureliaServer {
   }
 
   // sendDiagnostics() {}
-  public async onHover() // documentContent: string,
-  // position: Position,
-  // filePath: string
-  {
+  public async onHover() {
+    // filePath: string // position: Position, // documentContent: string,
     // const hovered = onHover(documentContent, position, filePath);
     // return hovered;
   }
@@ -114,7 +114,11 @@ export class AureliaServer {
     return symbols;
   }
 
-  // onCodeAction() {}
+  public async onCodeAction(codeActionParams: CodeActionParams) {
+    const codeAction = await onCodeAction(this.container, codeActionParams);
+    return codeAction;
+  }
+
   // onCodeLens() {}
   // onCodeLensResolve() {}
   // onDocumentFormatting() {}

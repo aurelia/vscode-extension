@@ -4,6 +4,7 @@ import {
   CompletionList,
   Position,
   WorkspaceEdit,
+  CodeAction,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -18,6 +19,12 @@ export interface AbstractRegionLanguageService {
     aureliaProgram: AureliaProgram,
     document: TextDocument
   ): Promise<Diagnostic[]>;
+  doCodeAction?(
+    aureliaProgram: AureliaProgram,
+    document: TextDocument,
+    start: Position,
+    region?: AbstractRegion
+  ): Promise<CodeAction[]>;
   doComplete?: (
     aureliaProgram: AureliaProgram,
     document: TextDocument,

@@ -7,6 +7,7 @@ import {
   readFeatureCache,
 } from './dev-test-helpers/cache-cucumber-features';
 import { minimalSteps } from './minimal-jest/minimal.spec';
+import { codeActionSteps } from './step-definitions/capabilities/codeAction/codeAction.spec';
 import { commonCapabilitiesStep } from './step-definitions/capabilities/common/common-capabilities.spec';
 import { completionSteps } from './step-definitions/capabilities/completions.spec';
 import { completionValueConverterSteps } from './step-definitions/capabilities/completions/completions-value-converters.spec';
@@ -59,6 +60,7 @@ export function initCucumberTests(tagFilter: string = '@focus'): void {
     // content
     contentChangeSteps,
     // capabilities
+    codeActionSteps,
     commonCapabilitiesStep,
     definitionSteps,
     completionSteps,
