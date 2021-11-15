@@ -59,7 +59,7 @@ export async function onRenameRequest(
       newName,
       region
     );
-    // renamed; /*?*/
+    // renamed; /* ? */
     return renamed;
   }
 

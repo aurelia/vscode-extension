@@ -108,15 +108,15 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
 
       // start tag
       expect(change[0].range.start.character).toBe(3);
-      expect(change[0].range.start.line).toBe(2);
+      expect(change[0].range.start.line).toBe(5);
       expect(change[0].range.end.character).toBe(17);
-      expect(change[0].range.end.line).toBe(2);
+      expect(change[0].range.end.line).toBe(5);
 
       // end tag
       expect(change[1].range.start.character).toBe(5);
-      expect(change[1].range.start.line).toBe(7);
+      expect(change[1].range.start.line).toBe(10);
       expect(change[1].range.end.character).toBe(19);
-      expect(change[1].range.end.line).toBe(7);
+      expect(change[1].range.end.line).toBe(10);
       // expect(true).toBeFalsy();
     }
   );

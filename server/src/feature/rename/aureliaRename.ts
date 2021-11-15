@@ -58,6 +58,7 @@ export async function aureliaRenameFromView(
     camelCase(sourceWord), // vars can be kebab from eg. view rename
     camelCase(newName)
   );
+  // viewModelChanes;/* ? */
 
   // 2. rename all others
   const otherCustomElementChanges = await getAllChangesForOtherViews(
@@ -66,7 +67,7 @@ export async function aureliaRenameFromView(
     sourceWord,
     kebabCase(newName)
   );
-  // otherCustomElementChanges; /*?*/
+  // otherCustomElementChanges; /* ? */
 
   // 3. rename all regions in view of target custom element
   // 3.1 Get document of corresponding view
@@ -88,6 +89,7 @@ export async function aureliaRenameFromView(
     sourceWord,
     newName
   );
+  // otherChangesInsideSameView;/* ? */
 
   // const { line } = position;
   // const startPosition = Position.create(line - 1, region.startCol - 1);

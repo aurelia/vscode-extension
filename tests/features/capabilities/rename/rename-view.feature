@@ -11,7 +11,7 @@ Feature: Rename in View.
 
     Examples:
       | DESCRIPTION      | LINE | CODE                | NEW_WORD |
-      | Normal Attribute | 6    | `    \|class="zed"` | new-new  |
+      | Normal Attribute | 9    | `    \|class="zed"` | new-new  |
 
   Scenario Outline: Rename Bindable attribute.
     And I open VSCode with the following file "other-custom-element-user.html"
@@ -22,7 +22,7 @@ Feature: Rename in View.
 
     Examples:
       | DESCRIPTION        | LINE | CODE                | NEW_WORD | NUM_OTHER_COMPONENTS |
-      | Bindable Attribute | 3    | `    \|foo.bind=""` | new-new  | 5                    |
+      | Bindable Attribute | 6    | `    \|foo.bind=""` | new-new  | 5                    |
 
   Scenario Outline: Rename variable in View.
     And I open VSCode with the following file "custom-element.html"
