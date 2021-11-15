@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -20,18 +21,37 @@ export class ImportLanguageService implements AbstractRegionLanguageService {
     if (targetRelativePath === undefined) return;
 
     const sourceDirName = path.dirname(UriUtils.toPath(document.uri));
-    const targetComponent = components.find((component) => {
-      const resolvedPath = path.resolve(sourceDirName, targetRelativePath);
+    const resolvedPath = path.resolve(sourceDirName, targetRelativePath);
+
+    // View
+    let viewPath: string | undefined;
+    if (fs.existsSync(resolvedPath)) {
+      viewPath = resolvedPath;
+    }
+
+    // View model
+    // Note: We could have gone the simple `fs.existsSync` way, but with this approach
+    //  we could check for component info.
+    //  Probably rather needed for hover, so
+    //  TODO: check like View, but only when you implement hover to reuse the below code.
+    let viewModelPath: string | undefined;
+    components.find((component) => {
       const { dir, name } = path.parse(component.viewModelFilePath);
-      /** Without extension to support .ts and .js */
+      // Without extension to support .ts and .js
       const viewModelWithoutExt = path.normalize(`${dir}/${name}`);
-      const isTarget = viewModelWithoutExt === resolvedPath;
-      return isTarget;
+      const isTargetViewModel = viewModelWithoutExt === resolvedPath;
+      if (isTargetViewModel) {
+        viewModelPath = component.viewModelFilePath;
+        return true;
+      }
+
+      return false;
     });
 
     const result: DefinitionResult = {
       lineAndCharacter: { line: 1, character: 0 },
-      viewModelFilePath: targetComponent?.viewModelFilePath,
+      viewModelFilePath: viewModelPath,
+      viewFilePath: viewPath,
     };
     return result;
   }

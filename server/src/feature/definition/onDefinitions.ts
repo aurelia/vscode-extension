@@ -41,7 +41,6 @@ export async function onDefintion(
   if (!regions) return;
 
   const offset = document.offsetAt(position);
-  offset; /*?*/
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
   if (region === undefined) return;
   const doDefinition = region.languageService.doDefinition;

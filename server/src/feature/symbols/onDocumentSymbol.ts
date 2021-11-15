@@ -109,6 +109,11 @@ export function convertToSymbolName(region: AbstractRegion) {
       icon: SymbolKind.Constructor,
       value: attributeValue,
     }, //
+    Import: {
+      label: 'import',
+      icon: SymbolKind.Constructor,
+      value: region.regionValue,
+    }, //
     RepeatFor: {
       label: 'repeat',
       icon: SymbolKind.Enum,
