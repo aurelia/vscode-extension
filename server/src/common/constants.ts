@@ -126,8 +126,11 @@ export enum AureliaViewModel {
 
 export enum AureliaView {
   IF = 'if',
+  IMPORT = 'import',
+  IMPORT_FROM_ATTRIBUTE = 'from',
   TEMPLATE_TAG_NAME = 'template',
   REPEAT_FOR = 'repeat.for',
+  REQUIRE = 'require',
   VALUE_CONVERTER_OPERATOR = '|',
   VALUE_CONVERTER_ARGUMENT = ':',
 }

@@ -10,17 +10,16 @@ Feature: Definition in View.
     Then I should land in the file <TARGET_FILE_NAME>
 
     Examples:
-      | DESCRIPTION             | LINE | CODE                                              | TARGET_FILE_NAME |
-      | Attribute               | 7    | `  <div click.delegate="\|increaseCounter()">`    | compo-user.ts    |
-      | Attribute interpolation | 11   | `  <div css="width: ${\|message}px;"></div>`      | compo-user.ts    |
-      | Custom Element          | 15   | `  <\|my-compo></my-compo>`                       | my-compo.ts      |
-      | Text interpolation      | 27   | `  ${} ${\|grammarRules.length}`                  | compo-user.ts    |
-      | Attribute               | 30   | `    <label repeat.for="\|rule of grammarRules">` | compo-user.ts    |
-      | Attribute               | 30   | `    <label repeat.for="rule of \|grammarRules">` | compo-user.ts    |
-      | Text interpolation      | 33   | `      ${\|rule.id}-${rule.saying}`               | compo-user.html  |
-
-  # TODO: after refac to bindable attributes | Bindable Attribute           | 20   | `            \|inter-bindable.bind="increaseCounter()"` | my-compo.ts      |
-  # TODO: after refac to bindable attributes | Bindable Attribute           | 21   | `            \|string-bindable.bind="grammarRules"` | my-compo.ts      |
+      | DESCRIPTION             | LINE | CODE                                                    | TARGET_FILE_NAME |
+      | Attribute               | 7    | `  <div click.delegate="\|increaseCounter()">`          | compo-user.ts    |
+      | Attribute interpolation | 11   | `  <div css="width: ${\|message}px;"></div>`            | compo-user.ts    |
+      | Custom Element          | 15   | `  <\|my-compo></my-compo>`                             | my-compo.ts      |
+      | Text interpolation      | 27   | `  ${} ${\|grammarRules.length}`                        | compo-user.ts    |
+      | Attribute               | 30   | `    <label repeat.for="\|rule of grammarRules">`       | compo-user.ts    |
+      | Attribute               | 30   | `    <label repeat.for="rule of \|grammarRules">`       | compo-user.ts    |
+      | Text interpolation      | 33   | `      ${\|rule.id}-${rule.saying}`                     | compo-user.html  |
+      | Bindable Attribute      | 20   | `            \|inter-bindable.bind="increaseCounter()"` | my-compo.ts      |
+      | Bindable Attribute      | 21   | `            \|string-bindable.bind="grammarRules"`     | my-compo.ts      |
 
 
   Scenario Outline: Value Converter.

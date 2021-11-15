@@ -17,6 +17,7 @@ import {
   ViewRegionInfoV2,
   ValueConverterRegion,
   Optional,
+  ImportRegion,
 } from './ViewRegions';
 
 const logger = new Logger('RegionParser');
@@ -55,8 +56,8 @@ export class RegionParser {
      * 5. repeat.for="" x
      * 6. Value converter region (value | take:10)
      * 7. BindableAttribute x
+     * 8. Import
      */
-
     saxStream.on('startTag', (startTag) => {
       // 0. Prep
       const tagName = startTag.tagName;
@@ -66,6 +67,15 @@ export class RegionParser {
       if (isTemplateTag) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         hasTemplateTag = true;
+      }
+
+      const isImportTag = getIsImportOrRequireTag(startTag);
+      if (isImportTag) {
+        const importRegion = ImportRegion.parse5(startTag);
+        if (importRegion) {
+          viewRegions.push(importRegion);
+        }
+        return;
       }
 
       const customElementBindableAttributeRegions: AbstractRegion[] = [];
@@ -363,6 +373,13 @@ function pickTruthyFields(
   });
 
   return truthyFields;
+}
+
+function getIsImportOrRequireTag(startTag: SaxStream.StartTagToken) {
+  const isImport = startTag.tagName === AureliaView.IMPORT;
+  const isRequire = startTag.tagName === AureliaView.REQUIRE;
+  const isTargetTag = isImport || isRequire;
+  return isTargetTag;
 }
 
 // const path =

@@ -90,6 +90,11 @@ export async function onCompletion(
 
     // TODO
     const htmlLanguageService = getLanguageService();
+    const result = htmlLanguageService.createScanner('input');
+    result.scan();
+
+    // <<<< Try out the scanner ^
+
     const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
     const htmlLSResult = htmlLanguageService.doComplete(
       document,

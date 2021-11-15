@@ -7,6 +7,7 @@ import {
   CallScopeExpression,
   ExpressionKind,
 } from '../../common/@aurelia-runtime-patch/src';
+import { AureliaView } from '../../common/constants';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
 import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
@@ -16,6 +17,7 @@ import { AttributeLanguageService } from './languageServer/AttributeLanguageServ
 import { AureliaHtmlLanguageService } from './languageServer/AureliaHtmlLanguageService';
 import { BindableAttributeLanguageService } from './languageServer/BindableAttributeLanguageService';
 import { CustomElementLanguageService } from './languageServer/CustomElementLanguageService';
+import { ImportLanguageService } from './languageServer/ImportLanguageService';
 import { RepeatForLanguageService } from './languageServer/RepeatForLanguageService';
 import { TextInterpolationLanguageService } from './languageServer/TextInterpolationLanguageService';
 import { ValueConverterLanguageService } from './languageServer/ValueConverterLanguageService';
@@ -48,6 +50,7 @@ export enum ViewRegionType {
   BindableAttribute = 'BindableAttribute',
   CustomElement = 'CustomElement',
   Html = 'html',
+  Import = 'Import',
   RepeatFor = 'RepeatFor',
   TextInterpolation = 'TextInterpolation',
   ValueConverter = 'ValueConverter',
@@ -122,19 +125,27 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
   constructor(info: ViewRegionInfoV2) {
     //
     this.type = info.type;
-    this.subType = info.subType;
+    if (info.subType !== undefined) this.subType = info.subType;
     //
-    this.sourceCodeLocation = info.sourceCodeLocation;
-    this.startTagLocation = info.startTagLocation;
+    this.sourceCodeLocation = {
+      startCol: info.sourceCodeLocation.startCol,
+      startLine: info.sourceCodeLocation.startLine,
+      startOffset: info.sourceCodeLocation.startOffset,
+      endLine: info.sourceCodeLocation.endLine,
+      endCol: info.sourceCodeLocation.endCol,
+      endOffset: info.sourceCodeLocation.endOffset,
+    };
+    if (info.startTagLocation !== undefined)
+      this.startTagLocation = info.startTagLocation;
     //
     this.tagName = info.tagName;
     this.attributeName = info.attributeName;
     this.attributeValue = info.attributeValue;
-    this.textValue = info.textValue;
-    this.regionValue = info.regionValue;
+    if (info.textValue !== undefined) this.textValue = info.textValue;
+    if (info.regionValue !== undefined) this.regionValue = info.regionValue;
     //
-    this.accessScopes = info.accessScopes;
-    this.data = info.data;
+    if (info.accessScopes !== undefined) this.accessScopes = info.accessScopes;
+    if (info.data !== undefined) this.data = info.data;
   }
 
   // region static
@@ -534,6 +545,62 @@ export class CustomElementRegion extends AbstractRegion {
 
   public accept<T>(visitor: IViewRegionsVisitor<T>): T {
     return visitor.visitCustomElement(this);
+  }
+  // endregion public
+}
+
+export class ImportRegion extends AbstractRegion {
+  public languageService: ImportLanguageService;
+  public readonly type: ViewRegionType.Import;
+  public startTagLocation: SourceCodeLocation;
+
+  constructor(info: ViewRegionInfoV2) {
+    super(info);
+    this.languageService = new ImportLanguageService();
+  }
+
+  // region public static
+  public static create(info: Optional<ViewRegionInfoV2, 'type'>) {
+    const finalInfo = convertToRegionInfo({
+      ...info,
+      type: ViewRegionType.Import,
+    });
+    return new ImportRegion(finalInfo);
+  }
+
+  public static is(region: AbstractRegion): region is CustomElementRegion {
+    return region.type === ViewRegionType.CustomElement;
+  }
+
+  public static parse5(startTag: SaxStream.StartTagToken) {
+    if (!startTag.sourceCodeLocation) return;
+
+    let importSource: string | undefined;
+    startTag.attrs.forEach((attr) => {
+      const isFrom = attr.name === AureliaView.IMPORT_FROM_ATTRIBUTE;
+      if (isFrom) {
+        importSource = attr.value;
+      }
+    });
+
+    const importRegion = this.create({
+      attributeName: AureliaView.IMPORT_FROM_ATTRIBUTE,
+      attributeValue: importSource,
+      tagName: startTag.tagName,
+      sourceCodeLocation: startTag.sourceCodeLocation,
+      type: ViewRegionType.Import,
+      regionValue: importSource,
+      // data: getRepeatForData(),
+    });
+
+    return importRegion;
+  }
+  // endregion public static
+
+  // region public
+
+  public accept<T>(visitor: IViewRegionsVisitor<T>): T {
+    return visitor.visitImport(this);
   }
   // endregion public
 }

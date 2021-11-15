@@ -1,5 +1,6 @@
 import { defineFeature, DefineStepFunction, loadFeature } from 'jest-cucumber';
 
+import { AureliaView } from '../../../../server/src/common/constants';
 import { ViewRegionUtils } from '../../../../server/src/common/documens/ViewRegionUtils';
 import { RegionParser } from '../../../../server/src/core/regions/RegionParser';
 import {
@@ -28,6 +29,30 @@ interface Shared {
 }
 
 defineFeature(feature, (test) => {
+  test('Parsing - Import', ({ given, when, then }) => {
+    const parsedRegions: AbstractRegion[] = [];
+    const shared: Shared = {
+      workspaceRootUri: '',
+      parsedRegions,
+    };
+
+    givenImInTheProject(given, shared);
+
+    whenIParseTheFile(when, shared);
+
+    then('the result should include import tags', () => {
+      const regionResults = ViewRegionUtils.getRegionsOfType(
+        shared.parsedRegions,
+        ViewRegionType.Import
+      );
+
+      expect(regionResults.length).toBeGreaterThan(0);
+      expect(regionResults[0].attributeName).toBe(
+        AureliaView.IMPORT_FROM_ATTRIBUTE
+      );
+    });
+  });
+
   test('Parsing - Custom Element - Bindable Attribute', ({
     given,
     when,

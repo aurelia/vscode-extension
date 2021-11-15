@@ -2,6 +2,10 @@ Feature: Embedded support
   Background:
     Given I'm in the project "scoped-for-testing"
 
+  Scenario: Parsing - Import
+    When I parse the file "other-custom-element-user.html"
+    Then the result should include import tags
+
   Scenario: Parsing - Custom Element - Bindable Attribute
     When I parse the file "other-custom-element-user.html"
     Then the result should include Custom element bindable attributes

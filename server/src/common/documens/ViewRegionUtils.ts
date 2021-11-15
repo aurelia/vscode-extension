@@ -6,6 +6,7 @@ import {
   AttributeRegion,
   BindableAttributeRegion,
   CustomElementRegion,
+  ImportRegion,
   RepeatForRegion,
   TextInterpolationRegion,
   ValueConverterRegion,
@@ -20,9 +21,10 @@ export type TypeToClass<TargetType extends ViewRegionType> =
     TargetType extends ViewRegionType.AttributeInterpolation ? AttributeInterpolationRegion :
       TargetType extends ViewRegionType.BindableAttribute ? BindableAttributeRegion :
         TargetType extends ViewRegionType.CustomElement ? CustomElementRegion :
-          TargetType extends ViewRegionType.RepeatFor ? RepeatForRegion :
-            TargetType extends ViewRegionType.TextInterpolation ? TextInterpolationRegion :
-              TargetType extends ViewRegionType.ValueConverter ? ValueConverterRegion :
+          TargetType extends ViewRegionType.Import ? ImportRegion :
+            TargetType extends ViewRegionType.RepeatFor ? RepeatForRegion :
+              TargetType extends ViewRegionType.TextInterpolation ? TextInterpolationRegion :
+                TargetType extends ViewRegionType.ValueConverter ? ValueConverterRegion :
 never;
 
 export class ViewRegionUtils {
