@@ -88,10 +88,9 @@ export async function onCompletion(
     const isNotRegion = region === undefined;
     const isInsideTag = await checkInsideTag(document, offset);
 
-    // TODO
     const htmlLanguageService = getLanguageService();
-    const result = htmlLanguageService.createScanner('input');
-    result.scan();
+    // const result = htmlLanguageService.createScanner('input');
+    // result.scan();
 
     // <<<< Try out the scanner ^
 
@@ -101,6 +100,7 @@ export async function onCompletion(
       position,
       htmlDocument
     );
+    // htmlLSResult; /* ? */
 
     if (isInsideTag) {
       ataCompletions = createAureliaTemplateAttributeCompletions();

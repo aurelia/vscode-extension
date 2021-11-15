@@ -1,3 +1,48 @@
+// if (region === undefined) return [];
+
+// // Approach similar to `aureliaVirtualComplete_vNext`,
+// // where we create a virtual ts file to leverage ts language server completions
+// // 1. Component
+// const project = aureliaProgram.tsMorphProject.project;
+// const targetComponent =
+//   aureliaProgram.aureliaComponents.getOneByFromDocument(document);
+// if (!targetComponent) return [];
+
+// // 2. Virtual copy with content
+// const sourceDocumentDir = path.dirname(UriUtils.toPath(document.uri));
+// const COPY_PATH = `${sourceDocumentDir}/view-import.ts`;
+// COPY_PATH; /*?*/
+// const sourceFile = project.createSourceFile(
+//   COPY_PATH
+//   // targetComponent.viewModelFilePath
+// );
+// if (sourceFile === undefined) return [];
+// const copy = sourceFile.copy(COPY_PATH, { overwrite: true });
+// // const virtualImportContent = `import '${region.regionValue}'`;
+// const virtualImportContent = `import '../'`;
+// copy.replaceWithText(virtualImportContent);
+// copy.getText(); /* ? */
+
+// const languageService = project.getLanguageService().compilerObject;
+// const completionsPos = virtualImportContent.length - 1; // import '...|'
+// completionsPos; /*?*/
+// const virtualCompletions = languageService.getCompletionsAtPosition(
+//   COPY_PATH.replace('file:///', 'file:/'),
+//   completionsPos,
+//   {}
+// );
+// // ?.entries.filter((result) => {
+// //   return result?.kind !== ts.ScriptElementKind['externalModuleName'];
+// // });
+// if (!virtualCompletions) {
+//   project.removeSourceFile(copy);
+//   return [];
+// }
+
+// virtualCompletions; /* ? */
+// project.removeSourceFile(copy);
+
+ // ---
 // export class AureliaHtmlRegion extends AbstractRegion {
 //   public languageService: AureliaHtmlLanguageService;
 //   public readonly type: ViewRegionType.Html;
