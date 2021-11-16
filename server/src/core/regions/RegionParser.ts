@@ -83,6 +83,9 @@ export class RegionParser {
       startTag.attrs.forEach((attr) => {
         const isAttributeKeyword = AURELIA_ATTRIBUTES_KEYWORDS.some(
           (keyword) => {
+            if (keyword === 'ref') {
+              return attr.name === keyword;
+            }
             return attr.name.includes(keyword);
           }
         );

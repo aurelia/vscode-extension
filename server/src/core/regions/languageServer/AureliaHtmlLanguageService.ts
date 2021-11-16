@@ -52,51 +52,76 @@ export class AureliaHtmlLanguageService
     document: TextDocument,
     startPosition: Position
   ) {
-    const htmlLanguageService = getLanguageService();
-    const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
-
+    const allCodeActions: CodeAction[] = [];
     // ---- refactor.aTag ----
-    // Get tag range
-    // Rename a tag
-    const renameTag = htmlLanguageService.doRename(
-      document,
-      startPosition,
-      CodeActionMap['refactor.aTag'].newText,
-      htmlDocument
-    );
-    // Rename href attribute
-    const offset = document.offsetAt(startPosition);
-    const targetTag = ParseHtml.findTagAtOffset(document.getText(), offset);
-    const hrefAttribute = targetTag?.sourceCodeLocation?.attrs['href'];
-    /* prettier-ignore */ if (hrefAttribute === undefined) { logger.log('href attribute not found'); return []; }
+    const aTagCodeAction = createCodeAction_RenameATag(document, startPosition);
+    if (aTagCodeAction) {
+      allCodeActions.push(aTagCodeAction);
+    }
 
-    const { startLine, startCol, endLine, endCol } = hrefAttribute;
-    const hrefStartPosition = PositionUtils.convertToZeroIndexed(
-      startLine,
-      startCol
-    );
-    const hrefEndPosition = PositionUtils.convertToZeroIndexed(endLine, endCol);
-    const range = Range.create(hrefStartPosition, hrefEndPosition);
-    const hrefEdit = TextEdit.replace(
-      range,
-      CodeActionMap['refactor.aTag'].newAttribute
-    );
-
-    // Create code action
-    const kind = CodeActionMap['refactor.aTag'].command;
-    const command = Command.create('Au: Command <<', kind, ['test-arg']);
-    const codeAcion = CodeAction.create(
-      CodeActionMap['refactor.aTag'].title,
-      command,
-      kind
-    );
-
-    if (renameTag?.changes == null) return [];
-    codeAcion.edit = {
-      changes: {
-        [document.uri]: [...renameTag.changes[document.uri], hrefEdit],
-      },
-    };
-    return [codeAcion];
+    return allCodeActions;
   }
+}
+
+function createCodeAction_RenameATag(
+  document: TextDocument,
+  position: Position
+) {
+  const htmlLanguageService = getLanguageService();
+  const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
+  const offset = document.offsetAt(position);
+  const aTag = ParseHtml.findTagAtOffset(document.getText(), offset);
+  const HREF = 'href';
+
+  // Early return, if not <a href> tag
+  if (aTag?.tagName !== 'a') return;
+  const hrefAttribute = aTag?.sourceCodeLocation?.attrs['href'];
+  if (hrefAttribute == null) return;
+
+  // Get tag range
+  // Rename <a> tag
+  const aTagPosition = PositionUtils.convertToZeroIndexed(
+    aTag.sourceCodeLocation?.startLine!,
+    aTag.sourceCodeLocation?.startCol! + 1 // right of "<"
+  );
+  const renameTag = htmlLanguageService.doRename(
+    document,
+    aTagPosition,
+    CodeActionMap['refactor.aTag'].newText,
+    htmlDocument
+  );
+
+  // Rename href attribute
+  const { startLine, startCol, endLine, endCol } = hrefAttribute;
+  const hrefStartPosition = PositionUtils.convertToZeroIndexed(
+    startLine,
+    startCol
+  );
+  const hrefEndPosition = PositionUtils.convertToZeroIndexed(
+    endLine,
+    startCol + HREF.length // just the attribute name (was also the ="..." part)
+  );
+  const range = Range.create(hrefStartPosition, hrefEndPosition);
+  const hrefEdit = TextEdit.replace(
+    range,
+    CodeActionMap['refactor.aTag'].newAttribute
+  );
+
+  // Create code action
+  const kind = CodeActionMap['refactor.aTag'].command;
+  if (renameTag?.changes == null) return;
+  const edit = {
+    changes: {
+      [document.uri]: [...renameTag.changes[document.uri], hrefEdit],
+    },
+  };
+  const command = Command.create('Au: Command <<', kind, [edit]);
+  const codeAcion = CodeAction.create(
+    CodeActionMap['refactor.aTag'].title,
+    command,
+    kind
+  );
+  codeAcion.edit = edit;
+
+  return codeAcion;
 }

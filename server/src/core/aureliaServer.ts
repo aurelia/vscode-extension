@@ -146,7 +146,11 @@ export class AureliaServer {
   // onColorPresentation() {}
   // onFoldingRanges() {}
   // onSelectionRanges() {}
-  // onExecuteCommand() {}
+
+  // public async onExecuteCommand(executeCommandParams: ExecuteCommandParams) {
+  //   onExecuteCommand(this.container, executeCommandParams);
+  // }
+
   // dispose() {}
 
   // console: RemoteConsole & PConsole;

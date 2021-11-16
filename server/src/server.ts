@@ -253,21 +253,6 @@ connection.onWorkspaceSymbol(async () => {
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
   const codeAction = await aureliaServer.onCodeAction(codeActionParams);
 
-  // const kind = 'extension.au.refactor.component';
-  // const codeAcion = CodeAction.create('Au: Create component', kind);
-  // codeAcion.command = Command.create('Au: Command <<', kind, ['test-arg']);
-  // const uri = UriUtils.toUri(
-  //   '/home/hdn/coding/repos/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html'
-  // );
-  // const position = Position.create(0, 5);
-  // const range = Range.create(position, position);
-  // codeAcion.edit = {
-  //   changes: {
-  //     [uri]: [{ newText: 'hello', range }],
-  //   },
-  // };
-  // return [codeAcion];
-
   if (codeAction) {
     return codeAction;
   }
@@ -300,7 +285,7 @@ connection.onExecuteCommand(
         break;
       }
       default: {
-        console.log('no command');
+        // console.log('no command');
       }
     }
     // async () => {

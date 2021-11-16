@@ -25,7 +25,7 @@ export const AURELIA_ATTRIBUTES_KEYWORDS = [
   'call',
   'capture',
   'ref',
-];
+] as const;
 
 export interface IAureliaProjectSetting {
   include?: string[];
