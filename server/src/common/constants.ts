@@ -152,8 +152,18 @@ export const WORD_SEPARATORS_REGEX_STRING =
   '\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\|\\;\\:\'\\"\\,\\.\\<\\>\\/\\?';
 export const whiteSpaceRegex = /[\s\r\n\t]/;
 
+export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
-  'extension.au.refactor.component',
-  'extension.aurelia.reinitializeExtension',
+  `${EXTENSION_COMMAND_PREFIX}.refactor.aTag`,
+  `${EXTENSION_COMMAND_PREFIX}.reinitializeExtension`,
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
+
+export const CodeActionMap = {
+  'refactor.aTag': {
+    command: 'extension.au.refactor.aTag',
+    title: 'Au: Convert to import tag',
+    newText: 'import',
+    newAttribute: 'from',
+  },
+};

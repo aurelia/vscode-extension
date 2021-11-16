@@ -1,10 +1,4 @@
-import {
-  CodeAction,
-  CodeActionParams,
-  Command,
-  Position,
-  Range,
-} from 'vscode-languageserver-protocol';
+import { CodeActionParams } from 'vscode-languageserver-protocol';
 
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
@@ -23,16 +17,16 @@ export async function onCodeAction(
 
   const aureliaProjects = container.get(AureliaProjects);
   const targetProject = aureliaProjects.getFromUri(textDocument.uri);
-  if (!targetProject) return;
+  if (!targetProject) return [];
   const aureliaProgram = targetProject?.aureliaProgram;
-  if (!aureliaProgram) return;
+  if (!aureliaProgram) return [];
 
   const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
     'viewFilePath',
     UriUtils.toPath(textDocument.uri)
   );
   const regions = targetComponent?.viewRegions;
-  if (!regions) return;
+  if (!regions) return [];
 
   const region = ViewRegionUtils.findRegionAtPosition(regions, range.start);
 
@@ -54,17 +48,4 @@ export async function onCodeAction(
     );
     return codeAction;
   }
-
-  const kind = 'extension.au.refactor.component';
-  const command = Command.create('Au: Command <<', kind, ['test-arg']);
-  const codeAcion = CodeAction.create('Au: Create component', command, kind);
-  const uri = UriUtils.toUri(
-    '/home/hdn/coding/repos/vscode-extension/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html'
-  );
-  codeAcion.edit = {
-    changes: {
-      [uri]: [{ newText: 'hello', range }],
-    },
-  };
-  return [codeAcion];
 }

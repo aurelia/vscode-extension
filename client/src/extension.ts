@@ -70,7 +70,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(new RelatedFiles());
 
   // context.subscriptions.push(
-  //   commands.registerCommand('extension.aurelia.reinitializeExtension', () => {
+  //   commands.registerCommand('extension.au.reinitializeExtension', () => {
   //     console.log('ok');
   //   })
   // );

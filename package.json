@@ -44,7 +44,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.aurelia.reinitializeExtension",
+        "command": "extension.au.reinitializeExtension",
         "title": "Reinitialize Extension",
         "category": "Aurelia"
       },
