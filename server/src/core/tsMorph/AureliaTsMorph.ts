@@ -9,13 +9,15 @@ import {
 export class TsMorphProject {
   public project: Project;
 
-  private readonly tsconfigPath: string = '';
+  private readonly tsconfigPath: string | undefined;
+  private targetSourceDirectory: string;
 
   constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();
     const targetSourceDirectory = getTargetSourceDirectory(settings);
+    this.targetSourceDirectory = targetSourceDirectory;
 
-    this.tsconfigPath =
+    const potentialTsConfigPath =
       // eslint-disable-next-line
       settings.pathToTsConfig ||
       (ts.findConfigFile(
@@ -24,6 +26,14 @@ export class TsMorphProject {
         'tsconfig.json'
       ) ??
         '');
+
+    const sourceDirHasTsConfig = potentialTsConfigPath.includes(
+      targetSourceDirectory
+    );
+
+    if (sourceDirHasTsConfig) {
+      this.tsconfigPath = potentialTsConfigPath;
+    }
   }
 
   public create(): Project {
@@ -42,6 +52,7 @@ export class TsMorphProject {
       // customCompilerOptions: {
       //   ...compilerSettings,
       // },
+      targetSourceDirectory: this.targetSourceDirectory,
       tsConfigPath: this.tsconfigPath,
     });
 
@@ -61,8 +72,8 @@ export class TsMorphProject {
 
 function getTargetSourceDirectory(settings: ExtensionSettings) {
   let targetSourceDirectory = '';
-  if (settings?.aureliaProject?.rootDirectory !== undefined) {
-    targetSourceDirectory = settings.aureliaProject.rootDirectory;
+  if (settings?.aureliaProject?.projectDirectory !== undefined) {
+    targetSourceDirectory = settings.aureliaProject.projectDirectory;
   } else {
     targetSourceDirectory = ts.sys.getCurrentDirectory();
   }
@@ -74,18 +85,26 @@ export function createTsMorphProject(
   customProjectSettings: {
     customCompilerOptions?: ts.CompilerOptions;
     tsConfigPath?: string;
+    targetSourceDirectory?: string;
   } = {
     customCompilerOptions: {},
     tsConfigPath: undefined,
   }
 ) {
-  const { customCompilerOptions, tsConfigPath } = customProjectSettings;
+  const { customCompilerOptions, tsConfigPath, targetSourceDirectory } =
+    customProjectSettings;
+
   const project = new Project({
     compilerOptions: customCompilerOptions,
   });
 
-  if (tsConfigPath !== undefined) {
+  if (tsConfigPath != null) {
     project.addSourceFilesFromTsConfig(tsConfigPath);
+  }
+  // No tsconfigPath means js project?!
+  else if (targetSourceDirectory) {
+    const pathGlob = `${targetSourceDirectory}/**/*.{j,t}s`;
+    project.addSourceFilesAtPaths(pathGlob);
   }
 
   return project;
