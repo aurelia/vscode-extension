@@ -69,7 +69,7 @@ export class AureliaProjects {
    * [PERF]: 2.5s
    */
   public async hydrate(documents: TextDocument[]) {
-    /* prettier-ignore */ logger.culogger.debug(['Parsing Aurelia related data...'], { logLevel: 'INFO', });
+    /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO', });
     /** TODO: Makes esnse? */
     const documentsPaths = uriToPath(documents);
     if (documentsPaths.length === 0) return;
@@ -83,7 +83,7 @@ export class AureliaProjects {
       aureliaProjectSettings
     );
 
-    /* prettier-ignore */ logger.culogger.debug(['Parsing done. Aurelia Extension is ready.'], { logLevel: 'INFO', });
+    /* prettier-ignore */ logger.log('Parsing done. Aurelia Extension is ready.', { logLevel: 'INFO', });
   }
 
   /**
@@ -263,15 +263,15 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
 }
 
 function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
-  /* prettier-ignore */ logger.culogger.debug([`Found ${aureliaProjects.length} Aurelia projects in: `], { logLevel: 'INFO', });
+  /* prettier-ignore */ logger.log(`Found ${aureliaProjects.length} Aurelia project(s) in: `, { logLevel: 'INFO', });
   aureliaProjects.forEach(({ tsConfigPath }) => {
-    /* prettier-ignore */ logger.culogger.debug([tsConfigPath], { logLevel: 'INFO', });
+    /* prettier-ignore */ logger.log(tsConfigPath, { logLevel: 'INFO', });
   });
 }
 
 function logHasNoAureliaProject() {
-  /* prettier-ignore */ logger.culogger.debug(['No active Aurelia project found.'], { logLevel: 'INFO', });
-  /* prettier-ignore */ logger.culogger.debug([ 'Extension will activate, as soon as a file inside an Aurelia project is opened.', ], { logLevel: 'INFO' });
+  /* prettier-ignore */ logger.log('No active Aurelia project found.', { logLevel: 'INFO', });
+  /* prettier-ignore */ logger.log( 'Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
 }
 
 /**

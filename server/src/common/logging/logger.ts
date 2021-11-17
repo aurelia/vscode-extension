@@ -1,9 +1,14 @@
+import * as path from 'path';
 import { blueBright, bgWhite, bold } from 'colorette';
-import { Logger as Culogger } from 'culog';
+import { Logger as Culogger, LogOptions } from 'culog';
 
 import { PerformanceMeasure } from './performance-measure';
 
-interface ILogOptions {
+const DEV_IS_WALLABY = __dirname.includes('wallabyjs.wallaby-vscode');
+
+type Environment = 'prod' | 'dev' | 'test';
+
+interface ILogOptions extends LogOptions {
   log?: boolean;
   focusedLogging?: boolean;
 
@@ -11,19 +16,18 @@ interface ILogOptions {
   focusedPerf?: boolean;
   logPerf?: boolean;
 
-  /**
-   * Indicate to, that log can/should perform a reset
-   */
+  env?: Environment;
   reset?: boolean;
   highlight?: boolean;
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
-  log: false,
+  log: true,
   focusedLogging: true,
   measurePerf: false,
   focusedPerf: true,
   logPerf: false,
+  env: 'prod',
   reset: false,
   highlight: false,
 };
@@ -37,7 +41,7 @@ export class Logger {
   constructor(
     // eslint-disable-next-line default-param-last
     scope: string = 'Aurelia',
-    private readonly options: ILogOptions = DEFAULT_LOG_OPTIONS
+    private readonly classOptions: ILogOptions = DEFAULT_LOG_OPTIONS
   ) {
     this.culogger = new Culogger({ scope });
     // const isJest = __dirname.includes('vscode-extension/server/');
@@ -53,14 +57,14 @@ export class Logger {
       // logScope: false,
     });
 
-    if (this.options.measurePerf !== undefined) {
+    if (this.classOptions.measurePerf !== undefined) {
       this.performanceMeasure = performanceMeasure;
     }
   }
 
   public log(message: string, options?: ILogOptions) {
     const localOptions = {
-      ...this.options,
+      ...this.classOptions,
       ...options,
     };
 
@@ -86,11 +90,13 @@ export class Logger {
       );
     }
 
+    if (localOptions.env !== this.classOptions.env) return;
+
     /**
      * Wallaby logic.
      * Wallaby does not console.log from external library.
      */
-    this.logMessage(message, options);
+    this.logMessage(message, localOptions);
 
     return {
       measureTo: this.getPerformanceMeasure()?.measureTo(message),
@@ -106,17 +112,28 @@ export class Logger {
       logLevel: 'INFO',
       log,
     });
-    if (loggedMessage !== undefined) {
-      console.log(loggedMessage[0]);
-      if (loggedMessage.length > 1) {
-        console.log('There are more log messages');
+
+    // Below this guard only for development with wallaby.
+    if (DEV_IS_WALLABY) {
+      if (loggedMessage !== undefined) {
+        const logSource = findLogSource();
+        let finalMessage = loggedMessage[0];
+        if (options.env !== 'prod') {
+          finalMessage = `${loggedMessage[0]} (at ${logSource})`;
+        }
+
+        console.log(finalMessage);
+
+        if (loggedMessage.length > 1) {
+          console.log('There are more log messages');
+        }
       }
     }
   }
 
   public getPerformanceMeasure() {
     if (
-      this.options.measurePerf !== undefined &&
+      this.classOptions.measurePerf !== undefined &&
       this.performanceMeasure === undefined
     ) {
       throw new Error(
@@ -126,4 +143,27 @@ export class Logger {
 
     return this.performanceMeasure;
   }
+}
+
+/**
+ * Assumption:
+ *   1. logger.log (source)
+ *   2. logger.logMessage
+ *   3. findLogSource (this function)
+ *   4. Error (from new Error().stack format)
+ */
+function findLogSource() {
+  const errorStack = new Error().stack;
+  if (errorStack == null) return;
+
+  const [_errorWord, _findLogSource, _LoggerLogMessage, _LoggerLog, rawTarget] =
+    errorStack.split('\n').map((str) => str.trim());
+  const rawSplit = rawTarget.split(' ');
+  const targetPath = rawSplit[rawSplit.length - 1];
+  let sourceName = path.basename(targetPath);
+  if (sourceName.endsWith(')')) {
+    sourceName = sourceName.replace(/\)$/, '');
+  }
+
+  return sourceName;
 }
