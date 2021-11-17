@@ -9,9 +9,8 @@ import {
 
 const getAbsPathInMonorepo = getAbsPathFromFixtureDir('monorepo');
 const getAbsPathInCliGenerated = getAbsPathFromFixtureDir('cli-generated');
-const getAbsPathInScopedForTesting = getAbsPathFromFixtureDir(
-  'scoped-for-testing'
-);
+const getAbsPathInScopedForTesting =
+  getAbsPathFromFixtureDir('scoped-for-testing');
 
 // prettier-ignore
 export const MONOREPO = {
@@ -47,6 +46,7 @@ export const SCOPED_FOR_TESTING = {
   'custom-element.html': getAbsPathInScopedForTesting('src/view/custom-element/custom-element.html'),
   'custom-element.ts': getAbsPathInScopedForTesting('src/view/custom-element/custom-element.ts'),
   'other-custom-element-user.html': getAbsPathInScopedForTesting('src/view/custom-element/other-custom-element-user.html'),
+  'view-diagnostics.html': getAbsPathInScopedForTesting('src/view/diagnostics/view-diagnostics.html')
 };
 
 /**

@@ -1,9 +1,11 @@
 import { Position } from 'vscode-html-languageservice';
 import {
+  Connection,
+  PublishDiagnosticsParams,
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import { CodeActionParams } from 'vscode-languageserver-protocol';
+import { CodeActionParams, Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { SymbolInformation } from 'vscode-languageserver-types';
 
@@ -12,6 +14,7 @@ import { onCompletion } from '../feature/completions/onCompletions';
 import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
 import { onDefintion } from '../feature/definition/onDefinitions';
+import { createDiagnostics } from '../feature/diagnostics/diagnostics';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
@@ -68,7 +71,16 @@ export class AureliaServer {
     await onDidSave(this.container, change);
   }
 
-  // sendDiagnostics() {}
+  sendDiagnostics(document: TextDocument) {
+    const diagnostics = createDiagnostics(this.container, document);
+
+    const diagnosticsParams: PublishDiagnosticsParams = {
+      uri: document.uri,
+      diagnostics,
+    };
+    return diagnosticsParams;
+  }
+
   public async onHover() {
     // filePath: string // position: Position, // documentContent: string,
     // const hovered = onHover(documentContent, position, filePath);

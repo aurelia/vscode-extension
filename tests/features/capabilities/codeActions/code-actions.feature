@@ -3,7 +3,6 @@ Feature: Code Actions.
   Background:
     Given the project is named "scoped-for-testing"
 
-  @focus
   Scenario Outline: View Refactor.
     And I open VSCode with the following file "custom-element.html"
     And I'm on the line <LINE> at character <CODE>

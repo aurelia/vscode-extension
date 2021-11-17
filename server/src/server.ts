@@ -161,12 +161,16 @@ connection.onDidChangeConfiguration(() => {
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-// documents.onDidChangeContent(
-//   async (change: TextDocumentChangeEvent<TextDocument>) => {
-//     if (!hasServerInitialized) return;
-//     await aureliaServer.onConnectionDidChangeContent(change);
-//   }
-// );
+documents.onDidChangeContent(
+  async (change: TextDocumentChangeEvent<TextDocument>) => {
+    if (!hasServerInitialized) return;
+    // const diagnosticsParams = await aureliaServer.sendDiagnostics(
+    //   change.document
+    // );
+    // connection.sendDiagnostics(diagnosticsParams);
+    // await aureliaServer.onConnectionDidChangeContent(change);
+  }
+);
 
 documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
   await aureliaServer.onDidSave(change);
