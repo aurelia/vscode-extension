@@ -31,7 +31,7 @@ export class AureliaProjects {
 
   public async initAndVerify(extensionSettings: ExtensionSettings) {
     const packageJsonPaths = getPackageJsonPaths(extensionSettings);
-    await this.init(packageJsonPaths);
+    await this.initAndSet(packageJsonPaths);
     const projects = this.getAll();
     const hasAureliaProject = projects.length > 0;
 
@@ -47,6 +47,7 @@ export class AureliaProjects {
   }
 
   public getBy(tsConfigPath: string): IAureliaProject | undefined {
+    this.getAll().map((all) => all.tsConfigPath); /* ? */
     const target = this.getAll().find(
       (projects) => projects.tsConfigPath === tsConfigPath
     );
@@ -125,7 +126,7 @@ export class AureliaProjects {
     });
   }
 
-  private async init(packageJsonPaths: string[]) {
+  private async initAndSet(packageJsonPaths: string[]) {
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
@@ -151,7 +152,7 @@ export class AureliaProjects {
     const aureliaProjects = this.getAll();
 
     /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    aureliaProjects.every(async ({ tsConfigPath, aureliaProgram }) => {
+    aureliaProjects.forEach(async ({ tsConfigPath, aureliaProgram }) => {
       const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
       if (!shouldActivate) return;
 

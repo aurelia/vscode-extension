@@ -13,7 +13,7 @@ import { Optional } from '../regions/ViewRegions';
 import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
 
-const logger = new Logger('aurelia-components');
+const logger = new Logger('AureliaComponents');
 
 export class AureliaComponents {
   private components: IAureliaComponent[] = [];
@@ -72,6 +72,9 @@ export class AureliaComponents {
     });
 
     const enhanced = this.enhanceWithViewRegions(componentListWithoutRegions);
+
+    logComponentList(enhanced);
+
     this.set(enhanced);
     this.setBindables(enhanced);
 
@@ -246,4 +249,7 @@ export class AureliaComponents {
       logger.log('[WARNING]: No components found');
     }
   }
+}
+function logComponentList(components: IAureliaComponent[]) {
+  logger.log(`Found ${components.length} Components.`);
 }

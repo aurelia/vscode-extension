@@ -44,12 +44,13 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project',{env:'test'});
     const { AureliaProjects } = myMockServer.getContainerDirectly();
     const tsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
+     tsConfigPath/*?*/
     const targetProject = AureliaProjects.getBy(tsConfigPath);
+    expect(true).toBeFalsy();
     if (!targetProject) return;
     const { aureliaProgram } = targetProject;
     expect(aureliaProgram).toBeTruthy();
 
-    expect(true).toBeFalsy();
   });
 
   then('the extension should rehydrate', () => {

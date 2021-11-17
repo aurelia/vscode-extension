@@ -11,6 +11,7 @@ type Environment = 'prod' | 'dev' | 'test';
 interface ILogOptions extends LogOptions {
   log?: boolean;
   focusedLogging?: boolean;
+  ignoreFirstXLogs?: number;
 
   measurePerf?: boolean;
   focusedPerf?: boolean;
@@ -24,15 +25,20 @@ interface ILogOptions extends LogOptions {
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: true,
   focusedLogging: true,
+  ignoreFirstXLogs: 4,
+  // ignoreFirstXLogs: 0,
+
   measurePerf: false,
   focusedPerf: true,
   logPerf: false,
+
   env: 'prod',
   reset: false,
   highlight: false,
 };
 
 const performanceMeasure = new PerformanceMeasure();
+let ignoreLogCount = 0;
 
 export class Logger {
   public readonly culogger: Culogger;
@@ -91,6 +97,15 @@ export class Logger {
     }
 
     if (localOptions.env !== this.classOptions.env) return;
+
+    // Log count
+    if (
+      localOptions.ignoreFirstXLogs !== undefined &&
+      ignoreLogCount < localOptions.ignoreFirstXLogs
+    ) {
+      ignoreLogCount++;
+      return;
+    }
 
     /**
      * Wallaby logic.
