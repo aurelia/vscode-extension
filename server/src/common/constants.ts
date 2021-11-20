@@ -162,7 +162,7 @@ export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 export const CodeActionMap = {
   'refactor.aTag': {
     command: 'extension.au.refactor.aTag',
-    title: 'Au: Convert to import tag',
+    title: 'Au: Convert to import tag 🟪',
     newText: 'import',
     newAttribute: 'from',
   },

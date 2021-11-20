@@ -4,6 +4,7 @@ import {
   PublishDiagnosticsParams,
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
+  TextDocuments,
 } from 'vscode-languageserver';
 import { CodeActionParams, Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -45,7 +46,6 @@ export class AureliaServer {
   public async onConnectionDidChangeContent(
     change: TextDocumentChangeEvent<TextDocument>
   ): Promise<void> {
-    /* prettier-ignore */ console.log('TCL: AureliaServer -> onConnectionDidChangeContent')
     await onConnectionDidChangeContent(this.container, change);
   }
 
@@ -127,8 +127,15 @@ export class AureliaServer {
     return symbols;
   }
 
-  public async onCodeAction(codeActionParams: CodeActionParams) {
-    const codeAction = await onCodeAction(this.container, codeActionParams);
+  public async onCodeAction(
+    codeActionParams: CodeActionParams,
+    allDocuments: TextDocuments<TextDocument>
+  ) {
+    const codeAction = await onCodeAction(
+      this.container,
+      codeActionParams,
+      allDocuments
+    );
     return codeAction;
   }
 

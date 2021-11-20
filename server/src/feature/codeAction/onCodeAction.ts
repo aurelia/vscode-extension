@@ -1,4 +1,6 @@
+import { TextDocuments } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
@@ -10,7 +12,8 @@ import { AureliaHtmlLanguageService } from '../../core/regions/languageServer/Au
 
 export async function onCodeAction(
   container: Container,
-  { textDocument, range }: CodeActionParams
+  { textDocument, range }: CodeActionParams,
+  allDocuments: TextDocuments<TextDocument>
 ) {
   // We need some kind of code action map
   // Since, eg. the aHref tag should only trigger "rename to import tag" code action
@@ -39,7 +42,7 @@ export async function onCodeAction(
   const doCodeAction = languageService.doCodeAction;
 
   if (doCodeAction) {
-    const document = TextDocumentUtils.createHtmlFromUri(textDocument);
+    const document = TextDocumentUtils.createHtmlFromUri(textDocument,allDocuments);
     const codeAction = await doCodeAction(
       aureliaProgram,
       document,

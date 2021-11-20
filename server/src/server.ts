@@ -139,20 +139,6 @@ connection.onInitialized(async () => {
   }
 });
 
-connection.onDidChangeConfiguration(() => {
-  console.log('[server.ts] onDidChangeConfiguration');
-
-  // if (hasConfigurationCapability) {
-  //   // Reset all cached document settings
-  //   documentSettings.settingsMap.clear();
-  // } else {
-  //   documentSettings.globalSettings = (change.settings[settingsName] ||
-  //     documentSettings.defaultSettings) as ExtensionSettings;
-  // }
-
-  // void createAureliaWatchProgram(aureliaProgram);
-});
-
 // connection.onDidOpenTextDocument(() => {});
 
 // Only keep settings for open documents
@@ -160,26 +146,15 @@ connection.onDidChangeConfiguration(() => {
 //   documentSettings.settingsMap.delete(e.document.uri);
 // });
 
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
-documents.onDidChangeContent(
-  MyLodash.debouncePromise(async (change: TextDocumentChangeEvent<TextDocument>) => {
-    if (!hasServerInitialized) return;
-    // const diagnosticsParams = await aureliaServer.sendDiagnostics(
-    //   change.document
-    // );
-    // connection.sendDiagnostics(diagnosticsParams);
-    await aureliaServer.onConnectionDidChangeContent(change);
-  }, 400)
-);
+connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
+  const codeAction = await aureliaServer.onCodeAction(
+    codeActionParams,
+    documents
+  );
 
-documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
-  await aureliaServer.onDidSave(change);
-});
-
-connection.onDidChangeWatchedFiles((_change) => {
-  // Monitored files have change in VSCode
-  connection.console.log('We received an file change event');
+  if (codeAction) {
+    return codeAction;
+  }
 });
 
 // This handler provides the initial list of the completion items.
@@ -226,6 +201,45 @@ connection.onDefinition(
   }
 );
 
+// The content of a text document has changed. This event is emitted
+// when the text document first opened or when its content has changed.
+documents.onDidChangeContent(
+  MyLodash.debouncePromise(
+    async (change: TextDocumentChangeEvent<TextDocument>) => {
+      if (!hasServerInitialized) return;
+      // const diagnosticsParams = await aureliaServer.sendDiagnostics(
+      //   change.document
+      // );
+      // connection.sendDiagnostics(diagnosticsParams);
+      await aureliaServer.onConnectionDidChangeContent(change);
+    },
+    400
+  )
+);
+
+connection.onDidChangeConfiguration(() => {
+  console.log('[server.ts] onDidChangeConfiguration');
+
+  // if (hasConfigurationCapability) {
+  //   // Reset all cached document settings
+  //   documentSettings.settingsMap.clear();
+  // } else {
+  //   documentSettings.globalSettings = (change.settings[settingsName] ||
+  //     documentSettings.defaultSettings) as ExtensionSettings;
+  // }
+
+  // void createAureliaWatchProgram(aureliaProgram);
+});
+
+connection.onDidChangeWatchedFiles((_change) => {
+  // Monitored files have change in VSCode
+  connection.console.log('We received an file change event');
+});
+
+documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
+  await aureliaServer.onDidSave(change);
+});
+
 connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
   if (hasServerInitialized === false) return;
   const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
@@ -254,14 +268,6 @@ connection.onWorkspaceSymbol(async () => {
 //     return hovered;
 //   }
 // );
-
-connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  const codeAction = await aureliaServer.onCodeAction(codeActionParams);
-
-  if (codeAction) {
-    return codeAction;
-  }
-});
 
 connection.onExecuteCommand(
   async (executeCommandParams: ExecuteCommandParams) => {

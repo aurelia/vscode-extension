@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { TextDocuments } from 'vscode-languageserver';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -21,7 +22,15 @@ export class TextDocumentUtils {
     return document;
   }
 
-  public static createHtmlFromUri({ uri }: { uri: string }): TextDocument {
+  public static createHtmlFromUri(
+    { uri }: { uri: string },
+    allDocuments?: TextDocuments<TextDocument>
+  ): TextDocument {
+    const openDocument = allDocuments?.get(uri);
+    if (openDocument) {
+      return openDocument;
+    }
+
     const content = fs.readFileSync(UriUtils.toPath(uri), 'utf-8');
     const document = TextDocument.create(uri, 'html', 0, content);
 

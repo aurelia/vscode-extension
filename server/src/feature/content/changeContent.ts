@@ -12,6 +12,7 @@ export async function onConnectionDidChangeContent(
   { document }: TextDocumentChangeEvent<TextDocument>
 ) {
   switch (document.languageId) {
+    case 'javascript':
     case 'typescript': {
       const aureliaProjects = container.get(AureliaProjects);
       if (aureliaProjects.preventHydration(document)) {
@@ -22,7 +23,10 @@ export async function onConnectionDidChangeContent(
 
       // await aureliaProjects.hydrate([document]);
       await aureliaProjects.updateManyViewModel([document]);
-      logger.log('Update');
+      logger.log('Update View models');
+    }
+    case 'html': {
+      logger.log('Update View');
     }
   }
 }
