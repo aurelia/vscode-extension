@@ -16,7 +16,7 @@ export let myMockServer: MockServer;
 let _WORKSPACE_URI_CACHE = '';
 
 export function theProjectIsNamed(projectName: FixtureNames): void {
-  logger.log('/^the project is named "(.*)"$/', { reset: true,env:'test' });
+  logger.log('/^the project is named "(.*)"$/', { reset: true, env: 'test' });
   // /* prettier-ignore */ logger.log('/^the project is named "(.*)"$/', { logPerf: true, reset: true, });
   testError.verifyProjectName(projectName);
 
@@ -42,12 +42,9 @@ export async function givenIOpenVsCodeWithTheFollowingFiles(
     .mock(textDocumentPaths)
     .setActive(textDocumentPaths)
     .getAll();
-  await myMockServer.getAureliaServer().onConnectionInitialized(
-    {
-      aureliaProject: {
-        rootDirectory: myMockServer.getWorkspaceUri(),
-      },
+  await myMockServer.getAureliaServer().onConnectionInitialized({
+    aureliaProject: {
+      rootDirectory: myMockServer.getWorkspaceUri(),
     },
-    mockTextDocuments
-  );
+  });
 }

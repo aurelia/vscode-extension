@@ -35,7 +35,7 @@ export const codeActionSteps: StepDefinitions = ({ when, then }) => {
         (codeAction) => codeAction.kind === finalKind
       );
       targetCodeAction /* ? */
-      expect(true).toBeFalsy();
+      // expect(true).toBeFalsy();
       if (targetCodeAction?.edit?.changes == null) return;
 
       const document = myMockServer.textDocuments.getActive();
