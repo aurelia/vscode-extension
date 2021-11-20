@@ -7,7 +7,6 @@ Feature: Hydrate on initialization
     Then the extension should hydrate the Aurelia project
 
   @monorepo
-  @focus
   Scenario Outline: Hydrate monorepo project
     Given the project is named "monorepo"
     And I open VSCode with the following file "<FILE_NAME>"
@@ -16,7 +15,7 @@ Feature: Hydrate on initialization
     Examples:
       | FILE_NAME  |
       | aurelia.ts |
-      # | burelia.ts |
+      | burelia.ts |
 
 
   @cli_generated

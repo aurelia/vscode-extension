@@ -2,7 +2,6 @@ Feature: Detecting an Aurelia project
   Note: This test is actually not valid from the code perspective, as
   the extension only activates, when there is a .ts/.html file active on open.
 
-  #
   Scenario: Non Aurelia project
     Given the project is named "non-aurelia-project"
     And I open VSCode with no active files

@@ -29,10 +29,15 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
       /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$',{env:'test'});
+      const { AureliaProjects } = myMockServer.getContainerDirectly();
+      spyOn(AureliaProjects, 'hydrate');
+
       myMockServer.setActiveFilePath(fileName);
       await givenIOpenVsCodeWithTheFollowingFiles([
         myMockServer.getActiveFilePath(),
       ]);
+
+      expect(AureliaProjects.hydrate).toHaveBeenCalled();
     }
   );
 
@@ -43,26 +48,37 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
   then('the extension should hydrate the Aurelia project', () => {
     /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project',{env:'test'});
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const tsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
-     tsConfigPath/*?*/
-    const targetProject = AureliaProjects.getBy(tsConfigPath);
-    expect(true).toBeFalsy();
-    if (!targetProject) return;
+    const targetTsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
+    const targetProject = AureliaProjects.getBy(targetTsConfigPath);
+    if (!targetProject) {
+      const allTsConfigPaths = AureliaProjects.getAll().map(
+        (p) => p.tsConfigPath
+      );
+      const isIncluded = allTsConfigPaths.some((tsConfigPath) =>
+        tsConfigPath.includes(targetTsConfigPath)
+      );
+      if (!isIncluded) return;
+
+      expect(AureliaProjects.getAll()[0].aureliaProgram).toBeTruthy();
+
+      return;
+    }
+
     const { aureliaProgram } = targetProject;
     expect(aureliaProgram).toBeTruthy();
-
   });
 
   then('the extension should rehydrate', () => {
     /* prettier-ignore */ logger.log('the extension should rehydrate',{env:'test'});
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    expect(AureliaProjects.hydrate).toBeCalled();
+    expect(AureliaProjects.hydrate).toBeCalledTimes(2);
   });
 
   then(/^the extension should not rehydrate$/, () => {
     /* prettier-ignore */ logger.log('/^the extension should not rehydrate$/',{env:'test'});
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    expect(AureliaProjects.hydrate).not.toBeCalled();
+    // Only called once on init
+    expect(AureliaProjects.hydrate).toHaveBeenCalledTimes(1);
   });
 };
 

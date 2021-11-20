@@ -1,3 +1,28 @@
+// if (tsConfigPath == null) {
+//   const virtualTsConfigPath = `${targetSourceDirectory}/tsconfig.json`;
+//   const tsConfigJson = ts.parseConfigFileTextToJson(
+//     virtualTsConfigPath,
+//     `{
+//     "compilerOptions": {
+//       "experimentalDecorators": true,
+//       "module": "commonjs",
+//       "target": "es6",
+//       "rootDir": "${targetSourceDirectory}",
+//       "sourceMap": true,
+//     },
+//     "include": ["src"],
+//     "exclude": ["node_modules"]
+//   }
+//   `
+//   ).config;
+
+//   finalCustomCompilerOptions = {
+//     ...finalCustomCompilerOptions,
+//     ...tsConfigJson,
+//   };
+// }
+
+// ---
 // if (region === undefined) return [];
 
 // // Approach similar to `aureliaVirtualComplete_vNext`,
