@@ -29,6 +29,7 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
+import { MyLodash } from './common/MyLodash';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -162,14 +163,14 @@ connection.onDidChangeConfiguration(() => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(
-  async (change: TextDocumentChangeEvent<TextDocument>) => {
+  MyLodash.debouncePromise(async (change: TextDocumentChangeEvent<TextDocument>) => {
     if (!hasServerInitialized) return;
     // const diagnosticsParams = await aureliaServer.sendDiagnostics(
     //   change.document
     // );
     // connection.sendDiagnostics(diagnosticsParams);
-    // await aureliaServer.onConnectionDidChangeContent(change);
-  }
+    await aureliaServer.onConnectionDidChangeContent(change);
+  }, 400)
 );
 
 documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {

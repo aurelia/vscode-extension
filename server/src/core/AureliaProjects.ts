@@ -37,9 +37,10 @@ export class AureliaProjects {
 
     if (!hasAureliaProject) {
       logHasNoAureliaProject();
-      return;
+      return false;
     }
     logFoundAureliaProjects(projects);
+    return true;
   }
 
   public getAll(): IAureliaProject[] {
@@ -47,7 +48,6 @@ export class AureliaProjects {
   }
 
   public getBy(tsConfigPath: string): IAureliaProject | undefined {
-    this.getAll().map((all) => all.tsConfigPath); /* ? */
     const target = this.getAll().find(
       (projects) => projects.tsConfigPath === tsConfigPath
     );
@@ -70,8 +70,7 @@ export class AureliaProjects {
    * [PERF]: 2.5s
    */
   public async hydrate(documents: TextDocument[]) {
-    /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO', });
-    /** TODO: Makes esnse? */
+    /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO' });
     const documentsPaths = uriToPath(documents);
     if (documentsPaths.length === 0) return;
 
@@ -84,7 +83,7 @@ export class AureliaProjects {
       aureliaProjectSettings
     );
 
-    /* prettier-ignore */ logger.log('Parsing done. Aurelia Extension is ready.', { logLevel: 'INFO', });
+    /* prettier-ignore */ logger.log('Parsing done. Aurelia Extension is ready.', { logLevel: 'INFO' });
   }
 
   /**
@@ -103,10 +102,10 @@ export class AureliaProjects {
       return false;
     }
 
-    logger.culogger.todo(
-      `What should happen to document, that is not included?: ${document.uri}`
-    );
-
+    // update: then extension should correctly(!) not active
+    // logger.culogger.todo(
+    //   `What should happen to document, that is not included?: ${document.uri}`
+    // );
     return true;
   }
 
@@ -157,9 +156,20 @@ export class AureliaProjects {
       if (!shouldActivate) return;
 
       if (aureliaProgram === null) {
+        const extensionSettings =
+          this.documentSettings.getSettings().aureliaProject;
+        this.documentSettings.setSettings({
+          ...extensionSettings,
+          aureliaProject: {
+            projectDirectory: tsConfigPath,
+          },
+        });
         aureliaProgram = new AureliaProgram(this.documentSettings);
         if (!compilerObject) {
           const tsMorphProject = aureliaProgram.tsMorphProject.create();
+          tsMorphProject
+            .getSourceFiles()
+            .map((f) => f.getSourceFile().getFilePath());
           const program = tsMorphProject.getProgram();
           // [PERF]: 1.87967675s
           compilerObject = program.compilerObject;
@@ -167,7 +177,7 @@ export class AureliaProjects {
         aureliaProgram.setProgram(compilerObject);
       }
 
-      const projectOptions = {
+      const projectOptions: IAureliaProjectSetting = {
         ...aureliaProjectSettings,
         rootDirectory: tsConfigPath,
       };
@@ -264,14 +274,14 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
 }
 
 function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
-  /* prettier-ignore */ logger.log(`Found ${aureliaProjects.length} Aurelia project(s) in: `, { logLevel: 'INFO', });
+  /* prettier-ignore */ logger.log(`Found ${aureliaProjects.length} Aurelia project(s) in: `, { logLevel: 'INFO' });
   aureliaProjects.forEach(({ tsConfigPath }) => {
-    /* prettier-ignore */ logger.log(tsConfigPath, { logLevel: 'INFO', });
+    /* prettier-ignore */ logger.log(tsConfigPath, { logLevel: 'INFO' });
   });
 }
 
 function logHasNoAureliaProject() {
-  /* prettier-ignore */ logger.log('No active Aurelia project found.', { logLevel: 'INFO', });
+  /* prettier-ignore */ logger.log('No active Aurelia project found.', { logLevel: 'INFO' });
   /* prettier-ignore */ logger.log( 'Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
 }
 

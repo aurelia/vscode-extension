@@ -17,12 +17,17 @@ export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
     const auProjects = AureliaProjects.getAll();
     strictEqual(auProjects.length, 0);
+
+    expect(AureliaProjects.hydrate).not.toHaveBeenCalled();
   });
 };
 
 export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
   given(/^I open VSCode with no active files$/, async () => {
     const mockTextDocuments = myMockServer.textDocuments.mock().getAll();
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    spyOn(AureliaProjects, 'hydrate');
+
     await myMockServer.getAureliaServer().onConnectionInitialized(
       {
         aureliaProject: {
@@ -37,13 +42,14 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
     const auProjects = AureliaProjects.getAll();
     expect(auProjects.length).toBeGreaterThan(0);
-    // [PERF][TODO]: For perf, this should be active
-    // strictEqual(auProjects[0].aureliaProgram, null);
+    expect(AureliaProjects.hydrate).toHaveBeenCalled();
+    expect(auProjects[0].aureliaProgram).toBe(null);
   });
 
   then('the extension should detect all Aurelia projects', () => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
     const auProjects = AureliaProjects.getAll();
-    strictEqual(auProjects.length >= 2, true);
+    expect(auProjects.length).toBeGreaterThanOrEqual(2);
+    expect(AureliaProjects.hydrate).toHaveBeenCalled();
   });
 };

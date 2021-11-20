@@ -1,10 +1,11 @@
 import { Container } from 'aurelia-dependency-injection';
 import { TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { Logger } from '../../common/logging/logger';
 
 import { AureliaProjects } from '../../core/AureliaProjects';
 
-// const logger = new Logger({ scope: 'change-content' });
+const logger = new Logger('changeContent');
 
 export async function onConnectionDidChangeContent(
   container: Container,
@@ -13,10 +14,15 @@ export async function onConnectionDidChangeContent(
   switch (document.languageId) {
     case 'typescript': {
       const aureliaProjects = container.get(AureliaProjects);
-      if (aureliaProjects.preventHydration(document)) return;
+      if (aureliaProjects.preventHydration(document)) {
+        logger.log('Prevent hydration');
 
-      await aureliaProjects.hydrate([document]);
-      // await aureliaProjects.updateManyViewModel([document]);
+        return;
+      }
+
+      // await aureliaProjects.hydrate([document]);
+      await aureliaProjects.updateManyViewModel([document]);
+      logger.log('Update');
     }
   }
 }

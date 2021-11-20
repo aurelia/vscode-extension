@@ -3,6 +3,7 @@ import { blueBright, bgWhite, bold } from 'colorette';
 import { Logger as Culogger, LogOptions } from 'culog';
 
 import { PerformanceMeasure } from './performance-measure';
+import { remapWallabyToNormalProject } from './WallabyUtils';
 
 const DEV_IS_WALLABY = __dirname.includes('wallabyjs.wallaby-vscode');
 
@@ -12,6 +13,7 @@ interface ILogOptions extends LogOptions {
   log?: boolean;
   focusedLogging?: boolean;
   ignoreFirstXLogs?: number;
+  ignoreAfterXLogs?: number;
 
   measurePerf?: boolean;
   focusedPerf?: boolean;
@@ -20,13 +22,15 @@ interface ILogOptions extends LogOptions {
   env?: Environment;
   reset?: boolean;
   highlight?: boolean;
+
+  projectPath?: string;
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: true,
   focusedLogging: true,
-  ignoreFirstXLogs: 4,
   // ignoreFirstXLogs: 0,
+  // ignoreAfterXLogs: 6,
 
   measurePerf: false,
   focusedPerf: true,
@@ -35,6 +39,8 @@ const DEFAULT_LOG_OPTIONS: ILogOptions = {
   env: 'prod',
   reset: false,
   highlight: false,
+
+  projectPath: '',
 };
 
 const performanceMeasure = new PerformanceMeasure();
@@ -74,9 +80,9 @@ export class Logger {
       ...options,
     };
 
-    if (localOptions.measurePerf !== undefined) {
-      if (localOptions.focusedPerf !== undefined) {
-        if (localOptions.logPerf !== undefined) {
+    if (localOptions.measurePerf === true) {
+      if (localOptions.focusedPerf === true) {
+        if (localOptions.logPerf === true) {
           this.getPerformanceMeasure()?.performance.mark(message);
           this.getPerformanceMeasure()?.continousMeasuring(message, {
             reset: localOptions.reset,
@@ -97,6 +103,21 @@ export class Logger {
     }
 
     if (localOptions.env !== this.classOptions.env) return;
+
+    if (
+      localOptions.ignoreFirstXLogs != null &&
+      localOptions.ignoreAfterXLogs != null
+    ) {
+      const ignoreFirst = ignoreLogCount >= localOptions.ignoreFirstXLogs;
+      const ignoreAfter = ignoreLogCount < localOptions.ignoreAfterXLogs;
+      const shouldIgnore = !(ignoreFirst && ignoreAfter);
+
+      ignoreLogCount++;
+
+      if (shouldIgnore) {
+        return;
+      }
+    }
 
     // Log count
     if (
@@ -134,8 +155,8 @@ export class Logger {
         const logSource = findLogSource();
         let finalMessage = loggedMessage[0];
         if (options.env !== 'prod') {
-          finalMessage = `${loggedMessage[0]} (at ${logSource})`;
         }
+        finalMessage = `${loggedMessage[0]} (at ${logSource})`;
 
         console.log(finalMessage);
 
@@ -171,13 +192,29 @@ function findLogSource() {
   const errorStack = new Error().stack;
   if (errorStack == null) return;
 
-  const [_errorWord, _findLogSource, _LoggerLogMessage, _LoggerLog, rawTarget] =
-    errorStack.split('\n').map((str) => str.trim());
-  const rawSplit = rawTarget.split(' ');
+  const [_error, ...errorTrace] = errorStack.split('\n');
+  const withOutLogger = errorTrace.filter(
+    (line) => !line.includes('logging/logger.')
+  );
+  // errorSplit.slice(4, 25).join('\n'); /* ? */
+  // prettifyCallstack(withOutLogger);
+
+  // const [_errorWord, _findLogSource, _LoggerLogMessage, _LoggerLog, rawTarget] =
+  const rawTarget = withOutLogger.map((str) => str.trim());
+  const rawSplit = rawTarget[0].split(' ');
   const targetPath = rawSplit[rawSplit.length - 1];
   let sourceName = path.basename(targetPath);
   if (sourceName.endsWith(')')) {
     sourceName = sourceName.replace(/\)$/, '');
+  }
+
+  if (DEV_IS_WALLABY) {
+    try {
+      const remapped = remapWallabyToNormalProject(targetPath);
+      if (typeof remapped !== 'string') {
+        return remapped.remappdeLocation;
+      }
+    } catch (_error) {}
   }
 
   return sourceName;

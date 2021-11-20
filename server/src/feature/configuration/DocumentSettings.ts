@@ -31,6 +31,8 @@ export interface IAureliaProjectSetting {
   include?: string[];
   exclude?: string[];
   rootDirectory?: string;
+  /** Difference to `rootDirectory`: root can be monorepo, this one is the specific project */
+  projectDirectory?: string;
 }
 
 export const defaultProjectOptions: IAureliaProjectSetting = {

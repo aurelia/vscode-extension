@@ -45,6 +45,7 @@ export class AureliaServer {
   public async onConnectionDidChangeContent(
     change: TextDocumentChangeEvent<TextDocument>
   ): Promise<void> {
+    /* prettier-ignore */ console.log('TCL: AureliaServer -> onConnectionDidChangeContent')
     await onConnectionDidChangeContent(this.container, change);
   }
 

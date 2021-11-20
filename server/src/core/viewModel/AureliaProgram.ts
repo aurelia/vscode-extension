@@ -154,13 +154,10 @@ export class AureliaProgram {
 function getUserConfiguredFilePaths(
   options: IAureliaProjectSetting = defaultProjectOptions
 ): string[] {
-  options/* ? */
   const { rootDirectory, exclude, include } = options;
   const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
   const finalExcludes = getFinalExcludes(exclude);
-   finalExcludes/*?*/
   const finalIncludes = getFinalIncludes(include);
-   finalIncludes/*?*/
   const paths = ts.sys.readDirectory(
     targetSourceDirectory,
     ['ts'],
