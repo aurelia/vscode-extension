@@ -16,6 +16,5 @@ export function initDependencyInjection(
     new DocumentSettings(extensionSettings)
   );
   const settings = container.get(DocumentSettings);
-  container.registerInstance(TsMorphProject, new TsMorphProject(settings));
   container.registerInstance(AureliaProjects, new AureliaProjects(settings));
 }

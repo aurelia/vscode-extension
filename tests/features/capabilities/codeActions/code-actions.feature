@@ -13,6 +13,7 @@ Feature: Code Actions.
       | DESCRIPTION | CODE_ACTION   | LINE | CODE                   | NEW_CODE |
       | Import      | refactor.aTag | 7    | `<\|a href="foo"></a>` | import   |
 
+  @focus
   Scenario Outline: View Refactor - on change content.
     Given I open VSCode with the following file "empty-view.html"
     And I'm replacing the file content with <CODE>

@@ -119,11 +119,12 @@ connection.onInitialized(async () => {
       rootDirectory: workspaceRootUri,
     };
 
-    aureliaServer = new AureliaServer(globalContainer, extensionSettings);
-    await aureliaServer.onConnectionInitialized(
+    aureliaServer = new AureliaServer(
+      globalContainer,
       extensionSettings,
-      documents.all()
+      documents
     );
+    await aureliaServer.onConnectionInitialized(extensionSettings);
 
     const tsConfigPath = UriUtils.toPath(workspaceRootUri);
     const aureliaProjects = globalContainer.get(AureliaProjects);
@@ -147,10 +148,7 @@ connection.onInitialized(async () => {
 // });
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
-  const codeAction = await aureliaServer.onCodeAction(
-    codeActionParams,
-    documents
-  );
+  const codeAction = await aureliaServer.onCodeAction(codeActionParams);
 
   if (codeAction) {
     return codeAction;
@@ -287,11 +285,12 @@ connection.onExecuteCommand(
           rootDirectory: workspaceRootUri,
         };
 
-        aureliaServer = new AureliaServer(globalContainer, extensionSettings);
-        await aureliaServer.onConnectionInitialized(
+        aureliaServer = new AureliaServer(
+          globalContainer,
           extensionSettings,
-          documents.all()
+          documents
         );
+        await aureliaServer.onConnectionInitialized(extensionSettings);
 
         break;
       }

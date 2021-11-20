@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { Position } from 'vscode-html-languageservice';
+import { TextDocuments } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../../../server/src/common/logging/logger';
@@ -9,7 +10,7 @@ import { UriUtils } from '../../../server/src/common/view/uri-utils';
 
 const logger = new Logger('text-documents');
 
-export class MockTextDocuments {
+export class MockTextDocuments extends TextDocuments<TextDocument> {
   private textDocuments: TextDocument[] = [];
   private activeTextDocument: TextDocument;
 
@@ -19,6 +20,7 @@ export class MockTextDocuments {
   private readonly workspaceRootUri: string;
 
   constructor(workspaceRootUri: string) {
+    super(<any>{});
     this.workspaceRootUri = workspaceRootUri;
   }
 
@@ -55,8 +57,17 @@ export class MockTextDocuments {
     return this.textDocuments;
   }
 
+  public all() {
+    return this.getAll();
+  }
+
   public getFirst(): TextDocument {
     return this.textDocuments[0];
+  }
+
+  public get(uri: string): TextDocument | undefined {
+    const target = this.getAll().find((document) => document.uri === uri);
+    return target;
   }
 
   public create(uri: string): TextDocument {

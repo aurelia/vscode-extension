@@ -1,5 +1,5 @@
 import { StepDefinitions } from 'jest-cucumber';
-import { CodeAction, Range, TextEdit } from 'vscode-languageserver-types';
+import { CodeAction, Range } from 'vscode-languageserver-types';
 
 import { EXTENSION_COMMAND_PREFIX } from '../../../../server/src/common/constants';
 import { Logger } from '../../../../server/src/common/logging/logger';
@@ -34,8 +34,7 @@ export const codeActionSteps: StepDefinitions = ({ when, then }) => {
       const targetCodeAction = codeActions.find(
         (codeAction) => codeAction.kind === finalKind
       );
-      targetCodeAction /* ? */
-      // expect(true).toBeFalsy();
+      expect(targetCodeAction).toBeDefined();
       if (targetCodeAction?.edit?.changes == null) return;
 
       const document = myMockServer.textDocuments.getActive();

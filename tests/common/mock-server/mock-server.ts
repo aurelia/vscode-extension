@@ -39,11 +39,12 @@ export class MockServer {
     private readonly extensionSettings: ExtensionSettings = {},
     private readonly activeDocuments: TextDocument[] = []
   ) {
+    this.textDocuments = new MockTextDocuments(this.workspaceRootUri);
     this.aureliaServer = new AureliaServer(
       this.container,
-      this.extensionSettings
+      this.extensionSettings,
+      this.textDocuments
     );
-    this.textDocuments = new MockTextDocuments(this.workspaceRootUri);
 
     this.AureliaProjects = this.container.get(AureliaProjects);
     this.DocumentSettings = this.container.get(DocumentSettings);
@@ -127,16 +128,13 @@ export class MockServer {
   public async onConnectionInitialized(
     aureliaProject: Partial<IAureliaProjectSetting>
   ) {
-    await this.aureliaServer.onConnectionInitialized(
-      {
-        aureliaProject: {
-          exclude: undefined,
-          rootDirectory: this.workspaceRootUri,
-          ...aureliaProject,
-        },
+    await this.aureliaServer.onConnectionInitialized({
+      aureliaProject: {
+        exclude: undefined,
+        rootDirectory: this.workspaceRootUri,
+        ...aureliaProject,
       },
-      this.textDocuments.getAll()
-    );
+    });
   }
 
   /**

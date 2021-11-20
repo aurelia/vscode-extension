@@ -106,6 +106,7 @@ export class AureliaProjects {
     // logger.culogger.todo(
     //   `What should happen to document, that is not included?: ${document.uri}`
     // );
+    logger.log(`Not updating document: ${path.basename(document.uri)}`);
     return true;
   }
 

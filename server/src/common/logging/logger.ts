@@ -29,7 +29,7 @@ interface ILogOptions extends LogOptions {
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: true,
   focusedLogging: true,
-  // ignoreFirstXLogs: 0,
+  ignoreFirstXLogs: 3,
   // ignoreAfterXLogs: 6,
 
   measurePerf: false,
@@ -155,8 +155,8 @@ export class Logger {
         const logSource = findLogSource();
         let finalMessage = loggedMessage[0];
         if (options.env !== 'prod') {
+          finalMessage = `${loggedMessage[0]} (at ${logSource})`;
         }
-        finalMessage = `${loggedMessage[0]} (at ${logSource})`;
 
         console.log(finalMessage);
 

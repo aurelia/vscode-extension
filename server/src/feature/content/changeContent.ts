@@ -15,11 +15,7 @@ export async function onConnectionDidChangeContent(
     case 'javascript':
     case 'typescript': {
       const aureliaProjects = container.get(AureliaProjects);
-      if (aureliaProjects.preventHydration(document)) {
-        logger.log('Prevent hydration');
-
-        return;
-      }
+      if (aureliaProjects.preventHydration(document)) return;
 
       // await aureliaProjects.hydrate([document]);
       await aureliaProjects.updateManyViewModel([document]);

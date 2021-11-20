@@ -9,6 +9,7 @@ import {
 import { CodeActionParams, Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { SymbolInformation } from 'vscode-languageserver-types';
+import { Logger } from '../common/logging/logger';
 
 import { onCodeAction } from '../feature/codeAction/onCodeAction';
 import { onCompletion } from '../feature/completions/onCompletions';
@@ -24,22 +25,24 @@ import { onWorkspaceSymbol } from '../feature/symbols/onWorkspaceSymbol';
 import { Container } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
 
+const logger = new Logger('AureliaServer');
+
 export class AureliaServer {
   constructor(
     private readonly container: Container,
-    public readonly extensionSettings: ExtensionSettings
+    public readonly extensionSettings: ExtensionSettings,
+    public allDocuments: TextDocuments<TextDocument>
   ) {
     initDependencyInjection(container, extensionSettings);
   }
 
   public async onConnectionInitialized(
-    extensionSettings: ExtensionSettings,
-    activeDocuments: TextDocument[] = []
+    extensionSettings: ExtensionSettings
   ): Promise<void> {
     await onConnectionInitialized(
       this.container,
       extensionSettings,
-      activeDocuments
+      this.allDocuments.all()
     );
   }
 
@@ -98,6 +101,7 @@ export class AureliaServer {
       document
     );
 
+    logger.log(`Found ${completions?.length ?? 0} completion(s).`);
     return completions;
   }
 
@@ -107,6 +111,8 @@ export class AureliaServer {
 
   public async onDefinition(document: TextDocument, position: Position) {
     const definition = await onDefintion(document, position, this.container);
+
+    logger.log(`Found ${definition?.length ?? 0} definition(s).`);
     return definition;
   }
 
@@ -117,6 +123,8 @@ export class AureliaServer {
 
   public async onDocumentSymbol(documentUri: string) {
     const symbols = await onDocumentSymbol(this.container, documentUri);
+
+    logger.log(`Found ${symbols?.length ?? 0} symbol(s).`);
     return symbols;
   }
 
@@ -124,18 +132,18 @@ export class AureliaServer {
     // const symbols = onWorkspaceSymbol(this.container, query);
     const symbols = onWorkspaceSymbol(this.container);
 
+    logger.log(`Found ${symbols?.length ?? 0} symbol(s).`);
     return symbols;
   }
 
-  public async onCodeAction(
-    codeActionParams: CodeActionParams,
-    allDocuments: TextDocuments<TextDocument>
-  ) {
+  public async onCodeAction(codeActionParams: CodeActionParams) {
     const codeAction = await onCodeAction(
       this.container,
       codeActionParams,
-      allDocuments
+      this.allDocuments
     );
+
+    logger.log(`Found ${codeAction?.length ?? 0} code action(s).`);
     return codeAction;
   }
 
@@ -156,6 +164,8 @@ export class AureliaServer {
       newName,
       this.container
     );
+
+    logger.log(`Found ${renamed?.changes?.length ?? 0} code action(s).`);
     return renamed;
   }
 
