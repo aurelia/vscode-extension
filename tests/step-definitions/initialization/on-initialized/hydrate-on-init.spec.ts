@@ -29,15 +29,15 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     /^I open VSCode with the following file "(.*)"$/,
     async (fileName: string) => {
       /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$',{env:'test'});
-      const { AureliaProjects } = myMockServer.getContainerDirectly();
-      spyOn(AureliaProjects, 'hydrate');
+      // const { AureliaProjects } = myMockServer.getContainerDirectly();
+      // spyOn(AureliaProjects, 'hydrate');
 
       myMockServer.setActiveFilePath(fileName);
       await givenIOpenVsCodeWithTheFollowingFiles([
         myMockServer.getActiveFilePath(),
       ]);
 
-      expect(AureliaProjects.hydrate).toHaveBeenCalled();
+      // expect(AureliaProjects.hydrate).toHaveBeenCalled();
     }
   );
 
