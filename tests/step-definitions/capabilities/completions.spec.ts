@@ -17,7 +17,7 @@ import { myMockServer } from './new-common/project.step';
 const logger = new Logger('[Test] Completions');
 
 // eslint-disable-next-line import/no-mutable-exports
-export let completions: AureliaCompletionItem[] | CompletionList = [];
+export let completions: AureliaCompletionItem[] | CompletionList | undefined;
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
   when('I trigger Suggestions', async () => {
@@ -29,14 +29,13 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
       position
     );
 
-    if (!isAureliaCompletionItem(completions)) {
-      throw new Error('Not AureliaCompletionItem[]');
-    }
-
-    // eslint-disable-next-line require-atomic-updates
     completions = await myMockServer
       .getAureliaServer()
       .onCompletion(document, textDocumentPositionParams);
+
+    if (!isAureliaCompletionItem(completions)) {
+      throw new Error('Not AureliaCompletionItem[]');
+    }
   });
 
   then(/^I should get the correct suggestions (.*)$/, (suggestion: string) => {

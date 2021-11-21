@@ -46,7 +46,7 @@ interface Features {}
 interface Capabilities {
   completions: boolean;
   codeActions: boolean;
-  defintions: boolean;
+  definitions: boolean;
   renames: boolean;
   documentSymbols: boolean;
   workspaceSymbols: boolean;

@@ -99,6 +99,7 @@ export class AureliaServer {
     document: TextDocument,
     textDocumentPosition: TextDocumentPositionParams
   ) {
+    if (this.extensionSettings.capabilities?.completions === false) return;
     /* prettier-ignore */ logger.log('Completion triggered.',{logMs:true,msStart:true});
 
     const completions = await onCompletion(
@@ -116,6 +117,7 @@ export class AureliaServer {
   // onDeclaration() {}
 
   public async onDefinition(document: TextDocument, position: Position) {
+    if (this.extensionSettings.capabilities?.definitions === false) return;
     /* prettier-ignore */ logger.log('Definition triggered.',{logMs:true,msStart:true});
 
     const definition = await onDefintion(document, position, this.container);
@@ -130,6 +132,7 @@ export class AureliaServer {
   // onDocumentHighlight() {}
 
   public async onDocumentSymbol(documentUri: string) {
+    if (this.extensionSettings.capabilities?.documentSymbols === false) return;
     /* prettier-ignore */ logger.log('Document symbol triggered.',{logMs:true,msStart:true});
 
     const symbols = await onDocumentSymbol(this.container, documentUri);
@@ -138,7 +141,8 @@ export class AureliaServer {
     return symbols;
   }
 
-  public onWorkspaceSymbol(): SymbolInformation[] {
+  public onWorkspaceSymbol() {
+    if (this.extensionSettings.capabilities?.workspaceSymbols === false) return;
     /* prettier-ignore */ logger.log('Workspace symbol triggered.',{logMs:true,msStart:true});
 
     // const symbols = onWorkspaceSymbol(this.container, query);
@@ -149,6 +153,7 @@ export class AureliaServer {
   }
 
   public async onCodeAction(codeActionParams: CodeActionParams) {
+    if (this.extensionSettings.capabilities?.codeActions === false) return;
     /* prettier-ignore */ logger.log('Code action triggered.',{logMs:true,msStart:true});
 
     const codeAction = await onCodeAction(
@@ -172,6 +177,7 @@ export class AureliaServer {
     position: Position,
     newName: string
   ) {
+    if (this.extensionSettings.capabilities?.renames === false) return;
     /* prettier-ignore */ logger.log('Rename triggered.',{logMs:true,msStart:true});
 
     const renamed = await onRenameRequest(

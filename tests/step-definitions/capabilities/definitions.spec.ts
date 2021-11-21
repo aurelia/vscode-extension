@@ -26,7 +26,7 @@ export const definitionSteps: StepDefinitions = ({ when, then, and }) => {
   });
 
   and(
-    /^the number of defintions should be (.*)$/,
+    /^the number of definitions should be (.*)$/,
     (numOfDefintions: string) => {
       if (definitions) {
         expect(definitions.length).toBe(Number(numOfDefintions));

@@ -162,7 +162,7 @@ function getQuickInfoAtPosition(
   if (defintion.length > 1) {
     // TODO: Add VSCode warning, to know how to actually handle this case.
     // Currently, I think, only one defintion will be returned.
-    throw new Error('Unsupported: Multiple defintions.');
+    throw new Error('Unsupported: Multiple definitions.');
   }
 
   /**

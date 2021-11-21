@@ -8,7 +8,7 @@ Feature: Definition in View Model.
     And I'm on the line <LINE> at character <CODE>
     When I execute Go To Definition
     Then I should land in the file <TARGET_FILE_NAME>
-    And the number of defintions should be <NUM_DEFINTIONS>
+    And the number of definitions should be <NUM_DEFINTIONS>
 
     Examples:
       | DESCRIPTION    | LINE | CODE                                          | NUM_DEFINTIONS | TARGET_FILE_NAME         |

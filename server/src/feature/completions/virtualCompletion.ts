@@ -157,8 +157,9 @@ export interface AureliaCompletionItem extends CompletionItem {
 }
 
 export function isAureliaCompletionItem(
-  completion: CompletionList | AureliaCompletionItem[]
+  completion: CompletionList | AureliaCompletionItem[] | undefined
 ): completion is AureliaCompletionItem[] {
+  if (completion == null) return false;
   if (!Array.isArray(completion)) return false;
 
   if (completion.length === 0) return true;

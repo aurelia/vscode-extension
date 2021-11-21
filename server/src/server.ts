@@ -153,9 +153,7 @@ connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
 
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
-  async (
-    _textDocumentPosition: TextDocumentPositionParams
-  ): Promise<CompletionItem[] | CompletionList> => {
+  async (_textDocumentPosition: TextDocumentPositionParams) => {
     const documentUri = _textDocumentPosition.textDocument.uri;
     const document = documents.get(documentUri);
     if (!document) {
@@ -167,7 +165,9 @@ connection.onCompletion(
       _textDocumentPosition
     );
 
-    return completions;
+    if (completions != null) {
+      return completions;
+    }
   }
 );
 

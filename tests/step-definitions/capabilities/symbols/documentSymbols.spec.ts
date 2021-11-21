@@ -5,7 +5,7 @@ import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { myMockServer } from '../new-common/project.step';
 
 export const symbolSteps: StepDefinitions = ({ when, then }) => {
-  let symbols: DocumentSymbol[];
+  let symbols: DocumentSymbol[] | undefined;
 
   when(/^I execute Document symbols$/, async () => {
     const uri = UriUtils.toUri(myMockServer.getActiveFilePath());
