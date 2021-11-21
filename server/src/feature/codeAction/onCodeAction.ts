@@ -18,7 +18,6 @@ export async function onCodeAction(
   { textDocument, range }: CodeActionParams,
   allDocuments: TextDocuments<TextDocument>
 ) {
-  logger.log('Code action triggered.');
   // We need some kind of code action map
   // Since, eg. the aHref tag should only trigger "rename to import tag" code action
 
@@ -58,6 +57,4 @@ export async function onCodeAction(
     );
     return codeAction;
   }
-
-  logger.log(`No Code actions found.`);
 }

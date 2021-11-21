@@ -2,7 +2,7 @@ import * as path from 'path';
 import { blueBright, bgWhite, bold } from 'colorette';
 import { Logger as Culogger, LogOptions } from 'culog';
 
-import { PerformanceMeasure } from './performance-measure';
+import { PerformanceMeasure, performance } from './performance-measure';
 import { remapWallabyToNormalProject } from './WallabyUtils';
 
 const DEV_IS_WALLABY = __dirname.includes('wallabyjs.wallaby-vscode');
@@ -19,6 +19,12 @@ interface ILogOptions extends LogOptions {
   focusedPerf?: boolean;
   logPerf?: boolean;
 
+  /** Log ms to last call of `logMs`. Ms = milliseconds */
+  shouldLogMs?: boolean;
+  logMs?: boolean;
+  msStart?: boolean;
+  msEnd?: boolean;
+
   env?: Environment;
   reset?: boolean;
   highlight?: boolean;
@@ -29,12 +35,14 @@ interface ILogOptions extends LogOptions {
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: true,
   focusedLogging: true,
-  ignoreFirstXLogs: 3,
-  // ignoreAfterXLogs: 6,
+  // ignoreFirstXLogs: 5,
+  // ignoreAfterXLogs: 7,
 
-  measurePerf: false,
+  measurePerf: true,
   focusedPerf: true,
   logPerf: false,
+
+  shouldLogMs: true,
 
   env: 'prod',
   reset: false,
@@ -49,6 +57,9 @@ let ignoreLogCount = 0;
 export class Logger {
   public readonly culogger: Culogger;
   private readonly performanceMeasure?: PerformanceMeasure;
+
+  private msStartTime: number;
+  private msEndTime: number;
 
   constructor(
     // eslint-disable-next-line default-param-last
@@ -69,7 +80,7 @@ export class Logger {
       // logScope: false,
     });
 
-    if (this.classOptions.measurePerf !== undefined) {
+    if (this.classOptions.measurePerf === true) {
       this.performanceMeasure = performanceMeasure;
     }
   }
@@ -79,7 +90,9 @@ export class Logger {
       ...this.classOptions,
       ...options,
     };
+    let finalMessage = message;
 
+    // region measure perf
     if (localOptions.measurePerf === true) {
       if (localOptions.focusedPerf === true) {
         if (localOptions.logPerf === true) {
@@ -95,6 +108,7 @@ export class Logger {
         });
       }
     }
+    // endregion measure perf
 
     if (localOptions.highlight === true) {
       console.log(
@@ -104,6 +118,7 @@ export class Logger {
 
     if (localOptions.env !== this.classOptions.env) return;
 
+    // region ignore
     if (
       localOptions.ignoreFirstXLogs != null &&
       localOptions.ignoreAfterXLogs != null
@@ -121,22 +136,32 @@ export class Logger {
 
     // Log count
     if (
-      localOptions.ignoreFirstXLogs !== undefined &&
+      localOptions.ignoreFirstXLogs != null &&
       ignoreLogCount < localOptions.ignoreFirstXLogs
     ) {
       ignoreLogCount++;
       return;
     }
+    // endregion ignore
+
+    // region measure ms
+    if (localOptions.shouldLogMs === true) {
+      if (localOptions.msStart) {
+        this.msStartTime = performance.now();
+      } else if (localOptions.msEnd) {
+        this.msEndTime = performance.now();
+        let duration = this.msEndTime - this.msStartTime;
+        duration = Math.round(duration * 10) / 10;
+        finalMessage = `${finalMessage} (took ${duration} ms)`;
+      }
+    }
+    // endregion measure ms
 
     /**
      * Wallaby logic.
      * Wallaby does not console.log from external library.
      */
-    this.logMessage(message, localOptions);
-
-    return {
-      measureTo: this.getPerformanceMeasure()?.measureTo(message),
-    };
+    this.logMessage(finalMessage, localOptions);
   }
 
   private logMessage(
@@ -155,8 +180,8 @@ export class Logger {
         const logSource = findLogSource();
         let finalMessage = loggedMessage[0];
         if (options.env !== 'prod') {
-          finalMessage = `${loggedMessage[0]} (at ${logSource})`;
         }
+        finalMessage = `${loggedMessage[0]} (at ${logSource})`;
 
         console.log(finalMessage);
 
@@ -173,7 +198,7 @@ export class Logger {
       this.performanceMeasure === undefined
     ) {
       throw new Error(
-        'Performance measuring not active. To acitve set this.optinos.measuerPerf = true.'
+        'Performance measuring not active. To activate set this.optinos.measurePerf = true.'
       );
     }
 
@@ -212,7 +237,8 @@ function findLogSource() {
     try {
       const remapped = remapWallabyToNormalProject(targetPath);
       if (typeof remapped !== 'string') {
-        return remapped.remappdeLocation;
+        return remapped.remappedLine;
+        // return remapped.remappdeLocation;
       }
     } catch (_error) {}
   }

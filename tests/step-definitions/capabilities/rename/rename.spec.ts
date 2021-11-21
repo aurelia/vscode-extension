@@ -12,7 +12,7 @@ let renamed: WorkspaceEdit | undefined;
 
 export const renameSteps: StepDefinitions = ({ and, when, then }) => {
   when(/^I trigger Rename to (.*)$/, async (newWord: string) => {
-    /* prettier-ignore */ logger.log('I trigger Suggestions',{logPerf:true});
+    /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
 
     const document = myMockServer.textDocuments.getActive();
 

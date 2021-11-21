@@ -40,9 +40,8 @@ export async function onRenameRequest(
   const aureliaProgram = targetProject?.aureliaProgram;
   if (!aureliaProgram) return;
 
-  const targetComponent = aureliaProgram.aureliaComponents.getOneByFromDocument(
-    document
-  );
+  const targetComponent =
+    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   const regions = targetComponent?.viewRegions;
 
   if (!regions) return;

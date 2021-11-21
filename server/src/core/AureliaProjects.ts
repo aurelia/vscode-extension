@@ -82,8 +82,6 @@ export class AureliaProjects {
       documentsPaths,
       aureliaProjectSettings
     );
-
-    /* prettier-ignore */ logger.log('Parsing done. Aurelia Extension is ready.', { logLevel: 'INFO' });
   }
 
   /**

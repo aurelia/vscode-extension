@@ -39,11 +39,15 @@ export class AureliaServer {
   public async onConnectionInitialized(
     extensionSettings: ExtensionSettings
   ): Promise<void> {
+    /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
+
     await onConnectionInitialized(
       this.container,
       extensionSettings,
       this.allDocuments.all()
     );
+
+    /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready. 🚀',{logMs:true,msEnd:true});
   }
 
   public async onConnectionDidChangeContent(
@@ -95,13 +99,15 @@ export class AureliaServer {
     document: TextDocument,
     textDocumentPosition: TextDocumentPositionParams
   ) {
+    /* prettier-ignore */ logger.log('Completion triggered.',{logMs:true,msStart:true});
+
     const completions = await onCompletion(
       this.container,
       textDocumentPosition,
       document
     );
 
-    logger.log(`Found ${completions?.length ?? 0} completion(s).`);
+    /* prettier-ignore */ logger.log(`Found ${completions?.length ?? 0} completion(s).`,{logMs:true,msEnd:true});
     return completions;
   }
 
@@ -110,9 +116,11 @@ export class AureliaServer {
   // onDeclaration() {}
 
   public async onDefinition(document: TextDocument, position: Position) {
+    /* prettier-ignore */ logger.log('Definition triggered.',{logMs:true,msStart:true});
+
     const definition = await onDefintion(document, position, this.container);
 
-    logger.log(`Found ${definition?.length ?? 0} definition(s).`);
+    /* prettier-ignore */ logger.log(`Found ${definition?.length ?? 0} definition(s).`,{logMs:true,msEnd:true});
     return definition;
   }
 
@@ -122,28 +130,34 @@ export class AureliaServer {
   // onDocumentHighlight() {}
 
   public async onDocumentSymbol(documentUri: string) {
+    /* prettier-ignore */ logger.log('Document symbol triggered.',{logMs:true,msStart:true});
+
     const symbols = await onDocumentSymbol(this.container, documentUri);
 
-    logger.log(`Found ${symbols?.length ?? 0} symbol(s).`);
+    /* prettier-ignore */ logger.log(`Found ${symbols?.length ?? 0} symbol(s).`,{logMs:true,msEnd:true});
     return symbols;
   }
 
   public onWorkspaceSymbol(): SymbolInformation[] {
+    /* prettier-ignore */ logger.log('Workspace symbol triggered.',{logMs:true,msStart:true});
+
     // const symbols = onWorkspaceSymbol(this.container, query);
     const symbols = onWorkspaceSymbol(this.container);
 
-    logger.log(`Found ${symbols?.length ?? 0} symbol(s).`);
+    /* prettier-ignore */ logger.log(`Found ${symbols?.length ?? 0} symbol(s).`,{logMs:true,msEnd:true});
     return symbols;
   }
 
   public async onCodeAction(codeActionParams: CodeActionParams) {
+    /* prettier-ignore */ logger.log('Code action triggered.',{logMs:true,msStart:true});
+
     const codeAction = await onCodeAction(
       this.container,
       codeActionParams,
       this.allDocuments
     );
 
-    logger.log(`Found ${codeAction?.length ?? 0} code action(s).`);
+    /* prettier-ignore */ logger.log(`Found ${codeAction?.length ?? 0} code action(s).`,{logMs:true,msEnd:true});
     return codeAction;
   }
 
@@ -158,6 +172,8 @@ export class AureliaServer {
     position: Position,
     newName: string
   ) {
+    /* prettier-ignore */ logger.log('Rename triggered.',{logMs:true,msStart:true});
+
     const renamed = await onRenameRequest(
       document,
       position,
@@ -165,7 +181,7 @@ export class AureliaServer {
       this.container
     );
 
-    logger.log(`Found ${renamed?.changes?.length ?? 0} code action(s).`);
+    /* prettier-ignore */ logger.log(`Found ${renamed?.changes?.length ?? 0} rename(s).`,{logMs:true,msEnd:true});
     return renamed;
   }
 

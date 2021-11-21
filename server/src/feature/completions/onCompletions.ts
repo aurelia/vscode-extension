@@ -22,8 +22,6 @@ import {
   createAureliaTemplateAttributeCompletions,
 } from './createAureliaTemplateAttributeCompletions';
 
-// const logger = new Logger('on-completions');
-
 export async function onCompletion(
   container: Container,
   _textDocumentPosition: TextDocumentPositionParams,

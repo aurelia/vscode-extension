@@ -16,7 +16,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
   given(
     /^I'm replacing the file content with (.*)$/,
     (codeWithCursor: string) => {
-      /* prettier-ignore */ logger.log('/^I\'m replacing the file content with (.*)$/',{logPerf: true,env:'test'});
+      /* prettier-ignore */ logger.log('/^I\'m replacing the file content with (.*)$/',{env:'test'});
 
       code = removeCursorFromCode(codeWithCursor);
       myMockServer.textDocuments.changeActive(code);
@@ -30,7 +30,7 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
      * @param line - 0 based
      */
     async (line: number, codeWithCursor: string) => {
-      /* prettier-ignore */ logger.log('/^I\'m on the line (d+) at character (.*)$/',{logPerf: true,env:'test'});
+      /* prettier-ignore */ logger.log('/^I\'m on the line (d+) at character (.*)$/',{env:'test'});
 
       code = removeCursorFromCode(codeWithCursor);
 
