@@ -32,20 +32,14 @@
     "vscode": "^1.51.1"
   },
   "activationEvents": [
-    "onCommand:aurelia.getAureliaComponents",
-    "onCommand:extension.auOpenRelated",
-    "onCommand:extension.auOpenRelatedScript",
-    "onCommand:extension.auOpenRelatedStyle",
-    "onCommand:extension.auOpenRelatedUnit",
-    "onCommand:extension.auOpenRelatedView",
-    "onLanguage:plaintext"
+    "*"
   ],
   "main": "./client/out/extension",
   "contributes": {
     "commands": [
       {
-        "command": "extension.au.reinitializeExtension",
-        "title": "Reinitialize Extension",
+        "command": "extension.au.reloadExtension",
+        "title": "Reload Extension",
         "category": "Aurelia"
       },
       {
@@ -77,102 +71,150 @@
     "configuration": {
       "title": "aurelia",
       "properties": {
-        "aurelia.aureliaProjects.inc": {
-          "/dict": true,
-          "/node_modules": true
-        },
         "aurelia.aureliaProject": {
-          "rootDirectory": {
-            "type": "string",
-            "description": "Provide a custom directory for the root."
-          },
-          "include": {
-            "type": "array",
-            "description": "Includes for your Aurelia Project",
-            "default": []
-          },
-          "exclude": {
-            "type": "array",
-            "description": "Exlcudes for your Aurelia Project",
-            "default": [
-              "**/node_modules",
-              "aurelia_project",
-              "**/out",
-              "**/build",
-              "**/dist"
-            ]
-          }
-        },
-        "aurelia.extensionSettings.startIntellisenseCapabilities": {
-          "description": "Control when the extension should start intellisense capabilities.",
-          "type": "string",
-          "default": "onStartup",
-          "enum": [
-            "onStartup",
-            "onAureliaProject"
-          ],
-          "enumDescriptions": [
-            "As soon as VSCode opens, start component collection.",
-            "When a file inside an Aurelia project is opened."
-          ]
-        },
-        "aurelia.relatedFiles": {
           "type": "object",
-          "description": "Aurelia quick switching between related files",
+          "markdownDescription": "The extension scans your View model files to extract information for various features. This setting provides customization."
+        },
+        "aurelia.aureliaProject.exclude": {
+          "type": "array",
+          "default": [
+            "**/node_modules",
+            "**/out",
+            "**/build",
+            "**/dist",
+            "aurelia_project"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Specifies exclude globs for your View model files.",
+          "scope": "language-overridable"
+        },
+        "aurelia.aureliaProject.include": {
+          "type": "array",
+          "default": [
+            "src"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Specifies include globs for your View model files.",
+          "scope": "language-overridable"
+        },
+        "aurelia.aureliaProject.rootDirectory": {
+          "type": "string",
+          "description": "Provide a custom directory for the root. (Defaults to workspace root)",
+          "default": ""
+        },
+        "aurelia.capabilities": {
+          "type": "object",
+          "markdownDescription": "Control capabilities for the extension.",
+          "additionalProperties": false,
+          "scope": "window",
           "default": {
-            "script": [
-              ".js",
-              ".ts"
-            ],
-            "style": [
-              ".less",
-              ".sass",
-              ".scss",
-              ".styl",
-              ".css"
-            ],
-            "unit": [
-              ".spec.js",
-              ".spec.ts"
-            ],
-            "view": [
-              ".html"
-            ]
+            "completion": false,
+            "codeAction": false,
+            "defintion": false,
+            "rename": false,
+            "documentSymbol": false,
+            "workspaceSymbol": false
+          },
+          "properties": {
+            "capabilities.completions": {
+              "type": "boolean",
+              "description": "Provide completions from View model to View (and more).",
+              "default": "false"
+            },
+            "capabilities.codeActions": {
+              "type": "boolean",
+              "description": "Provide code actions for eg. refactoring.",
+              "default": "false"
+            },
+            "capabilities.defintions": {
+              "type": "boolean",
+              "description": "Provide defintions between View model and View (and more).",
+              "default": "false"
+            },
+            "capabilities.renames": {
+              "type": "boolean",
+              "description": "Provide renamings from eg. View model bindables (and more).",
+              "default": "false"
+            },
+            "capabilities.documentSymbols": {
+              "type": "boolean",
+              "description": "Provide document symbols from regions inside View.",
+              "default": "false"
+            },
+            "capabilities.workspaceSymbols": {
+              "type": "boolean",
+              "description": "Provide workspace symbols from all regions of your Views.",
+              "default": "false"
+            }
           }
         },
         "aurelia.pathToTsConfig": {
           "type": "string",
           "description": "Provide an absolute path to a tsconfig.json"
         },
-        "aurelia.capabilities.completion": {
-          "type": "boolean",
-          "description": "Provide completions from View model to View (and more).",
-          "default": "false"
+        "aurelia.relatedFiles": {
+          "type": "object",
+          "markdownDescription": "Quick switching between related files. **Important** all files are assumed to be in the same directory."
         },
-        "aurelia.capabilities.codeAction": {
-          "type": "boolean",
-          "description": "Provide code actions for eg. refactoring.",
-          "default": "false"
+        "aurelia.relatedFiles.script": {
+          "type": "array",
+          "default": [
+            ".js",
+            ".ts"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project scripts. **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
         },
-        "aurelia.capabilities.defintion": {
-          "type": "boolean",
-          "description": "Provide defintions between View model and View (and more).",
-          "default": "false"
+        "aurelia.relatedFiles.style": {
+          "type": "array",
+          "default": [
+            ".less",
+            ".sass",
+            ".scss",
+            ".styl",
+            ".css"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project styles **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
         },
-        "aurelia.capabilities.rename": {
-          "type": "boolean",
-          "description": "Provide renamings from eg. View model bindables (and more).",
-          "default": "false"
+        "aurelia.relatedFiles.unit": {
+          "type": "array",
+          "default": [
+            ".spec.js",
+            ".spec.ts"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project unit tests. **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
         },
-        "aurelia.capabilities.documentSymbol": {
-          "type": "boolean",
-          "description": "Provide document symbols from regions inside View.",
-          "default": "false"
-        },
-        "aurelia.capabilities.workspaceSymbol": {
-          "type": "boolean",
-          "description": "Provide workspace symbols from all regions of your Views.",
-          "default": "false"
+        "aurelia.relatedFiles.view": {
+          "type": "array",
+          "default": [
+            ".html"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project views. **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
         }
       },
       "grammars": [

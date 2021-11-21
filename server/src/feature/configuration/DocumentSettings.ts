@@ -43,9 +43,19 @@ export const defaultProjectOptions: IAureliaProjectSetting = {
 
 interface Features {}
 
+interface Capabilities {
+  completions: boolean;
+  codeActions: boolean;
+  defintions: boolean;
+  renames: boolean;
+  documentSymbols: boolean;
+  workspaceSymbols: boolean;
+}
+
 // The example settings
 export interface ExtensionSettings {
   aureliaProject?: IAureliaProjectSetting;
+  capabilities?: Capabilities;
   featureToggles?: Features;
   relatedFiles?: {
     script: ['.js', '.ts'];
@@ -59,9 +69,6 @@ export interface ExtensionSettings {
 }
 
 export class DocumentSettings {
-  // The global settings, used when the `workspace/configuration` request is not supported by the client.
-  // Please note that this is not the case when using this server with the client provided in this example
-  // but could happen with other clients.
   public defaultSettings: ExtensionSettings = {
     relatedFiles: {
       script: ['.js', '.ts'],

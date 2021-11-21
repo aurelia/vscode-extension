@@ -70,7 +70,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(new RelatedFiles());
 
   // context.subscriptions.push(
-  //   commands.registerCommand('extension.au.reinitializeExtension', () => {
+  //   commands.registerCommand('extension.au.reloadExtension', () => {
   //     console.log('ok');
   //   })
   // );

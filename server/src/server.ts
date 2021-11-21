@@ -47,8 +47,6 @@ let hasServerInitialized = false;
 let aureliaServer: AureliaServer;
 
 connection.onInitialize(async (params: InitializeParams) => {
-  console.log('[server.ts] 1. onInitialize');
-
   const capabilities = params.capabilities;
 
   // Does the client support the `workspace/configuration` request?
@@ -98,8 +96,6 @@ connection.onInitialize(async (params: InitializeParams) => {
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 connection.onInitialized(async () => {
-  console.log('[server.ts] 2. onInitialized');
-
   if (hasConfigurationCapability) {
     // Register for all configuration changes.
     void connection.client.register(
@@ -271,7 +267,7 @@ connection.onExecuteCommand(
   async (executeCommandParams: ExecuteCommandParams) => {
     const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
     switch (command) {
-      case 'extension.au.reinitializeExtension': {
+      case 'extension.au.reloadExtension': {
         const workspaceFolders =
           await connection.workspace.getWorkspaceFolders();
         if (workspaceFolders === null) return;
