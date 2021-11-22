@@ -219,7 +219,7 @@ function findLogSource() {
 
   const [_error, ...errorTrace] = errorStack.split('\n');
   const withOutLogger = errorTrace.filter(
-    (line) => !line.includes('logging/logger.')
+    (line) => !line.includes(path.normalize('logging/logger.'))
   );
   // errorSplit.slice(4, 25).join('\n'); /* ? */
   // prettifyCallstack(withOutLogger);
@@ -227,7 +227,13 @@ function findLogSource() {
   // const [_errorWord, _findLogSource, _LoggerLogMessage, _LoggerLog, rawTarget] =
   const rawTarget = withOutLogger.map((str) => str.trim());
   const rawSplit = rawTarget[0].split(' ');
-  const targetPath = rawSplit[rawSplit.length - 1];
+  /** Path could have space, thus we join those */
+  let targetPath = rawSplit[rawSplit.length - 1];
+  if (rawSplit.length >= 4) {
+    const [_at, _caller, ...pathToJoin] = rawSplit;
+    targetPath = pathToJoin.join(' ');
+  }
+
   let sourceName = path.basename(targetPath);
   if (sourceName.endsWith(')')) {
     sourceName = sourceName.replace(/\)$/, '');
