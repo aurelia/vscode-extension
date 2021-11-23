@@ -1,3 +1,54 @@
+// ---
+// /** [Ignore] Seems useful, so keeping it for now */
+// export function createProgram(
+//   files: {
+//     fileName: string;
+//     content: string;
+//     sourceFile?: ts.SourceFile;
+//   }[],
+//   compilerOptions?: ts.CompilerOptions
+// ): ts.Program {
+//   const tsConfigJson = ts.parseConfigFileTextToJson(
+//     'tsconfig.json',
+//     compilerOptions
+//       ? JSON.stringify(compilerOptions)
+//       : `{
+//    "compilerOptions": {
+//     "target": "es2018",
+//     "module": "commonjs",
+//     "lib": ["es2018"],
+//     "rootDir": ".",
+//     "strict": false,
+//     "esModuleInterop": true,
+//    }
+//  `
+//   );
+//   const { options, errors } = ts.convertCompilerOptionsFromJson(
+//     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+//     tsConfigJson.config.compilerOptions,
+//     '.'
+//   );
+//   if (errors.length) {
+//     throw errors;
+//   }
+//   const compilerHost = ts.createCompilerHost(options);
+//   compilerHost.getSourceFile = function (
+//     fileName: string
+//   ): ts.SourceFile | undefined {
+//     const file = files.find((f) => f.fileName === fileName);
+//     if (!file) return undefined;
+//     file.sourceFile =
+//       file.sourceFile ??
+//       ts.createSourceFile(fileName, file.content, ts.ScriptTarget.ES2015, true);
+//     return file.sourceFile;
+//   };
+//   return ts.createProgram(
+//     files.map((f) => f.fileName),
+//     options,
+//     compilerHost
+//   );
+// }
+// ---
 // if (tsConfigPath == null) {
 //   const virtualTsConfigPath = `${targetSourceDirectory}/tsconfig.json`;
 //   const tsConfigJson = ts.parseConfigFileTextToJson(
@@ -67,7 +118,7 @@
 // virtualCompletions; /* ? */
 // project.removeSourceFile(copy);
 
- // ---
+// ---
 // export class AureliaHtmlRegion extends AbstractRegion {
 //   public languageService: AureliaHtmlLanguageService;
 //   public readonly type: ViewRegionType.Html;

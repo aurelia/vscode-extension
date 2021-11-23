@@ -45,19 +45,7 @@ export class UriUtils {
     return nodePath.sep === '\\';
   }
 
-  private static decodeWinPath(path: string): string {
-    // C%3A/Users/hdn%20local/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.318/projects/01d527eb4e87d260/instrumented/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html
-    let winPath = path;
-    if (winPath.startsWith('/')) {
-      winPath = winPath.replace('/', '');
-    }
-    winPath = winPath.replace(/\//g, '\\');
-    winPath = winPath.replace('%3A', ':');
-    winPath = winPath.replace(/%20/g, ' ');
-
-    return winPath;
-  }
-  private static encodeWinPath(path: string): string {
+  public static encodeWinPath(path: string): string {
     // C%3A/Users/hdn%20local/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.318/projects/01d527eb4e87d260/instrumented/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html
     let encodePath = path.replace(/\\\\?/g, () => '/');
     // fix colon
@@ -66,6 +54,19 @@ export class UriUtils {
     encodePath = encodePath.replace(' ', '%20');
 
     return encodePath;
+  }
+
+  private static decodeWinPath(path: string): string {
+    // C%3A/Users/hdn%20local/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.318/projects/01d527eb4e87d260/instrumented/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html
+    let winPath = path;
+    if (winPath.startsWith('/')) {
+      winPath = winPath.replace('/', '');
+    }
+    winPath = winPath.replace(/\//g, '\\');
+    winPath = winPath.replace(/%3A/g, ':');
+    winPath = winPath.replace(/%20/g, ' ');
+
+    return winPath;
   }
   private static removeFileProtocol(fileUri: string): string {
     const removed = fileUri.replace(/^file:\/\/?\/?/g, '');

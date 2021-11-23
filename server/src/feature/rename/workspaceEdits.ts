@@ -120,7 +120,7 @@ export function performViewModelChanges(
 
   const tsMorphProject = aureliaProgram.tsMorphProject.get();
   const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
-  const viewModelUri = pathToFileURL(viewModelPath).toString();
+  const viewModelUri = UriUtils.toVscodeUri(viewModelPath);
   result[viewModelUri] = [];
 
   const className = targetComponent?.className ?? '';
@@ -205,7 +205,7 @@ export function getViewModelPathFromTagName(
    * 1. Triggered on <|my-component>
    */
   if (typeof targetAureliaFile?.fileName === 'string') {
-    return targetAureliaFile.fileName;
+    return UriUtils.toSysPath(targetAureliaFile.fileName);
   }
 }
 

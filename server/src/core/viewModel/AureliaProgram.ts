@@ -147,7 +147,9 @@ export class AureliaProgram {
 
     const sourceFiles = this.getAureliaSourceFiles();
     if (!sourceFiles) return;
-    const filePaths = sourceFiles.map((file) => file.fileName);
+    const filePaths = sourceFiles.map((file) =>
+      UriUtils.toSysPath(file.fileName)
+    );
     if (filePaths === undefined) return;
     this.filePaths = filePaths;
   }

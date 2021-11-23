@@ -1,3 +1,4 @@
+import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
@@ -31,7 +32,7 @@ export function getVirtualDefinition(
   const virtualCls = getVirtualLangagueService(virtualSourcefile, program);
 
   const result = virtualCls.getDefinitionAtPosition(
-    virtualSourcefile.fileName,
+    UriUtils.toSysPath(virtualSourcefile.fileName),
     virtualCursorIndex
   );
 

@@ -13,4 +13,4 @@ Feature: Definitions in View.
     Examples:
       | DESCRIPTION | LINE | CODE                                                 | NUM_DEFINTIONS | TARGET_FILE_NAME    |
       | Import      | 1    | `  <import from="\|./custom-element"></import>`      | 1              | custom-element.ts   |
-      | Import      | 2    | `  <import from="\|./custom-element.html"></import>` | 1              | custom-element.html |
+      # | Import      | 2    | `  <import from="\|./custom-element.html"></import>` | 1              | custom-element.html |

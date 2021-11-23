@@ -8,7 +8,7 @@ export const symbolSteps: StepDefinitions = ({ when, then }) => {
   let symbols: DocumentSymbol[] | undefined;
 
   when(/^I execute Document symbols$/, async () => {
-    const uri = UriUtils.toUri(myMockServer.getActiveFilePath());
+    const uri = UriUtils.toVscodeUri(myMockServer.getActiveFilePath());
     symbols = await myMockServer.getAureliaServer().onDocumentSymbol(uri);
   });
 

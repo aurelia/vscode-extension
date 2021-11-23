@@ -48,7 +48,9 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
   then('the extension should hydrate the Aurelia project', () => {
     /* prettier-ignore */ logger.log('the extension should hydrate the Aurelia project',{env:'test'});
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const targetTsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
+    const targetTsConfigPath = UriUtils.toSysPath(
+      myMockServer.getWorkspaceUri()
+    );
     const targetProject = AureliaProjects.getBy(targetTsConfigPath);
     if (!targetProject) {
       const allTsConfigPaths = AureliaProjects.getAll().map(

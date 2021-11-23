@@ -48,6 +48,7 @@ export async function aureliaDefinitionFromViewModel(
     position
   );
 
+  isSourceDefinition; /*?*/
   /** Not source, so push source */
   if (!isSourceDefinition) {
     finalDefinitions.push(...regularDefintions);
@@ -274,11 +275,14 @@ function getIsSourceDefinition(
 ) {
   const targetDefinition = definitions.find((definition) => {
     const { start, end } = definition.targetRange;
-    const _isIncludedPosition = PositionUtils.isIncluded(start, end, position);
+    const isIncludedPosition = PositionUtils.isIncluded(start, end, position);
     const isSamePath =
-      definition.targetUri === UriUtils.toVscodeUri(viewModelPath);
+      UriUtils.toSysPath(definition.targetUri) ===
+      UriUtils.toSysPath(viewModelPath);
 
-    const isSourceDefinition = _isIncludedPosition && isSamePath;
+    isSamePath; /*?*/
+
+    const isSourceDefinition = isIncludedPosition && isSamePath;
     return isSourceDefinition;
   });
 

@@ -141,7 +141,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     }
   ): MockTextDocuments {
     const fileUris = this.convertToFileUris(options, filePaths);
-    filePaths; /*?*/
+    // filePaths; /*?*/
 
     if (this.textDocuments.length === 0) {
       this.initMock(filePaths);
@@ -157,7 +157,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
 
       if (targetDocument) return;
 
-      const newTextDocument = this.create(uri);
+      const newTextDocument = this.create(path);
       this.textDocuments.push(newTextDocument);
     });
 

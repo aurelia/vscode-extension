@@ -1,6 +1,7 @@
 import { ts } from 'ts-morph';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
+import { UriUtils } from '../../common/view/uri-utils';
 
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
@@ -129,7 +130,7 @@ function getDefinitionAtPosition(
   virtualCursorIndex: number
 ) {
   const defintion = languageService.getDefinitionAtPosition(
-    virtualSourcefile.fileName,
+    UriUtils.toSysPath(virtualSourcefile.fileName),
     virtualCursorIndex
   );
   return defintion;
@@ -154,7 +155,7 @@ function getQuickInfoAtPosition(
    * `{}`, that's why we go through `getDefinitionAtPosition`.
    */
   const defintion = languageService.getDefinitionAtPosition(
-    virtualSourcefile.fileName,
+    UriUtils.toSysPath(virtualSourcefile.fileName),
     virtualCursorIndex
   );
   if (!defintion) return;
@@ -184,7 +185,7 @@ function getQuickInfoAtPosition(
    * 2. Documentation
    */
   const quickInfo = languageService.getQuickInfoAtPosition(
-    virtualSourcefile.fileName,
+    UriUtils.toSysPath(virtualSourcefile.fileName),
     virtualCursorIndex
   );
   let finalDocumentation = '';
@@ -244,7 +245,7 @@ export function getVirtualLangagueService(
   const lSHost: ts.LanguageServiceHost = {
     getCompilationSettings: () => compilerSettings,
     getScriptFileNames: () => {
-      const finalScriptFileName = [sourceFile.fileName];
+      const finalScriptFileName = [UriUtils.toSysPath(sourceFile.fileName)];
       return finalScriptFileName;
     },
     getScriptVersion: () => '0',
@@ -300,7 +301,9 @@ export function createVirtualViewModelSourceFile(
   );
   if (!classNameAndOpeningBracketMatch) {
     throw new Error(
-      `No match found in File: ${originalSourceFile.fileName} with target class name: ${targetClassName}`
+      `No match found in File: ${UriUtils.toSysPath(
+        originalSourceFile.fileName
+      )} with target class name: ${targetClassName}`
     );
   }
 
@@ -376,7 +379,9 @@ export function createVirtualFileWithContent(
   }
 
   const customElementClassName = componentList.find((component) => {
-    const result = component.viewModelFilePath === targetSourceFile.fileName;
+    const result =
+      component.viewModelFilePath ===
+      UriUtils.toSysPath(targetSourceFile.fileName);
     return result;
   })?.className;
 
@@ -399,6 +404,6 @@ export function createVirtualFileWithContent(
   return {
     virtualCursorIndex,
     virtualSourcefile,
-    viewModelFilePath: targetSourceFile.fileName,
+    viewModelFilePath: UriUtils.toSysPath(targetSourceFile.fileName),
   };
 }

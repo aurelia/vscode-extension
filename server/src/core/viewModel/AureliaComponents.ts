@@ -5,7 +5,7 @@ import { Project } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
-import { Logger } from '../../common/logging/logger';
+import { defaultLogger, Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
 import { RegionParser } from '../regions/RegionParser';
@@ -108,6 +108,7 @@ export class AureliaComponents {
 
   public getOneByFromDocument(document: TextDocument) {
     document.uri; /*?*/
+    defaultLogger.stack();
     const target = this.getAll().find((component) => {
       if (this.isViewDocument(document)) {
         if (component.viewFilePath === undefined) return false;

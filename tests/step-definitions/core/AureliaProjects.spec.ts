@@ -27,15 +27,16 @@ export const AureliaProjectsSteps: StepDefinitions = ({ when, then }) => {
 
   then('the view model should change', () => {
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    const tsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
+    const tsConfigPath = UriUtils.toSysPath(myMockServer.getWorkspaceUri());
     const targetProject = AureliaProjects.getBy(tsConfigPath);
-    const documentPath = UriUtils.toPath(
+    const documentPath = UriUtils.toSysPath(
       myMockServer.textDocuments.getActive().uri
     );
-    const targetComponent = targetProject?.aureliaProgram?.aureliaComponents.getOneBy(
-      'viewModelFilePath',
-      documentPath
-    );
+    const targetComponent =
+      targetProject?.aureliaProgram?.aureliaComponents.getOneBy(
+        'viewModelFilePath',
+        documentPath
+      );
 
     const result = targetComponent?.classMembers?.find(
       (member) => member.name === newName

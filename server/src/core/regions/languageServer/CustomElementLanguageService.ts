@@ -11,6 +11,7 @@ import { getVirtualDefinition } from '../../../feature/definition/virtualDefinit
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
+import { UriUtils } from '../../../common/view/uri-utils';
 
 export class CustomElementLanguageService
   implements AbstractRegionLanguageService
@@ -45,7 +46,6 @@ export class CustomElementLanguageService
     const goToSourceWord = findSourceWord(customElementRegion, offset);
 
     const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
-    aureliaSourceFiles?.map((file) => file.fileName); /* ? */
     const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {
       return path.parse(sourceFile.fileName).name === goToSourceWord;
     });
@@ -59,7 +59,7 @@ export class CustomElementLanguageService
           line: 1,
           character: 1,
         } /** TODO: Find class declaration position. Currently default to top of file */,
-        viewModelFilePath: targetAureliaFile?.fileName,
+        viewModelFilePath: UriUtils.toSysPath(targetAureliaFile?.fileName),
       };
     }
 
@@ -79,7 +79,7 @@ export class CustomElementLanguageService
     const sourceWordCamelCase = camelCase(goToSourceWord);
 
     return getVirtualDefinition(
-      targetAureliaFileDifferentViewModel.fileName,
+      UriUtils.toSysPath(targetAureliaFileDifferentViewModel.fileName),
       aureliaProgram,
       sourceWordCamelCase
     );

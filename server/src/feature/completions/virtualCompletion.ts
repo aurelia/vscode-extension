@@ -38,6 +38,7 @@ import {
 
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import { AsyncReturnType } from '../../common/global';
+import { UriUtils } from '../../common/view/uri-utils';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
@@ -65,7 +66,7 @@ export function getVirtualCompletion(
   }
 
   const cls = getVirtualLangagueService(virtualSourcefile, program);
-  const virtualSourceFilePath = virtualSourcefile.fileName;
+  const virtualSourceFilePath = UriUtils.toSysPath(virtualSourcefile.fileName);
 
   // [PERF]: ~0.25
   const virtualCompletions = cls
@@ -100,56 +101,6 @@ export function getVirtualCompletion(
     });
 
   return { virtualCompletions, virtualCompletionEntryDetails };
-}
-
-/** [Ignore] Seems useful, so keeping it for now */
-export function createProgram(
-  files: {
-    fileName: string;
-    content: string;
-    sourceFile?: ts.SourceFile;
-  }[],
-  compilerOptions?: ts.CompilerOptions
-): ts.Program {
-  const tsConfigJson = ts.parseConfigFileTextToJson(
-    'tsconfig.json',
-    compilerOptions
-      ? JSON.stringify(compilerOptions)
-      : `{
-   "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "lib": ["es2018"],
-    "rootDir": ".",
-    "strict": false,
-    "esModuleInterop": true,
-   }
- `
-  );
-  const { options, errors } = ts.convertCompilerOptionsFromJson(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    tsConfigJson.config.compilerOptions,
-    '.'
-  );
-  if (errors.length) {
-    throw errors;
-  }
-  const compilerHost = ts.createCompilerHost(options);
-  compilerHost.getSourceFile = function (
-    fileName: string
-  ): ts.SourceFile | undefined {
-    const file = files.find((f) => f.fileName === fileName);
-    if (!file) return undefined;
-    file.sourceFile =
-      file.sourceFile ??
-      ts.createSourceFile(fileName, file.content, ts.ScriptTarget.ES2015, true);
-    return file.sourceFile;
-  };
-  return ts.createProgram(
-    files.map((f) => f.fileName),
-    options,
-    compilerHost
-  );
 }
 
 export interface AureliaCompletionItem extends CompletionItem {
