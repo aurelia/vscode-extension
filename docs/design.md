@@ -40,6 +40,39 @@ For Go To Definition to work
 Each variable or method is declared (eg. on top of your class)
 
 
+## System paths
+This section is dedicated to Windows.
+There are 2 ways paths are built.
+1. Vscode uris
+  - file:///c%3A/Users/hdn%20local/path/to/custom-element.html
+2. "Normal" windows pathing with backslash
+  - file:///C:/Users/hdn%20local/path/to/custom-element.html
+  - https://docs.microsoft.com/en-us/previous-versions/aa767731(v=vs.85)
+    [Assumption] 3. (omit file:// protocol when possible)
+    Note: 1. and 2. don't work with fs from node (tested with eg `file://C|/Users/name/path/to/file.ext`).
+    Also note, vscode does open those uris, but fs just cannot read those.
+
+    ```
+     // 1. Specifying a drive and a file name.
+     file:///C|/My Documents/ALetter.html
+
+     // 2. Specifying only a drive and a path to browse the directory.
+     file:///C|/My Documents/
+
+     // 3. Specifying a drive and a directory using the command line representation of the directory location.
+     C:\My Documents\
+
+     // 4. Specifying only the directory on the local primary drive.
+     \My Documents\
+    ```
+
+### Approach
+1. Take vscode uri
+2. Convert to sys path (eg. windows backslashes)
+3. Continue to work with sys paths in code
+4. Convert back to vscode uri when returning
+   1. [HMM], how to deal with non-vscode clients?
+
 
 # Footnotes
 
