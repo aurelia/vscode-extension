@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { UriUtils } from '../../../server/src/common/view/uri-utils';
 
 import { findProjectRoot } from '../find-project-root';
 
@@ -28,9 +29,14 @@ export function getFixtureUri(fixtureName: FixtureNames): string {
   return fixtureUri;
 }
 
-export const getAbsPathFromFixtureDir = (fixtureName: FixtureNames) => (
-  relPath: string
-): string => {
-  const absPath = path.resolve(testFixtureDir, fixtureName, relPath);
-  return absPath;
-};
+export const getAbsPathFromFixtureDir =
+  (fixtureName: FixtureNames) =>
+  (relPath: string): string => {
+    let absPath = path.resolve(testFixtureDir, fixtureName, relPath);
+    if (path.sep === '\\') {
+      // absPath = UriUtils.normalize(absPath);
+      absPath = UriUtils.toSysPath(absPath);
+      // absPath = UriUtils.toUri(absPath);
+    }
+    return absPath;
+  };

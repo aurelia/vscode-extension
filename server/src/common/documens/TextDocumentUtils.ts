@@ -13,7 +13,7 @@ export class TextDocumentUtils {
   ): TextDocument {
     const content = fs.readFileSync(path, 'utf-8');
     const document = TextDocument.create(
-      UriUtils.toUri(path),
+      UriUtils.toVscodeUri(path),
       languageId,
       0,
       content
@@ -31,7 +31,7 @@ export class TextDocumentUtils {
       return openDocument;
     }
 
-    const content = fs.readFileSync(UriUtils.toPath(uri), 'utf-8');
+    const content = fs.readFileSync(UriUtils.toSysPath(uri), 'utf-8');
     const document = TextDocument.create(uri, 'html', 0, content);
 
     return document;
@@ -40,7 +40,7 @@ export class TextDocumentUtils {
   public static createHtmlFromPath(path: string): TextDocument {
     const content = fs.readFileSync(path, 'utf-8');
     const document = TextDocument.create(
-      UriUtils.toUri(path),
+      UriUtils.toVscodeUri(path),
       'html',
       0,
       content

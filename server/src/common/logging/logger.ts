@@ -3,7 +3,7 @@ import { blueBright, bgWhite, bold } from 'colorette';
 import { Logger as Culogger, LogOptions } from 'culog';
 
 import { PerformanceMeasure, performance } from './performance-measure';
-import { remapWallabyToNormalProject } from './WallabyUtils';
+import { prettifyCallstack, remapWallabyToNormalProject } from './WallabyUtils';
 
 const DEV_IS_WALLABY = __dirname.includes('wallabyjs.wallaby-vscode');
 
@@ -33,10 +33,10 @@ interface ILogOptions extends LogOptions {
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
-  log: true,
+  log: false,
   focusedLogging: true,
-  // ignoreFirstXLogs: 5,
-  // ignoreAfterXLogs: 7,
+  // ignoreFirstXLogs: 0,
+  // ignoreAfterXLogs: 1,
 
   measurePerf: true,
   focusedPerf: true,
@@ -192,6 +192,20 @@ export class Logger {
     }
   }
 
+  stack() {
+    const errorStack = new Error().stack;
+    if (errorStack == null) return;
+
+    const [_error, ...errorTrace] = errorStack.split('\n');
+    const withOutLogger = errorTrace.filter(
+      (line) => !line.includes(path.normalize('logging/logger.'))
+    );
+
+    // errorSplit.slice(4, 25).join('\n'); /* ? */
+    const stack = prettifyCallstack(withOutLogger);
+    console.log(stack.rawToTrackerList);
+  }
+
   public getPerformanceMeasure() {
     if (
       this.classOptions.measurePerf !== undefined &&
@@ -251,3 +265,5 @@ function findLogSource() {
 
   return sourceName;
 }
+
+export const defaultLogger = new Logger('defaultLogger');

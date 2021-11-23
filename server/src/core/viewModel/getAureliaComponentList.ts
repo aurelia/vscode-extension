@@ -30,6 +30,8 @@ import {
 } from '../../common/constants';
 import { Optional } from '../regions/ViewRegions';
 import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
+import { defaultLogger } from '../../common/logging/logger';
+import { UriUtils } from '../../common/view/uri-utils';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,
@@ -71,7 +73,7 @@ export function getAureliaComponentInfoFromClassDeclaration(
           className: targetClassDeclaration.name?.getText() ?? '',
           valueConverterName,
           baseViewModelFileName: Path.parse(sourceFile.fileName).name,
-          viewModelFilePath: sourceFile.fileName,
+          viewModelFilePath: UriUtils.toSysPath(sourceFile.fileName),
           type: AureliaClassTypes.VALUE_CONVERTER,
           sourceFile,
         };
@@ -83,7 +85,7 @@ export function getAureliaComponentInfoFromClassDeclaration(
       const conventionViewFilePath = fileName.replace(/.[jt]s$/, '.html');
       let viewFilePath: string = '';
       if (fs.existsSync(conventionViewFilePath)) {
-        viewFilePath = conventionViewFilePath;
+        viewFilePath = UriUtils.toSysPath(conventionViewFilePath);
       } else {
         viewFilePath =
           getTemplateImportPathFromCustomElementDecorator(
@@ -140,7 +142,7 @@ export function getAureliaComponentInfoFromClassDeclaration(
         decoratorStartOffset,
         decoratorEndOffset,
         baseViewModelFileName: Path.parse(sourceFile.fileName).name,
-        viewModelFilePath: sourceFile.fileName,
+        viewModelFilePath: UriUtils.toSysPath(sourceFile.fileName),
         viewFilePath,
         type: AureliaClassTypes.CUSTOM_ELEMENT,
         classMembers: resultClassMembers,
@@ -394,7 +396,7 @@ function getTemplateImportPathFromCustomElementDecorator(
   });
 
   templateImportPath = Path.resolve(
-    Path.dirname(sourceFile.fileName),
+    Path.dirname(UriUtils.toSysPath(sourceFile.fileName)),
     templateImportPath
   );
 

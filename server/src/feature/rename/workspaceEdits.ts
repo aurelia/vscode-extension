@@ -159,7 +159,7 @@ export function performViewModelChanges(
     renameLocations.forEach((location) => {
       const range = getRangeFromLocation(location);
       const referencePath = location.getSourceFile().getFilePath();
-      const referenceUri = UriUtils.toUri(referencePath);
+      const referenceUri = UriUtils.toVscodeUri(referencePath);
       if (result[referenceUri] === undefined) result[referenceUri] = [];
       if (result === undefined) return;
 

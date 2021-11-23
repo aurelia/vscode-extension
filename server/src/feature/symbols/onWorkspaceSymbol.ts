@@ -18,7 +18,7 @@ export function onWorkspaceSymbol(container: Container) {
         component.viewRegions?.forEach((region) => {
           if (component.viewFilePath === undefined) return;
 
-          const viewUri = UriUtils.toUri(component.viewFilePath);
+          const viewUri = UriUtils.toVscodeUri(component.viewFilePath);
           const symbol = createWorkspaceSymbol(viewUri, region);
           if (!symbol) return;
 

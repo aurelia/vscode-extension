@@ -113,7 +113,7 @@ export class MockServer {
 
   public getAureliaProgram() {
     const targetProject = this.AureliaProjects.getBy(
-      UriUtils.toPath(this.workspaceRootUri)
+      UriUtils.toSysPath(this.workspaceRootUri)
     );
     const aureliaProgram = targetProject?.aureliaProgram;
 

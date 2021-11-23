@@ -20,7 +20,7 @@ export class ImportLanguageService implements AbstractRegionLanguageService {
     const targetRelativePath = importRegion.regionValue;
     if (targetRelativePath === undefined) return;
 
-    const sourceDirName = path.dirname(UriUtils.toPath(document.uri));
+    const sourceDirName = path.dirname(UriUtils.toSysPath(document.uri));
     const resolvedPath = path.resolve(sourceDirName, targetRelativePath);
 
     // View
@@ -37,8 +37,7 @@ export class ImportLanguageService implements AbstractRegionLanguageService {
     let viewModelPath: string | undefined;
     components.find((component) => {
       const { dir, name } = path.parse(component.viewModelFilePath);
-      // Without extension to support .ts and .js
-      const viewModelWithoutExt = path.normalize(`${dir}/${name}`);
+      const viewModelWithoutExt = `${dir}${path.sep}${name}`;
       const isTargetViewModel = viewModelWithoutExt === resolvedPath;
       if (isTargetViewModel) {
         viewModelPath = component.viewModelFilePath;

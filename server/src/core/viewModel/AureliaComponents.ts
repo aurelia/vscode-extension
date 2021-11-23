@@ -25,6 +25,7 @@ export class AureliaComponents {
   public init(program: ts.Program, filePaths: string[]): void {
     if (filePaths.length === 0) {
       logger.log('Error: No Aurelia files found.');
+      return;
     }
     if (this.checker === undefined) {
       this.checker = program.getTypeChecker();
@@ -36,6 +37,8 @@ export class AureliaComponents {
     >[] = [];
 
     filePaths.forEach((path) => {
+      if (path == null) return;
+
       const isDTs = Path.basename(path).endsWith('.d.ts');
       if (isDTs) return;
 
@@ -104,21 +107,22 @@ export class AureliaComponents {
   }
 
   public getOneByFromDocument(document: TextDocument) {
+    document.uri; /*?*/
     const target = this.getAll().find((component) => {
       if (this.isViewDocument(document)) {
         if (component.viewFilePath === undefined) return false;
-        if (component.viewFilePath !== UriUtils.toPath(document.uri))
+        if (component.viewFilePath !== UriUtils.toSysPath(document.uri))
           return false;
         return this.getOneBy(
           'viewFilePath',
-          UriUtils.toPath(component.viewFilePath)
+          UriUtils.toSysPath(component.viewFilePath)
         );
       } else if (this.isViewModelDocument(document)) {
-        if (component.viewModelFilePath !== UriUtils.toPath(document.uri))
+        if (component.viewModelFilePath !== UriUtils.toSysPath(document.uri))
           return false;
         return this.getOneBy(
           'viewModelFilePath',
-          UriUtils.toPath(component.viewModelFilePath)
+          UriUtils.toSysPath(component.viewModelFilePath)
         );
       }
 
@@ -168,7 +172,7 @@ export class AureliaComponents {
    * Parse current state of source file, and assign to components.
    */
   public updateOne(project: Project, document: TextDocument): void {
-    const sourceFilePath = UriUtils.toPath(document.uri);
+    const sourceFilePath = UriUtils.toSysPath(document.uri);
     const sourceFile = project.getSourceFile(sourceFilePath);
     if (!sourceFile) return;
 
@@ -187,7 +191,7 @@ export class AureliaComponents {
 
     const targetIndex = this.getIndexBy(
       'viewModelFilePath',
-      UriUtils.toPath(document.uri)
+      UriUtils.toSysPath(document.uri)
     );
 
     this.components[targetIndex] = {

@@ -29,7 +29,7 @@ export async function aureliaDefinitionFromViewModel(
 ): Promise<LocationLink[] | undefined> {
   const offset = document.offsetAt(position);
 
-  const viewModelPath = UriUtils.toPath(document.uri);
+  const viewModelPath = UriUtils.toSysPath(document.uri);
   const targetProject = container
     .get(AureliaProjects)
     .getFromPath(viewModelPath);
@@ -138,7 +138,7 @@ async function getAureliaClassMemberDefinitions_SameView(
   if (!viewExtensions) return [];
 
   const viewPath = getRelatedFilePath(
-    UriUtils.toPath(document.uri),
+    UriUtils.toSysPath(document.uri),
     viewExtensions
   );
   const viewDocument = TextDocumentUtils.createHtmlFromPath(viewPath);
@@ -275,7 +275,8 @@ function getIsSourceDefinition(
   const targetDefinition = definitions.find((definition) => {
     const { start, end } = definition.targetRange;
     const _isIncludedPosition = PositionUtils.isIncluded(start, end, position);
-    const isSamePath = definition.targetUri === UriUtils.toUri(viewModelPath);
+    const isSamePath =
+      definition.targetUri === UriUtils.toVscodeUri(viewModelPath);
 
     const isSourceDefinition = _isIncludedPosition && isSamePath;
     return isSourceDefinition;

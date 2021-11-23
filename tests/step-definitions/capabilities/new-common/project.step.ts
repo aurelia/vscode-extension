@@ -26,7 +26,7 @@ export function theProjectIsNamed(projectName: FixtureNames): void {
     // if (true) {
     myMockServer = new MockServer(testContainer, workspaceRootUri, {
       aureliaProject: {
-        rootDirectory: UriUtils.toPath(workspaceRootUri),
+        rootDirectory: UriUtils.toSysPath(workspaceRootUri),
       },
     });
     // myMockServer.setWorkspaceUri(workspaceRootUri);
@@ -36,9 +36,9 @@ export function theProjectIsNamed(projectName: FixtureNames): void {
 }
 
 export async function givenIOpenVsCodeWithTheFollowingFiles(
-  textDocumentPaths: string[]
+  textDocumentPaths: string[] = []
 ): Promise<void> {
-  const mockTextDocuments = myMockServer.textDocuments
+  myMockServer.textDocuments
     .mock(textDocumentPaths)
     .setActive(textDocumentPaths)
     .getAll();

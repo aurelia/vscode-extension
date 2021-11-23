@@ -17,15 +17,17 @@ export class TsMorphProject {
     const targetSourceDirectory = getTargetSourceDirectory(settings);
     this.targetSourceDirectory = targetSourceDirectory;
 
-    const potentialTsConfigPath =
+    let potentialTsConfigPath =
       // eslint-disable-next-line
       settings.pathToTsConfig ||
       (ts.findConfigFile(
-        /* searchPath */ UriUtils.toPath(targetSourceDirectory),
+        /* searchPath */ UriUtils.toSysPath(targetSourceDirectory),
         ts.sys.fileExists,
         'tsconfig.json'
       ) ??
         '');
+    // potentialTsConfigPath = UriUtils.normalize(potentialTsConfigPath);
+    potentialTsConfigPath = UriUtils.toSysPath(potentialTsConfigPath);
 
     const sourceDirHasTsConfig = potentialTsConfigPath.includes(
       targetSourceDirectory
@@ -99,7 +101,8 @@ export function createTsMorphProject(
   });
 
   if (tsConfigPath != null) {
-    project.addSourceFilesFromTsConfig(tsConfigPath);
+    const normalized = UriUtils.toSysPath(tsConfigPath);
+    project.addSourceFilesFromTsConfig(normalized);
   }
   // No tsconfigPath means js project?!
   else if (targetSourceDirectory) {

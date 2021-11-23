@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as path from 'path';
+import * as nodePath from 'path';
 import { fileURLToPath } from 'url';
 
 import * as fastGlob from 'fast-glob';
@@ -7,15 +7,15 @@ import { ts } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../common/logging/logger';
-import { uriToPath } from '../common/uriToPath';
 import {
   DocumentSettings,
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaProgram } from './viewModel/AureliaProgram';
+import { UriUtils } from '../common/view/uri-utils';
 
-const logger = new Logger('AureliaProjectFiles');
+const logger = new Logger('AureliaProject');
 
 let compilerObject: ts.Program | undefined;
 
@@ -56,14 +56,16 @@ export class AureliaProjects {
   }
 
   public getFromPath(documentPath: string): IAureliaProject | undefined {
-    const target = this.getAll().find((project) =>
-      documentPath.includes(project.tsConfigPath)
-    );
+    const target = this.getAll().find((project) => {
+      const included = documentPath.includes(project.tsConfigPath);
+      return included;
+    });
     return target;
   }
 
   public getFromUri(uri: string): IAureliaProject | undefined {
-    return this.getFromPath(uri);
+    const path = UriUtils.toSysPath(uri);
+    return this.getFromPath(path);
   }
 
   /**
@@ -71,7 +73,10 @@ export class AureliaProjects {
    */
   public async hydrate(documents: TextDocument[]) {
     /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO' });
-    const documentsPaths = uriToPath(documents);
+    const documentsPaths = documents.map((document) => {
+      const result = UriUtils.toSysPath(document.uri);
+      return result;
+    });
     if (documentsPaths.length === 0) return;
 
     const settings = this.documentSettings.getSettings();
@@ -104,7 +109,7 @@ export class AureliaProjects {
     // logger.culogger.todo(
     //   `What should happen to document, that is not included?: ${document.uri}`
     // );
-    logger.log(`Not updating document: ${path.basename(document.uri)}`);
+    logger.log(`Not updating document: ${nodePath.basename(document.uri)}`);
     return true;
   }
 
@@ -137,7 +142,7 @@ export class AureliaProjects {
       }
 
       this.aureliaProjects.push({
-        tsConfigPath: aureliaProjectPath,
+        tsConfigPath: UriUtils.toSysPath(aureliaProjectPath),
         aureliaProgram: null,
       });
     });
@@ -166,9 +171,9 @@ export class AureliaProjects {
         aureliaProgram = new AureliaProgram(this.documentSettings);
         if (!compilerObject) {
           const tsMorphProject = aureliaProgram.tsMorphProject.create();
-          tsMorphProject
-            .getSourceFiles()
-            .map((f) => f.getSourceFile().getFilePath());
+          // tsMorphProject
+          //   .getSourceFiles()
+          //   .map((f) => f.getSourceFile().getFilePath()); /*?*/
           const program = tsMorphProject.getProgram();
           // [PERF]: 1.87967675s
           compilerObject = program.compilerObject;
@@ -253,7 +258,7 @@ function getAureliaProjectPaths(packageJsonPaths: string[]): string[] {
     return isAu;
   });
   const aureliaProjectPaths = aureliaProjectsRaw.map((aureliaProject) => {
-    const dirName = path.dirname(aureliaProject);
+    const dirName = nodePath.dirname(UriUtils.toSysPath(aureliaProject));
     return dirName;
   });
 
@@ -263,7 +268,7 @@ function getAureliaProjectPaths(packageJsonPaths: string[]): string[] {
 function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   const workspaceRootUri =
     extensionSettings.aureliaProject?.rootDirectory ?? '';
-  const cwd = fileURLToPath(path.normalize(workspaceRootUri));
+  const cwd = UriUtils.toSysPath(workspaceRootUri);
   const packageJsonPaths = fastGlob.sync('**/package.json', {
     absolute: true,
     ignore: ['node_modules'],

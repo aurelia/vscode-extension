@@ -44,7 +44,10 @@ Quick Navigation:
     - [4.2 EO - Definitions](#42-eo---definitions)
     - [4.3 EO - Hover](#43-eo---hover)
   - [5. Architecture.png](#5-architecturepng)
+    - [Dependency graph](#dependency-graph)
 - [Parsing](#parsing)
+- [Fluent API](#fluent-api)
+  - [Against](#against)
 
 </p>
 </details>
@@ -134,5 +137,30 @@ _Generated via [dependency-cruiser](https://github.com/sverweij/dependency-cruis
 
 # Parsing
 _Intention: Know where and when parsing is happening_
+
+# Fluent API
+## Against
+(Note, pattern may have been used wrongly, or not in the original sense)
+Hard to debug. Consider the following example:
+```ts
+// usage.ts
+  myMockServer.textDocuments
+    .mock(textDocumentPaths)
+    .setActive(textDocumentPaths)
+    .getAll();
+
+// MyMockServer.ts
+  public setActive(textDocumentPaths: string[]): MockTextDocuments {     // <- Where does the arg come from?
+    const target = this.find(textDocumentPaths[0]);                      //   1. Find usage place 2. See, that its fluent API
+    if (target) {                                                        //   3. Chained, so not easily loggable
+      this.activeTextDocument = target;
+    } else {
+      logger.log('No document found ');
+    }
+
+    return this;
+  }
+```
+
 
 Parsing mainly happens in [2. Extension Input (EI)](#2-extension-input-ei)

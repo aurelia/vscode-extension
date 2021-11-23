@@ -25,7 +25,7 @@ export async function givenImOnTheLineAtCharacter(
   position = Position.create(line, character);
 
   const { AureliaProjects } = myMockServer.getContainerDirectly();
-  const tsConfigPath = UriUtils.toPath(myMockServer.getWorkspaceUri());
+  const tsConfigPath = UriUtils.toSysPath(myMockServer.getWorkspaceUri());
   const targetProject = AureliaProjects.getBy(tsConfigPath);
   if (!targetProject) return;
   const { aureliaProgram } = targetProject;

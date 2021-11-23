@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as path from 'path';
+import * as nodePath from 'path';
 
 import { Position } from 'vscode-html-languageservice';
 import { TextDocuments } from 'vscode-languageserver';
@@ -71,7 +71,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
   }
 
   public create(uri: string): TextDocument {
-    const path = UriUtils.toPath(uri);
+    const path = UriUtils.toSysPath(uri);
     const fileContent = fs.readFileSync(path, 'utf-8');
     const textDocument = TextDocument.create(uri, 'typescript', 1, fileContent);
     return textDocument;
@@ -99,9 +99,10 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
   }
 
   private find(documentPath: string): TextDocument | undefined {
-    const targetDocument = this.textDocuments.find((document) =>
-      document.uri.includes(documentPath)
-    );
+    const targetDocument = this.textDocuments.find((document) => {
+      const sysPath = UriUtils.toSysPath(document.uri);
+      return sysPath.includes(documentPath);
+    });
     return targetDocument;
   }
 
@@ -116,12 +117,12 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     return this;
   }
 
-  private initMock(fileUris: string[]) {
-    const textDocuments = fileUris.map((uri) => {
-      const path = UriUtils.toPath(uri);
+  private initMock(filePaths: string[]) {
+    const textDocuments = filePaths.map((path) => {
       const fileContent = fs.readFileSync(path, 'utf-8');
+      const asUri = UriUtils.toVscodeUri(path);
       const textDocument = TextDocument.create(
-        uri,
+        asUri,
         'typescript',
         1,
         fileContent
@@ -135,22 +136,23 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
   public mock(
     filePaths: string[] = [],
     options: { isUri?: boolean; isRelative?: boolean } = {
-      isUri: false,
-      isRelative: true,
+      isUri: true,
+      isRelative: false,
     }
   ): MockTextDocuments {
     const fileUris = this.convertToFileUris(options, filePaths);
+    filePaths; /*?*/
 
     if (this.textDocuments.length === 0) {
-      this.initMock(fileUris);
+      this.initMock(filePaths);
       return this;
     }
 
     // Don't add duplicate
 
-    fileUris.forEach((uri) => {
+    filePaths.forEach((path) => {
       const targetDocument = this.getAll().find((textDocument) => {
-        return textDocument.uri === uri;
+        return UriUtils.toSysPath(textDocument.uri) === path;
       });
 
       if (targetDocument) return;
@@ -166,10 +168,10 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     options: { isUri?: boolean; isRelative?: boolean },
     fileUris: string[]
   ): string[] {
-    if (options.isRelative !== undefined) {
+    if (options.isRelative === true) {
       fileUris = this.changeToRelative(fileUris);
     }
-    if (options.isUri !== undefined) {
+    if (options.isUri === true) {
       fileUris = this.convertToFileUri(fileUris);
     }
     return fileUris;
@@ -177,15 +179,19 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
 
   private changeToRelative(fileUris: string[]) {
     fileUris = fileUris.map((uri) => {
-      const absPaths = path.resolve(this.workspaceRootUri, uri);
-      return absPaths;
+      let absPath = nodePath.resolve(this.workspaceRootUri, uri);
+      return absPath;
     });
     return fileUris;
   }
 
-  private convertToFileUri(fileUris: string[]) {
-    fileUris = fileUris.map((uri) => {
-      const convertToUri = `file:/${uri}`;
+  private convertToFileUri(filePaths: string[]) {
+    const fileUris = filePaths.map((uri) => {
+      let convertToUri = `file:/${uri}`;
+      if (UriUtils.isWin()) {
+        convertToUri = UriUtils.toVscodeUri(uri);
+      }
+
       return convertToUri;
     });
     return fileUris;

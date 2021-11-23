@@ -1,8 +1,10 @@
+import * as nodePath from 'path';
 import 'reflect-metadata';
 
 import { ts } from 'ts-morph';
 
 import { AureliaClassTypes } from '../../common/constants';
+import { UriUtils } from '../../common/view/uri-utils';
 import {
   defaultProjectOptions,
   DocumentSettings,
@@ -158,9 +160,10 @@ function getUserConfiguredFilePaths(
   const targetSourceDirectory = rootDirectory ?? ts.sys.getCurrentDirectory();
   const finalExcludes = getFinalExcludes(exclude);
   const finalIncludes = getFinalIncludes(include);
+  const sysPath = UriUtils.toSysPath(targetSourceDirectory);
   const paths = ts.sys.readDirectory(
-    targetSourceDirectory,
-    ['ts'],
+    sysPath,
+    ['ts', 'js'],
     // ['ts', 'js', 'html'],
     finalExcludes,
     finalIncludes

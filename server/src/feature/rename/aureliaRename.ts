@@ -46,7 +46,7 @@ export async function aureliaRenameFromView(
     viewModelPath =
       getViewModelPathFromTagName(aureliaProgram, region.tagName ?? '') ?? '';
   } else {
-    viewModelPath = getRelatedFilePath(UriUtils.toPath(document.uri), [
+    viewModelPath = getRelatedFilePath(UriUtils.toSysPath(document.uri), [
       '.js',
       '.ts',
     ]);
@@ -128,7 +128,7 @@ export async function aureliaRenameFromViewModel(
 ) {
   const offset = document.offsetAt(position);
   const sourceWord = getWordAtOffset(document.getText(), offset);
-  const viewModelPath = UriUtils.toPath(document.uri);
+  const viewModelPath = UriUtils.toSysPath(document.uri);
   const targetProject = container
     .get(AureliaProjects)
     .getFromPath(viewModelPath);
@@ -159,7 +159,7 @@ export async function aureliaRenameFromViewModel(
   if (!viewExtensions) return;
 
   const viewPath = getRelatedFilePath(
-    UriUtils.toPath(document.uri),
+    UriUtils.toSysPath(document.uri),
     viewExtensions
   );
 

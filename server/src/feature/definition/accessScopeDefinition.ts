@@ -67,7 +67,7 @@ export function getAccessScopeDefinition(
         line: targetRepeatForRegion.sourceCodeLocation.startLine,
         character: targetRepeatForRegion.sourceCodeLocation.startCol,
       } /** TODO: Find class declaration position. Currently default to top of file */,
-      viewModelFilePath: UriUtils.toPath(document.uri),
+      viewModelFilePath: UriUtils.toSysPath(document.uri),
     };
   }
 
@@ -99,7 +99,7 @@ export function getAccessScopeViewModelDefinition(
 
   const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
     'viewFilePath',
-    UriUtils.toPath(document.uri)
+    UriUtils.toSysPath(document.uri)
   );
   const targetMember = targetComponent?.classMembers?.find(
     (member) => member.name === goToSourceWord
@@ -107,7 +107,7 @@ export function getAccessScopeViewModelDefinition(
 
   if (!targetMember) return;
 
-  const viewModelPath = getRelatedFilePath(UriUtils.toPath(document.uri), [
+  const viewModelPath = getRelatedFilePath(UriUtils.toSysPath(document.uri), [
     '.js',
     '.ts',
   ]);

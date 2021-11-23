@@ -18,9 +18,9 @@ export async function onDocumentSymbol(
   documentUri: string
 ): Promise<DocumentSymbol[]> {
   const document = TextDocumentUtils.createHtmlFromPath(
-    UriUtils.toPath(documentUri)
+    UriUtils.toSysPath(documentUri)
   );
-  const viewModelPath = UriUtils.toPath(document.uri);
+  const viewModelPath = UriUtils.toSysPath(document.uri);
   const targetProject = container
     .get(AureliaProjects)
     .getFromPath(viewModelPath);

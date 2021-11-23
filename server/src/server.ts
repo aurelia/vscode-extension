@@ -122,7 +122,7 @@ connection.onInitialized(async () => {
     );
     await aureliaServer.onConnectionInitialized(extensionSettings);
 
-    const tsConfigPath = UriUtils.toPath(workspaceRootUri);
+    const tsConfigPath = UriUtils.toSysPath(workspaceRootUri);
     const aureliaProjects = globalContainer.get(AureliaProjects);
     const targetProject = aureliaProjects.getBy(tsConfigPath);
     if (!targetProject) return;

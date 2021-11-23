@@ -29,7 +29,7 @@ export async function onCodeAction(
 
   const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
     'viewFilePath',
-    UriUtils.toPath(textDocument.uri)
+    UriUtils.toSysPath(textDocument.uri)
   );
   const regions = targetComponent?.viewRegions;
   if (!regions) return [];

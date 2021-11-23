@@ -3,6 +3,7 @@ import * as path from 'path';
 import { PROJECT_CONFIG } from '../../project.config';
 import { ObjectUtils } from '../object/ObjectUtils';
 import { StringUtils } from '../string/StringUtils';
+import { UriUtils } from '../view/uri-utils';
 import { generateDependencyTreeSingle } from './errorStackLogging';
 
 __dirname; /* ? */
@@ -89,14 +90,16 @@ function shouldNotTrack(source: string) {
   return shouldNot;
 }
 
-export function prettifyCallstack(rawErrorSplit: string[]) {
+export function prettifyCallstack(rawErrorSplit: string[]): {
+  pickedStack: {};
+  rawToTrackerList: (string | undefined)[];
+} {
   const errorSplit = rawErrorSplit.reverse();
   // errorSplit; /*?*/
   // TODO findIndex of Logger.log (stack always starts with 4 elements we are not interested in (Error\nfindLog\nLogmsseag...))
 
   // - 1. Turn into tracker list
   const rawToTrackerList = turnIntoRawTrackerList(errorSplit);
-  // rawToTrackerList; /*?*/
   rawToTrackerList.forEach((rawTrackerEntry) => {
     if (rawTrackerEntry == null) return;
     const [fileName, lineNumber, caller] =
@@ -112,7 +115,6 @@ export function prettifyCallstack(rawErrorSplit: string[]) {
   // - 2. Only get actual stack
   const pickedStack = {};
   ObjectUtils.atPath(result, rawToTrackerList, pickedStack);
-  pickedStack; /* ? */
   // rawToTrackerList.forEach((trackerLine) => {
   //   if (trackerLine == null) return;
   //   // @ts-ignore
@@ -121,6 +123,10 @@ export function prettifyCallstack(rawErrorSplit: string[]) {
   // });
 
   // - 3. Put into actual tracker
+  // ^ TODO
+
+  // ...
+  return { pickedStack, rawToTrackerList };
 }
 
 /**
@@ -140,14 +146,19 @@ function turnIntoRawTrackerList(errorSplit: string[]) {
       const splitLine = errorLine.trim().split(' ');
       const cleanedLine = splitLine.filter((line) => line);
       if (cleanedLine.length === 0) return;
-      const [_at, _caller, _path] = cleanedLine;
+      const [_at, _caller, ..._paths] = cleanedLine;
+
+      let targetPath = _paths[0];
+      if (_paths.length >= 2) {
+        targetPath = _paths.join(' ');
+      }
 
       try {
-        if (shouldNotTrack(_path)) return;
+        if (shouldNotTrack(targetPath)) return;
         if (shouldNotTrack(_caller)) return;
-        const remapped = remapWallabyToNormalProject(_path);
+        const remapped = remapWallabyToNormalProject(targetPath);
         if (typeof remapped === 'string') return;
-        const jsPath = getJsPathMatch(_path)?.groups?.PATH;
+        const jsPath = getJsPathMatch(targetPath)?.groups?.PATH;
         // const jsLine = getJsPathMatch(_path)?.groups?.LINE;
         const jsFileName = path.basename(jsPath ?? '').replace(/.js$/, '.ts');
         const trackerKey = `${jsFileName}${TRACKER_SEPARATOR}${remapped.remappedLine}${TRACKER_SEPARATOR}${_caller}`;
@@ -212,7 +223,9 @@ export function remapWallabyToNormalProject(targetPath: string) {
     remappedLine: finalLinesNumberText,
   };
 }
+
 function getJsPathMatch(targetPath: string) {
+  targetPath = UriUtils.toSysPath(targetPath);
   const jsPathRegexp = /(?:\(?)(?<PATH>.*)\:(?<LINE>\d+)\:\d+(?:\)?)$/;
   const jsPathMatch = jsPathRegexp.exec(targetPath);
   return jsPathMatch;
