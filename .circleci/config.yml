@@ -5,7 +5,7 @@ references:
     run:
       name: npm-update-and-install
       command: |
-        sudo npm install -g yarn@latest
+        sudo npm install -g npm@latest
         yarn
         yarn postinstall
 
