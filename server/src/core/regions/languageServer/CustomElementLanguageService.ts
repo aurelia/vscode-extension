@@ -41,7 +41,6 @@ export class CustomElementLanguageService
     position: Position,
     customElementRegion: AbstractRegion
   ): Promise<DefinitionResult | undefined> {
-    document.getText(); /* ? */
     const offset = document.offsetAt(position);
     const goToSourceWord = findSourceWord(customElementRegion, offset);
 

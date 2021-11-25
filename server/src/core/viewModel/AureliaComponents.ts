@@ -107,8 +107,6 @@ export class AureliaComponents {
   }
 
   public getOneByFromDocument(document: TextDocument) {
-    document.uri; /*?*/
-    defaultLogger.stack();
     const target = this.getAll().find((component) => {
       if (this.isViewDocument(document)) {
         if (component.viewFilePath === undefined) return false;
