@@ -40,8 +40,6 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
     const auProjects = AureliaProjects.getAll();
     expect(auProjects.length).toBeGreaterThan(0);
     // expect(AureliaProjects.hydrate).toHaveBeenCalled();
-    auProjects[0].aureliaProgram?.aureliaComponents.getAll().map(c => c.componentName) /* ? */
-    // expect(true).toBeFalsy();
     // expect(auProjects[0].aureliaProgram).toBe(null);
     // TODO: how to simulate "no active file, ie. extension should not activate"
   });
