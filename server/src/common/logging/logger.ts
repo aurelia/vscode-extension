@@ -36,7 +36,7 @@ interface ILogOptions extends LogOptions {
 }
 
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
-  log: false,
+  log: true,
   focusedLogging: true,
   // ignoreFirstXLogs: 0,
   // ignoreAfterXLogs: 1,

@@ -1,21 +1,4 @@
-export {
-  IPlatform,
-} from '@aurelia/kernel';
-export {
-  Platform,
-  TaskQueue,
-  Task,
-  TaskAbortError,
-  TaskQueuePriority,
-  TaskStatus,
-  QueueTaskOptions,
-  ITask,
-} from '@aurelia/platform';
-
-export {
-  alias,
-  registerAliases,
-} from './alias';
+export { alias, registerAliases } from './alias';
 export {
   ExpressionKind,
   CallFunctionExpression,
@@ -100,7 +83,7 @@ export {
 export {
   SetObserver,
   enableSetObservation,
-  disableSetObservation
+  disableSetObservation,
 } from './observation/set-observer';
 export {
   BindingContext,
@@ -111,9 +94,7 @@ export {
   CollectionLengthObserver,
   CollectionSizeObserver,
 } from './observation/collection-length-observer';
-export {
-  ComputedObserver,
-} from './observation/computed-observer';
+export { ComputedObserver } from './observation/computed-observer';
 export {
   IDirtyChecker,
   DirtyCheckProperty,
@@ -131,10 +112,7 @@ export {
   Observation,
   EffectFunc,
 } from './observation/observation';
-export {
-  IObservableDefinition,
-  observable,
-} from './observation/observable';
+export { IObservableDefinition, observable } from './observation/observable';
 export {
   IObjectObservationAdapter,
   IObserverLocator,
@@ -144,28 +122,16 @@ export {
   ObservableGetter,
   ObservableSetter,
 } from './observation/observer-locator';
-export {
-  PrimitiveObserver,
-} from './observation/primitive-observer';
-export {
-  PropertyAccessor,
-} from './observation/property-accessor';
-export {
-  ProxyObservable,
-} from './observation/proxy-observation';
-export {
-  SetterObserver,
-} from './observation/setter-observer';
-export {
-  ISignaler,
-} from './observation/signaler';
+export { PrimitiveObserver } from './observation/primitive-observer';
+export { PropertyAccessor } from './observation/property-accessor';
+export { ProxyObservable } from './observation/proxy-observation';
+export { SetterObserver } from './observation/setter-observer';
+export { ISignaler } from './observation/signaler';
 export {
   SubscriberRecord,
   subscriberCollection,
 } from './observation/subscriber-collection';
-export {
-  ConnectableSwitcher,
-} from './observation/connectable-switcher';
+export { ConnectableSwitcher } from './observation/connectable-switcher';
 
 export {
   bindingBehavior,
