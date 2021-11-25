@@ -12,14 +12,11 @@ import { CompletionItem } from 'vscode-languageserver-types';
 
 import { AureliaClassTypes, CodeActionMap } from '../../../common/constants';
 import { PositionUtils } from '../../../common/documens/PositionUtils';
-import { Logger } from '../../../common/logging/logger';
 import { ParseHtml } from '../../../common/view/document-parsing';
 import { AURELIA_KEY_WORD_COMPLETIONS } from '../../../feature/completions/aureliaKeyWordCompletions';
 import { createComponentCompletionList } from '../../../feature/completions/completions';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
-
-const logger = new Logger('AuHtmlLS');
 
 export class AureliaHtmlLanguageService
   implements AbstractRegionLanguageService
@@ -77,12 +74,14 @@ function createCodeAction_RenameATag(
   if (aTag?.tagName !== 'a') return;
   const hrefAttribute = aTag?.sourceCodeLocation?.attrs['href'];
   if (hrefAttribute == null) return;
+  if (aTag.sourceCodeLocation?.startLine == null) return;
+  if (aTag.sourceCodeLocation?.startCol == null) return;
 
   // Get tag range
   // Rename <a> tag
   const aTagPosition = PositionUtils.convertToZeroIndexed(
-    aTag.sourceCodeLocation?.startLine!,
-    aTag.sourceCodeLocation?.startCol! + 1 // right of "<"
+    aTag.sourceCodeLocation?.startLine,
+    aTag.sourceCodeLocation?.startCol + 1 // right of "<"
   );
   const renameTag = htmlLanguageService.doRename(
     document,
@@ -92,7 +91,7 @@ function createCodeAction_RenameATag(
   );
 
   // Rename href attribute
-  const { startLine, startCol, endLine, endCol } = hrefAttribute;
+  const { startLine, startCol, endLine } = hrefAttribute;
   const hrefStartPosition = PositionUtils.convertToZeroIndexed(
     startLine,
     startCol

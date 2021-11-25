@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import * as path from 'path';
 
 import { blueBright, bgWhite, bold } from 'colorette';
@@ -147,9 +149,9 @@ export class Logger {
 
     // region measure ms
     if (localOptions.shouldLogMs === true) {
-      if (localOptions.msStart) {
+      if (localOptions.msStart === true) {
         this.msStartTime = performance.now();
-      } else if (localOptions.msEnd) {
+      } else if (localOptions.msEnd === true) {
         this.msEndTime = performance.now();
         let duration = this.msEndTime - this.msStartTime;
         duration = Math.round(duration * 10) / 10;
@@ -179,10 +181,11 @@ export class Logger {
     if (DEV_IS_WALLABY) {
       if (loggedMessage !== undefined) {
         const logSource = findLogSource();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         let finalMessage = loggedMessage[0];
         if (options.env !== 'prod') {
+          finalMessage = `${loggedMessage[0]} (at ${logSource})`;
         }
-        finalMessage = `${loggedMessage[0]} (at ${logSource})`;
 
         console.log(finalMessage);
 
@@ -193,11 +196,11 @@ export class Logger {
     }
   }
 
-  stack() {
+  public stack() {
     const errorStack = new Error().stack;
     if (errorStack == null) return;
 
-    const [_error, ...errorTrace] = errorStack.split('\n');
+    const [, ...errorTrace] = errorStack.split('\n');
     const withOutLogger = errorTrace.filter(
       (line) => !line.includes(path.normalize('logging/logger.'))
     );
@@ -261,6 +264,7 @@ function findLogSource() {
         return remapped.remappedLine;
         // return remapped.remappdeLocation;
       }
+      // eslint-disable-next-line no-empty
     } catch (_error) {}
   }
 

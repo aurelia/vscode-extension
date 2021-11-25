@@ -1,14 +1,12 @@
 import { Position } from 'vscode-html-languageservice';
 import {
-  Connection,
   PublishDiagnosticsParams,
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
   TextDocuments,
 } from 'vscode-languageserver';
-import { CodeActionParams, Diagnostic } from 'vscode-languageserver-protocol';
+import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { SymbolInformation } from 'vscode-languageserver-types';
 
 import { Logger } from '../common/logging/logger';
 import { onCodeAction } from '../feature/codeAction/onCodeAction';
@@ -79,7 +77,7 @@ export class AureliaServer {
     await onDidSave(this.container, change);
   }
 
-  sendDiagnostics(document: TextDocument) {
+  public sendDiagnostics(document: TextDocument) {
     const diagnostics = createDiagnostics(this.container, document);
 
     const diagnosticsParams: PublishDiagnosticsParams = {
@@ -187,7 +185,8 @@ export class AureliaServer {
       this.container
     );
 
-    /* prettier-ignore */ logger.log(`Found ${renamed?.changes?.length ?? 0} rename(s).`,{logMs:true,msEnd:true});
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    /* prettier-ignore */ logger.log(`Found ${renamed?.changes?.length ?? '0'} rename(s).`,{logMs:true,msEnd:true});
     return renamed;
   }
 

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
 export class MyLodash {
@@ -13,6 +17,7 @@ export class MyLodash {
         // Get the result of the inner function, then apply it to the resolve function of
         // each promise that has been created since the last time the inner function was run
         const result = inner(...args);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         resolves.forEach((r) => r(result));
         resolves = [];
       }, ms);

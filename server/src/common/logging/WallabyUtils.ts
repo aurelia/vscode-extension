@@ -1,3 +1,12 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable no-useless-escape */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -7,7 +16,6 @@ import { StringUtils } from '../string/StringUtils';
 import { UriUtils } from '../view/uri-utils';
 import { generateDependencyTreeSingle } from './errorStackLogging';
 
-__dirname; /* ? */
 const errorStacks = [
   `at logFoundAureliaProjects (/home/hdn/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.317/projects/832463c82f802eb4/instrumented/server/src/core/AureliaProjects.js:313:33)
     at AureliaProjects.<anonymous> (/home/hdn/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.317/projects/832463c82f802eb4/instrumented/server/src/core/AureliaProjects.js:111:33)
@@ -146,7 +154,7 @@ function turnIntoRawTrackerList(errorSplit: string[]) {
       // errorLine.trim(); /*?*/
       const splitLine = errorLine.trim().split(' ');
       const cleanedLine = splitLine.filter((line) => line);
-      if (cleanedLine.length === 0) return;
+      if (cleanedLine.length === 0) return false;
       const [_at, _caller, ..._paths] = cleanedLine;
 
       let targetPath = _paths[0];
@@ -155,16 +163,18 @@ function turnIntoRawTrackerList(errorSplit: string[]) {
       }
 
       try {
-        if (shouldNotTrack(targetPath)) return;
-        if (shouldNotTrack(_caller)) return;
+        if (shouldNotTrack(targetPath)) return false;
+        if (shouldNotTrack(_caller)) return false;
         const remapped = remapWallabyToNormalProject(targetPath);
-        if (typeof remapped === 'string') return;
+        if (typeof remapped === 'string') return false;
         const jsPath = getJsPathMatch(targetPath)?.groups?.PATH;
         // const jsLine = getJsPathMatch(_path)?.groups?.LINE;
         const jsFileName = path.basename(jsPath ?? '').replace(/.js$/, '.ts');
         const trackerKey = `${jsFileName}${TRACKER_SEPARATOR}${remapped.remappedLine}${TRACKER_SEPARATOR}${_caller}`;
         return trackerKey;
-      } catch (_error) {}
+      } catch (_error) {
+        return false;
+      }
     })
     .filter((line) => line);
 }
@@ -200,7 +210,7 @@ export function remapWallabyToNormalProject(targetPath: string) {
         ' ',
         ''
       );
-      if (!normalizedLine.includes(normalizedOriginalCode)) return;
+      if (!normalizedLine.includes(normalizedOriginalCode)) return false;
       return [index + 1, line]; // + 1 Lines are shown 1-indexed
     })
     .filter((line) => line != null);

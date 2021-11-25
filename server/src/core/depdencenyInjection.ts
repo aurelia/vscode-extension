@@ -5,7 +5,6 @@ import {
   DocumentSettings,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaProjects } from './AureliaProjects';
-import { TsMorphProject } from './tsMorph/AureliaTsMorph';
 
 export function initDependencyInjection(
   container: Container,

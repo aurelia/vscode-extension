@@ -20,7 +20,9 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
   private readonly workspaceRootUri: string;
 
   constructor(workspaceRootUri: string) {
-    super(<any>{});
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    super({} as unknown);
     this.workspaceRootUri = workspaceRootUri;
   }
 
@@ -133,16 +135,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     this.setMany(textDocuments);
   }
 
-  public mock(
-    filePaths: string[] = [],
-    options: { isUri?: boolean; isRelative?: boolean } = {
-      isUri: true,
-      isRelative: false,
-    }
-  ): MockTextDocuments {
-    const fileUris = this.convertToFileUris(options, filePaths);
-    // filePaths; /*?*/
-
+  public mock(filePaths: string[] = []): MockTextDocuments {
     if (this.textDocuments.length === 0) {
       this.initMock(filePaths);
       return this;

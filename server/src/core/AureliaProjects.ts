@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as nodePath from 'path';
-import { fileURLToPath } from 'url';
 
 import * as fastGlob from 'fast-glob';
 import { ts } from 'ts-morph';
@@ -155,7 +154,7 @@ export class AureliaProjects {
     const aureliaProjects = this.getAll();
 
     /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    aureliaProjects.forEach(async ({ tsConfigPath, aureliaProgram }) => {
+    aureliaProjects.every(async ({ tsConfigPath, aureliaProgram }) => {
       const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
       if (!shouldActivate) return;
 

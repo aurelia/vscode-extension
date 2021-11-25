@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import path from 'path';
-import { pathToFileURL } from 'url';
 
 import { SyntaxKind } from '@ts-morph/common';
 import { camelCase, kebabCase } from 'lodash';

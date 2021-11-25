@@ -127,7 +127,6 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
       const change = getRenameChangeFromFilePath({
         filePathOrFragment: 'custom-element.html',
       });
-      change; /* ? */
 
       if (change === undefined) return;
       expect(change[0].range.start.character).toBe(Number(scopeStart));
@@ -143,12 +142,9 @@ function getRenameChangeFromFilePath({
   uri?: string;
   filePathOrFragment?: string;
 }) {
-  filePathOrFragment; /* ? */
   const finalTargetPath = filePathOrFragment ?? UriUtils.toSysPath(uri ?? '');
-  finalTargetPath; /* ? */
   if (!finalTargetPath) return;
   if (!renamed?.changes) return;
-  renamed; /* ? */
 
   const [, targetChanges] =
     Object.entries(renamed?.changes).find(([fileUri]) => {

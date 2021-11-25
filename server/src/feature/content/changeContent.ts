@@ -18,8 +18,9 @@ export async function onConnectionDidChangeContent(
       if (aureliaProjects.preventHydration(document)) return;
 
       // await aureliaProjects.hydrate([document]);
-      await aureliaProjects.updateManyViewModel([document]);
+      aureliaProjects.updateManyViewModel([document]);
       logger.log('Update View models');
+      break;
     }
     case 'html': {
       logger.log('Update View');

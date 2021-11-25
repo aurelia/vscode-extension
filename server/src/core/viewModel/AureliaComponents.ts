@@ -5,7 +5,7 @@ import { Project } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
-import { defaultLogger, Logger } from '../../common/logging/logger';
+import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
 import { RegionParser } from '../regions/RegionParser';

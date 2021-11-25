@@ -1,4 +1,5 @@
 import { strictEqual } from 'assert';
+import * as fs from 'fs';
 
 import { StepDefinitions } from 'jest-cucumber';
 
@@ -10,6 +11,12 @@ import {
 
 export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
   given(/^the project is named "(.*)"$/, async (projectName: FixtureNames) => {
+    const myPath =
+      // 'C:\\Users\\hdn local\\Desktop\\dev\\aurelia\\vscode-extension\\tests\\unit\\step-definitions\\embeddedLanguages\\embedded-support.spec.ts';
+      'C:/Users/hdn local/Desktop/dev/aurelia/vscode-extension/tests/unit/step-definitions/embeddedLanguages/embedded-support.spec.ts';
+
+    fs.readFileSync(myPath); /* ? */
+
     theProjectIsNamed(projectName);
   });
 
@@ -24,7 +31,7 @@ export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
 
 export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
   given(/^I open VSCode with no active files$/, async () => {
-    const mockTextDocuments = myMockServer.textDocuments.mock().getAll();
+    // const mockTextDocuments = myMockServer.textDocuments.mock().getAll();
     const { AureliaProjects } = myMockServer.getContainerDirectly();
     spyOn(AureliaProjects, 'hydrate');
 

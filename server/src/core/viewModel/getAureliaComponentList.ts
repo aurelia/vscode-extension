@@ -28,7 +28,6 @@ import {
   AureliaDecorator,
   AureliaViewModel,
 } from '../../common/constants';
-import { defaultLogger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { Optional } from '../regions/ViewRegions';
 import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';

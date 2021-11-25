@@ -5,7 +5,6 @@ import { LocationLink, Range } from 'vscode-languageserver';
 
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
-import { defaultLogger } from '../../common/logging/logger';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
 import { DocumentSettings } from '../configuration/DocumentSettings';
@@ -38,7 +37,7 @@ export async function onDefintion(
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   if (!targetComponent) return;
   const regions = targetComponent?.viewRegions;
-  if (!regions) return;
+  if (regions.length === 0) return;
 
   const offset = document.offsetAt(position);
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);

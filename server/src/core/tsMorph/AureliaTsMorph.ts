@@ -105,7 +105,7 @@ export function createTsMorphProject(
     project.addSourceFilesFromTsConfig(normalized);
   }
   // No tsconfigPath means js project?!
-  else if (targetSourceDirectory) {
+  else if (targetSourceDirectory != null) {
     const pathGlob = `${targetSourceDirectory}/**/*.{j,t}s`;
     project.addSourceFilesAtPaths(pathGlob);
   }

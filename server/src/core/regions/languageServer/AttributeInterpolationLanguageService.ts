@@ -1,7 +1,6 @@
 import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
 import { aureliaVirtualComplete_vNext } from '../../../feature/completions/virtualCompletion2';
 import { getAccessScopeDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
@@ -13,7 +12,8 @@ import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class AttributeInterpolationLanguageService
-  implements AbstractRegionLanguageService {
+  implements AbstractRegionLanguageService
+{
   public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
@@ -34,9 +34,10 @@ export class AttributeInterpolationLanguageService
     position: Position,
     region: AbstractRegion
   ): Promise<DefinitionResult | undefined> {
-    const regions = aureliaProgram.aureliaComponents.getOneByFromDocument(
-      document
-    )?.viewRegions;
+    const regions =
+      aureliaProgram.aureliaComponents.getOneByFromDocument(
+        document
+      )?.viewRegions;
 
     return getAccessScopeDefinition(
       aureliaProgram,

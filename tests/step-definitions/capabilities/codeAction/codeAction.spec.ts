@@ -2,11 +2,8 @@ import { StepDefinitions } from 'jest-cucumber';
 import { CodeAction, Range } from 'vscode-languageserver-types';
 
 import { EXTENSION_COMMAND_PREFIX } from '../../../../server/src/common/constants';
-import { Logger } from '../../../../server/src/common/logging/logger';
 import { position } from '../new-common/file.step';
 import { myMockServer } from '../new-common/project.step';
-
-const logger = new Logger('codeAction.spec');
 
 let codeActions: CodeAction[] | undefined = [];
 let finalKind: string = '';

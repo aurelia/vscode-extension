@@ -4,14 +4,11 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
-import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
 import { AbstractRegionLanguageService } from '../../core/regions/languageServer/AbstractRegionLanguageService';
 import { AureliaHtmlLanguageService } from '../../core/regions/languageServer/AureliaHtmlLanguageService';
-
-const logger = new Logger('onCodeAction');
 
 export async function onCodeAction(
   container: Container,

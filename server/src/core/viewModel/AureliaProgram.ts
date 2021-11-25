@@ -1,4 +1,3 @@
-import * as nodePath from 'path';
 import 'reflect-metadata';
 
 import { ts } from 'ts-morph';

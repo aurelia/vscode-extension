@@ -13,9 +13,9 @@ export class ObjectUtils {
    * { a: { b: { c: 'arrived' } } }
    */
   public static atPath(
-    obj: Record<string, any>,
+    obj: Record<string, unknown>,
     keys: (string | undefined)[],
-    result: Record<string, any>
+    result: Record<string, unknown>
   ) {
     if (obj == null) return;
 
@@ -27,6 +27,8 @@ export class ObjectUtils {
       } else {
         result[key] = obj[key];
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       this.atPath(obj[key], keys, result[key]);
     });
   }

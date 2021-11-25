@@ -69,7 +69,6 @@ defineFeature(feature, (test) => {
     whenIParseTheFile(when, shared);
 
     then('the result should include Custom element bindable attributes', () => {
-      shared.parsedRegions; /* ? */
       const regionResults = ViewRegionUtils.getRegionsOfType(
         shared.parsedRegions,
         ViewRegionType.CustomElement
