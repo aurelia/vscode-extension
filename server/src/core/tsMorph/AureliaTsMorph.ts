@@ -10,7 +10,7 @@ export class TsMorphProject {
   public project: Project;
 
   private readonly tsconfigPath: string | undefined;
-  private targetSourceDirectory: string;
+  private readonly targetSourceDirectory: string;
 
   constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();

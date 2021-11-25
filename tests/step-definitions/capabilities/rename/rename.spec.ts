@@ -143,16 +143,16 @@ function getRenameChangeFromFilePath({
   uri?: string;
   filePathOrFragment?: string;
 }) {
-  filePathOrFragment; /*?*/
+  filePathOrFragment; /* ? */
   const finalTargetPath = filePathOrFragment ?? UriUtils.toSysPath(uri ?? '');
-  finalTargetPath; /*?*/
+  finalTargetPath; /* ? */
   if (!finalTargetPath) return;
   if (!renamed?.changes) return;
-  renamed; /*?*/
+  renamed; /* ? */
 
   const [, targetChanges] =
     Object.entries(renamed?.changes).find(([fileUri]) => {
-      UriUtils.toSysPath(fileUri); /*?*/
+      UriUtils.toSysPath(fileUri); /* ? */
       const result = UriUtils.toSysPath(fileUri).includes(finalTargetPath);
       return result;
     }) ?? [];

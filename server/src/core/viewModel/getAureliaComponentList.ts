@@ -28,10 +28,10 @@ import {
   AureliaDecorator,
   AureliaViewModel,
 } from '../../common/constants';
-import { Optional } from '../regions/ViewRegions';
-import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 import { defaultLogger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
+import { Optional } from '../regions/ViewRegions';
+import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,

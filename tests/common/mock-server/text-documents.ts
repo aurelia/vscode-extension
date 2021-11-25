@@ -179,7 +179,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
 
   private changeToRelative(fileUris: string[]) {
     fileUris = fileUris.map((uri) => {
-      let absPath = nodePath.resolve(this.workspaceRootUri, uri);
+      const absPath = nodePath.resolve(this.workspaceRootUri, uri);
       return absPath;
     });
     return fileUris;

@@ -21,6 +21,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import 'reflect-metadata';
 
 import { AURELIA_COMMANDS, AURELIA_COMMANDS_KEYS } from './common/constants';
+import { MyLodash } from './common/MyLodash';
 import { UriUtils } from './common/view/uri-utils';
 import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/aureliaServer';
@@ -29,7 +30,6 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
-import { MyLodash } from './common/MyLodash';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.

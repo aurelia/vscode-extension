@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+
 import { PROJECT_CONFIG } from '../../project.config';
 import { ObjectUtils } from '../object/ObjectUtils';
 import { StringUtils } from '../string/StringUtils';
@@ -7,7 +8,7 @@ import { UriUtils } from '../view/uri-utils';
 import { generateDependencyTreeSingle } from './errorStackLogging';
 
 __dirname; /* ? */
-var errorStacks = [
+const errorStacks = [
   `at logFoundAureliaProjects (/home/hdn/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.317/projects/832463c82f802eb4/instrumented/server/src/core/AureliaProjects.js:313:33)
     at AureliaProjects.<anonymous> (/home/hdn/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.317/projects/832463c82f802eb4/instrumented/server/src/core/AureliaProjects.js:111:33)
     at Generator.next (<anonymous>)
@@ -209,7 +210,7 @@ export function remapWallabyToNormalProject(targetPath: string) {
   // Match: ~/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.317/projects/832463c82f802eb4/instrumented/
   const wallabyPathRegex = /(.*wallabyjs.wallaby.*instrumented)/;
   const wallabyPathMatch = wallabyPathRegex.exec(tsPath);
-  if (wallabyPathMatch == null) return `wallaby not found`;
+  if (wallabyPathMatch == null) return 'wallaby not found';
   const wallabyPath = wallabyPathMatch[1];
   const finalTsPath = tsPath.replace(wallabyPath, PROJECT_CONFIG.projectPath);
   const finalLinesNumberText = targetTsLines

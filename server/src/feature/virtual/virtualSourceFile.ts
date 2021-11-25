@@ -1,8 +1,8 @@
 import { ts } from 'ts-morph';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
-import { UriUtils } from '../../common/view/uri-utils';
 
+import { UriUtils } from '../../common/view/uri-utils';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 

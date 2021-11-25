@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import { TextDocuments } from 'vscode-languageserver';
 
+import { TextDocuments } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { DocumentSettings } from '../../feature/configuration/DocumentSettings';

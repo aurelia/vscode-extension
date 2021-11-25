@@ -9,8 +9,8 @@ import {
 import { CodeActionParams, Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { SymbolInformation } from 'vscode-languageserver-types';
-import { Logger } from '../common/logging/logger';
 
+import { Logger } from '../common/logging/logger';
 import { onCodeAction } from '../feature/codeAction/onCodeAction';
 import { onCompletion } from '../feature/completions/onCompletions';
 import { ExtensionSettings } from '../feature/configuration/DocumentSettings';

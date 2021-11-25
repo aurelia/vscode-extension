@@ -1,5 +1,6 @@
 import { Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
 

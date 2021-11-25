@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { UriUtils } from '../../../server/src/common/view/uri-utils';
 
+import { UriUtils } from '../../../server/src/common/view/uri-utils';
 import { findProjectRoot } from '../find-project-root';
 
 const projectRoot = findProjectRoot();

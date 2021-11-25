@@ -7,13 +7,13 @@ import { ts } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../common/logging/logger';
+import { UriUtils } from '../common/view/uri-utils';
 import {
   DocumentSettings,
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaProgram } from './viewModel/AureliaProgram';
-import { UriUtils } from '../common/view/uri-utils';
 
 const logger = new Logger('AureliaProject');
 
@@ -286,7 +286,7 @@ function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
 
 function logHasNoAureliaProject() {
   /* prettier-ignore */ logger.log('No active Aurelia project found.', { logLevel: 'INFO' });
-  /* prettier-ignore */ logger.log( 'Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
+  /* prettier-ignore */ logger.log('Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
 }
 
 /**

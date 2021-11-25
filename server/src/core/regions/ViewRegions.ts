@@ -61,7 +61,6 @@ export enum ViewRegionSubType {
   EndTag = 'EndTag',
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CustomElementRegionData = AbstractRegion[];
 
 export interface RepeatForRegionData {

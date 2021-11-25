@@ -1,4 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { RegionParser } from '../../../server/src/core/regions/RegionParser';
 
 interface TestCasesMap {

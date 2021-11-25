@@ -39,7 +39,7 @@ fdescribe('generateDependencyTree', () => {
           ['a', 'b'],
         ];
         const result = generateDependencyTree(input);
-        result; /*?*/
+        result; /* ? */
         // expect(result).toEqual({ a: { c: 'leaf' }, b: { c: 'leaf' } });
         expect(result).toEqual({ a: { b: { c: 'leaf' } } });
       });
