@@ -11,12 +11,6 @@ import {
 
 export const commonExtensionSteps: StepDefinitions = ({ given, then }) => {
   given(/^the project is named "(.*)"$/, async (projectName: FixtureNames) => {
-    const myPath =
-      // 'C:\\Users\\hdn local\\Desktop\\dev\\aurelia\\vscode-extension\\tests\\unit\\step-definitions\\embeddedLanguages\\embedded-support.spec.ts';
-      'C:/Users/hdn local/Desktop/dev/aurelia/vscode-extension/tests/unit/step-definitions/embeddedLanguages/embedded-support.spec.ts';
-
-    fs.readFileSync(myPath); /* ? */
-
     theProjectIsNamed(projectName);
   });
 
