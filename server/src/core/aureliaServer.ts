@@ -131,11 +131,12 @@ export class AureliaServer {
 
   public async onDocumentSymbol(documentUri: string) {
     if (this.extensionSettings.capabilities?.documentSymbols === false) return;
-    /* prettier-ignore */ logger.log('Document symbol triggered.',{logMs:true,msStart:true});
+    // Too spammy
+    // /* prettier-ignore */ logger.log('Document symbol triggered.',{logMs:true,msStart:true});
 
     const symbols = await onDocumentSymbol(this.container, documentUri);
 
-    /* prettier-ignore */ logger.log(`Found ${symbols?.length ?? 0} symbol(s).`,{logMs:true,msEnd:true});
+    // /* prettier-ignore */ logger.log(`Found ${symbols?.length ?? 0} symbol(s).`,{logMs:true,msEnd:true});
     return symbols;
   }
 
@@ -152,7 +153,8 @@ export class AureliaServer {
 
   public async onCodeAction(codeActionParams: CodeActionParams) {
     if (this.extensionSettings.capabilities?.codeActions === false) return;
-    /* prettier-ignore */ logger.log('Code action triggered.',{logMs:true,msStart:true});
+    // Too spammy
+    // /* prettier-ignore */ logger.log('Code action triggered.',{logMs:true,msStart:true});
 
     const codeAction = await onCodeAction(
       this.container,
@@ -160,7 +162,7 @@ export class AureliaServer {
       this.allDocuments
     );
 
-    /* prettier-ignore */ logger.log(`Found ${codeAction?.length ?? 0} code action(s).`,{logMs:true,msEnd:true});
+    // /* prettier-ignore */ logger.log(`Found ${codeAction?.length ?? 0} code action(s).`,{logMs:true,msEnd:true});
     return codeAction;
   }
 

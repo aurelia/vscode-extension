@@ -18,7 +18,12 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 // We need to import this to include reflect functionality
 import 'reflect-metadata';
 
-import { AURELIA_COMMANDS, AURELIA_COMMANDS_KEYS } from './common/constants';
+import {
+  AURELIA_COMMANDS,
+  AURELIA_COMMANDS_KEYS,
+  CodeActionMap,
+} from './common/constants';
+import { Logger } from './common/logging/logger';
 import { MyLodash } from './common/MyLodash';
 import { UriUtils } from './common/view/uri-utils';
 import { AureliaProjects } from './core/AureliaProjects';
@@ -28,6 +33,8 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
+
+const logger = new Logger('Server');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -286,6 +293,12 @@ connection.onExecuteCommand(
         );
         await aureliaServer.onConnectionInitialized(extensionSettings);
 
+        break;
+      }
+      case CodeActionMap['refactor.aTag'].command: {
+        logger.log(
+          `Command executed: "${CodeActionMap['refactor.aTag'].title}"`
+        );
         break;
       }
       default: {

@@ -1,6 +1,8 @@
 - [Debugging](#debugging)
   - [Run and Debug](#run-and-debug)
   - [Troubleshooting](#troubleshooting)
+    - [Launch Client](#launch-client)
+    - [Attach server](#attach-server)
 - [Coding style](#coding-style)
   - [Prefer only one return in function with if/else/switch](#prefer-only-one-return-in-function-with-ifelseswitch)
 - [Testing](#testing)
@@ -18,8 +20,14 @@
 
 ## Troubleshooting
 
+### Launch Client
 - When I click on "Launch Client" nothing happens
   - Reload VSCode and try again
+- The terminal process "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command yarn run watch" terminated with exit code: 1.
+  - change your default terminal (security issues with powershell, the default shell)
+  - Recommendation: Bash
+
+### Attach server
 - "Attach Server" results in Could not connect to debug target at http://localhost:6009:
   - Make sure to have step 2.2 in [Run and Debug](#run-and-debug)
 

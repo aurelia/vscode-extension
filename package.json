@@ -114,12 +114,12 @@
           "additionalProperties": false,
           "scope": "window",
           "default": {
-            "completions": false,
-            "codeActions": false,
-            "defintions": false,
-            "renames": false,
-            "documentSymbols": false,
-            "workspaceSymbols": false
+            "completions": true,
+            "codeActions": true,
+            "defintions": true,
+            "renames": true,
+            "documentSymbols": true,
+            "workspaceSymbols": true
           },
           "properties": {
             "capabilities.completions": {

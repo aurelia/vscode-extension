@@ -154,8 +154,8 @@ export const whiteSpaceRegex = /[\s\r\n\t]/;
 
 export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
-  `${EXTENSION_COMMAND_PREFIX}.refactor.aTag`,
-  `${EXTENSION_COMMAND_PREFIX}.reloadExtension`,
+  'extension.au.refactor.aTag',
+  'extension.au.reloadExtension',
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 
