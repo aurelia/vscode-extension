@@ -2958,10 +2958,10 @@ cucumber-messages@8.0.0:
     protobufjs "^6.8.8"
     uuid "^3.3.3"
 
-culog@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/culog/-/culog-0.0.9.tgz#9ceab230f78c912373a9e3c59ce24558de516237"
-  integrity sha512-Ol7VbHrtWOxtpY3ly7eTixw+6pzaYPdiFMxrNMgRFnACejHaSVs1rTaGiy0pN7KU9qZ2arYY60deTvrCmepZIQ==
+culog@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/culog/-/culog-0.0.10.tgz#e4bf258e02cf3a85d0d23a260079fb2306810d4f"
+  integrity sha512-gfgCCapWYWxpefe+Ittfmkof994EC66tD0PnrewHxL+Y4TFN1KyqEKfQKhsTR0rblPFtXxgFQIII0iFy7EW9Eg==
   dependencies:
     typescript "^4.2.3"
 
