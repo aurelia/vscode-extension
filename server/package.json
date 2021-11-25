@@ -12,6 +12,7 @@
     "node": "*"
   },
   "dependencies": {
+    "@aurelia/kernel": "^2.0.0-alpha.23",
     "fast-glob": "^3.2.5",
     "lodash": "^4.17.21",
     "parse5": "^6.0.1",
