@@ -6,6 +6,7 @@ import {
   AccessScopeExpression,
   CallScopeExpression,
   ExpressionKind,
+  ExpressionType,
 } from '../../common/@aurelia-runtime-patch/src';
 import { AureliaView } from '../../common/constants';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
@@ -608,6 +609,7 @@ export class RepeatForRegion extends AbstractRegion {
   public languageService: RepeatForLanguageService;
   public readonly type: ViewRegionType.RepeatFor;
   public readonly data: RepeatForRegionData;
+  public readonly accessScopes: AccessScopeExpression[];
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
@@ -667,8 +669,17 @@ export class RepeatForRegion extends AbstractRegion {
       };
       return repeatForData;
     }
+
+    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
+      attr.value,
+      [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+      { startOffset, expressionType: ExpressionType.IsIterator }
+    );
+
     const repeatForViewRegion = RepeatForRegion.create({
+      accessScopes,
       attributeName: attr.name,
+      attributeValue: attr.value,
       sourceCodeLocation: updatedLocation,
       type: ViewRegionType.RepeatFor,
       data: getRepeatForData(),
