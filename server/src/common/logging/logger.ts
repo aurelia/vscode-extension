@@ -35,7 +35,8 @@ interface ILogOptions extends LogOptions {
   projectPath?: string;
 }
 
-const isCI = process.env.AULSP_MODE === 'ci';
+const isCI = Boolean(process.env.CI);
+console.log('TCL: isCI', isCI);
 const shouldLog = !isCI;
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: shouldLog,
