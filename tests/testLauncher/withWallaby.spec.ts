@@ -1,9 +1,9 @@
 import { initCucumberTests } from '../jest-cucumber-setup.spec';
 
-// initCucumberTests();
+initCucumberTests();
 // initCucumberTests('@cli_generated');
 // initCucumberTests('@cli_generated and @focus');
-initCucumberTests('@core');
+// initCucumberTests('@core');
 // initCucumberTests('@monorepo or @core');
 // initCucumberTests('@monorepo');
 // initCucumberTests('@scoped_for_testing');

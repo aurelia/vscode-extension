@@ -1,4 +1,17 @@
 // ---
+// RegionParser.pretty(regions, {
+//   asTable: true,
+//   maxColWidth: 20,
+//   ignoreKeys: [
+//     'sourceCodeLocation',
+//     'languageService',
+//     'subType',
+//     'accessScopes',
+//     'tagName',
+//     'startTagLocation',
+//   ],
+// });
+// ---
 // /** [Ignore] Seems useful, so keeping it for now */
 // export function createProgram(
 //   files: {

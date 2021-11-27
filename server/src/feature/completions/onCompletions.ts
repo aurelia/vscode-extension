@@ -46,27 +46,10 @@ export async function onCompletion(
     /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }
 
-  // regions; /*?*/
-  RegionParser.pretty(regions, {
-    asTable: true,
-    maxColWidth: 20,
-    ignoreKeys: [
-      'sourceCodeLocation',
-      'languageService',
-      'subType',
-      'accessScopes',
-      'tagName',
-      'startTagLocation',
-    ],
-  });
-  // aureliaProgram.aureliaComponents.getAll().map((c) => c.componentName); /* ? */
-
   if (regions.length === 0) return [];
-  // document.getText(); /* ? */
   const { position } = _textDocumentPosition;
   const offset = document.offsetAt(position);
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
-  // region; /* ? */
 
   const text = document.getText();
   const triggerCharacter = text.substring(offset - 1, offset);
@@ -86,22 +69,15 @@ export async function onCompletion(
     const isNotRegion = region === undefined;
     const isInsideTag = await checkInsideTag(document, offset);
 
-    const htmlLanguageService = getLanguageService();
-    // const result = htmlLanguageService.createScanner('input');
-    // result.scan();
-
-    // <<<< Try out the scanner ^
-
-    const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
-    const htmlLSResult = htmlLanguageService.doComplete(
-      document,
-      position,
-      htmlDocument
-    );
-    // htmlLSResult; /* ? */
-
     if (isInsideTag) {
       ataCompletions = createAureliaTemplateAttributeCompletions();
+      const htmlLanguageService = getLanguageService();
+      const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
+      const htmlLSResult = htmlLanguageService.doComplete(
+        document,
+        position,
+        htmlDocument
+      );
 
       const completionsWithStandardHtml = [
         ...ataCompletions,

@@ -268,6 +268,8 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   const workspaceRootUri =
     extensionSettings.aureliaProject?.rootDirectory ?? '';
   const cwd = UriUtils.toSysPath(workspaceRootUri);
+  /* prettier-ignore */ logger.log(`Get package.json based on: ${cwd}`,{env:'test'});
+
   const packageJsonPaths = fastGlob.sync('**/package.json', {
     absolute: true,
     ignore: ['node_modules'],

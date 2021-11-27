@@ -35,10 +35,8 @@ interface ILogOptions extends LogOptions {
   projectPath?: string;
 }
 
-const isTesting = process.env.AULSP_MODE === 'TEST';
-console.log('TCL: process.env.AULSP_MODE', process.env.AULSP_MODE);
-console.log('TCL: isTesting', isTesting);
-const shouldLog = !isTesting;
+const isCI = process.env.AULSP_MODE === 'ci';
+const shouldLog = !isCI;
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: shouldLog,
   focusedLogging: true,
