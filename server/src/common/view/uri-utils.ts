@@ -70,6 +70,11 @@ export class UriUtils {
   }
   private static removeFileProtocol(fileUri: string): string {
     const removed = fileUri.replace(/^file:\/\/?\/?/g, '');
-    return removed;
+    if (this.isWin()) {
+      return removed;
+    }
+
+    const addSlashAtStart = `/${removed}`;
+    return addSlashAtStart;
   }
 }
