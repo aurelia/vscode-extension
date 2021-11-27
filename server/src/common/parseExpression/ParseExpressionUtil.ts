@@ -2,12 +2,15 @@ import {
   AccessKeyedExpression,
   AccessMemberExpression,
   AccessScopeExpression,
+  AnyBindingExpression,
   BinaryExpression,
+  BindingBehaviorExpression,
   CallMemberExpression,
   CallScopeExpression,
   ConditionalExpression,
   ExpressionKind,
   ExpressionType,
+  ForOfStatement,
   Interpolation,
   IsAssign,
   IsExpression,
@@ -31,6 +34,7 @@ export type KindToActualExpression<TargetKind extends ExpressionKind> =
               TargetKind extends ExpressionKind.ValueConverter ? ValueConverterExpression :
                 TargetKind extends ExpressionKind.Conditional ? ConditionalExpression :
                   TargetKind extends ExpressionKind.Unary ? UnaryExpression :
+                    TargetKind extends ExpressionKind.ForOfStatement ? ForOfStatement :
 never;
 
 export enum ExpressionKind_Dev {
@@ -76,6 +80,7 @@ export enum ExpressionKind_Dev {
 }
 
 interface ExpressionsOfKindOptions {
+  expressionType?: ExpressionType;
   /**
    * Flatten eg. AccessScope inside CallScope.
    * Instead of
@@ -126,11 +131,11 @@ export class ParseExpressionUtil {
       input = input.substring(0, input.length - 1);
     }
 
-    const parsed = (parseExpression(
+    const parsed = parseExpression(
       input,
-      ExpressionType.None,
+      options?.expressionType ?? ExpressionType.None,
       options?.startOffset
-    ) as unknown) as Interpolation;
+    ) as unknown as Interpolation;
 
     // Interpolation
     if (parsed instanceof Interpolation) {
@@ -230,10 +235,10 @@ export class ParseExpressionUtil {
     targetName: string,
     targetKinds: TargetKind[]
   ): KindToActualExpression<TargetKind>[] {
-    const parsed = (parseExpression(
+    const parsed = parseExpression(
       input,
       ExpressionType.None
-    ) as unknown) as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
       parsed,
       targetKinds
@@ -253,7 +258,7 @@ export class ParseExpressionUtil {
 }
 
 function findAllExpressionRecursive(
-  expressionOrList: IsExpression | IsExpression[],
+  expressionOrList: AnyBindingExpression | AnyBindingExpression[],
   targetKinds: ExpressionKind[],
   collector: unknown[],
   options?: ExpressionsOfKindOptions
@@ -416,6 +421,31 @@ function findAllExpressionRecursive(
 
   // .expression (.operation)
   else if (singleExpression instanceof UnaryExpression) {
+    findAllExpressionRecursive(
+      singleExpression.expression,
+      targetKinds,
+      collector,
+      options
+    );
+
+    return;
+  }
+
+  // .iterable
+  else if (singleExpression instanceof ForOfStatement) {
+    findAllExpressionRecursive(
+      singleExpression.iterable,
+      targetKinds,
+      collector,
+      options
+    );
+
+    return;
+  }
+
+  // .expression
+  else if (singleExpression instanceof BindingBehaviorExpression) {
+    //  singleExpression.expression/*?*/
     findAllExpressionRecursive(
       singleExpression.expression,
       targetKinds,
