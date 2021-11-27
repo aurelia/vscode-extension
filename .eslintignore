@@ -1,5 +1,16 @@
 node_modules/**
 client/node_modules/**
 client/out/**
+
 server/node_modules/**
 server/out/**
+server/src/common/@aurelia-runtime-patch
+
+tests/testFixture
+tests/out/**
+tests/minimal-jest
+
+wallaby.config.js
+jest.config.js
+.eslintrc.cjs
+_code-dep

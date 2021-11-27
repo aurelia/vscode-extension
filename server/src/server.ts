@@ -1,47 +1,40 @@
-import { AsyncReturnType } from './common/global.d';
-
 import {
   createConnection,
   TextDocuments,
   ProposedFeatures,
   InitializeParams,
   DidChangeConfigurationNotification,
-  CompletionItem,
   TextDocumentPositionParams,
   TextDocumentSyncKind,
   InitializeResult,
-  CompletionList,
-  Definition,
+  TextDocumentChangeEvent,
+  RenameParams,
+  DocumentSymbolParams,
+  ExecuteCommandParams,
 } from 'vscode-languageserver';
-
+import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import {
-  getLanguageModes,
-  LanguageModes,
-} from './feature/embeddedLanguages/languageModes';
 
 // We need to import this to include reflect functionality
 import 'reflect-metadata';
 
 import {
-  documentSettings,
+  AURELIA_COMMANDS,
+  AURELIA_COMMANDS_KEYS,
+  CodeActionMap,
+} from './common/constants';
+import { Logger } from './common/logging/logger';
+import { MyLodash } from './common/MyLodash';
+import { UriUtils } from './common/view/uri-utils';
+import { AureliaProjects } from './core/AureliaProjects';
+import { AureliaServer } from './core/aureliaServer';
+import { globalContainer } from './core/container';
+import {
   ExtensionSettings,
   settingsName,
-} from './configuration/DocumentSettings';
-import { aureliaProgram } from './viewModel/AureliaProgram';
-import { createAureliaWatchProgram } from './viewModel/createAureliaWatchProgram';
+} from './feature/configuration/DocumentSettings';
 
-import { DefinitionResult } from './feature/definition/getDefinition';
-import { CustomHover } from './feature/virtual/virtualSourceFile';
-import {
-  AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER,
-  AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER,
-} from './common/constants';
-import { checkInsideTag } from './common/view/document-parsing';
-import {
-  createAureliaTemplateAttributeCompletions,
-  createAureliaTemplateAttributeKeywordCompletions,
-} from './feature/completions/createAureliaTemplateAttributeCompletions';
+const logger = new Logger('Server');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -50,31 +43,28 @@ export const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-let languageModes: LanguageModes;
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
-let hasDiagnosticRelatedInformationCapability: boolean = false;
+// let hasDiagnosticRelatedInformationCapability: boolean = false;
+
+let hasServerInitialized = false;
+let aureliaServer: AureliaServer;
 
 connection.onInitialize(async (params: InitializeParams) => {
-  console.log('[server.ts] 1. onInitialize');
-
   const capabilities = params.capabilities;
-  languageModes = await getLanguageModes();
 
   // Does the client support the `workspace/configuration` request?
   // If not, we will fall back using global settings
   hasConfigurationCapability = !!(
-    capabilities.workspace && !!capabilities.workspace.configuration
+    capabilities.workspace && Boolean(capabilities.workspace.configuration)
   );
   hasWorkspaceFolderCapability = !!(
-    capabilities.workspace && !!capabilities.workspace.workspaceFolders
+    capabilities.workspace && Boolean(capabilities.workspace.workspaceFolders)
   );
-  hasDiagnosticRelatedInformationCapability = !!(
-    capabilities.textDocument &&
-    capabilities.textDocument.publishDiagnostics &&
-    capabilities.textDocument.publishDiagnostics.relatedInformation
-  );
+  // hasDiagnosticRelatedInformationCapability = Boolean(
+  //   capabilities.textDocument?.publishDiagnostics?.relatedInformation
+  // );
 
   const result: InitializeResult = {
     capabilities: {
@@ -82,20 +72,20 @@ connection.onInitialize(async (params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [
-          ' ',
-          '.',
-          '[',
-          '"',
-          '\'',
-          '{',
-          '<',
-          ':',
-          '|',
-        ],
+        // eslint-disable-next-line @typescript-eslint/quotes
+        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
       },
       definitionProvider: true,
-      hoverProvider: true,
+      // hoverProvider: true,
+      codeActionProvider: true,
+      renameProvider: true,
+      documentSymbolProvider: true,
+      workspaceSymbolProvider: true,
+      executeCommandProvider: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        commands: AURELIA_COMMANDS,
+      },
     },
   };
   if (hasWorkspaceFolderCapability) {
@@ -106,15 +96,11 @@ connection.onInitialize(async (params: InitializeParams) => {
     };
   }
 
-  // Injections
-  documentSettings.inject(connection, hasConfigurationCapability);
-
   return result;
 });
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 connection.onInitialized(async () => {
-  console.log('[server.ts] 2. onInitialized');
-
   if (hasConfigurationCapability) {
     // Register for all configuration changes.
     void connection.client.register(
@@ -122,9 +108,31 @@ connection.onInitialized(async () => {
       undefined
     );
 
+    const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+    if (workspaceFolders === null) return;
 
-    console.log('[server.ts] 3. Create Aurelia Watch Program');
-    await createAureliaWatchProgram(aureliaProgram);
+    const workspaceRootUri = workspaceFolders[0].uri;
+    const extensionSettings = (await connection.workspace.getConfiguration({
+      section: settingsName,
+    })) as ExtensionSettings;
+
+    extensionSettings.aureliaProject = {
+      rootDirectory: workspaceRootUri,
+    };
+
+    aureliaServer = new AureliaServer(
+      globalContainer,
+      extensionSettings,
+      documents
+    );
+    await aureliaServer.onConnectionInitialized(extensionSettings);
+
+    const tsConfigPath = UriUtils.toSysPath(workspaceRootUri);
+    const aureliaProjects = globalContainer.get(AureliaProjects);
+    const targetProject = aureliaProjects.getBy(tsConfigPath);
+    if (!targetProject) return;
+
+    hasServerInitialized = true;
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
@@ -133,105 +141,38 @@ connection.onInitialized(async () => {
   }
 });
 
-connection.onDidChangeConfiguration((change) => {
-  console.log('[server.ts] onDidChangeConfiguration');
-
-  if (hasConfigurationCapability) {
-    // Reset all cached document settings
-    documentSettings.settingsMap.clear();
-  } else {
-    documentSettings.globalSettings = (change.settings[settingsName] ||
-      documentSettings.defaultSettings) as ExtensionSettings;
-  }
-
-  void createAureliaWatchProgram(aureliaProgram);
-});
+// connection.onDidOpenTextDocument(() => {});
 
 // Only keep settings for open documents
-documents.onDidClose((e) => {
-  documentSettings.settingsMap.delete(e.document.uri);
-});
+// documents.onDidClose((e) => {
+//   documentSettings.settingsMap.delete(e.document.uri);
+// });
 
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
-documents.onDidChangeContent(async (change) => {
-  console.log('[server.ts] (re-)get Language Modes');
-  languageModes = await getLanguageModes();
-});
+connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
+  const codeAction = await aureliaServer.onCodeAction(codeActionParams);
 
-connection.onDidChangeWatchedFiles((_change) => {
-  // Monitored files have change in VSCode
-  connection.console.log('We received an file change event');
+  if (codeAction) {
+    return codeAction;
+  }
 });
 
 // This handler provides the initial list of the completion items.
 connection.onCompletion(
-  async (
-    _textDocumentPosition: TextDocumentPositionParams
-  ): Promise<CompletionItem[] | CompletionList> => {
+  async (_textDocumentPosition: TextDocumentPositionParams) => {
     const documentUri = _textDocumentPosition.textDocument.uri;
     const document = documents.get(documentUri);
     if (!document) {
       throw new Error('No document found');
-      return [];
     }
-    const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
+
+    const completions = await aureliaServer.onCompletion(
       document,
-      _textDocumentPosition.position
+      _textDocumentPosition
     );
 
-    if (!modeAndRegion) return [];
-    const { mode } = modeAndRegion;
-
-    if (!mode) return [];
-
-    const doComplete = mode.doComplete!;
-    const text = document.getText();
-    const offset = document.offsetAt(_textDocumentPosition.position);
-    const triggerCharacter = text.substring(offset - 1, offset);
-    let accumulateCompletions: CompletionItem[] = [];
-
-    if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {
-      const isNotRegion = modeAndRegion.region === undefined;
-      const isInsideTag = await checkInsideTag(document, offset);
-      if (isNotRegion && isInsideTag) {
-        const atakCompletions = createAureliaTemplateAttributeKeywordCompletions();
-        return atakCompletions;
-      }
-    } else if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER) {
-      let ataCompletions: CompletionItem[];
-      const isNotRegion = modeAndRegion.region === undefined;
-      const isInsideTag = await checkInsideTag(document, offset);
-
-      if (isInsideTag) {
-        ataCompletions = createAureliaTemplateAttributeCompletions();
-
-        if (isNotRegion) {
-          return ataCompletions;
-        }
-
-        accumulateCompletions = ataCompletions;
-      }
+    if (completions != null) {
+      return completions;
     }
-
-    if (doComplete !== undefined) {
-      let completions: CompletionItem[] = [CompletionItem.create('')];
-      try {
-        completions = ((await doComplete(
-          document,
-          _textDocumentPosition,
-          triggerCharacter,
-          modeAndRegion.region
-        )) as unknown) as CompletionItem[];
-      } catch (error) {
-        console.log('TCL: error', error);
-      }
-
-      accumulateCompletions.push(...completions);
-      return accumulateCompletions;
-    }
-
-    return [];
   }
 );
 
@@ -243,22 +184,164 @@ connection.onCompletion(
 //   }
 // );
 
-connection.onDefinition((_: TextDocumentPositionParams): Definition | null => {
-  /**
-   * Need to have this onDefinition here, else we get following error in the console
-   * Request textDocument/definition failed.
-   * Message: Unhandled method textDocument/definition
-   * Code: -32601
-   */
-  return null;
+connection.onDefinition(
+  async ({ position, textDocument }: TextDocumentPositionParams) => {
+    const documentUri = textDocument.uri.toString();
+    const document = documents.get(documentUri); // <
+    if (!document) return null;
+
+    const definition = await aureliaServer.onDefinition(document, position);
+
+    if (definition) {
+      return definition;
+    }
+
+    return null;
+  }
+);
+
+// The content of a text document has changed. This event is emitted
+// when the text document first opened or when its content has changed.
+documents.onDidChangeContent(
+  MyLodash.debouncePromise(
+    async (change: TextDocumentChangeEvent<TextDocument>) => {
+      if (!hasServerInitialized) return;
+      // const diagnosticsParams = await aureliaServer.sendDiagnostics(
+      //   change.document
+      // );
+      // connection.sendDiagnostics(diagnosticsParams);
+      await aureliaServer.onConnectionDidChangeContent(change);
+    },
+    400
+  )
+);
+
+connection.onDidChangeConfiguration(() => {
+  console.log('[server.ts] onDidChangeConfiguration');
+
+  // if (hasConfigurationCapability) {
+  //   // Reset all cached document settings
+  //   documentSettings.settingsMap.clear();
+  // } else {
+  //   documentSettings.globalSettings = (change.settings[settingsName] ||
+  //     documentSettings.defaultSettings) as ExtensionSettings;
+  // }
+
+  // void createAureliaWatchProgram(aureliaProgram);
 });
 
-connection.onHover(() => {
-  return null;
+connection.onDidChangeWatchedFiles((_change) => {
+  // Monitored files have change in VSCode
+  connection.console.log('We received an file change event');
 });
+
+documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
+  await aureliaServer.onDidSave(change);
+});
+
+connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
+  if (hasServerInitialized === false) return;
+  const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
+  return symbols;
+});
+// connection.onWorkspaceSymbol(async (params: WorkspaceSymbolParams) => {
+connection.onWorkspaceSymbol(async () => {
+  if (hasServerInitialized === false) return;
+  // const workspaceSymbols = aureliaServer.onWorkspaceSymbol(params.query);
+  const workspaceSymbols = aureliaServer.onWorkspaceSymbol();
+  return workspaceSymbols;
+});
+
+// connection.onHover(
+//   async ({ position, textDocument }: TextDocumentPositionParams) => {
+//     const documentUri = textDocument.uri.toString();
+//     const document = documents.get(documentUri); // <
+//     if (!document) return null;
+
+//     const hovered = await aureliaServer.onHover(
+//       document.getText(),
+//       position,
+//       documentUri,
+//     );
+
+//     return hovered;
+//   }
+// );
+
+connection.onExecuteCommand(
+  async (executeCommandParams: ExecuteCommandParams) => {
+    const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
+    switch (command) {
+      case 'extension.au.reloadExtension': {
+        const workspaceFolders =
+          await connection.workspace.getWorkspaceFolders();
+        if (workspaceFolders === null) return;
+
+        const workspaceRootUri = workspaceFolders[0].uri;
+        const extensionSettings = (await connection.workspace.getConfiguration({
+          section: settingsName,
+        })) as ExtensionSettings;
+
+        extensionSettings.aureliaProject = {
+          rootDirectory: workspaceRootUri,
+        };
+
+        aureliaServer = new AureliaServer(
+          globalContainer,
+          extensionSettings,
+          documents
+        );
+        await aureliaServer.onConnectionInitialized(extensionSettings);
+
+        break;
+      }
+      case CodeActionMap['refactor.aTag'].command: {
+        logger.log(
+          `Command executed: "${CodeActionMap['refactor.aTag'].title}"`
+        );
+        break;
+      }
+      default: {
+        // console.log('no command');
+      }
+    }
+    // async () => {
+    return null;
+  }
+);
+
+connection.onRenameRequest(
+  async ({ position, textDocument, newName }: RenameParams) => {
+    const documentUri = textDocument.uri;
+    const document = documents.get(documentUri);
+    if (!document) {
+      throw new Error('No document found');
+    }
+    const renamed = await aureliaServer.onRenameRequest(
+      document,
+      position,
+      newName
+    );
+
+    if (renamed) {
+      return renamed;
+    }
+  }
+);
+
+// connection.onPrepareRename(async (prepareRename: PrepareRenameParams) => {
+//   /* prettier-ignore */ console.log('TCL: prepareRename', prepareRename);
+//   return new ResponseError(0, 'failed');
+// });
 
 connection.onRequest('aurelia-get-component-list', () => {
-  return aureliaProgram.getComponentList().map((cList) => {
+  const aureliaProjects = globalContainer.get(AureliaProjects);
+  // TODO: use .getBy instead of getAll
+  const { aureliaProgram } = aureliaProjects.getAll()[0];
+
+  if (!aureliaProgram) return;
+
+  return aureliaProgram.aureliaComponents.getAll().map((cList) => {
     const {
       componentName,
       className,
@@ -275,100 +358,6 @@ connection.onRequest('aurelia-get-component-list', () => {
     };
   });
 });
-
-connection.onRequest<any, any>(
-  'get-virtual-definition',
-  async ({
-    documentContent,
-    position,
-    goToSourceWord,
-    filePath,
-  }): Promise<DefinitionResult | undefined> => {
-    const document = TextDocument.create(filePath, 'html', 0, documentContent);
-    const isRefactor = true;
-
-    let modeAndRegion: AsyncReturnType<
-      LanguageModes['getModeAndRegionAtPosition']
-    >;
-    try {
-      modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-        document,
-        position
-      );
-    } catch (error) {
-      console.log('TCL: error', error);
-    }
-
-    if (!modeAndRegion) return;
-    const { mode, region } = modeAndRegion;
-
-    if (!mode) return;
-
-    const doDefinition = mode.doDefinition!;
-
-    if (doDefinition !== undefined && isRefactor) {
-      let definitions: AsyncReturnType<typeof doDefinition>;
-
-      try {
-        definitions = await doDefinition(
-          document,
-          position,
-          goToSourceWord,
-          region
-        );
-      } catch (error) {
-        console.log('TCL: error', error);
-        return;
-      }
-      return definitions;
-    }
-
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('LEGACY DEFINITON');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-    console.log('---------------------------------------');
-  }
-);
-connection.onRequest<any, any>(
-  'get-virtual-hover',
-  async ({
-    documentContent,
-    position,
-    goToSourceWord,
-    filePath,
-  }): Promise<CustomHover | undefined> => {
-    const document = TextDocument.create(filePath, 'html', 0, documentContent);
-    const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-      document,
-      position
-    );
-
-    if (!modeAndRegion) return;
-    const { mode, region } = modeAndRegion;
-
-    if (!mode) return;
-    if (!region) return;
-
-    const doHover = mode.doHover;
-
-    if (doHover) {
-      let hoverResult: AsyncReturnType<typeof doHover>;
-
-      try {
-        hoverResult = await doHover(document, position, goToSourceWord, region);
-      } catch (error) {
-        console.log('TCL: error', error);
-        return;
-      }
-      return hoverResult;
-    }
-  }
-);
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

@@ -1,98 +1,18 @@
 import 'reflect-metadata';
 import * as path from 'path';
-import * as vscode from 'vscode';
-import { workspace, ExtensionContext } from 'vscode';
-import * as ts from 'typescript';
 
+import { commands, workspace, ExtensionContext } from 'vscode';
 import {
+  Disposable,
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient';
+
 import { RelatedFiles } from './feature/relatedFiles';
 
 let client: LanguageClient;
-
-class SearchDefinitionInView implements vscode.DefinitionProvider {
-  public client: LanguageClient;
-
-  public constructor(client: LanguageClient) {
-    this.client = client;
-  }
-
-  public async provideDefinition(
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): Promise<vscode.DefinitionLink[]> {
-    const goToSourceWordRange = document.getWordRangeAtPosition(position);
-    const goToSourceWord = document.getText(goToSourceWordRange);
-
-    try {
-      const result = await this.client.sendRequest<{
-        lineAndCharacter: ts.LineAndCharacter;
-        viewModelFilePath: string;
-        viewFilePath: string;
-      }>('get-virtual-definition', {
-        documentContent: document.getText(),
-        position,
-        goToSourceWord,
-        filePath: document.uri.path,
-      });
-
-      const { line, character } = result.lineAndCharacter;
-      const targetPath = result.viewFilePath || result.viewModelFilePath;
-
-      return [
-        {
-          targetUri: vscode.Uri.file(targetPath),
-          targetRange: new vscode.Range(
-            new vscode.Position(line - 1, character),
-            new vscode.Position(line, character)
-          ),
-        },
-      ];
-    } catch (err) {
-      console.log('TCL: SearchDefinitionInView -> err', err);
-    }
-  }
-}
-
-class HoverInView implements vscode.HoverProvider {
-  public client: LanguageClient;
-
-  public constructor(client: LanguageClient) {
-    this.client = client;
-  }
-
-  public async provideHover(
-    document: vscode.TextDocument,
-    position: vscode.Position
-  ): Promise<vscode.Hover> {
-    const goToSourceWordRange = document.getWordRangeAtPosition(position);
-    const goToSourceWord = document.getText(goToSourceWordRange);
-
-    try {
-      const result = await this.client.sendRequest<{
-        contents: { kind: string; value: string };
-        documentation: string;
-      }>('get-virtual-hover', {
-        documentContent: document.getText(),
-        position,
-        goToSourceWord,
-        filePath: document.uri.path,
-      });
-
-      const markdown = new vscode.MarkdownString(result.contents.value, false);
-
-      return {
-        contents: [markdown, result.documentation],
-      };
-    } catch (err) {
-      console.log('TCL: SearchDefinitionInView -> err', err);
-    }
-  }
-}
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
@@ -118,7 +38,10 @@ export function activate(context: ExtensionContext) {
   const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
     outputChannelName: 'Aurelia v2',
-    documentSelector: [{ scheme: 'file', language: 'html' }],
+    documentSelector: [
+      { scheme: 'file', language: 'html' },
+      { scheme: 'file', language: 'typescript' },
+    ],
     synchronize: {
       // Notify the server about file changes to '.clientrc files contained in the workspace
       fileEvents: workspace.createFileSystemWatcher('**/.clientrc'),
@@ -134,39 +57,37 @@ export function activate(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      'aurelia.getAureliaComponents',
-      async () => {
-        console.log('Getting...');
-        const components = await client.sendRequest<string[]>(
-          'aurelia-get-component-list'
-        );
-        console.log(`Found >${components.length}< components.`);
-        console.log('TCL: activate -> components', components);
-      }
-    )
+    commands.registerCommand('aurelia.getAureliaComponents', async () => {
+      console.log('Getting...');
+      const components = await client.sendRequest<string[]>(
+        'aurelia-get-component-list'
+      );
+      console.log(`Found >${components.length}< components.`);
+      console.log('TCL: activate -> components', components);
+    })
   );
 
   context.subscriptions.push(new RelatedFiles());
 
+  // context.subscriptions.push(
+  //   commands.registerCommand('extension.au.reloadExtension', () => {
+  //     console.log('ok');
+  //   })
+  // );
   context.subscriptions.push(
-    vscode.languages.registerDefinitionProvider(
-      { scheme: 'file', language: 'html' },
-      new SearchDefinitionInView(client)
-    )
-  );
-
-  context.subscriptions.push(
-    vscode.languages.registerHoverProvider(
-      { scheme: 'file', language: 'html' },
-      new HoverInView(client)
-    )
+    Disposable.create(() => {
+      commands.registerTextEditorCommand(
+        'extension.au.refactor.component',
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {}
+      );
+    })
   );
 
   // Start the client. This will also launch the server
   client.start();
 
-  /**ISSUE-VaNcstW0 */
+  /** ISSUE-VaNcstW0 */
   // await client.onReady();
   // User Information
   // client.onRequest('warning:no-tsconfig-found', () => {
@@ -176,7 +97,7 @@ export function activate(context: ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
-  if (!client) {
+  if (client === undefined) {
     return undefined;
   }
   return client.stop();

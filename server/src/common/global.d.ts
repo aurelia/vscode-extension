@@ -1,4 +1,4 @@
-/** https://www.jpwilliams.dev/how-to-unpack-the-return-type-of-a-promise-in-typescript */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type AsyncReturnType<T extends (...args: any) => any> = T extends (
   ...args: any
 ) => Promise<infer U>

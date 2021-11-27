@@ -1,0 +1,403 @@
+export interface AureliaClassDecorators {
+  customElement: string;
+  useView: string;
+  noView: string;
+}
+
+type AureliaClassDecoratorPossibilites =
+  | 'customElement'
+  | 'useView'
+  | 'noView'
+  | '';
+
+interface DecoratorInfo {
+  decoratorName: AureliaClassDecoratorPossibilites;
+  decoratorArgument: string;
+}
+
+import * as fs from 'fs';
+import * as Path from 'path';
+
+import { kebabCase } from 'lodash';
+import { ts } from 'ts-morph';
+
+import { getElementNameFromClassDeclaration } from '../../common/className';
+import {
+  VALUE_CONVERTER_SUFFIX,
+  AureliaClassTypes,
+  AureliaDecorator,
+  AureliaViewModel,
+} from '../../common/constants';
+import { UriUtils } from '../../common/view/uri-utils';
+import { Optional } from '../regions/ViewRegions';
+import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
+
+export function getAureliaComponentInfoFromClassDeclaration(
+  sourceFile: ts.SourceFile,
+  checker: ts.TypeChecker
+): Optional<IAureliaComponent, 'viewRegions'> | undefined {
+  let result: Optional<IAureliaComponent, 'viewRegions'> | undefined;
+  let targetClassDeclaration: ts.ClassDeclaration | undefined;
+
+  sourceFile.forEachChild((node) => {
+    if (
+      ts.isClassDeclaration(node) &&
+      isNodeExported(node) &&
+      (classDeclarationHasUseViewOrNoView(node) ||
+        hasCustomElementNamingConvention(node) ||
+        hasValueConverterNamingConvention(node))
+    ) {
+      targetClassDeclaration = node;
+
+      // Note the `!` in the argument: `getSymbolAtLocation` expects a `Node` arg, but returns undefined
+      const symbol = checker.getSymbolAtLocation(node.name!);
+      if (symbol === undefined) {
+        console.log('No symbol found for: ', node.name);
+        return;
+      }
+
+      const documentation = ts.displayPartsToString(
+        symbol.getDocumentationComment(checker)
+      );
+
+      // Value Converter
+      const isValueConverterModel = checkValueConverter(targetClassDeclaration);
+      if (isValueConverterModel) {
+        const valueConverterName = targetClassDeclaration.name
+          ?.getText()
+          .replace(VALUE_CONVERTER_SUFFIX, '')
+          .toLocaleLowerCase();
+        result = {
+          documentation,
+          className: targetClassDeclaration.name?.getText() ?? '',
+          valueConverterName,
+          baseViewModelFileName: Path.parse(sourceFile.fileName).name,
+          viewModelFilePath: UriUtils.toSysPath(sourceFile.fileName),
+          type: AureliaClassTypes.VALUE_CONVERTER,
+          sourceFile,
+        };
+        return;
+      }
+
+      // Standard Component
+      const { fileName } = targetClassDeclaration.getSourceFile();
+      const conventionViewFilePath = fileName.replace(/.[jt]s$/, '.html');
+      let viewFilePath: string = '';
+      if (fs.existsSync(conventionViewFilePath)) {
+        viewFilePath = UriUtils.toSysPath(conventionViewFilePath);
+      } else {
+        viewFilePath =
+          getTemplateImportPathFromCustomElementDecorator(
+            targetClassDeclaration,
+            sourceFile
+          ) ?? '';
+      }
+
+      // TODO: better way to filter out non aurelia classes?
+      if (viewFilePath === '') return;
+
+      const resultClassMembers = getAureliaViewModelClassMembers(
+        targetClassDeclaration,
+        checker
+      );
+      const viewModelName = getElementNameFromClassDeclaration(
+        targetClassDeclaration
+      );
+
+      // Decorator
+      const customElementDecorator = getCustomElementDecorator(
+        targetClassDeclaration
+      );
+      let decoratorComponentName;
+      let decoratorStartOffset;
+      let decoratorEndOffset;
+      if (customElementDecorator) {
+        // get argument for name property in decorator
+        customElementDecorator.expression.forEachChild((decoratorChild) => {
+          if (!ts.isObjectLiteralExpression(decoratorChild)) return;
+          decoratorChild.forEachChild((decoratorArgument) => {
+            if (!ts.isPropertyAssignment(decoratorArgument)) return;
+            decoratorArgument.forEachChild((decoratorProp) => {
+              if (!ts.isStringLiteral(decoratorProp)) {
+                // TODO: What if name is not a string? --> Notify users [ISSUE-8Rh31VAG]
+                return;
+              }
+
+              decoratorComponentName = decoratorProp
+                .getText()
+                .replace(/['"]/g, '');
+              decoratorStartOffset = decoratorProp.getStart() + 1; // start quote
+              decoratorEndOffset = decoratorProp.getEnd(); // include the last character, ie. the end quote
+            });
+          });
+        });
+      }
+
+      result = {
+        documentation,
+        className: targetClassDeclaration.name?.getText() ?? '',
+        componentName: viewModelName,
+        decoratorComponentName,
+        decoratorStartOffset,
+        decoratorEndOffset,
+        baseViewModelFileName: Path.parse(sourceFile.fileName).name,
+        viewModelFilePath: UriUtils.toSysPath(sourceFile.fileName),
+        viewFilePath,
+        type: AureliaClassTypes.CUSTOM_ELEMENT,
+        classMembers: resultClassMembers,
+        sourceFile,
+      };
+    }
+  });
+
+  return result;
+}
+
+function checkValueConverter(targetClassDeclaration: ts.ClassDeclaration) {
+  const isValueConverterName = targetClassDeclaration.name
+    ?.getText()
+    .includes(VALUE_CONVERTER_SUFFIX);
+
+  return Boolean(isValueConverterName);
+}
+
+function isNodeExported(node: ts.ClassDeclaration): boolean {
+  return (ts.getCombinedModifierFlags(node) & ts.ModifierFlags.Export) !== 0;
+}
+
+export function getClassDecoratorInfos(
+  classDeclaration: ts.ClassDeclaration
+): DecoratorInfo[] {
+  const classDecoratorInfos: DecoratorInfo[] = [];
+
+  const aureliaDecorators = ['customElement', 'useView', 'noView'];
+  classDeclaration.decorators?.forEach((decorator) => {
+    const result: DecoratorInfo = {
+      decoratorName: '',
+      decoratorArgument: '',
+    };
+
+    decorator.expression.forEachChild((decoratorChild) => {
+      const childName =
+        decoratorChild.getText() as AureliaClassDecoratorPossibilites;
+      const isAureliaDecorator = aureliaDecorators.includes(childName);
+
+      if (isAureliaDecorator) {
+        if (ts.isIdentifier(decoratorChild)) {
+          result.decoratorName = childName;
+        }
+      } else if (ts.isToken(decoratorChild)) {
+        result.decoratorArgument = childName;
+      }
+    });
+    classDecoratorInfos.push(result);
+  });
+
+  return classDecoratorInfos.filter((info) => info.decoratorName !== '');
+}
+
+function getAureliaViewModelClassMembers(
+  classDeclaration: ts.ClassDeclaration,
+  checker: ts.TypeChecker
+): IAureliaClassMember[] {
+  const classMembers: IAureliaClassMember[] = [];
+
+  classDeclaration.forEachChild((classMember) => {
+    if (
+      ts.isPropertyDeclaration(classMember) ||
+      ts.isGetAccessorDeclaration(classMember) ||
+      ts.isMethodDeclaration(classMember)
+    ) {
+      const classMemberName = classMember.name?.getText();
+
+      const isBindable = classMember.decorators?.find((decorator) => {
+        return decorator.getText().includes('@bindable');
+      });
+
+      // Get bindable type. If bindable type is undefined, we set it to be "unknown".
+      const memberType =
+        classMember.type?.getText() !== undefined
+          ? classMember.type?.getText()
+          : 'unknown';
+      const memberTypeText =
+        '' + `${isBindable ? 'Bindable ' : ''}` + `Type: \`${memberType}\``;
+      // Add comment documentation if available
+      const symbol = checker.getSymbolAtLocation(classMember.name);
+      const commentDoc = ts.displayPartsToString(
+        symbol?.getDocumentationComment(checker)
+      );
+
+      let defaultValueText: string = '';
+      if (ts.isPropertyDeclaration(classMember)) {
+        // Add default values. The value can be undefined, but that is correct in most cases.
+        const defaultValue = classMember.initializer?.getText() ?? '';
+        defaultValueText = `Default value: \`${defaultValue}\``;
+      }
+
+      // Concatenate documentation parts with spacing
+      const documentation = `${commentDoc}\n\n${memberTypeText}\n\n${defaultValueText}`;
+
+      const result: IAureliaClassMember = {
+        name: classMemberName,
+        documentation,
+        isBindable: Boolean(isBindable),
+        syntaxKind: ts.isPropertyDeclaration(classMember)
+          ? ts.SyntaxKind.VariableDeclaration
+          : ts.SyntaxKind.MethodDeclaration,
+        start: classMember.getStart(),
+        end: classMember.getEnd(),
+      };
+      classMembers.push(result);
+    }
+  });
+
+  return classMembers;
+}
+
+/**
+ * classDeclarationHasUseViewOrNoView checks whether a classDeclaration has a useView or noView
+ *
+ * @param classDeclaration - ClassDeclaration to check
+ */
+function classDeclarationHasUseViewOrNoView(
+  classDeclaration: ts.ClassDeclaration
+): boolean {
+  if (!classDeclaration.decorators) return false;
+
+  const hasViewDecorator = classDeclaration.decorators.some((decorator) => {
+    const result =
+      decorator.getText().includes('@useView') ||
+      decorator.getText().includes('@noView');
+    return result;
+  });
+
+  return hasViewDecorator;
+}
+
+/**
+ * [refactor]: also get other decorators
+ */
+export function getCustomElementDecorator(
+  classDeclaration: ts.ClassDeclaration
+) {
+  const target = classDeclaration.decorators?.find((decorator) => {
+    const result = decorator
+      .getText()
+      .includes(AureliaDecorator.CUSTOM_ELEMENT);
+    return result;
+  });
+  return target;
+}
+
+/**
+ * MyClassCustomelement
+ *
+ * \@customElement(...)
+ * MyClass
+ */
+function hasCustomElementNamingConvention(
+  classDeclaration: ts.ClassDeclaration
+): boolean {
+  const hasCustomElementDecorator =
+    classDeclaration.decorators?.some((decorator) => {
+      const decoratorName = decorator.getText();
+      const result =
+        decoratorName.includes(AureliaDecorator.CUSTOM_ELEMENT) ||
+        decoratorName.includes('name');
+      return result;
+    }) ?? false;
+
+  const className = classDeclaration.name?.getText();
+  const hasCustomElementNamingConvention = Boolean(
+    className?.includes(AureliaClassTypes.CUSTOM_ELEMENT)
+  );
+
+  const { fileName } = classDeclaration.getSourceFile();
+  const baseName = Path.parse(fileName).name;
+  const isCorrectFileAndClassConvention = baseName === kebabCase(className);
+
+  return (
+    hasCustomElementDecorator ||
+    hasCustomElementNamingConvention ||
+    isCorrectFileAndClassConvention
+  );
+}
+
+/**
+ * MyClassValueConverter
+ *
+ * \@valueConverter(...)
+ * MyClass
+ */
+function hasValueConverterNamingConvention(
+  classDeclaration: ts.ClassDeclaration
+): boolean {
+  const hasValueConverterDecorator =
+    classDeclaration.decorators?.some((decorator) => {
+      const result = decorator
+        .getText()
+        .includes(AureliaDecorator.VALUE_CONVERTER);
+      return result;
+    }) ?? false;
+
+  const hasValueConverterNamingConvention = Boolean(
+    classDeclaration.name?.getText().includes(AureliaClassTypes.VALUE_CONVERTER)
+  );
+
+  return hasValueConverterDecorator || hasValueConverterNamingConvention;
+}
+
+function getTemplateImportPathFromCustomElementDecorator(
+  classDeclaration: ts.ClassDeclaration,
+  sourceFile: ts.SourceFile
+): string | undefined {
+  if (!classDeclaration.decorators) return;
+
+  const customElementDecorator = classDeclaration.decorators.find(
+    (decorator) => {
+      const result = decorator
+        .getText()
+        .includes(AureliaDecorator.CUSTOM_ELEMENT);
+      return result;
+    }
+  );
+
+  if (!customElementDecorator) return;
+
+  const hasTemplateProp = customElementDecorator
+    .getText()
+    .includes(AureliaViewModel.TEMPLATE);
+  if (!hasTemplateProp) return;
+
+  let templateImportPath = '';
+  const templateImport = sourceFile.statements.find((statement) => {
+    const isImport = statement.kind === ts.SyntaxKind.ImportDeclaration;
+    if (!isImport) {
+      return false;
+    }
+
+    let foundTemplateImport = false;
+    statement.getChildren().forEach((child) => {
+      if (child.kind === ts.SyntaxKind.ImportClause) {
+        if (child.getText().includes(AureliaViewModel.TEMPLATE)) {
+          foundTemplateImport = true;
+        }
+      }
+    });
+
+    return foundTemplateImport;
+  });
+
+  templateImport?.getChildren().forEach((child) => {
+    if (child.kind === ts.SyntaxKind.StringLiteral) {
+      templateImportPath = child.getText().replace(/['"]/g, '');
+    }
+  });
+
+  templateImportPath = Path.resolve(
+    Path.dirname(UriUtils.toSysPath(sourceFile.fileName)),
+    templateImportPath
+  );
+
+  return templateImportPath;
+}

@@ -1,6 +1,7 @@
 import { kebabCase } from 'lodash';
-import * as ts from 'typescript';
-import { getClassDecoratorInfos } from '../viewModel/getAureliaComponentList';
+import { ts } from 'ts-morph';
+
+import { getClassDecoratorInfos } from '../core/viewModel/getAureliaComponentList';
 import { CUSTOM_ELEMENT_SUFFIX } from './constants';
 
 /**
@@ -15,7 +16,7 @@ export function getElementNameFromClassDeclaration(
 
   classDecoratorInfos
     .find((info) => info.decoratorName === 'customElement')
-    ?.decoratorArgument.replace(/'"/, ''); // The argument is a string with the quotes. We don' want the quotes.
+    ?.decoratorArgument.replace(/['"]/g, ''); // The argument is a string with the quotes. We don' want the quotes.
 
   const className = classDeclaration.name?.getText() ?? '';
   const withoutCustomElementSuffix = className.replace(

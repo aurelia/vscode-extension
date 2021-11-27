@@ -1,5 +1,9 @@
 import { CompletionItem, InsertTextFormat } from 'vscode-languageserver';
-import { AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST, AURELIA_WITH_SPECIAL_KEYWORD } from '../../common/constants';
+
+import {
+  AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST,
+  AURELIA_WITH_SPECIAL_KEYWORD,
+} from '../../common/constants';
 
 export function createAureliaTemplateAttributeKeywordCompletions(): CompletionItem[] {
   const result = AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST.map((keyword) => {
@@ -26,4 +30,3 @@ export function createAureliaTemplateAttributeCompletions(): CompletionItem[] {
 
   return result;
 }
-

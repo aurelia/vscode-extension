@@ -1,223 +1,338 @@
 {
-	"name": "aurelia",
-	"description": "A VSCode extension for Aurelia",
-	"author": "AureliaEffect",
-	"license": "MIT",
-	"version": "2.0.7",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/aurelia/vscode-extension"
-	},
-	"publisher": "AureliaEffect",
-	"categories": [
-		"Programming Languages",
-		"Themes",
-		"Snippets"
-	],
-	"icon": "images/logo.png",
-	"keywords": [
-		"aurelia",
-		"vscode",
-		"extension"
-	],
-	"homepage": "http://aurelia.io",
-	"bugs": {
-		"url": "https://github.com/aurelia/vscode-extension/issues"
-	},
-	"galleryBanner": {
-		"color": "#5c2d91",
-		"theme": "dark"
-	},
-	"engines": {
-		"vscode": "^1.51.1"
-	},
-	"activationEvents": [
-		"onCommand:aurelia.getAureliaComponents",
-		"onCommand:extension.auOpenRelated",
-		"onCommand:extension.auOpenRelatedScript",
-		"onCommand:extension.auOpenRelatedStyle",
-		"onCommand:extension.auOpenRelatedUnit",
-		"onCommand:extension.auOpenRelatedView",
-		"onLanguage:plaintext"
-	],
-	"main": "./client/out/extension",
-	"contributes": {
-		"commands": [
-			{
-				"command": "aurelia.getAureliaComponents",
-				"title": "[Au] Show Aurelia Components parsed by the extension",
-				"category": "Aurelia"
-			},
-			{
-				"command": "extension.auOpenRelated",
-				"title": "[Au] Switch between Aurelia view and view model"
-			},
-			{
-				"command": "extension.auOpenRelatedScript",
-				"title": "[Au] Open Related Aurelia File: Script"
-			},
-			{
-				"command": "extension.auOpenRelatedStyle",
-				"title": "[Au] Open Related Aurelia File: Style"
-			},
-			{
-				"command": "extension.auOpenRelatedUnit",
-				"title": "[Au] Open Related Aurelia File: Unit"
-			},
-			{
-				"command": "extension.auOpenRelatedView",
-				"title": "[Au] Open Related Aurelia File: View"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "Aurelia",
-			"properties": {
-				"aurelia.aureliaProject": {
-          "rootDirectory": {
-            "type": "string",
-            "description": "Provide a custom directory for the root."
+  "name": "aurelia",
+  "description": "A VSCode extension for Aurelia",
+  "author": "AureliaEffect",
+  "license": "MIT",
+  "version": "2.0.7",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aurelia/vscode-extension"
+  },
+  "publisher": "AureliaEffect",
+  "categories": [
+    "Programming Languages",
+    "Themes",
+    "Snippets"
+  ],
+  "icon": "images/logo.png",
+  "keywords": [
+    "aurelia",
+    "vscode",
+    "extension"
+  ],
+  "homepage": "http://aurelia.io",
+  "bugs": {
+    "url": "https://github.com/aurelia/vscode-extension/issues"
+  },
+  "galleryBanner": {
+    "color": "#5c2d91",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.51.1"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./client/out/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.au.reloadExtension",
+        "title": "Reload Extension",
+        "category": "Aurelia"
+      },
+      {
+        "command": "aurelia.getAureliaComponents",
+        "title": "[Au] Show Aurelia Components parsed by the extension",
+        "category": "Aurelia"
+      },
+      {
+        "command": "extension.auOpenRelated",
+        "title": "[Au] Switch between Aurelia view and view model"
+      },
+      {
+        "command": "extension.auOpenRelatedScript",
+        "title": "[Au] Open Related Aurelia File: Script"
+      },
+      {
+        "command": "extension.auOpenRelatedStyle",
+        "title": "[Au] Open Related Aurelia File: Style"
+      },
+      {
+        "command": "extension.auOpenRelatedUnit",
+        "title": "[Au] Open Related Aurelia File: Unit"
+      },
+      {
+        "command": "extension.auOpenRelatedView",
+        "title": "[Au] Open Related Aurelia File: View"
+      }
+    ],
+    "configuration": {
+      "title": "aurelia",
+      "properties": {
+        "aurelia.aureliaProject": {
+          "type": "object",
+          "markdownDescription": "The extension scans your View model files to extract information for various features. This setting provides customization."
+        },
+        "aurelia.aureliaProject.exclude": {
+          "type": "array",
+          "default": [
+            "**/node_modules",
+            "**/out",
+            "**/build",
+            "**/dist",
+            "aurelia_project"
+          ],
+          "items": {
+            "type": "string"
           },
-          "include": {
-            "type": "array",
-            "description": "Includes for your Aurelia Project",
-            "default": ["src"]
+          "uniqueItems": true,
+          "markdownDescription": "Specifies exclude globs for your View model files.",
+          "scope": "language-overridable"
+        },
+        "aurelia.aureliaProject.include": {
+          "type": "array",
+          "default": [
+            "src"
+          ],
+          "items": {
+            "type": "string"
           },
-          "exclude": {
-            "type": "array",
-            "description": "Exlcudes for your Aurelia Project",
-            "default": [
-              "**/node_modules",
-              "aurelia_project",
-              "**/out",
-              "**/build",
-              "**/dist"
-            ]
+          "uniqueItems": true,
+          "markdownDescription": "Specifies include globs for your View model files.",
+          "scope": "language-overridable"
+        },
+        "aurelia.aureliaProject.rootDirectory": {
+          "type": "string",
+          "description": "Provide a custom directory for the root. (Defaults to workspace root)",
+          "default": ""
+        },
+        "aurelia.capabilities": {
+          "type": "object",
+          "markdownDescription": "Control capabilities for the extension.",
+          "additionalProperties": false,
+          "scope": "window",
+          "default": {
+            "completions": true,
+            "codeActions": true,
+            "defintions": true,
+            "renames": true,
+            "documentSymbols": true,
+            "workspaceSymbols": true
+          },
+          "properties": {
+            "capabilities.completions": {
+              "type": "boolean",
+              "description": "Provide completions from View model to View (and more).",
+              "default": "false"
+            },
+            "capabilities.codeActions": {
+              "type": "boolean",
+              "description": "Provide code actions for eg. refactoring.",
+              "default": "false"
+            },
+            "capabilities.definitions": {
+              "type": "boolean",
+              "description": "Provide definitions between View model and View (and more).",
+              "default": "false"
+            },
+            "capabilities.renames": {
+              "type": "boolean",
+              "description": "Provide renamings from eg. View model bindables (and more).",
+              "default": "false"
+            },
+            "capabilities.documentSymbols": {
+              "type": "boolean",
+              "description": "Provide document symbols from regions inside View.",
+              "default": "false"
+            },
+            "capabilities.workspaceSymbols": {
+              "type": "boolean",
+              "description": "Provide workspace symbols from all regions of your Views.",
+              "default": "false"
+            }
           }
         },
-				"aurelia.relatedFiles": {
-					"type": "object",
-					"description": "Aurelia quick switching between related files",
-					"default": {
-						"script": [
-							".js",
-							".ts"
-						],
-						"style": [
-							".less",
-							".sass",
-							".scss",
-							".styl",
-							".css"
-						],
-						"unit": [
-							".spec.js",
-							".spec.ts"
-						],
-						"view": [
-							".html"
-						]
-					}
-				},
         "aurelia.pathToTsConfig": {
           "type": "string",
           "description": "Provide an absolute path to a tsconfig.json"
+        },
+        "aurelia.relatedFiles": {
+          "type": "object",
+          "markdownDescription": "Quick switching between related files. **Important** all files are assumed to be in the same directory."
+        },
+        "aurelia.relatedFiles.script": {
+          "type": "array",
+          "default": [
+            ".js",
+            ".ts"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project scripts. **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
+        },
+        "aurelia.relatedFiles.style": {
+          "type": "array",
+          "default": [
+            ".less",
+            ".sass",
+            ".scss",
+            ".styl",
+            ".css"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project styles **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
+        },
+        "aurelia.relatedFiles.unit": {
+          "type": "array",
+          "default": [
+            ".spec.js",
+            ".spec.ts"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project unit tests. **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
+        },
+        "aurelia.relatedFiles.view": {
+          "type": "array",
+          "default": [
+            ".html"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Define file extensions for your project views. **Important** all files are assumed to be in the same directory.",
+          "scope": "window"
         }
-			}
-		},
-		"grammars": [
-			{
-				"language": "html",
-				"scopeName": "au.html",
-				"path": "./syntaxes/html.json"
-			}
-		],
-		"languages": [
-			{
-				"id": "html",
-				"order": 1,
-				"extensions": [
-					".html",
-					".htm",
-					".shtml",
-					".xhtml",
-					".mdoc",
-					".jsp",
-					".asp",
-					".aspx",
-					".jshtm",
-					".volt",
-					".ejs",
-					".au"
-				],
-				"aliases": [
-					"HTML",
-					"htm",
-					"html",
-					"xhtml"
-				],
-				"mimetypes": [
-					"text/html",
-					"text/x-jshtm",
-					"text/template",
-					"text/ng-template",
-					"application/xhtml+xml"
-				],
-				"embeddedLanguages": {
-					"text.html": "html",
-					"source.css": "css",
-					"source.js": "javascript",
-					"source.python": "python",
-					"source.smarty": "smarty"
-				},
-				"configuration": "./language-configuration.json"
-			}
-		]
-	},
-	"scripts": {
+      },
+      "grammars": [
+        {
+          "language": "html",
+          "scopeName": "au.html",
+          "path": "./syntaxes/html.json"
+        }
+      ],
+      "languages": [
+        {
+          "id": "html",
+          "order": 1,
+          "extensions": [
+            ".html",
+            ".htm",
+            ".shtml",
+            ".xhtml",
+            ".mdoc",
+            ".jsp",
+            ".asp",
+            ".aspx",
+            ".jshtm",
+            ".volt",
+            ".ejs",
+            ".au"
+          ],
+          "aliases": [
+            "HTML",
+            "htm",
+            "html",
+            "xhtml"
+          ],
+          "mimetypes": [
+            "text/html",
+            "text/x-jshtm",
+            "text/template",
+            "text/ng-template",
+            "application/xhtml+xml"
+          ],
+          "embeddedLanguages": {
+            "text.html": "html",
+            "source.css": "css",
+            "source.js": "javascript",
+            "source.python": "python",
+            "source.smarty": "smarty"
+          },
+          "configuration": "./language-configuration.json"
+        }
+      ]
+    }
+  },
+  "scripts": {
     "publish:addTag": "",
-		"vscode:prepublish": "npm run compile",
-		"build": "tsc -p ./",
-		"changelog": "node ./node_modules/conventional-changelog-cli/cli.js -p angular -i CHANGELOG.md -s",
-		"compile": "npm run compile:client && npm run compile:server",
-		"compile:client": "tsc -p ./client/tsconfig.json",
-		"compile:server": "tsc -p ./server/tsconfig.json",
-		"watch": "tsc -b -w",
-		"watch:client": "tsc -w -p ./client/tsconfig.json",
-		"watch:server": "tsc -w -p ./server/tsconfig.json",
-		"postinstall": "cd client && npm i && cd ../server && npm i && cd ..",
-		"test": "sh ./scripts/e2e.sh",
-		"test:unit": "TS_NODE_PROJECT='./tsconfig.json' ./node_modules/.bin/_mocha --require ts-node/register 'tests/unit/**/*.spec.ts'",
-		"test:unit:ci": "TS_NODE_PROJECT='./tsconfig.json' ./node_modules/.bin/_mocha --require ts-node/register 'tests/unit/**/*.spec.ts' --exit --color",
-		"start:depTree": "./node_modules/.bin/code-dependency --exclude 'node_modules' --source ./_code-dep"
-	},
-	"devDependencies": {
-		"@code-dependency/cli": "^0.5.0",
-		"@types/assert": "^1.5.4",
-		"@types/mocha": "^8.2.1",
-		"@types/node": "^14.14.30",
-		"@typescript-eslint/eslint-plugin": "^4.15.1",
-		"@typescript-eslint/parser": "^4.15.1",
-		"conventional-changelog-cli": "^2.1.1",
-		"core-js": "^3.6.5",
-		"eslint": "^7.20.0",
-		"eslint-plugin-compat": "^3.8.0",
-		"eslint-plugin-import": "^2.22.1",
-		"eslint-plugin-jsdoc": "^30.7.8",
-		"eslint-plugin-mocha": "^8.0.0",
-		"mocha": "^8.3.0",
-		"prettier": "^2.2.1",
-		"prettier-eslint": "^12.0.0",
-		"ts-node": "^9.1.1"
-	},
-	"dependencies": {
-		"aurelia-dependency-injection": "^1.5.2",
-		"lodash": "^4.17.19",
-		"reflect-metadata": "^0.1.9",
-		"vscode-languageserver": "^6.1.1",
-		"vscode-languageserver-textdocument": "^1.0.1",
-		"vscode-css-languageservice": "^4.1.2",
-		"vscode-html-languageservice": "^3.0.3",
-		"typescript": "^4.3.5"
-	}
+    "vscode:prepublish": "npm run compile",
+    "build": "tsc -p ./",
+    "changelog": "node ./node_modules/conventional-changelog-cli/cli.js -p angular -i CHANGELOG.md -s",
+    "compile": "npm run compile:client && npm run compile:server",
+    "compile:client": "tsc -p ./client/tsconfig.json",
+    "compile:server": "tsc -p ./server/tsconfig.json",
+    "lint": "      npx eslint ./ --ext js,ts",
+    "lint:fix": "  npx eslint ./ --ext js,ts --fix",
+    "lint:cache": "npx eslint ./ --ext js,ts --cache",
+    "watch": "tsc -b -w",
+    "watch:client": "tsc -w -p ./client/tsconfig.json",
+    "watch:server": "tsc -w -p ./server/tsconfig.json",
+    "postinstall": "cd client && yarn && cd ../server && yarn && cd ..",
+    "test": "sh ./scripts/e2e.sh",
+    "test:unit:gherkin": "npm run test:unit:gherkin:core && npm run test:unit:gherkin:cli && npm run test:unit:gherkin:mono && npm run test:unit:gherkin:scoped",
+    "test:unit:gherkin:ci": "npm run test:unit:gherkin:core && npm run test:unit:gherkin:cli && npm run test:unit:gherkin:mono && npm run test:unit:gherkin:scoped",
+    "test:unit:gherkin:core": "  npx jest ./testLauncher/core.spec.ts             --forceExit --color",
+    "test:unit:gherkin:cli": "   npx jest ./testLauncher/cliGenerated.spec.ts     --forceExit --color",
+    "test:unit:gherkin:mono": "  npx jest ./testLauncher/monorepo.spec.ts         --forceExit --color",
+    "test:unit:gherkin:scoped": "npx jest ./testLauncher/scopedForTesting.spec.ts --forceExit --color",
+    "start:depTree": "./node_modules/.bin/code-dependency --exclude 'node_modules' --source ./server/src/",
+    "start:depCruise": "depcruise --include-only '^server/src' --output-type dot server/src | dot -T svg > dependencygraph.svg"
+  },
+  "devDependencies": {
+    "@code-dependency/cli": "^0.5.0",
+    "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
+    "@sucrase/jest-plugin": "^2.2.0",
+    "@types/assert": "^1.5.4",
+    "@types/jest": "~25.1.3",
+    "@types/mocha": "^8.2.1",
+    "@types/node": "^14.14.30",
+    "@typescript-eslint/eslint-plugin": "^5.3.0",
+    "@typescript-eslint/parser": "^5.3.0",
+    "conventional-changelog-cli": "^2.1.1",
+    "core-js": "^3.6.5",
+    "dependency-cruiser": "^9.23.3",
+    "eslint": "^8.3.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsdoc": "^37.0.3",
+    "jest": "~25.1.0",
+    "jest-cucumber": "^3.0.1",
+    "mocha": "^8.3.0",
+    "prettier": "^2.4.1",
+    "prettier-eslint": "^13.0.0",
+    "sucrase": "^3.20.1",
+    "ts-jest": "~25.2.1",
+    "ts-node": "^9.1.1",
+    "webpack": "^4.46.0"
+  },
+  "dependencies": {
+    "aurelia-dependency-injection": "^1.5.2",
+    "colorette": "^2.0.12",
+    "culog": "^0.0.10",
+    "lodash": "^4.17.19",
+    "reflect-metadata": "^0.1.9",
+    "ts-morph": "^12.0.0",
+    "typescript": "^4.4.4",
+    "vscode-html-languageservice": "^3.0.3",
+    "vscode-languageserver": "^6.1.1",
+    "vscode-languageserver-textdocument": "^1.0.1"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-typescript"
+    ]
+  }
 }

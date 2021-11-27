@@ -1,0 +1,13 @@
+<template>
+  <import from="./custom-element"></import>
+  <import from="./custom-element.html"></import>
+
+  <!-- With bindable multiline -->
+  <custom-element
+    foo.bind=""
+    bar.call="otherBar"
+    id="${otherQux}"
+    class="zed"
+  ></custom-element>
+
+</template>

@@ -6,8 +6,8 @@ references:
       name: npm-update-and-install
       command: |
         sudo npm install -g npm@latest
-        npm install
-        npm run postinstall
+        yarn
+        yarn postinstall
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
       - *npm_install_update
       - run:
           name: pre-publish
-          command: npm run vscode:prepublish
+          command: yarn vscode:prepublish
   test:
     docker:
       - image: circleci/node:latest
@@ -27,10 +27,10 @@ jobs:
       - *npm_install_update
       - run:
           name: build
-          command: npm run build
+          command: yarn build
       - run:
           name: Test
-          command: npm run test:unit:ci
+          command: yarn test:unit:gherkin:ci
   publish:
     docker:
       - image: circleci/node:latest
@@ -39,7 +39,7 @@ jobs:
       - *npm_install_update
       - run:
           name: install VS Code Extension Manager
-          command: npm i vsce
+          command: yarn vsce
       - run:
           name: publish to marketplace
           command: npx vsce publish -p ${VSTOKEN}

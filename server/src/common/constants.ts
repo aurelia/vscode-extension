@@ -107,7 +107,12 @@ export const AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST = [
   'call',
   'delegate',
   'trigger',
-];
+] as const;
+
+export enum AureliaVersion {
+  V1 = 'V1',
+  V2 = 'V2',
+}
 
 export enum AureliaClassTypes {
   CUSTOM_ELEMENT = 'CustomElement',
@@ -121,8 +126,11 @@ export enum AureliaViewModel {
 
 export enum AureliaView {
   IF = 'if',
+  IMPORT = 'import',
+  IMPORT_FROM_ATTRIBUTE = 'from',
   TEMPLATE_TAG_NAME = 'template',
   REPEAT_FOR = 'repeat.for',
+  REQUIRE = 'require',
   VALUE_CONVERTER_OPERATOR = '|',
   VALUE_CONVERTER_ARGUMENT = ':',
 }
@@ -138,3 +146,24 @@ export enum AureliaLSP {
   /** [c]ompletion [i]tem [d]ata [t]ype -> cidt */
   AureliaCompletionItemDataType = 'AURELIA_CIDT',
 }
+
+export const WORD_SEPARATORS = '`~!@#%^&*()=+[{]}|;:\'",.<>/?'; // removed -,$
+export const WORD_SEPARATORS_REGEX_STRING =
+  '\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\|\\;\\:\'\\"\\,\\.\\<\\>\\/\\?';
+export const whiteSpaceRegex = /[\s\r\n\t]/;
+
+export const EXTENSION_COMMAND_PREFIX = 'extension.au';
+export const AURELIA_COMMANDS = [
+  'extension.au.refactor.aTag',
+  'extension.au.reloadExtension',
+] as const;
+export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
+
+export const CodeActionMap = {
+  'refactor.aTag': {
+    command: 'extension.au.refactor.aTag',
+    title: 'Au: Convert to import tag 🟪',
+    newText: 'import',
+    newAttribute: 'from',
+  },
+};

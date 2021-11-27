@@ -1,3 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import * as fs from 'fs';
+import * as path from 'path';
+
 import {
   commands,
   Disposable,
@@ -6,13 +14,11 @@ import {
   ViewColumn,
   workspace,
 } from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
 
 export class RelatedFiles implements Disposable {
   private readonly disposables: Disposable[] = [];
 
-  public constructor() {
+  constructor() {
     this.disposables.push(
       commands.registerTextEditorCommand(
         'extension.auOpenRelated',
@@ -94,7 +100,7 @@ export class RelatedFiles implements Disposable {
       return;
     }
 
-    let relatedFile: string;
+    let relatedFile: string = '';
     const fileName = editor.document.fileName;
     const extension = path.extname(fileName).toLowerCase();
     const fileExtensionsConfig = this.getRelatedFilePathExtensions();
@@ -130,7 +136,7 @@ export class RelatedFiles implements Disposable {
       /**
        * '.spec' is not recognized as an file extension.
        * Thus, `replace`, so we are able to switch from, eg. 'unit' to 'style'.
-       * */
+       */
       const fileName = editor.document.fileName.replace('.spec', '');
       const relatedFile = this.getRelatedFilePath(fileName, switchToExtensions);
       if (relatedFile) {
@@ -149,7 +155,7 @@ export class RelatedFiles implements Disposable {
    * @returns targetFile
    */
   private getRelatedFilePath(fullPath: string, relatedExts: string[]): string {
-    let targetFile: string;
+    let targetFile: string = '';
     try {
       relatedExts.forEach((ext) => {
         const fileName = `${path.basename(

@@ -1,0 +1,57 @@
+<template>
+  <!-- Test: Completion {{ISSUE-9WZg54qT}}-->
+  <!-- Attribute region -->
+  <div click.delegate=""></div>
+
+  <!-- Test: Go to definition [METHOD] {{ISSUE-15pHmj6C}}-->
+  <!-- Attribute region -->
+  <div click.delegate="increaseCounter()"></div>
+
+  <!-- Test: Go to definition [VARIABLE] {{ISSUE-oITTCXJc}}-->
+  <!-- Attribute Interpolated region -->
+  <div css="width: ${message}px;"></div>
+
+  <!-- Test: Go to definition [CUSTOM_ELEMENT] {{ISSUE-lj6q5QtN}}-->
+  <!-- Custom element region -->
+  <my-compo></my-compo>
+
+  <!-- Test: Go to definition [CUSTOM_ELEMENT_BINDABLE] {{ISSUE-8Q6EL3Ui}}-->
+  <!-- Custom element region -->
+  <my-compo
+    inter-bindable.bind="increaseCounter()"
+    string-bindable.bind="grammarRules"
+    hello="saht"
+  >
+  </my-compo>
+
+  <!-- Text interpolated region {{ISSUE-sCxw9bfm}}-->
+  ${} ${grammarRules.length}
+  <div id="class-name">
+    <!-- Text interpolated repeat-for region {{ISSUE-uMZ1grJD}}-->
+    <label repeat.for="rule of grammarRules">
+      <!-- Test: Definition - Repeat for {{ISSUE-5ugNzvtm}} -->
+      <!-- Text interpolated region {{ISSUE-vKaChQeb}}-->
+      ${rule.id}-${rule.saying}
+    </label>
+  </div>
+
+  <!-- Classes -->
+  <div
+    id="some-long-id-for-line-break"
+    class="${message ? 'message-class' : ''} ${}"
+    if.bind="message === ''"
+  ></div>
+
+  <!-- Value converters -->
+  <template>
+    <!-- Value Converter Region {{ISSUE-M0pKnxbJ}} -->
+    <tr
+      if.bind="message | sort"
+      repeat.for="repo of repos | sort:column.value:direction.value | take:10"
+    >
+      ...
+    </tr>
+  </template>
+
+  <compo-user></compo-user>
+</template>

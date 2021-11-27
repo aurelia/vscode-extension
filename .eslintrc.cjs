@@ -4,22 +4,23 @@ const thisDir = path.resolve(__dirname);
 module.exports = {
   parser: '@typescript-eslint/parser',
   root: true,
-  extends:  [
+  extends: [
     'eslint:recommended',
     'plugin:jsdoc/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
-    'plugin:import/typescript'
+    'plugin:import/typescript',
   ],
   parserOptions: {
-    ecmaVersion: 2019,
+    ecmaVersion: 2020,
     project: path.join(thisDir, 'tsconfig.eslint.json'),
     sourceType: 'module',
     tsconfigRootDir: thisDir,
+    extraFileExtensions: ['.cjs']
   },
   env: {
-    es6: true
+    es6: true,
   },
   globals: {
     MutationObserver: 'readonly',
@@ -29,11 +30,7 @@ module.exports = {
     BigInt64Array: 'readonly',
     BigUint64Array: 'readonly',
   },
-  plugins: [
-    '@typescript-eslint',
-    'import',
-    'jsdoc',
-  ],
+  plugins: ['@typescript-eslint', 'import', 'jsdoc'],
   reportUnusedDisableDirectives: true,
   rules: {
     // Opinionated overrides of the default recommended rules:
@@ -49,29 +46,54 @@ module.exports = {
 
     // Opinionated non default rules:
     '@typescript-eslint/ban-ts-comment': 'warn',
-    '@typescript-eslint/explicit-member-accessibility': 'error',
+    // '@typescript-eslint/explicit-member-accessibility': 'error',
+    '@typescript-eslint/explicit-member-accessibility': [
+      'error',
+      {
+        overrides: {
+          constructors: 'no-public',
+        },
+      },
+    ],
     '@typescript-eslint/await-thenable': 'error',
     '@typescript-eslint/adjacent-overload-signatures': 'error',
     '@typescript-eslint/array-type': 'error',
-    '@typescript-eslint/ban-types': ['error', {
-      'extendDefaults': false,
-      'types': {
-        // '{}': 'Avoid using the `{}` type. Prefer a specific lookup type, like `Record<string, unknown>`, or use `object` (lowercase) when referring simply to non-primitives.',
-        Function: 'Avoid using the `Function` type. Prefer a specific function type, like `() => void`, or use `Constructable` / `Class<TProto, TStatic>` when referring to a constructor function.',
-        Boolean: { message: 'Use boolean instead', fixWith: 'boolean' },
-        Number: { message: 'Use number instead', fixWith: 'number' },
-        String: { message: 'Use string instead', fixWith: 'string' },
-        Object: { message: 'Use Record<string, unknown> instead', fixWith: 'Record<string, unknown>' },
-        Symbol: { message: 'Use symbol instead', fixWith: 'symbol' }
-      }
-    }],
-    '@typescript-eslint/brace-style': ['error', '1tbs', { allowSingleLine: true }],
-    '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as', objectLiteralTypeAssertions: 'never' }],
+    '@typescript-eslint/ban-types': [
+      'error',
+      {
+        extendDefaults: false,
+        types: {
+          // '{}': 'Avoid using the `{}` type. Prefer a specific lookup type, like `Record<string, unknown>`, or use `object` (lowercase) when referring simply to non-primitives.',
+          Function:
+            'Avoid using the `Function` type. Prefer a specific function type, like `() => void`, or use `Constructable` / `Class<TProto, TStatic>` when referring to a constructor function.',
+          Boolean: { message: 'Use boolean instead', fixWith: 'boolean' },
+          Number: { message: 'Use number instead', fixWith: 'number' },
+          String: { message: 'Use string instead', fixWith: 'string' },
+          Object: {
+            message: 'Use Record<string, unknown> instead',
+            fixWith: 'Record<string, unknown>',
+          },
+          Symbol: { message: 'Use symbol instead', fixWith: 'symbol' },
+        },
+      },
+    ],
+    // '@typescript-eslint/brace-style': [ 'error', '1tbs', { allowSingleLine: true }, ],
+    '@typescript-eslint/brace-style': 'off',
+    '@typescript-eslint/consistent-type-assertions': [
+      'error',
+      { assertionStyle: 'as', objectLiteralTypeAssertions: 'never' },
+    ],
     '@typescript-eslint/func-call-spacing': ['error', 'never'],
     '@typescript-eslint/member-delimiter-style': 'error',
-    '@typescript-eslint/member-ordering': ['error', { default: ['signature', 'field'] }],
+    '@typescript-eslint/member-ordering': [
+      'error',
+      { default: ['signature', 'field'] },
+    ],
     '@typescript-eslint/no-dynamic-delete': 'error',
-    '@typescript-eslint/no-empty-function': ['error', { 'allow': ['protected-constructors', 'private-constructors'] }],
+    '@typescript-eslint/no-empty-function': [
+      'error',
+      { allow: ['protected-constructors', 'private-constructors'] },
+    ],
     '@typescript-eslint/no-extra-non-null-assertion': 'error',
     '@typescript-eslint/no-extraneous-class': 'off',
     '@typescript-eslint/no-floating-promises': 'error',
@@ -93,16 +115,26 @@ module.exports = {
     '@typescript-eslint/prefer-string-starts-ends-with': 'error',
     '@typescript-eslint/return-await': 'error',
     '@typescript-eslint/semi': 'error',
-    '@typescript-eslint/space-before-function-paren': ['error', {
-      anonymous: 'always',
-      named: 'never',
-      asyncArrow: 'always'
-    }],
-    '@typescript-eslint/triple-slash-reference': ['error', { path: 'never', types: 'always', lib: 'never' }],
+    '@typescript-eslint/space-before-function-paren': [
+      'error',
+      {
+        anonymous: 'always',
+        named: 'never',
+        asyncArrow: 'always',
+      },
+    ],
+    '@typescript-eslint/triple-slash-reference': [
+      'error',
+      { path: 'never', types: 'always', lib: 'never' },
+    ],
     '@typescript-eslint/type-annotation-spacing': 'error',
     'import/default': 'error',
     'import/export': 'error',
-    'import/extensions': ['error', 'never', { css: 'always', html: 'always', scss: 'always' }],
+    'import/extensions': [
+      'error',
+      'never',
+      { css: 'always', html: 'always', scss: 'always' },
+    ],
     'import/no-absolute-path': 'error',
     'import/no-duplicates': 'error',
     // 'import/no-extraneous-dependencies': ['error', {
@@ -118,16 +150,32 @@ module.exports = {
     'import/no-mutable-exports': 'error',
     'import/no-self-import': 'error',
     'import/no-useless-path-segments': ['error'],
-    'import/order': ['error', { 'groups': [], 'newlines-between': 'ignore' }],
+    'import/order': [
+      'error',
+      {
+        alphabetize: {
+          order:
+            'asc' /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */,
+          caseInsensitive: true /* ignore case. Options: [true, false] */,
+        },
+        groups: [
+          ['builtin'],
+          ['external'],
+          ['internal'],
+          ['parent', 'sibling', 'index', 'object'],
+        ],
+        'newlines-between': 'always',
+      },
+    ],
     'import/no-deprecated': 'off', // this rule is extremely slow (takes 95% of the time of the full lint operation) so we disable it for that reason only
     'jsdoc/check-alignment': 'error',
     // 'jsdoc/check-indentation': 'error',
-    'jsdoc/check-tag-names': ['error', {
-      definedTags: [
-        'chainable',
-        'internal'
-      ]
-    }],
+    'jsdoc/check-tag-names': [
+      'error',
+      {
+        definedTags: ['chainable', 'internal'],
+      },
+    ],
     'jsdoc/check-syntax': 'error',
     'jsdoc/newline-after-description': 'error',
     'jsdoc/require-hyphen-before-param-description': ['error', 'always'],
@@ -151,14 +199,35 @@ module.exports = {
     'no-new-wrappers': 'error',
     'no-octal-escape': 'error',
     'no-prototype-builtins': 'error',
-    'no-restricted-properties': ['error',
-      { property: 'substr', message: '"substr" is considered a legacy function and should be avoided when possible. Use "substring" instead.' }
+    'no-restricted-properties': [
+      'error',
+      {
+        property: 'substr',
+        message:
+          '"substr" is considered a legacy function and should be avoided when possible. Use "substring" instead.',
+      },
     ],
-    'no-restricted-syntax': ['error',
-      { selector: 'MemberExpression[object.name=\'document\'][property.name=\'cookies\']', message: 'Usage of document.cookies is forbidden.' },
-      { selector: 'MemberExpression[object.name=\'document\'][property.name=\'domain\']', message: 'Usage of document.domain is forbidden.' },
-      { selector: 'MemberExpression[object.name=\'document\'][property.name=\'write\']', message: 'Usage of document.write is forbidden.' },
-      { selector: 'CallExpression[callee.name=\'execScript\']', message: 'Usage of execScript is forbidden.' }
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector:
+          "MemberExpression[object.name='document'][property.name='cookies']",
+        message: 'Usage of document.cookies is forbidden.',
+      },
+      {
+        selector:
+          "MemberExpression[object.name='document'][property.name='domain']",
+        message: 'Usage of document.domain is forbidden.',
+      },
+      {
+        selector:
+          "MemberExpression[object.name='document'][property.name='write']",
+        message: 'Usage of document.write is forbidden.',
+      },
+      {
+        selector: "CallExpression[callee.name='execScript']",
+        message: 'Usage of execScript is forbidden.',
+      },
     ],
     'no-return-await': 'error',
     'no-sequences': 'error',
@@ -179,15 +248,19 @@ module.exports = {
     'prefer-spread': 'error',
     'prefer-template': 'error',
     'quote-props': ['error', 'consistent'],
-    'quotes': ['off'],
-    'radix': 'error',
+    quotes: ['off'],
+    radix: 'error',
     'sort-keys': ['off'],
     'space-before-function-paren': 'off', // See @typescript-eslint/space-before-function-paren
     'space-in-parens': 'error',
-    'spaced-comment': ['error', 'always', {
-      line: { markers: ['/'], exceptions: ['-', '+'] },
-      block: { markers: ['!'], exceptions: ['*'], balanced: true }
-    }],
+    'spaced-comment': [
+      'error',
+      'always',
+      {
+        line: { markers: ['/'], exceptions: ['-', '+'] },
+        block: { markers: ['!'], exceptions: ['*'], balanced: true },
+      },
+    ],
 
     // Things we maybe need to fix some day, so are marked as warnings for now:
     '@typescript-eslint/no-unsafe-assignment': 'warn',
@@ -198,18 +271,30 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 'warn',
     '@typescript-eslint/no-unnecessary-condition': 'off', // Only false positives seen so far
     '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
-    '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-unused-vars-experimental': 'off', // Off for now, crashes eslint
-    '@typescript-eslint/prefer-nullish-coalescing': ['warn', { 'forceSuggestionFixer': true }],
+    '@typescript-eslint/prefer-nullish-coalescing': [
+      'warn',
+      { forceSuggestionFixer: true },
+    ],
     '@typescript-eslint/prefer-optional-chain': 'warn',
     '@typescript-eslint/promise-function-async': 'off',
     '@typescript-eslint/require-await': 'off',
     // '@typescript-eslint/quotes': ['warn', 'backtick', { avoidEscape: true }],
     '@typescript-eslint/require-array-sort-compare': 'warn',
-    '@typescript-eslint/restrict-plus-operands': ['warn', { 'checkCompoundAssignments': true }],
-    '@typescript-eslint/restrict-template-expressions': ['warn', { 'allowNumber': true, 'allowBoolean': true, 'allowNullable': false }],
+    '@typescript-eslint/restrict-plus-operands': [
+      'warn',
+      { checkCompoundAssignments: true },
+    ],
+    '@typescript-eslint/restrict-template-expressions': [
+      'warn',
+      { allowNumber: true, allowBoolean: true, allowNullable: false },
+    ],
     '@typescript-eslint/strict-boolean-expressions': 'warn',
-    '@typescript-eslint/typedef': ['warn', { arrowParameter: false, parameter: false, variableDeclaration: false }],
+    '@typescript-eslint/typedef': [
+      'warn',
+      { arrowParameter: false, parameter: false, variableDeclaration: false },
+    ],
     '@typescript-eslint/unbound-method': 'off', // Only false positives seen so far
     'jsdoc/check-examples': 'off',
     'jsdoc/check-param-names': 'off',
@@ -223,37 +308,42 @@ module.exports = {
     'jsdoc/require-returns': 'off',
     'jsdoc/require-returns-type': 'off',
     'default-param-last': ['warn'],
-    'eqeqeq': ['warn', 'smart'],
+    eqeqeq: ['warn', 'smart'],
     'no-await-in-loop': 'warn',
     'no-cond-assign': 'warn',
     // 'no-console': 'warn',
-    'no-constructor-return':'warn',
+    'no-constructor-return': 'warn',
     'no-extra-boolean-cast': 'warn',
     'no-fallthrough': 'warn',
     'no-inner-declarations': 'warn',
     'no-shadow': 'off', // using @typescript-eslint/no-shadow instead
-    'no-useless-computed-key': ['warn', { 'enforceForClassMembers': true }],
+    'no-useless-computed-key': ['warn', { enforceForClassMembers: true }],
     'no-undef': 'off', // let typescript take care of this instead
     'require-atomic-updates': 'warn',
 
     // Off for now as they create way to much noise
-    '@typescript-eslint/quotes': ['warn', 'single']
+    '@typescript-eslint/quotes': ['warn', 'single'],
   },
-  overrides: [{ // Specific overrides for JS files as some TS rules don't make sense there.
-    files: ['**/*.js'],
-    rules: {
-      '@typescript-eslint/explicit-member-accessibility': 'off',
-      '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
-      '@typescript-eslint/restrict-plus-operands': 'off',
-      '@typescript-eslint/typedef': 'off',
-    }
-  }, { // Specific overrides for TS files within examples, scripts and tests as some rules don't make sense there.
-    files: ['examples/**', 'scripts/**', 'test/**'],
-    rules: {
-      '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
-      'import/no-extraneous-dependencies': 'off',
-    }
-  }],
+  overrides: [
+    {
+      // Specific overrides for JS files as some TS rules don't make sense there.
+      files: ['**/*.js'],
+      rules: {
+        '@typescript-eslint/explicit-member-accessibility': 'off',
+        '@typescript-eslint/no-require-imports': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
+        '@typescript-eslint/restrict-plus-operands': 'off',
+        '@typescript-eslint/typedef': 'off',
+      },
+    },
+    {
+      // Specific overrides for TS files within examples, scripts and tests as some rules don't make sense there.
+      files: ['examples/**', 'scripts/**', 'test/**'],
+      rules: {
+        '@typescript-eslint/no-require-imports': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
+        'import/no-extraneous-dependencies': 'off',
+      },
+    },
+  ],
 };

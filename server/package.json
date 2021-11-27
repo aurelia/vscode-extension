@@ -1,25 +1,27 @@
 {
-	"name": "aurelia",
-	"description": "A VSCode extension for Aurelia",
-	"author": "AureliaEffect",
-	"license": "MIT",
-	"version": "2.0.7",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/aurelia/vscode-extension"
-	},
-	"engines": {
-		"node": "*"
-	},
-	"dependencies": {
-		"lodash": "^4.17.21",
-		"parse5": "^6.0.1",
-		"parse5-sax-parser": "^6.0.1"
-	},
-	"scripts": {},
-	"devDependencies": {
-		"@types/lodash": "^4.14.168",
-		"@types/parse5": "^5.0.3",
-		"@types/parse5-sax-parser": "^5.0.1"
-	}
+  "name": "aurelia",
+  "description": "A VSCode extension for Aurelia",
+  "author": "AureliaEffect",
+  "license": "MIT",
+  "version": "2.0.7",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aurelia/vscode-extension"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "@aurelia/kernel": "^2.0.0-alpha.23",
+    "fast-glob": "^3.2.5",
+    "lodash": "^4.17.21",
+    "parse5": "^6.0.1",
+    "parse5-sax-parser": "^6.0.1"
+  },
+  "scripts": {},
+  "devDependencies": {
+    "@types/lodash": "^4.14.168",
+    "@types/parse5": "^5.0.3",
+    "@types/parse5-sax-parser": "^5.0.1"
+  }
 }

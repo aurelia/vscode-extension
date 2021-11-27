@@ -1,10 +1,10 @@
-import { DefinitionResult } from './getDefinition';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { UriUtils } from '../../common/view/uri-utils';
+import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
   getVirtualLangagueService,
-  VirtualSourceFileInfo,
 } from '../virtual/virtualSourceFile';
+import { DefinitionResult } from './getDefinition';
 
 /**
  * 1. Create virtual file
@@ -16,14 +16,23 @@ export function getVirtualDefinition(
   aureliaProgram: AureliaProgram,
   goToSourceWord: string
 ): DefinitionResult | undefined {
-  const { virtualSourcefile, virtualCursorIndex, viewModelFilePath } =
-    createVirtualFileWithContent(aureliaProgram, filePath, goToSourceWord) ??
-    ({} as VirtualSourceFileInfo);
+  const virtualFileWithContent = createVirtualFileWithContent(
+    aureliaProgram,
+    filePath,
+    goToSourceWord
+  );
+  if (virtualFileWithContent === undefined) return;
 
-  const virtualCls = getVirtualLangagueService(virtualSourcefile);
+  const { virtualSourcefile, virtualCursorIndex, viewModelFilePath } =
+    virtualFileWithContent;
+
+  const program = aureliaProgram.getProgram();
+  if (program === undefined) return;
+
+  const virtualCls = getVirtualLangagueService(virtualSourcefile, program);
 
   const result = virtualCls.getDefinitionAtPosition(
-    virtualSourcefile.fileName,
+    UriUtils.toSysPath(virtualSourcefile.fileName),
     virtualCursorIndex
   );
 

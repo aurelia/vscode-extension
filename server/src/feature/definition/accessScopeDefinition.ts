@@ -2,16 +2,19 @@
  * Defintion[Access Scope]: http://aurelia.io/docs/binding/how-it-works#abstract-syntax-tree
  */
 
+import { Position, TextDocument } from 'vscode-languageserver';
+
+import { findSourceWord } from '../../common/documens/find-source-word';
+import { getRelatedFilePath } from '../../common/documens/related';
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
+import { UriUtils } from '../../common/view/uri-utils';
 import {
-  RepeatForRegionData,
-  ViewRegionInfo,
+  AbstractRegion,
+  RepeatForRegion,
   ViewRegionType,
-} from '../embeddedLanguages/embeddedSupport';
-import { TextDocument } from 'vscode-languageserver';
-import { aureliaProgram } from '../../viewModel/AureliaProgram';
-import { getVirtualDefinition } from './virtualDefinition';
+} from '../../core/regions/ViewRegions';
+import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DefinitionResult } from './getDefinition';
-import { Position } from '../embeddedLanguages/languageModes';
 
 /**
  * Priority
@@ -25,15 +28,22 @@ import { Position } from '../embeddedLanguages/languageModes';
  *  2.3 ${grammarRules.length}
  */
 export function getAccessScopeDefinition(
+  aureliaProgram: AureliaProgram,
   document: TextDocument,
   position: Position,
-  goToSourceWord: string,
-  regions?: ViewRegionInfo[]
+  region: AbstractRegion,
+  /**
+   * All regions to also find definitions inside view itself
+   */
+  regions?: AbstractRegion[]
 ): DefinitionResult | undefined {
+  const offset = document.offsetAt(position);
+  const goToSourceWord = findSourceWord(region, offset);
+
   // 1.
   const repeatForRegions = regions?.filter(
-    (region) => region.type === ViewRegionType.RepeatFor
-  ) as ViewRegionInfo<RepeatForRegionData>[];
+    (_region) => _region.type === ViewRegionType.RepeatFor
+  ) as RepeatForRegion[];
   const targetRepeatForRegion = repeatForRegions.find(
     (repeatForRegion) => repeatForRegion.data?.iterator === goToSourceWord
   );
@@ -42,9 +52,9 @@ export function getAccessScopeDefinition(
     /** repeat.for="" */
 
     if (
-      targetRepeatForRegion?.startLine === undefined ||
-      targetRepeatForRegion.startOffset === undefined ||
-      targetRepeatForRegion.startCol === undefined
+      targetRepeatForRegion.sourceCodeLocation.startLine === undefined ||
+      targetRepeatForRegion.sourceCodeLocation.startOffset === undefined ||
+      targetRepeatForRegion.sourceCodeLocation.startCol === undefined
     ) {
       console.error(
         `RepeatFor-Region does not have a start (line). cSearched for ${goToSourceWord}`
@@ -54,15 +64,20 @@ export function getAccessScopeDefinition(
 
     return {
       lineAndCharacter: {
-        line: targetRepeatForRegion.startLine,
-        character: targetRepeatForRegion.startCol,
+        line: targetRepeatForRegion.sourceCodeLocation.startLine,
+        character: targetRepeatForRegion.sourceCodeLocation.startCol,
       } /** TODO: Find class declaration position. Currently default to top of file */,
-      viewModelFilePath: document.uri,
+      viewModelFilePath: UriUtils.toSysPath(document.uri),
     };
   }
 
   // 2.
-  const viewModelDefinition = getAccessScopeViewModelDefinition(document, position, goToSourceWord);
+  const viewModelDefinition = getAccessScopeViewModelDefinition(
+    document,
+    position,
+    region,
+    aureliaProgram
+  );
   return viewModelDefinition;
 }
 
@@ -76,19 +91,38 @@ export function getAccessScopeDefinition(
 export function getAccessScopeViewModelDefinition(
   document: TextDocument,
   position: Position,
-  goToSourceWord: string
+  region: AbstractRegion,
+  aureliaProgram: AureliaProgram
 ): DefinitionResult | undefined {
-  const virtualDefinition = getVirtualDefinition(
-    document.uri,
-    aureliaProgram,
-    goToSourceWord
-  );
-  if (
-    virtualDefinition?.lineAndCharacter.line !== 0 &&
-    virtualDefinition?.lineAndCharacter.character !== 0
-  ) {
-    return virtualDefinition;
-  }
+  const offset = document.offsetAt(position);
+  const goToSourceWord = findSourceWord(region, offset);
 
-  return;
+  const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
+    'viewFilePath',
+    UriUtils.toSysPath(document.uri)
+  );
+  const targetMember = targetComponent?.classMembers?.find(
+    (member) => member.name === goToSourceWord
+  );
+
+  if (!targetMember) return;
+
+  const viewModelPath = getRelatedFilePath(UriUtils.toSysPath(document.uri), [
+    '.js',
+    '.ts',
+  ]);
+  const viewModelDocument = TextDocumentUtils.createFromPath(
+    viewModelPath,
+    'typescript'
+  );
+  const targetPosition = viewModelDocument.positionAt(targetMember.start);
+  const defintion: DefinitionResult = {
+    lineAndCharacter: {
+      line: targetPosition.line + 1, // from sourcefile, but defintion is 1 based
+      character: targetPosition.character,
+    },
+    viewModelFilePath: viewModelPath,
+  };
+
+  return defintion;
 }

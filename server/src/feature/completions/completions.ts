@@ -1,4 +1,5 @@
 import { kebabCase } from 'lodash';
+import { SyntaxKind } from 'typescript';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -7,22 +8,14 @@ import {
   TextDocument,
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
-import { AureliaClassTypes } from '../../common/constants';
-import {
-  CustomElementRegionData,
-  parseDocumentRegions,
-  getRegionFromLineAndCharacter,
-  ViewRegionType,
-  ViewRegionInfo,
-} from '../embeddedLanguages/embeddedSupport';
-import { Position } from '../embeddedLanguages/languageModes';
 
+import { AureliaClassTypes } from '../../common/constants';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import {
-  aureliaProgram,
   IAureliaClassMember,
   IAureliaComponent,
-} from '../../viewModel/AureliaProgram';
-import { SyntaxKind } from 'typescript';
+  AureliaProgram,
+} from '../../core/viewModel/AureliaProgram';
 
 export function createCompletionItem(
   classMember: IAureliaClassMember,
@@ -61,12 +54,8 @@ export function createCompletionItem(
 export function createClassCompletionItem(
   aureliaComponent: IAureliaComponent
 ): CompletionItem {
-  const {
-    documentation,
-    componentName,
-    className,
-    viewFilePath,
-  } = aureliaComponent;
+  const { documentation, componentName, className, viewFilePath } =
+    aureliaComponent;
   const finalName = componentName ?? className;
   const result: CompletionItem = {
     documentation: {
@@ -94,13 +83,14 @@ export function createComponentCompletionList(
 }
 
 export async function getBindablesCompletion(
+  aureliaProgram: AureliaProgram,
   _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  region?: ViewRegionInfo
+  region?: AbstractRegion
 ): Promise<CompletionItem[]> {
   if (!region) return [];
 
-  const bindableList = aureliaProgram.getBindableList();
+  const bindableList = aureliaProgram.aureliaComponents.getBindables();
   const asCompletionItem = bindableList.map((bindable) => {
     const result = createCompletionItem(
       bindable.classMember,
@@ -109,16 +99,18 @@ export async function getBindablesCompletion(
     return result;
   });
 
-  return asCompletionItem.filter((bindable) => {
-    return (
-      kebabCase(bindable.data.elementName) === region.tagName
-    );
+  const targetBindables = asCompletionItem.filter((bindable) => {
+    // eslint-disable-next-line
+    return kebabCase(bindable.data.elementName) === region.tagName;
   });
+  return targetBindables;
 }
 
-export function createValueConverterCompletion(): CompletionItem[] {
-  const valueConverterCompletionList = aureliaProgram
-    .getComponentList()
+export function createValueConverterCompletion(
+  aureliaProgram: AureliaProgram
+): CompletionItem[] {
+  const valueConverterCompletionList = aureliaProgram.aureliaComponents
+    .getAll()
     .filter((component) => component.type === AureliaClassTypes.VALUE_CONVERTER)
     .map((valueConverterComponent) => {
       const elementName = valueConverterComponent.valueConverterName ?? '';
