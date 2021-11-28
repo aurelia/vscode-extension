@@ -36,7 +36,6 @@ interface ILogOptions extends LogOptions {
 }
 
 const isCI = Boolean(process.env.CI);
-console.log('TCL: isCI', isCI);
 const shouldLog = !isCI;
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: shouldLog,

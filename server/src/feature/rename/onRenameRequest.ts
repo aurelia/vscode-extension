@@ -61,25 +61,6 @@ export async function onRenameRequest(
     // renamed; /* ? */
     return renamed;
   }
-
-  // const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-  //   document,
-  //   position
-  // );
-
-  // if (!modeAndRegion) return;
-  // const { mode, region } = modeAndRegion;
-
-  // if (!mode) return normalRename(position, document, newName);
-  // if (!region) return normalRename(position, document, newName);
-
-  // // const doRename = mode.doRename;
-
-  // if (doRename) {
-  //   const renamed = await doRename(document, position, newName, region);
-  //   // renamed; /*?*/
-  //   return renamed;
-  // }
 }
 
 function normalRename(
