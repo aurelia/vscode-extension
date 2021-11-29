@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SaxStream from 'parse5-sax-parser';
+import SaxStream, { TextToken } from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaView } from '../../common/constants';
@@ -160,12 +160,21 @@ export class RegionParser {
       viewRegions.push(customElementViewRegion);
     });
 
-    saxStream.on('text', (text) => {
-      let interpolationMatch;
+    saxStream.on('text', (text: TextToken) => {
+      let interpolationMatch: RegExpExecArray | null;
       while ((interpolationMatch = interpolationRegex.exec(text.text))) {
+        // Find number of new lines
+        const textUntilMatch = text.text.substring(0, interpolationMatch.index);
+        const countNewLineRegex = /\n/g;
+        const numberOfNewLines =
+          textUntilMatch.match(countNewLineRegex)?.length;
+        if (numberOfNewLines == null) return;
+
+        // Parse
         const viewRegion = TextInterpolationRegion.parse5Text(
           text,
-          interpolationMatch
+          interpolationMatch,
+          numberOfNewLines
         );
         if (!viewRegion) return;
         viewRegions.push(viewRegion);
@@ -345,8 +354,6 @@ export function prettyTable<
         prettyOptions?.maxColWidth ?? Infinity,
         maxTracker[index]
       );
-      finalEntry = finalEntry.replace('\n', '[nl]');
-      // maxTracker; /*?*/
       return finalEntry?.padEnd(padWith, ' ');
     });
     return padded.join(' | ');

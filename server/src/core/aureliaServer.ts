@@ -188,7 +188,7 @@ export class AureliaServer {
     );
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    /* prettier-ignore */ logger.log(`Found ${Object.keys(renamed?.changes ?? {}).length ?? '0'} rename(s).`,{logMs:true,msEnd:true});
+    /* prettier-ignore */ logger.log(`Found ${Object.keys(renamed?.changes ?? {}).length ?? '0'} file(s) to rename.`,{logMs:true,msEnd:true});
     return renamed;
   }
 

@@ -170,7 +170,7 @@ export async function aureliaRenameFromViewModel(
     sourceWord,
     newName
   );
-  // otherChangesInsideSameView; /*?*/
+  // otherChangesInsideSameView; /* ? */
 
   const finalChanges = {
     changes: {
