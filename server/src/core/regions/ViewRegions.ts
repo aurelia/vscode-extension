@@ -228,8 +228,8 @@ export class AttributeRegion extends AbstractRegion {
       attr.name.length + // click.delegate
       2; // ="
 
-    /** Eg. click.delegate="increaseCounter()>"< */
-    const lastCharIndex = attrLocation.endOffset;
+    /** Eg. click.delegate="increaseCounter()><" */
+    const lastCharIndex = attrLocation.endOffset - 1; // - 1 the quote
 
     const startOffset = attrLocation.startOffset + attrNameLength;
     const updatedLocation: parse5.Location = {
@@ -636,8 +636,8 @@ export class RepeatForRegion extends AbstractRegion {
       attr.name.length + // click.delegate
       2; // ="
 
-    /** Eg. click.delegate="increaseCounter()>"< */
-    const endInterpolationLength = attrLocation.endOffset;
+    /** Eg. click.delegate="increaseCounter()><" */
+    const endInterpolationLength = attrLocation.endOffset - 1; // - 1 the quote
 
     // __<label repeat.for="rule of grammarRules">
     const startColAdjust =
@@ -665,7 +665,7 @@ export class RepeatForRegion extends AbstractRegion {
         iterator,
         iterableName: iterable,
         iterableStartOffset,
-        iterableEndOffset: iterableStartOffset + iterable.length + 1,
+        iterableEndOffset: iterableStartOffset + iterable.length,
       };
       return repeatForData;
     }

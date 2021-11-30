@@ -49,7 +49,14 @@ export class ViewRegionUtils {
     line: string
   ) {
     const result = regions.filter((region) => {
-      return region.sourceCodeLocation.startLine === Number(line);
+      const isSameLine = region.sourceCodeLocation.startLine === Number(line);
+      if (isSameLine) {
+        // Excluded TextInterpolation regions, because text regions start on "line before" in parse5
+        if (region.textValue?.startsWith('\n') != null) {
+          return false;
+        }
+      }
+      return isSameLine;
     });
     return result;
   }

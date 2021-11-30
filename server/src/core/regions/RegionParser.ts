@@ -167,8 +167,7 @@ export class RegionParser {
         const textUntilMatch = text.text.substring(0, interpolationMatch.index);
         const countNewLineRegex = /\n/g;
         const numberOfNewLines =
-          textUntilMatch.match(countNewLineRegex)?.length;
-        if (numberOfNewLines == null) return;
+          textUntilMatch.match(countNewLineRegex)?.length ?? 0;
 
         // Parse
         const viewRegion = TextInterpolationRegion.parse5Text(
