@@ -227,13 +227,21 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
   const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
   const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
   const isAuV1PluginDev = devDep['aurelia-binding'] !== undefined;
+  const isAuV1Cli = dep['aurelia-cli'] !== undefined;
+  const isAuV1CliDev = devDep['aurelia-cli'] !== undefined;
 
   const isAuV2App = dep['aurelia'] !== undefined;
   const isAuV2AppDev = devDep['aurelia'] !== undefined;
   const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
   const isAuV2PluginDev = devDep['@aurelia/runtime'] !== undefined;
 
-  const isAuApp = isAuV1App || isAuV1AppDev || isAuV2App || isAuV2AppDev;
+  const isAuApp =
+    isAuV1App ||
+    isAuV1AppDev ||
+    isAuV1Cli ||
+    isAuV1CliDev ||
+    isAuV2App ||
+    isAuV2AppDev;
   const isAuPlugin =
     isAuV1Plugin || isAuV1PluginDev || isAuV2Plugin || isAuV2PluginDev;
 
