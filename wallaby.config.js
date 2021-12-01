@@ -20,7 +20,6 @@ module.exports = function (wallaby) {
 
     tests: [
       // 'tests/testLauncher/withWallaby.spec.ts',
-      // 'tests/unit/step-definitions/embeddedLanguages/embedded-support.spec.ts',
       'tests/unit/core/**/*.spec.ts'
     ],
 

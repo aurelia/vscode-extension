@@ -1,5 +1,5 @@
 {
-	"name": "aurelia",
+	"name": "aurelia-client",
 	"description": "A VSCode extension for Aurelia",
 	"author": "AureliaEffect",
 	"license": "MIT",
