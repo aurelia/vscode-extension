@@ -149,6 +149,8 @@ connection.onInitialized(async () => {
 // });
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
+  if (hasServerInitialized === false) return;
+
   const codeAction = await aureliaServer.onCodeAction(codeActionParams);
 
   if (codeAction) {
