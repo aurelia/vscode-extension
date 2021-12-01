@@ -70,13 +70,18 @@ export class AureliaProjects {
   /**
    * [PERF]: 2.5s
    */
-  public async hydrate(documents: TextDocument[]) {
+  public async hydrate(documents: TextDocument[]): Promise<boolean> {
     /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO' });
     const documentsPaths = documents.map((document) => {
       const result = UriUtils.toSysPath(document.uri);
       return result;
     });
-    if (documentsPaths.length === 0) return;
+    if (documentsPaths.length === 0) {
+      /* prettier-ignore */ logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('(!) Waiting until you change to an .html, .js, or .ts file.', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
+      return false;
+    }
 
     const settings = this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
@@ -86,6 +91,8 @@ export class AureliaProjects {
       documentsPaths,
       aureliaProjectSettings
     );
+
+    return true;
   }
 
   /**
@@ -110,6 +117,14 @@ export class AureliaProjects {
     // );
     logger.log(`Not updating document: ${nodePath.basename(document.uri)}`);
     return true;
+  }
+
+  public isHydrated(): boolean {
+    const projects = this.getAll();
+    const hydrated = projects.every(
+      (project) => project.aureliaProgram !== null
+    );
+    return hydrated;
   }
 
   public updateManyViewModel(documents: TextDocument[]) {

@@ -35,17 +35,15 @@ export class AureliaServer {
   }
 
   public async onConnectionInitialized(
-    extensionSettings: ExtensionSettings
+    extensionSettings?: ExtensionSettings
   ): Promise<void> {
     /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
 
     await onConnectionInitialized(
       this.container,
-      extensionSettings,
+      extensionSettings ?? this.extensionSettings,
       this.allDocuments.all()
     );
-
-    /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready. 🚀',{logMs:true,msEnd:true});
   }
 
   public async onConnectionDidChangeContent(

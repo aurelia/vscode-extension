@@ -125,7 +125,7 @@ connection.onInitialized(async () => {
       extensionSettings,
       documents
     );
-    await aureliaServer.onConnectionInitialized(extensionSettings);
+    await aureliaServer.onConnectionInitialized();
 
     const tsConfigPath = UriUtils.toSysPath(workspaceRootUri);
     const aureliaProjects = globalContainer.get(AureliaProjects);
@@ -291,7 +291,7 @@ connection.onExecuteCommand(
           extensionSettings,
           documents
         );
-        await aureliaServer.onConnectionInitialized(extensionSettings);
+        await aureliaServer.onConnectionInitialized();
 
         break;
       }

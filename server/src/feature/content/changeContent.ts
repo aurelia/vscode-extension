@@ -11,10 +11,19 @@ export async function onConnectionDidChangeContent(
   container: Container,
   { document }: TextDocumentChangeEvent<TextDocument>
 ) {
+  const aureliaProjects = container.get(AureliaProjects);
+
+  // Hydration
+  if (!aureliaProjects.isHydrated()) {
+    aureliaProjects.hydrate([document]);
+    /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready to use. 🚀',{logMs:true,msEnd:true});
+    return;
+  }
+
+  // Updating
   switch (document.languageId) {
     case 'javascript':
     case 'typescript': {
-      const aureliaProjects = container.get(AureliaProjects);
       if (aureliaProjects.preventHydration(document)) return;
 
       // await aureliaProjects.hydrate([document]);
