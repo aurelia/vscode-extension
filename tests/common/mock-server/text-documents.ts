@@ -6,6 +6,7 @@ import { TextDocuments } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../../../server/src/common/logging/logger';
+import { StringUtils } from '../../../server/src/common/string/StringUtils';
 import { UriUtils } from '../../../server/src/common/view/uri-utils';
 
 const logger = new Logger('text-documents');
@@ -123,11 +124,18 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     const textDocuments = filePaths.map((path) => {
       const fileContent = fs.readFileSync(path, 'utf-8');
       const asUri = UriUtils.toVscodeUri(path);
+      // We want LF and not CRLF for testing purposes
+      const ensureLfEolFileContent = StringUtils.replaceAll(
+        fileContent,
+        '\r\n',
+        '\n'
+      );
+
       const textDocument = TextDocument.create(
         asUri,
         'typescript',
         1,
-        fileContent
+        ensureLfEolFileContent
       );
       return textDocument;
     });

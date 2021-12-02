@@ -57,31 +57,33 @@ const testCasesMapFileBased: TestCasesMapFileBased = {};
 /* prettier-ignore */
 testCasesMapFileBased['Offsets'] = [
   //   , Type                      , LINE  , CODE                                          , PARAMETERS                        , FILE
-  [{}  , 'Attribute'               , 2     , '<div id.bind="bar"></div>'                   , {regVal:'bar' ,off:'47;50'}       , 'custom-element.html' ] ,
-  [{}  , 'AttributeInterpolation'  , 1     , '<div id="${foo}"></div>'                     , {regVal:'foo' ,off:'19;22'}       , 'custom-element.html' ] ,
+  [{}  , 'Attribute'               , 2     , '<div id.bind="bar"></div>'                   , {regVal:'bar' ,off:'45;48'}       , 'custom-element.html' ] ,
+  [{}  , 'AttributeInterpolation'  , 1     , '<div id="${foo}"></div>'                     , {regVal:'foo' ,off:'18;21'}       , 'custom-element.html' ] ,
   [{}  , 'CustomElement'           , NaN   , ''                                            , {}                                , 'other-custom-element-user.html' ] ,
   [{}  , 'Import'                  , NaN   , ''                                            , {}                                , 'other-custom-element-user.html' ] ,
-  [{}  , 'RepeatFor'               , 3     , '<div repeat.for="fooElement of foo"></div>'  , {regVal:'foo' ,off:'91;94'}       , 'custom-element.html' ] ,
+  [{}  , 'RepeatFor'               , 3     , '<div repeat.for="fooElement of foo"></div>'  , {regVal:'foo' ,off:'88;91'}       , 'custom-element.html' ] ,
   [{}  , 'TextInterpolation'       , 0     , '${foo}'                                      , {regVal:'foo' ,off:'2;6' }        , 'custom-element.html' ] ,
 ];
 
 /* prettier-ignore */
 testCasesMapFileBased['Access scopes'] = [
-  //   , Type                      , LINE  , CODE                                                        , PARAMETERS                                                                          , FILE
-  [{}  , 'Attribute'               , NaN   , '<p id.bind="foo"></p>'                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                                , '' ] ,
-  [{}  , 'Attribute'               , NaN   , '<p>${foo}</p>'                                             , {accSco:['foo'] ,nameLoc: ['5;8']}                                                  , ''] ,
-  [{}  , 'Attribute'               , NaN   , '<p>\n..${foo}</p>'                                         , {accSco:['foo'] ,nameLoc: ['9;12']}                                                 , ''] ,
-  [{}  , 'Attribute'               , NaN   , '<p>\n\n..${foo}</p>'                                       , {accSco:['foo'] ,nameLoc: ['11;14']}                                                , ''] ,
-  [{}  , 'Attribute'               , NaN   , '<p>\n\n..${foo} ${bar}</p>'                                , {accSco:['foo','bar'] ,nameLoc: ['11;14' ,'18;21']}                                 , ''] ,
-  [{}  , 'Attribute'               , NaN   , '<p>\n..${foo}\n..${bar}</p>'                               , {accSco:['foo','bar'] ,nameLoc: ['9;12' ,'19;22']}                                  , ''] ,
-  [{}  , 'Attribute'               , NaN   , '<p>\n\n..${foo} ${bar}\n..${qux}</p>'                      , {accSco:['foo','bar','qux'] ,nameLoc: ['11;14' ,'18;21' ,'28;31']}                  , ''] ,
-  [{}  , 'Attribute'               , NaN   , '<p repeat.for="person of people"></p>'                     , {accSco:['people']}                                                                 , '' ] ,
-  [{}  , 'Attribute'               , NaN   , '<p repeat.for="p of people | foo:bar & qux:\'zed\'"></p>'  , {accSco:['people;bar']}                                                             , '' ] ,
-  [{}  , 'TextInterpolation'       , 0     , '${foo}'                                                    , {accSco:['foo'] ,nameLoc:['2;5']}                                                    , 'custom-element.html' ] ,
-  [{}  , 'AttributeInterpolation'  , 1     , '<div id="${foo}"></div>'                                   , {accSco:['foo'] ,nameLoc: ['19;22']}                                               , 'custom-element.html'],
-  [{}  , 'Attribute'               , 2     , '<div id.bind="bar"></div>'                                 , {accSco:['bar'] ,nameLoc: ['47;50']}                                               , 'custom-element.html'],
-  [{}  , 'Many'                    , 4     , '<span id.bind="qux.attr">${qux.interpol}</span>'           , {accSco:['qux!qux'] ,nameLoc: ['119;122','131;134']}                               , 'custom-element.html'],
-  [{}  , 'Many'                    , 5     , '<p class="${useFoo(qux)}">${arr[qux] |hello}</p>'          , {accSco:['useFoo;qux!arr;qux'] ,nameLoc: ['165;171!172;175','181;184','185;188']}  , 'custom-element.html'],
+  //   , Type                      , LINE  , CODE                                                        , PARAMETERS                                                                         , FILE
+  [{}  , 'Attribute'               , NaN   , '<p id.bind="foo"></p>'                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , '' ] ,
+  [{}  , 'Attribute'               , NaN   , '<p>${foo}</p>'                                             , {accSco:['foo'] ,nameLoc: ['5;8']}                                                 , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p>\n..${foo}</p>'                                         , {accSco:['foo'] ,nameLoc: ['8;11']}                                                , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p>\r\n..${foo}</p>'                                       , {accSco:['foo'] ,nameLoc: ['9;12']}                                                , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p>\n\n..${foo}</p>'                                       , {accSco:['foo'] ,nameLoc: ['9;12']}                                                , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p>\n\n..${foo} ${bar}</p>'                                , {accSco:['foo','bar'] ,nameLoc: ['9;12' ,'16;19']}                                 , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p>\n..${foo}\n..${bar}</p>'                               , {accSco:['foo','bar'] ,nameLoc: ['8;11' ,'17;20']}                                 , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p>\n\n..${foo} ${bar}\n..${qux}</p>'                      , {accSco:['foo','bar','qux'] ,nameLoc: ['9;12' ,'16;19' ,'25;28']}                  , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p>\r\n\r\n..${foo} ${bar}\r\n..${qux}</p>'                , {accSco:['foo','bar','qux'] ,nameLoc: ['11;14' ,'18;21' ,'28;31']}                 , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p repeat.for="person of people"></p>'                     , {accSco:['people']}                                                                , ''] ,
+  [{}  , 'Attribute'               , NaN   , '<p repeat.for="p of people | foo:bar & qux:\'zed\'"></p>'  , {accSco:['people;bar']}                                                            , ''] ,
+  [{}  , 'TextInterpolation'       , 0     , '${foo}'                                                    , {accSco:['foo'] ,nameLoc:['2;5']}                                                  , 'custom-element.html'] ,
+  [{}  , 'AttributeInterpolation'  , 1     , '<div id="${foo}"></div>'                                   , {accSco:['foo'] ,nameLoc: ['18;21']}                                               , 'custom-element.html'],
+  [{}  , 'Attribute'               , 2     , '<div id.bind="bar"></div>'                                 , {accSco:['bar'] ,nameLoc: ['45;48']}                                               , 'custom-element.html'],
+  [{}  , 'Many'                    , 4     , '<span id.bind="qux.attr">${qux.interpol}</span>'           , {accSco:['qux','qux'] ,nameLoc: ['115;118','127;130']}                             , 'custom-element.html'],
+  [{}  , 'Many'                    , 5     , '<p class="${useFoo(qux)}">${arr[qux] |hello}</p>'          , {accSco:['useFoo!qux','arr!qux'] ,nameLoc: ['160;166!167;170','176;179!180;183']}  , 'custom-element.html'],
 ];
 
 /* prettier-ignore */
@@ -145,10 +147,10 @@ describe('RegionParser.', () => {
                 const { startTagLocation } = openingCustomElementTag;
                 expect(startTagLocation.startLine).toBe(5);
                 expect(startTagLocation.startCol).toBe(2);
-                expect(startTagLocation.startOffset).toBe(147);
+                expect(startTagLocation.startOffset).toBe(142);
                 expect(startTagLocation.endLine).toBe(10);
                 expect(startTagLocation.endCol).toBe(3);
-                expect(startTagLocation.endOffset).toBe(248);
+                expect(startTagLocation.endOffset).toBe(238);
               });
 
               // Custom Element - Start Tag
@@ -165,10 +167,10 @@ describe('RegionParser.', () => {
                 const { sourceCodeLocation } = openingCustomElementTag;
                 expect(sourceCodeLocation.startLine).toBe(5);
                 expect(sourceCodeLocation.startCol).toBe(3);
-                expect(sourceCodeLocation.startOffset).toBe(148);
+                expect(sourceCodeLocation.startOffset).toBe(143);
                 expect(sourceCodeLocation.endLine).toBe(5);
                 expect(sourceCodeLocation.endCol).toBe(17);
-                expect(sourceCodeLocation.endOffset).toBe(162);
+                expect(sourceCodeLocation.endOffset).toBe(157);
               });
 
               // Custom Element - End Tag
@@ -186,10 +188,10 @@ describe('RegionParser.', () => {
                 const { sourceCodeLocation } = closingCustomElementTag;
                 expect(sourceCodeLocation.startCol).toBe(5);
                 expect(sourceCodeLocation.startLine).toBe(10);
-                expect(sourceCodeLocation.startOffset).toBe(250);
+                expect(sourceCodeLocation.startOffset).toBe(240);
                 expect(sourceCodeLocation.endCol).toBe(19);
                 expect(sourceCodeLocation.endLine).toBe(10);
-                expect(sourceCodeLocation.endOffset).toBe(264);
+                expect(sourceCodeLocation.endOffset).toBe(254);
               });
             }
 
@@ -251,7 +253,7 @@ describe('RegionParser.', () => {
 
                 let targetRegions = shared.parsedRegions;
                 if (shared.parsedRegions.length === 0) {
-                  const document = TextDocument.create('', '', 0, code);
+                  const document = TextDocument.create('', 'html', 0, code);
                   targetRegions = RegionParser.parse(document, []);
                 }
 
@@ -271,16 +273,12 @@ describe('RegionParser.', () => {
                   );
                   if (!resultNames) return;
                   if (rawExpectedAccessScopes == null) return;
-                  // ['12;23|34']
                   const expectedAccessScopes =
                     rawExpectedAccessScopes[regionIndex].split(
                       COLLECTION_SPLIT
                     );
-                  // ['12;23']
-                  const expectedAccessScopeByRegion =
-                    expectedAccessScopes[regionIndex].split(GROUP_SPLIT);
 
-                  expect(resultNames).toEqual(expectedAccessScopeByRegion);
+                  expect(resultNames).toEqual(expectedAccessScopes);
 
                   if (rawExpectedNameLocation == null) return;
                   if (rawExpectedNameLocation.length === 0) return;
@@ -321,7 +319,7 @@ function getEmptyShared() {
   const shared: Shared = {
     workspaceRootUri: '',
     parsedRegions,
-    line: 0,
+    line: NaN,
   };
   return shared;
 }

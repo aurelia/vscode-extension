@@ -45,6 +45,7 @@ export class RegionParser {
       (component) => component.componentName
     );
     const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
+    const documentHasCrlf = document.getText().includes('\r\n');
 
     let hasTemplateTag = false;
 
@@ -165,15 +166,18 @@ export class RegionParser {
       while ((interpolationMatch = interpolationRegex.exec(text.text))) {
         // Find number of new lines
         const textUntilMatch = text.text.substring(0, interpolationMatch.index);
-        const countNewLineRegex = /\n/g;
-        const numberOfNewLines =
-          textUntilMatch.match(countNewLineRegex)?.length ?? 0;
+        // crlf = carriage return, line feed (windows specific)
+        let numberOfCrlfs = 0;
+        if (documentHasCrlf) {
+          const crlfRegex = /\n/g;
+          numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
+        }
 
         // Parse
         const viewRegion = TextInterpolationRegion.parse5Text(
           text,
           interpolationMatch,
-          numberOfNewLines
+          numberOfCrlfs
         );
         if (!viewRegion) return;
         viewRegions.push(viewRegion);

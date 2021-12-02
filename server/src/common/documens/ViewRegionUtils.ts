@@ -52,7 +52,7 @@ export class ViewRegionUtils {
       const isSameLine = region.sourceCodeLocation.startLine === Number(line);
       if (isSameLine) {
         // Excluded TextInterpolation regions, because text regions start on "line before" in parse5
-        if (region.textValue?.startsWith('\n') != null) {
+        if (region.textValue?.startsWith('\n')) {
           return false;
         }
       }
