@@ -868,6 +868,9 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           // beforeStartIndex; /*?*/
           const beforeValueIndex =
             state._startIndex - state._tokenValue.toString().length;
+          state; /* ? */
+          // state._startIndex; /* ? */
+          // beforeValueIndex; /* ? */
           // state.ip[state._startIndex]; /*?*/
           // state.ip[beforeValueIndex]; /*?*/
           const openBracketIndex = findCharBackUntil(state, ['{', ':', ',']);
@@ -876,16 +879,24 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           // for (let index = beforeValueIndex; index > 0; index -= 1) {
 
           // console.log('^^^');
-          // @ts-ignore
           const token = state.ip[openBracketIndex];
 
           if (token === '{') {
+            'AccessScopeExpression'; /* ?*/
+            // const start = startOffset + beforeValueIndex + 1;
+            const start = startOffset + state._startIndex;
+            const end =
+              startOffset +
+              state._startIndex +
+              state._tokenValue.toString().length;
+            start; /*?*/
+            end; /*?*/
             result = new AccessScopeExpression(
               state._tokenValue as string,
               access & Access.Ancestor,
               {
-                start: startOffset + beforeValueIndex,
-                end: startOffset + state._startIndex,
+                start,
+                end,
               }
             );
           } else if (token === ',') {
@@ -1162,11 +1173,13 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           }
           consume(state, Token.CloseParen);
           if (access & Access.Scope) {
+            'CallScope?'; /* ? */
             // state._tokenValue; /*?*/
             // state.index/*?*/
             // state._startIndex/*?*/
-            // state/*?*/
+            state/*?*/
             const startCallScopeIndex = state.index - state._startIndex - 1;
+             startCallScopeIndex/*?*/
             result = new CallScopeExpression(
               name,
               args,
@@ -1400,7 +1413,12 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
       if (true /**/) throw new Error(`Unexpected keyword "of": '${state.ip}'`);
       else throw new Error(`AUR0161:${state.ip}`);
     }
-    if (true /**/) throw new Error(`Unconsumed token: '${state.ip}'`);
+    if (true /**/)
+      throw new Error(
+        `Unconsumed token: '${state.ip} near index ${state.index}. Maybe: ${
+          state.ip[state.index]
+        }'`
+      );
     else throw new Error(`AUR0162:${state.ip}`);
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1683,7 +1701,11 @@ function parseInterpolation(
       case Char.Dollar:
         if (state.ip.charCodeAt(state.index + 1) === Char.OpenBrace) {
           parts.push(result);
+          // parts; /*?*/
+          const partsLength = result.length;
+          // partsLength; /*?*/
           result = '';
+          // startOffset; /* ? */
 
           state.index += 2;
           state._currentChar = state.ip.charCodeAt(state.index);
@@ -1694,6 +1716,7 @@ function parseInterpolation(
             Precedence.Variadic,
             ExpressionType.Interpolation,
             startOffset
+            // startOffset + partsLength
           );
           expressions.push(expression);
           continue;
@@ -1946,7 +1969,7 @@ function consume(state: ParserState, token: Token): void {
 }
 
 function findCharBackUntil(state: ParserState, targetChars: string[]) {
-  let openBracketIndex;
+  let openBracketIndex = -1;
   for (let index = state._startIndex; index > 0; index -= 1) {
     // state.ip[index]; /*?*/
 
