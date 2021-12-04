@@ -26,10 +26,10 @@ type TestRegionType = keyof typeof ViewRegionType | 'ATag' | 'Many';
 
 type TestCaseFileBased = [
   TestCaseOptions,
-  TestRegionType,
-  number /* Line */,
   string /* Code */,
   TestCaseFileBasedParameters,
+  TestRegionType,
+  number /* Line */,
   string /* Filename */
 ];
 export interface TestCasesMapFileBased {
