@@ -22,7 +22,10 @@ import {
   ValueConverterExpression,
 } from '../@aurelia-runtime-patch/src';
 import '@aurelia/metadata';
-import { SourceCodeLocation } from '../@aurelia-runtime-patch/src/binding/ast';
+import {
+  ArrayLiteralExpression,
+  SourceCodeLocation,
+} from '../@aurelia-runtime-patch/src/binding/ast';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
@@ -38,6 +41,8 @@ export type KindToActualExpression<TargetKind extends ExpressionKind> =
                 TargetKind extends ExpressionKind.Conditional ? ConditionalExpression :
                   TargetKind extends ExpressionKind.Unary ? UnaryExpression :
                     TargetKind extends ExpressionKind.ForOfStatement ? ForOfStatement :
+                      TargetKind extends ExpressionKind.ArrayLiteral ? ArrayLiteralExpression :
+                        TargetKind extends ExpressionKind.ObjectLiteral ? ObjectLiteralExpression :
 never;
 
 export enum ExpressionKind_Dev {
@@ -145,7 +150,6 @@ export class ParseExpressionUtil {
       input,
       {
         expressionType: options?.expressionType ?? ExpressionType.Interpolation,
-        startOffset: options?.startOffset ?? 0,
         isInterpolation:
           options?.expressionType === ExpressionType.Interpolation,
       }
@@ -264,7 +268,6 @@ export class ParseExpressionUtil {
   ): KindToActualExpression<TargetKind>[] {
     const parsed = parseExpression(input, {
       expressionType: ExpressionType.None,
-      startOffset: 0,
     }) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
       parsed,
@@ -512,6 +515,15 @@ function findAllExpressionRecursive(
   else if (singleExpression instanceof ObjectLiteralExpression) {
     findAllExpressionRecursive(
       singleExpression.values as Writeable<IsAssign[]>,
+      targetKinds,
+      collector,
+      options
+    );
+
+    return;
+  } else if (singleExpression instanceof ArrayLiteralExpression) {
+    findAllExpressionRecursive(
+      singleExpression.elements as Writeable<IsAssign[]>,
       targetKinds,
       collector,
       options

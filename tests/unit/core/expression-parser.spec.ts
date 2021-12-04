@@ -46,6 +46,12 @@ testCasesMapFileBased['Offsets'] = [
   [{} , 'Attribute' , NaN , 'foo.bar[0]'                       , {accSco:['foo'] ,nameLoc: ['0;3']} , '' ] ,
   [{} , 'Attribute' , NaN , 'foo[bar] | bar'                   , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
 
+  // Unsupported
+  // [{focus:true} , 'Attribute' , NaN , '[foo, ...bar]'                   , {accSco:['foo!bar'] ,nameLoc: ['1;4!9;12']} , '' ] ,
+  // [{focus:true} , 'Attribute' , NaN , 'foo([...bar])'                   , {accSco:['foo'] ,nameLoc: ['0;3!8;11']} , '' ] ,
+  // [{focus:true} , 'Attribute' , NaN , '{foo, ...bar}'                   , {accSco:['foo!bar'] ,nameLoc: ['1;4!9;12']} , '' ] ,
+  // [{focus:true} , 'Attribute' , NaN , 'foo({...bar})'                   , {accSco:['foo'] ,nameLoc: ['0;3!8;11']} , '' ] ,
+
   // Single Interpolation
   // , 'Type , LINE , 'CODE                                    , {PARAMETERS
   [{} , 'TextInterpolation' , NaN , '${foo}'                   , {accSco:['foo'] ,nameLoc: ['2;5']} , '' ] ,
@@ -122,18 +128,17 @@ describe('RegionParser.', () => {
                 let startOffset = 0;
                 let expressionType = ExpressionType.None;
                 if (regionType === ViewRegionType.TextInterpolation) {
-                  // startOffset += 2;
                   expressionType = ExpressionType.Interpolation;
                 }
 
-                code /* ? */
+                // code /* ? */
                 const targetParsed =
                   ParseExpressionUtil.getAllExpressionsOfKindV2(
                     code,
                     [ExpressionKind.AccessScope, ExpressionKind.CallScope],
                     { startOffset, expressionType }
                   );
-                targetParsed; /* ? */
+                // targetParsed; /* ? */
                 // JSON.stringify(targetParsed, null, 4) /* ? */
                 targetParsed.forEach((scope, scopeIndex) => {
                   // Name

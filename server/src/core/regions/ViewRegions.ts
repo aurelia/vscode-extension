@@ -766,8 +766,7 @@ export class TextInterpolationRegion extends AbstractRegion {
     text.text; /*? */
     const parsed = parseExpression(text.text, {
       expressionType: ExpressionType.Interpolation,
-      startOffset: 0,
-      isInterpolation: true
+      isInterpolation: true,
     }) as unknown as Interpolation;
     parsed; /* ? */
 
