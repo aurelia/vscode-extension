@@ -11,7 +11,8 @@ module.exports = {
   // preset: 'ts-jest',
   // verbose: true,
   // testRegex: '.spec.[j,t]s$',
-  testMatch: ['**/core/**/*.spec.ts'],
+  // testMatch: ['*.spec.ts'],
+  // testMatch: ['**/unit/core/**/*.spec.ts'],
   // coverageDirectory: '.coverage',
   // coverageReporters: ['text', 'text-summary'],
   // coverageThreshold: {
