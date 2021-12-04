@@ -14,12 +14,15 @@ import {
   Interpolation,
   IsAssign,
   IsExpression,
+  ObjectLiteralExpression,
   parseExpression,
   PrimitiveLiteralExpression,
+  TemplateExpression,
   UnaryExpression,
   ValueConverterExpression,
 } from '../@aurelia-runtime-patch/src';
 import '@aurelia/metadata';
+import { SourceCodeLocation } from '../@aurelia-runtime-patch/src/binding/ast';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
@@ -124,21 +127,36 @@ export class ParseExpressionUtil {
 
     if (input === '') return [];
 
+    // --> Ignore for now
+    // TODO: how to differentiate between normal and interpolation?
+    // ensure ${}
+
+    // remove ${}
     if (input.startsWith('${')) {
       input = input.replace('${', '');
+      // input = `\${${input}}`;
     }
     if (input.endsWith('}')) {
       input = input.substring(0, input.length - 1);
+      // input = `${input}}`;
     }
 
     const parsed = parseExpression(
       input,
-      options?.expressionType ?? ExpressionType.None,
+      options?.expressionType ?? ExpressionType.Interpolation,
+      // options?.expressionType ?? ExpressionType.None,
       options?.startOffset
     ) as unknown as Interpolation;
+    // ) as unknown as Interpolation;
 
     // Interpolation
     if (parsed instanceof Interpolation) {
+      // if (parsed) {
+      //   parsed.parts; /* ? */
+      //   // parsed.expressions /* ? */
+      //   JSON.stringify(parsed.expressions, null, 4); /* ? */
+      // }
+
       parsed.expressions.forEach((expression) => {
         // ExpressionKind_Dev[expression.$kind]; /*?*/
         // expression; /*?*/
@@ -162,6 +180,8 @@ export class ParseExpressionUtil {
     }
     // None
     else {
+      // parsed; /* ? */
+      // JSON.stringify(parsed, null, 4); /* ? */
       findAllExpressionRecursive(
         parsed,
         targetKinds,
@@ -169,6 +189,8 @@ export class ParseExpressionUtil {
         options
       );
     }
+
+    finalExpressions = sortExpressions<ReturnType>(finalExpressions);
 
     return finalExpressions;
   }
@@ -270,16 +292,16 @@ function findAllExpressionRecursive(
   // .args
   if (Array.isArray(expressionOrList)) {
     const targetExpressions = expressionOrList.filter((expression) => {
-      const targetExpression = isKindIncluded(targetKinds, expression.$kind);
+      const targetExpressionKind = isKindIncluded(
+        targetKinds,
+        expression.$kind
+      );
       // Array can have children eg. AccessScopes
-      if (!targetExpression) {
+      if (!targetExpressionKind) {
         findAllExpressionRecursive(expression, targetKinds, collector, options);
       }
       // Special case, if we want CallScope AND AccessScope
-      else if (
-        expression instanceof CallScopeExpression &&
-        options?.flatten !== undefined
-      ) {
+      else if (expression instanceof CallScopeExpression) {
         findAllExpressionRecursive(
           expression.args as Writeable<IsAssign[]>,
           targetKinds,
@@ -288,7 +310,7 @@ function findAllExpressionRecursive(
         );
       }
 
-      return targetExpression;
+      return targetExpressionKind;
     });
 
     collector.push(...targetExpressions);
@@ -297,7 +319,12 @@ function findAllExpressionRecursive(
 
   // default rec return
   const singleExpression = expressionOrList;
-  if (isKindIncluded(targetKinds, singleExpression.$kind)) {
+  // if nothing to filter, return all
+  if (targetKinds.length === 0) {
+    collector.push(singleExpression);
+  }
+  // return targets only
+  else if (isKindIncluded(targetKinds, singleExpression.$kind)) {
     collector.push(singleExpression);
   }
 
@@ -456,6 +483,30 @@ function findAllExpressionRecursive(
     return;
   }
 
+  // .expression
+  else if (singleExpression instanceof TemplateExpression) {
+    findAllExpressionRecursive(
+      singleExpression.expressions as Writeable<IsAssign[]>,
+      targetKinds,
+      collector,
+      options
+    );
+
+    return;
+  }
+
+  // .values
+  else if (singleExpression instanceof ObjectLiteralExpression) {
+    findAllExpressionRecursive(
+      singleExpression.values as Writeable<IsAssign[]>,
+      targetKinds,
+      collector,
+      options
+    );
+
+    return;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   singleExpression; /* ? */
   /* prettier-ignore */ throw new Error(`Unconsumed. Was: '${ExpressionKind_Dev[expressionOrList.$kind]}'`);
@@ -471,6 +522,22 @@ function isKindIncluded(
   return isKind;
 }
 
+function sortExpressions<T>(finalExpressions: T[]): T[] {
+  const sorted = finalExpressions.sort((rawExpressionA, rawExpressionB) => {
+    const expressionA = rawExpressionA as unknown as {
+      nameLocation: SourceCodeLocation;
+    };
+    const expressionB = rawExpressionB as unknown as {
+      nameLocation: SourceCodeLocation;
+    };
+    const sortedCheck =
+      expressionA.nameLocation.start - expressionB.nameLocation.start;
+
+    return sortedCheck;
+  });
+
+  return sorted;
+}
 // const input = '${repos || hello | sort:direction.value:hello(what) | take:10}';
 // const parsed = parseExpression(input /*?*/, ExpressionType.Interpolation);
 // const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(parsed, [

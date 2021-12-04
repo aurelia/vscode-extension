@@ -7,6 +7,8 @@ import {
   CallScopeExpression,
   ExpressionKind,
   ExpressionType,
+  Interpolation,
+  parseExpression,
 } from '../../common/@aurelia-runtime-patch/src';
 import { AureliaView } from '../../common/constants';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
@@ -732,43 +734,54 @@ export class TextInterpolationRegion extends AbstractRegion {
     /** Make up for difference between parse5 (not counting \n) and vscode (counting \n) */
     newLineCounter: number
   ) {
-    if (interpolationMatch === null) return;
+    // if (interpolationMatch === null) return;
     // interpolationMatch; /* ? */
     const textLocation = text.sourceCodeLocation;
     if (!textLocation) return;
 
-    /** Eg. \n\n  ${grammarRules.length} */
-    const startInterpolationLength =
-      interpolationMatch.index + // width:_
-      2; // ${
+    // /** Eg. \n\n  ${grammarRules.length} */
+    // const startInterpolationLength =
+    //   interpolationMatch.index + // width:_
+    //   2; // ${
 
-    // TODO: have to plus each new line match
-    const startOffset =
-      textLocation.startOffset +
-      startInterpolationLength + //
-      newLineCounter; // Actual making up for difference,
-    /** Eg. >css="width: ${message}<px;" */
-    const interpolationValue = interpolationMatch[1];
-    const endInterpolationLength =
-      Number(interpolationValue.length) + // message
-      1; // "embrace" end char
-    const endOffset = startOffset + endInterpolationLength;
+    // // TODO: have to plus each new line match
+    // textLocation.startOffset +
+    //   startInterpolationLength + //
+    //   newLineCounter; // Actual making up for difference,
+    // /** Eg. >css="width: ${message}<px;" */
+    // const interpolationValue = interpolationMatch[1];
+    // const endInterpolationLength =
+    //   Number(interpolationValue.length) + // message
+    //   1; // "embrace" end char
+    // const endOffset = startOffset + endInterpolationLength;
 
-    const updatedLocation: parse5.Location = {
-      ...textLocation,
-      startOffset,
-      endOffset,
-    };
+    // const updatedLocation: parse5.Location = {
+    //   ...textLocation,
+    //   startOffset,
+    //   endOffset,
+    // };
+    const startOffset = textLocation.startOffset;
+     startOffset/*?*/
+
+    text.text; /*? */
+    const parsed = parseExpression(
+      text.text,
+      ExpressionType.Interpolation,
+      0
+    ) as unknown as Interpolation;
+    parsed /* ? */
 
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
-      interpolationValue,
+      text.text,
       [ExpressionKind.AccessScope, ExpressionKind.CallScope],
       { startOffset }
     );
+    accessScopes.length; /* ?*/
 
+    if (text.sourceCodeLocation == null) return;
     const textRegion = TextInterpolationRegion.create({
-      regionValue: interpolationValue,
-      sourceCodeLocation: updatedLocation,
+      regionValue: text.text,
+      sourceCodeLocation: text.sourceCodeLocation,
       textValue: text.text,
       accessScopes,
     });

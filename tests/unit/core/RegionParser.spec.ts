@@ -5,52 +5,20 @@ import { AureliaView } from '../../../server/src/common/constants';
 import { ViewRegionUtils } from '../../../server/src/common/documens/ViewRegionUtils';
 import { RegionParser } from '../../../server/src/core/regions/RegionParser';
 import {
-  AbstractRegion,
   RepeatForRegion,
   ViewRegionSubType,
   ViewRegionType,
 } from '../../../server/src/core/regions/ViewRegions';
-import { getPathsFromFileNames } from '../../common/file-path-mocks';
 import {
-  FixtureNames,
-  getFixtureUri,
-} from '../../common/fixtures/get-fixture-dir';
-import { MockTextDocuments } from '../../common/mock-server/text-documents';
-
-interface TestCaseFileBasedParameters {
-  accSco?: string[];
-  nameLoc?: string[];
-  /** [start;end] */
-  off?: string;
-  regVal?: string;
-}
-
-interface TestCaseOptions {
-  focus?: boolean;
-}
-
-type TestRegionType = keyof typeof ViewRegionType | 'ATag' | 'Many';
-
-type TestCaseFileBased = [
-  TestCaseOptions,
-  TestRegionType,
-  number /* Line */,
-  string /* Code */,
-  TestCaseFileBasedParameters,
-  string /* Filename */
-];
-interface TestCasesMapFileBased {
-  [description: string]: TestCaseFileBased[];
-}
-
-interface Shared {
-  workspaceRootUri: string;
-  parsedRegions: AbstractRegion[];
-  line: number;
-}
-
-const COLLECTION_SPLIT = '!';
-const GROUP_SPLIT = ';';
+  TestCasesMapFileBased,
+  getEmptyShared,
+  filterTestCaseMap,
+  givenImInTheProject,
+  whenIParseTheFile,
+  andImOnTheLine,
+  COLLECTION_SPLIT,
+  GROUP_SPLIT,
+} from '../common/testTemplate';
 
 const testCasesMapFileBased: TestCasesMapFileBased = {};
 
@@ -79,7 +47,9 @@ testCasesMapFileBased['Access scopes'] = [
   [{}  , 'Attribute'               , NaN   , '<p>\r\n\r\n..${foo} ${bar}\r\n..${qux}</p>'                , {accSco:['foo','bar','qux'] ,nameLoc: ['11;14' ,'18;21' ,'28;31']}                 , ''] ,
   [{}  , 'Attribute'               , NaN   , '<p repeat.for="person of people"></p>'                     , {accSco:['people']}                                                                , ''] ,
   [{}  , 'Attribute'               , NaN   , '<p repeat.for="p of people | foo:bar & qux:\'zed\'"></p>'  , {accSco:['people;bar']}                                                            , ''] ,
-  [{}  , 'TextInterpolation'       , 0     , '${foo}'                                                    , {accSco:['foo'] ,nameLoc:['2;5']}                                                  , 'custom-element.html'] ,
+  // Nested ${${}}
+  // [{focus:true}  , 'Attribute'     , NaN   , "<ul>Funding ${other}</ul>"                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , '' ] ,
+  [{focus:true}  , 'Attribute'     , NaN   , "<ul>Funding ${other} middle ${foo.bar ? `(${foo.bar.qux})` : ''} Max</ul>"                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , '' ] ,
   [{}  , 'AttributeInterpolation'  , 1     , '<div id="${foo}"></div>'                                   , {accSco:['foo'] ,nameLoc: ['18;21']}                                               , 'custom-element.html'],
   [{}  , 'Attribute'               , 2     , '<div id.bind="bar"></div>'                                 , {accSco:['bar'] ,nameLoc: ['45;48']}                                               , 'custom-element.html'],
   [{}  , 'Many'                    , 4     , '<span id.bind="qux.attr">${qux.interpol}</span>'           , {accSco:['qux','qux'] ,nameLoc: ['115;118','127;130']}                             , 'custom-element.html'],
@@ -95,7 +65,7 @@ testCasesMapFileBased['No parse result'] = [
 describe('RegionParser.', () => {
   let shared = getEmptyShared();
 
-  describe.only('File based.', () => {
+  describe.skip('File based.', () => {
     const filteredTestCaseMap = filterTestCaseMap(testCasesMapFileBased);
 
     Object.entries(filteredTestCaseMap).forEach(([testName, testCases]) => {
@@ -267,6 +237,8 @@ describe('RegionParser.', () => {
                 const rawExpectedAccessScopes = parameters.accSco;
                 const rawExpectedNameLocation = parameters.nameLoc;
 
+                targetRegions; /* ? */
+                expect(true).toBeFalsy();
                 targetRegions.forEach((region, regionIndex) => {
                   const resultNames = region.accessScopes?.map(
                     (scope) => scope.name
@@ -313,63 +285,3 @@ describe('RegionParser.', () => {
     });
   });
 });
-
-function getEmptyShared() {
-  const parsedRegions: AbstractRegion[] = [];
-  const shared: Shared = {
-    workspaceRootUri: '',
-    parsedRegions,
-    line: NaN,
-  };
-  return shared;
-}
-
-function givenImInTheProject(projectName: FixtureNames, shared: Shared) {
-  shared.workspaceRootUri = getFixtureUri(projectName);
-}
-
-function whenIParseTheFile(fileName: string, shared: Shared) {
-  const textDocumentPaths = getPathsFromFileNames(shared.workspaceRootUri, [
-    fileName,
-  ]);
-  const textDocuments = new MockTextDocuments(shared.workspaceRootUri);
-  const textDocument = textDocuments
-    .mock(textDocumentPaths)
-    .setActive(textDocumentPaths)
-    .getActive();
-
-  // const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
-  const parsedRegions = RegionParser.parse(
-    textDocument,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    [{ componentName: 'custom-element', viewFilePath: 'custom-element.html' }]
-  );
-
-  shared.parsedRegions = parsedRegions;
-}
-
-function andImOnTheLine(line: number, shared: Shared) {
-  shared.line = line;
-}
-
-function filterTestCaseMap(testCasesMap: TestCasesMapFileBased) {
-  const finalTestCasesMap: TestCasesMapFileBased = {};
-
-  Object.entries(testCasesMap).forEach(([testName, testCases]) => {
-    testCases.forEach((testCase) => {
-      if (testCase[0].focus !== true) return;
-
-      if (finalTestCasesMap[testName] == null) {
-        finalTestCasesMap[testName] = [];
-      }
-      finalTestCasesMap[testName].push(testCase);
-    });
-  });
-
-  if (Object.keys(finalTestCasesMap).length === 0) {
-    return testCasesMap;
-  }
-
-  return finalTestCasesMap;
-}

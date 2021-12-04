@@ -868,9 +868,6 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           // beforeStartIndex; /*?*/
           const beforeValueIndex =
             state._startIndex - state._tokenValue.toString().length;
-          state; /* ? */
-          // state._startIndex; /* ? */
-          // beforeValueIndex; /* ? */
           // state.ip[state._startIndex]; /*?*/
           // state.ip[beforeValueIndex]; /*?*/
           const openBracketIndex = findCharBackUntil(state, ['{', ':', ',']);
@@ -879,24 +876,16 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           // for (let index = beforeValueIndex; index > 0; index -= 1) {
 
           // console.log('^^^');
+          // @ts-ignore
           const token = state.ip[openBracketIndex];
 
           if (token === '{') {
-            'AccessScopeExpression'; /* ?*/
-            // const start = startOffset + beforeValueIndex + 1;
-            const start = startOffset + state._startIndex;
-            const end =
-              startOffset +
-              state._startIndex +
-              state._tokenValue.toString().length;
-            start; /*?*/
-            end; /*?*/
             result = new AccessScopeExpression(
               state._tokenValue as string,
               access & Access.Ancestor,
               {
-                start,
-                end,
+                start: startOffset + beforeValueIndex,
+                end: startOffset + state._startIndex,
               }
             );
           } else if (token === ',') {
@@ -1153,44 +1142,75 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           break;
         case Token.OpenParen:
           state._assignable = false;
+          // '>>>> 1'; /* ? */
           // state._tokenValue; /*?*/
           // state; /*?*/
           const openParentStateStartIndex = state._startIndex;
           nextToken(state);
           while ((state._currentToken as Token) !== Token.CloseParen) {
+            // ('>>>> 1.1'); /* ? */
+            // state._tokenValue; /*?*/
+            // state; /*?*/
+            // foo(bar())
+            let argsOffset = startOffset;
+            if ((state._currentToken as Token) === Token.CloseParen) {
+              argsOffset = startOffset + state._startIndex;
+            }
             args.push(
               parse(
                 state,
                 Access.Reset,
                 Precedence.Assign,
                 expressionType,
-                startOffset
+                argsOffset
               )
             );
             if (!consumeOpt(state, Token.Comma)) {
               break;
             }
           }
+          // '>>>> 2'; /* ? */
+          // state; /* ? */
           consume(state, Token.CloseParen);
           if (access & Access.Scope) {
-            'CallScope?'; /* ? */
             // state._tokenValue; /*?*/
             // state.index/*?*/
             // state._startIndex/*?*/
-            state/*?*/
+            // ('>>>> 3'); /* ? */
+            // state; /*?*/
+            // state._tokenValue; /* ? */
             const startCallScopeIndex = state.index - state._startIndex - 1;
-             startCallScopeIndex/*?*/
+            // startCallScopeIndex; /*?*/
+            // foo(bar)
+            let nameLocationStart = startOffset + startCallScopeIndex;
+            let nameLocationEnd =
+              startOffset + startCallScopeIndex + name.toString().length;
+            let scopeLocationStart = startOffset + startCallScopeIndex;
+            let scopeLocationEnd = startOffset + state._startIndex;
+            if ((state._currentToken as Token) === Token.CloseParen) {
+              // foo(bar())
+              ('>>>>>>>>>>>>>>>>>> hmm'); /* ? */
+              const openParenIndex = findCharBackUntil(state, ['(']);
+              if (openParenIndex != null) {
+                nameLocationStart =
+                  startOffset +
+                  openParenIndex -
+                  state._tokenValue.toString().length;
+                nameLocationEnd = startOffset + openParenIndex;
+                // TODO scopeLocation
+              }
+            }
             result = new CallScopeExpression(
               name,
               args,
               (result as AccessScopeExpression | AccessThisExpression).ancestor,
               {
-                start: startOffset + startCallScopeIndex,
-                end: startOffset + startCallScopeIndex + name.toString().length,
+                start: nameLocationStart,
+                end: nameLocationEnd,
               },
               {
-                start: startOffset + startCallScopeIndex,
-                end: startOffset + state._startIndex,
+                start: scopeLocationStart,
+                end: scopeLocationEnd,
                 // end: startOffset + state.index,
               }
             );
@@ -1413,12 +1433,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
       if (true /**/) throw new Error(`Unexpected keyword "of": '${state.ip}'`);
       else throw new Error(`AUR0161:${state.ip}`);
     }
-    if (true /**/)
-      throw new Error(
-        `Unconsumed token: '${state.ip} near index ${state.index}. Maybe: ${
-          state.ip[state.index]
-        }'`
-      );
+    if (true /**/) throw new Error(`Unconsumed token: '${state.ip}'`);
     else throw new Error(`AUR0162:${state.ip}`);
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1701,11 +1716,7 @@ function parseInterpolation(
       case Char.Dollar:
         if (state.ip.charCodeAt(state.index + 1) === Char.OpenBrace) {
           parts.push(result);
-          // parts; /*?*/
-          const partsLength = result.length;
-          // partsLength; /*?*/
           result = '';
-          // startOffset; /* ? */
 
           state.index += 2;
           state._currentChar = state.ip.charCodeAt(state.index);
@@ -1716,7 +1727,6 @@ function parseInterpolation(
             Precedence.Variadic,
             ExpressionType.Interpolation,
             startOffset
-            // startOffset + partsLength
           );
           expressions.push(expression);
           continue;
@@ -1969,7 +1979,7 @@ function consume(state: ParserState, token: Token): void {
 }
 
 function findCharBackUntil(state: ParserState, targetChars: string[]) {
-  let openBracketIndex = -1;
+  let openBracketIndex;
   for (let index = state._startIndex; index > 0; index -= 1) {
     // state.ip[index]; /*?*/
 

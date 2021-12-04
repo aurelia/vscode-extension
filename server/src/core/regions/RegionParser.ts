@@ -163,25 +163,58 @@ export class RegionParser {
 
     saxStream.on('text', (text: TextToken) => {
       let interpolationMatch: RegExpExecArray | null;
-      while ((interpolationMatch = interpolationRegex.exec(text.text))) {
-        // Find number of new lines
-        const textUntilMatch = text.text.substring(0, interpolationMatch.index);
-        // crlf = carriage return, line feed (windows specific)
-        let numberOfCrlfs = 0;
-        if (documentHasCrlf) {
-          const crlfRegex = /\n/g;
-          numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
-        }
 
-        // Parse
-        const viewRegion = TextInterpolationRegion.parse5Text(
-          text,
-          interpolationMatch,
-          numberOfCrlfs
-        );
-        if (!viewRegion) return;
-        viewRegions.push(viewRegion);
-      }
+      // const textUntilMatch = text.text.substring(0, interpolationMatch.index);
+      // crlf = carriage return, line feed (windows specific)
+      // let numberOfCrlfs = 0;
+      // if (documentHasCrlf) {
+      //   const crlfRegex = /\n/g;
+      //   numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
+      // }
+
+      // Parse
+      // text; /* ? */
+      // try {
+      const viewRegion = TextInterpolationRegion.parse5Text(text, null, 0);
+      if (!viewRegion) return;
+      viewRegions.push(viewRegion);
+
+      // while ((interpolationMatch = interpolationRegex.exec(text.text))) {
+      // Find number of new lines
+      // const textUntilMatch = text.text.substring(0, interpolationMatch.index);
+      // // crlf = carriage return, line feed (windows specific)
+      // let numberOfCrlfs = 0;
+      // if (documentHasCrlf) {
+      //   const crlfRegex = /\n/g;
+      //   numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
+      // }
+
+      // // Parse
+      // // text; /* ? */
+      // // try {
+      // const viewRegion = TextInterpolationRegion.parse5Text(
+      //   text,
+      //   // { text: document.getText() },
+      //   interpolationMatch,
+      //   numberOfCrlfs
+      // );
+      // if (!viewRegion) return;
+      // viewRegions.push(viewRegion);
+      // } catch (_error) {
+      //   const error = _error as Error;
+      //   error.message; /* ? */
+      //   if (!error.message.startsWith('Unterminated template string:'))
+      //     return;
+
+      //   const viewRegion = TextInterpolationRegion.parse5Text(
+      //     text,
+      //     interpolationMatch,
+      //     numberOfCrlfs
+      //   );
+      //   if (!viewRegion) return;
+      //   viewRegions.push(viewRegion);
+      // }
+      // }
     });
 
     saxStream.on('endTag', (endTag) => {
