@@ -902,8 +902,9 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
             // ('isInterpolation'); /* ? */
             // state; /* ?*/
             // const accessScopeStart = state._startIndex;
-            const accessScopeStart = state.index - state._tokenValue.toString().length;
-            const accessScopeEnd = state.index;
+            const accessScopeStart =
+              startOffset + state.index - state._tokenValue.toString().length;
+            const accessScopeEnd = startOffset + state.index;
             result = new AccessScopeExpression(
               state._tokenValue as string,
               access & Access.Ancestor,
@@ -1225,11 +1226,11 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
                 // TODO scopeLocation
               }
             }
-            ('CallScopeExpression'); /* ? */
+            // ('CallScopeExpression'); /* ? */
             if (isInterpolation) {
-              state; /* ? */
-              isInterpolation; /*?*/
-              startCallScopeIndex; /*?*/
+              // state; /* ? */
+              // isInterpolation; /*?*/
+              // startCallScopeIndex; /*?*/
               const targetNameLocation =
                 // @ts-ignore
                 result.nameLocation as SourceCodeLocation;
@@ -1401,7 +1402,6 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
   }
   if (Precedence.Variadic < minPrecedence) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result; /*?*/
     return result as any;
   }
 

@@ -128,34 +128,22 @@ export class ParseExpressionUtil {
     targetKinds: TargetKind[],
     options?: ExpressionsOfKindOptions
   ): ReturnType[] {
+    // /* prettier-ignore */ console.log('----------------------------------------')
     let finalExpressions: ReturnType[] = [];
 
-    if (input === '') return [];
-
-    // --> Ignore for now
-    // TODO: how to differentiate between normal and interpolation?
-    // ensure ${}
-
-    // remove ${}
-    if (input.startsWith('${')) {
-      // input = input.replace('${', '');
-      // input = `\${${input}}`;
-    }
-    if (input.endsWith('}')) {
-      // input = input.substring(0, input.length - 1);
-      // input = `${input}}`;
-    }
+    if (input.trim() === '') return [];
 
     const parsed = parseExpression(
       input,
       {
-        expressionType: options?.expressionType ?? ExpressionType.Interpolation,
+        expressionType: options?.expressionType ?? ExpressionType.None,
+        startOffset: options?.startOffset ?? 0,
         isInterpolation:
           options?.expressionType === ExpressionType.Interpolation,
       }
       // options?.expressionType ?? ExpressionType.None,
     ) as unknown as Interpolation;
-    // parsed /* ? */
+    // parsed; /* ? */
     // ) as unknown as Interpolation;
 
     // Interpolation
@@ -268,6 +256,7 @@ export class ParseExpressionUtil {
   ): KindToActualExpression<TargetKind>[] {
     const parsed = parseExpression(input, {
       expressionType: ExpressionType.None,
+      startOffset: 0,
     }) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
       parsed,

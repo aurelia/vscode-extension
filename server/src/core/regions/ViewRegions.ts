@@ -288,50 +288,61 @@ export class AttributeInterpolationRegion extends AbstractRegion {
   public static parse5Interpolation(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute,
-    interpolationMatch: RegExpExecArray | null
+    interpolationMatch: RegExpExecArray | null,
+    documentHasCrlf: boolean
   ) {
-    if (interpolationMatch === null) return;
     const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
     if (!attrLocation) return;
 
-    /** Eg. >css="width: ${<message}px;" */
-    const startInterpolationLength =
-      attr.name.length + // css
-      2 + // ="
-      interpolationMatch.index + // width:_
-      2; // ${
+    /** Eg. >click.delegate="<increaseCounter()" */
+    const attrNameLength =
+      attr.name.length + // click.delegate
+      2; // ="
+      // attrNameLength /* ? */
 
-    const startOffset = attrLocation.startOffset + startInterpolationLength;
-    const startCol = attrLocation.startCol + startInterpolationLength;
+    /** Eg. click.delegate="increaseCounter()><" */
+    const lastCharIndex = attrLocation.endOffset - 1; // - 1 the quote
 
-    const interpolationValue = interpolationMatch[1];
-    /** Eg. css="width: ${>message}<px;" */
-    const endInterpolationLength = Number(interpolationValue.length); // message
-    // 1; // "embrace" end char // need?
-
+    const startOffset = attrLocation.startOffset + attrNameLength;
+    //  startOffset/*?*/
     const updatedLocation: parse5.Location = {
       ...attrLocation,
       startOffset,
-      startCol: startCol,
-      endOffset: startOffset + endInterpolationLength,
-      endCol: startCol + endInterpolationLength,
+      endOffset: lastCharIndex,
     };
 
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
-      interpolationValue,
+    let accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
+      attr.value,
       [ExpressionKind.AccessScope, ExpressionKind.CallScope],
-      { startOffset }
+      { expressionType: ExpressionType.Interpolation, startOffset }
     );
+
+    // crlf fix
+    if (documentHasCrlf) {
+      accessScopes.forEach((scope) => {
+        const { start } = scope.nameLocation;
+        const textUntilMatch = attr.value.substring(0, start);
+        // crlf = carriage return, line feed (windows specific)
+        let numberOfCrlfs = 0;
+        const crlfRegex = /\n/g;
+        numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
+
+        scope.nameLocation.start += numberOfCrlfs;
+        scope.nameLocation.end += numberOfCrlfs;
+      });
+    }
+
+    if (startTag.sourceCodeLocation == null) return;
 
     const viewRegion = AttributeInterpolationRegion.create({
       attributeName: attr.name,
       attributeValue: attr.value,
+      // sourceCodeLocation: { ...startTag.sourceCodeLocation },
       sourceCodeLocation: updatedLocation,
       tagName: startTag.tagName,
       accessScopes,
-      regionValue: interpolationMatch[1],
+      regionValue: attr.value,
     });
-    // viewRegion; /* ? */
 
     return viewRegion;
   }
@@ -464,6 +475,7 @@ export class CustomElementRegion extends AbstractRegion {
   }
 
   public static parse5Start(startTag: SaxStream.StartTagToken) {
+    //  startTag/*?*/
     const tagName = startTag.tagName;
     const { sourceCodeLocation } = startTag;
     if (!sourceCodeLocation) return;
@@ -732,52 +744,36 @@ export class TextInterpolationRegion extends AbstractRegion {
     text: SaxStream.TextToken,
     interpolationMatch: RegExpExecArray | null,
     /** Make up for difference between parse5 (not counting \n) and vscode (counting \n) */
-    newLineCounter: number
+    documentHasCrlf: boolean
+    // newLineCounter: number
   ) {
-    // if (interpolationMatch === null) return;
-    // interpolationMatch; /* ? */
     const textLocation = text.sourceCodeLocation;
     if (!textLocation) return;
 
-    // /** Eg. \n\n  ${grammarRules.length} */
-    // const startInterpolationLength =
-    //   interpolationMatch.index + // width:_
-    //   2; // ${
-
-    // // TODO: have to plus each new line match
-    // textLocation.startOffset +
-    //   startInterpolationLength + //
-    //   newLineCounter; // Actual making up for difference,
-    // /** Eg. >css="width: ${message}<px;" */
-    // const interpolationValue = interpolationMatch[1];
-    // const endInterpolationLength =
-    //   Number(interpolationValue.length) + // message
-    //   1; // "embrace" end char
-    // const endOffset = startOffset + endInterpolationLength;
-
-    // const updatedLocation: parse5.Location = {
-    //   ...textLocation,
-    //   startOffset,
-    //   endOffset,
-    // };
     const startOffset = textLocation.startOffset;
-    startOffset; /*?*/
-
-    text.text; /*? */
-    const parsed = parseExpression(text.text, {
-      expressionType: ExpressionType.Interpolation,
-      isInterpolation: true,
-    }) as unknown as Interpolation;
-    parsed; /* ? */
-
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
+    let accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
       text.text,
       [ExpressionKind.AccessScope, ExpressionKind.CallScope],
-      { startOffset }
+      { expressionType: ExpressionType.Interpolation, startOffset }
     );
-    accessScopes.length; /* ?*/
+
+    // crlf fix
+    if (documentHasCrlf) {
+      accessScopes.forEach((scope) => {
+        const { start } = scope.nameLocation;
+        const textUntilMatch = text.text.substring(0, start);
+        // crlf = carriage return, line feed (windows specific)
+        let numberOfCrlfs = 0;
+        const crlfRegex = /\n/g;
+        numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
+
+        scope.nameLocation.start += numberOfCrlfs;
+        scope.nameLocation.end += numberOfCrlfs;
+      });
+    }
 
     if (text.sourceCodeLocation == null) return;
+
     const textRegion = TextInterpolationRegion.create({
       regionValue: text.text,
       sourceCodeLocation: text.sourceCodeLocation,

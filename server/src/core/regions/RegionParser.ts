@@ -120,16 +120,18 @@ export class RegionParser {
         }
         // 3. Attribute Interpolation
         else {
-          let interpolationMatch;
-          while ((interpolationMatch = interpolationRegex.exec(attr.value))) {
-            const viewRegion = AttributeInterpolationRegion.parse5Interpolation(
-              startTag,
-              attr,
-              interpolationMatch
-            );
-            if (!viewRegion) return;
-            viewRegions.push(viewRegion);
-          }
+          if (interpolationRegex.exec(attr.value) === null) return;
+          // TODO: Weirdly, if this line does not exist, tests fail
+          interpolationRegex.exec(attr.value) == null;
+
+          const viewRegion = AttributeInterpolationRegion.parse5Interpolation(
+            startTag,
+            attr,
+            null,
+            documentHasCrlf
+          );
+          if (!viewRegion) return;
+          viewRegions.push(viewRegion);
         }
 
         const isValueConverterRegion = attr.value.includes(
@@ -162,7 +164,8 @@ export class RegionParser {
     });
 
     saxStream.on('text', (text: TextToken) => {
-      let interpolationMatch: RegExpExecArray | null;
+      if (text.text.trim() === '') return;
+      let interpolationMatch: RegExpExecArray | null = null;
 
       // const textUntilMatch = text.text.substring(0, interpolationMatch.index);
       // crlf = carriage return, line feed (windows specific)
@@ -175,7 +178,11 @@ export class RegionParser {
       // Parse
       // text; /* ? */
       // try {
-      const viewRegion = TextInterpolationRegion.parse5Text(text, null, 0);
+      const viewRegion = TextInterpolationRegion.parse5Text(
+        text,
+        null,
+        documentHasCrlf
+      );
       if (!viewRegion) return;
       viewRegions.push(viewRegion);
 
