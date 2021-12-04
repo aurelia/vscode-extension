@@ -1,5 +1,9 @@
-import { ExpressionKind } from '../../../server/src/common/@aurelia-runtime-patch/src';
+import {
+  ExpressionKind,
+  ExpressionType,
+} from '../../../server/src/common/@aurelia-runtime-patch/src';
 import { ParseExpressionUtil } from '../../../server/src/common/parseExpression/ParseExpressionUtil';
+import { ViewRegionType } from '../../../server/src/core/regions/ViewRegions';
 import {
   andImOnTheLine,
   COLLECTION_SPLIT,
@@ -19,54 +23,64 @@ const testCasesMapFileBased: TestCasesMapFileBased = {};
 // const input = 'arr[qux]';
 /* prettier-ignore */
 testCasesMapFileBased['Offsets'] = [
-  // , 'Type , LINE , 'CODE                       , {PARAMETERS
-  [{} , 'Many' , NaN , 'foo'                      , {accSco:['foo'] ,nameLoc: ['0;3']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo(bar)'                 , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo(bar())'               , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo(bar(qux))'            , {accSco:['foo!bar!qux'] ,nameLoc: ['0;3!4;7!8;11']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo(bar, qux(zed))'       , {accSco:['foo!bar!qux!zed'] ,nameLoc: ['0;3!4;7!9;12!13;16']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo("bar", qux(zed))'     , {accSco:['foo!qux!zed'] ,nameLoc: ['0;3!11;14!15;18']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo("bar", qux)'          , {accSco:['foo!qux'] ,nameLoc: ['0;3!11;14']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo(bar, qux)'            , {accSco:['foo!bar!qux'] ,nameLoc: ['0;3!4;7!9;12']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo({bar})'               , {accSco:['foo!bar'] ,nameLoc: ['0;3!5;8']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo({ bar})'              , {accSco:['foo!bar'] ,nameLoc: ['0;3!6;9']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo({ bar, ok})'          , {accSco:['foo!bar!ok'] ,nameLoc: ['0;3!6;9!11;13']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo({ba, quxx})'          , {accSco:['foo!ba!quxx'] ,nameLoc: ['0;3!5;7!9;13']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo({bar: qux})'          , {accSco:['foo!qux'] ,nameLoc: ['0;3!10;13']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo({bar: 0})[0]'         , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo({bar: 0})[0].qux'     , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo[bar]'                 , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo[0].bar[qux]'          , {accSco:['foo!qux'] ,nameLoc: ['0;3!11;14']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo.bar'                  , {accSco:['foo'] ,nameLoc: ['0;3']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo.bar[0]'               , {accSco:['foo'] ,nameLoc: ['0;3']} , '' ] ,
-  [{} , 'Many' , NaN , 'foo[bar] | bar'           , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
+  // , 'Type , LINE , 'CODE                                    , {PARAMETERS
+  [{} , 'Attribute' , NaN , 'foo'                              , {accSco:['foo'] ,nameLoc: ['0;3']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo(bar)'                         , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo(bar())'                       , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo(bar(qux))'                    , {accSco:['foo!bar!qux'] ,nameLoc: ['0;3!4;7!8;11']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo(bar, qux(zed))'               , {accSco:['foo!bar!qux!zed'] ,nameLoc: ['0;3!4;7!9;12!13;16']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo("bar", qux(zed))'             , {accSco:['foo!qux!zed'] ,nameLoc: ['0;3!11;14!15;18']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo("bar", qux)'                  , {accSco:['foo!qux'] ,nameLoc: ['0;3!11;14']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo(bar, qux)'                    , {accSco:['foo!bar!qux'] ,nameLoc: ['0;3!4;7!9;12']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo({bar})'                       , {accSco:['foo!bar'] ,nameLoc: ['0;3!5;8']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo({ bar})'                      , {accSco:['foo!bar'] ,nameLoc: ['0;3!6;9']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo({ bar, ok})'                  , {accSco:['foo!bar!ok'] ,nameLoc: ['0;3!6;9!11;13']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo({ba, quxx})'                  , {accSco:['foo!ba!quxx'] ,nameLoc: ['0;3!5;7!9;13']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo({bar: qux})'                  , {accSco:['foo!qux'] ,nameLoc: ['0;3!10;13']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo({bar: 0})[0]'                 , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo({bar: 0})[0].qux'             , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo[bar]'                         , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo[0].bar[qux]'                  , {accSco:['foo!qux'] ,nameLoc: ['0;3!11;14']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo.bar'                          , {accSco:['foo'] ,nameLoc: ['0;3']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo.bar(qux)'                     , {accSco:['foo!qux'] ,nameLoc: ['0;3!8;11']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo.bar[0]'                       , {accSco:['foo'] ,nameLoc: ['0;3']} , '' ] ,
+  [{} , 'Attribute' , NaN , 'foo[bar] | bar'                   , {accSco:['foo!bar'] ,nameLoc: ['0;3!4;7']} , '' ] ,
 
   // Single Interpolation
-  // , 'Type , LINE , 'CODE                       , {PARAMETERS
-  [{} , 'Many' , NaN , '${foo}'                   , {accSco:['foo'] ,nameLoc: ['2;5']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo(bar)}'              , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo(bar())}'            , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo(bar(qux))}'         , {accSco:['foo!bar!qux'] ,nameLoc: ['2;5!6;9!10;13']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo(bar, qux(zed))}'    , {accSco:['foo!bar!qux!zed'] ,nameLoc: ['2;5!6;9!11;14!15;18']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo("bar", qux(zed))}'  , {accSco:['foo!qux!zed'] ,nameLoc: ['2;5!13;16!17;20']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo("bar", qux)}'       , {accSco:['foo!qux'] ,nameLoc: ['2;5!13;16']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo(bar, qux)}'         , {accSco:['foo!bar!qux'] ,nameLoc: ['2;5!6;9!11;14']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo({bar})}'            , {accSco:['foo!bar'] ,nameLoc: ['2;5!5;8']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo({ bar})}'           , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo({ bar, ok})}'       , {accSco:['foo!bar!ok'] ,nameLoc: ['2;5!6;9!11;13']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo({ba, quxx})}'       , {accSco:['foo!ba!quxx'] ,nameLoc: ['2;5!5;7!9;13']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo({bar: qux})}'       , {accSco:['foo!qux'] ,nameLoc: ['2;5!10;13']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo({bar: 0})[0]}'      , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo({bar: 0})[0].qux}'  , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo[bar]}'              , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo[0].bar[qux]}'       , {accSco:['foo!qux'] ,nameLoc: ['2;5!13;16']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo.bar}'               , {accSco:['foo'] ,nameLoc: ['2;5']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo.bar[0]}'            , {accSco:['foo'] ,nameLoc: ['2;5']} , '' ] ,
-  [{} , 'Many' , NaN , '${foo[bar] | bar}'        , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
+  // , 'Type , LINE , 'CODE                                    , {PARAMETERS
+  [{} , 'TextInterpolation' , NaN , '${foo}'                   , {accSco:['foo'] ,nameLoc: ['2;5']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo(bar)}'              , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo(bar())}'            , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo(bar(qux))}'         , {accSco:['foo!bar!qux'] ,nameLoc: ['2;5!6;9!10;13']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo(bar, qux(zed))}'    , {accSco:['foo!bar!qux!zed'] ,nameLoc: ['2;5!6;9!11;14!15;18']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo("bar", qux(zed))}'  , {accSco:['foo!qux!zed'] ,nameLoc: ['2;5!13;16!17;20']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo("bar", qux)}'       , {accSco:['foo!qux'] ,nameLoc: ['2;5!13;16']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo(bar, qux)}'         , {accSco:['foo!bar!qux'] ,nameLoc: ['2;5!6;9!11;14']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo({bar})}'            , {accSco:['foo!bar'] ,nameLoc: ['2;5!7;10']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo({ bar})}'           , {accSco:['foo!bar'] ,nameLoc: ['2;5!8;11']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo({ bar, ok})}'       , {accSco:['foo!bar!ok'] ,nameLoc: ['2;5!8;11!13;15']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo({ba, quxx})}'       , {accSco:['foo!ba!quxx'] ,nameLoc: ['2;5!7;9!11;15']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo({bar: qux})}'       , {accSco:['foo!qux'] ,nameLoc: ['2;5!12;15']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo({bar: 0})[0]}'      , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo({bar: 0})[0].qux}'  , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo[bar]}'              , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo[0].bar[qux]}'       , {accSco:['foo!qux'] ,nameLoc: ['2;5!13;16']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo.bar}'               , {accSco:['foo'] ,nameLoc: ['2;5']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo.bar(qux)}'          , {accSco:['foo!qux'] ,nameLoc: ['2;5!10;13']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo.bar[0]}'            , {accSco:['foo'] ,nameLoc: ['2;5']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo[bar] | bar}'        , {accSco:['foo!bar'] ,nameLoc: ['2;5!6;9']} , '' ] ,
 
   // Multiple Interpolations
-  // , 'Type , LINE , 'CODE                       , {PARAMETERS
-  [{focus:true} , 'Many' , NaN , 'foo ${bar}'                   , {accSco:['bar'] ,nameLoc: ['6;9']} , '' ] ,
+  // , 'Type , LINE , 'CODE                                    , {PARAMETERS
+  [{} , 'TextInterpolation' , NaN , 'foo${bar}'                , {accSco:['bar'] ,nameLoc: ['5;8']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , 'foo ${bar} qux'           , {accSco:['bar'] ,nameLoc: ['6;9']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo} ${bar}'            , {accSco:['foo!bar'] ,nameLoc: ['2;5!9;12']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo} bar ${qux}'        , {accSco:['foo!qux'] ,nameLoc: ['2;5!13;16']} , '' ] ,
+  [{} , 'TextInterpolation' , NaN , '${foo} ${bar} qux'        , {accSco:['foo!bar'] ,nameLoc: ['2;5!9;12']} , '' ] ,
+
+  // Nested Interpolations
+  // , 'Type , LINE , 'CODE                                    , {PARAMETERS
+  [{} , 'TextInterpolation' , NaN , '${foo ? `${bar}` : ""}'   , {accSco:['foo!bar'] ,nameLoc: ['2;5!11;14']} , '' ] ,
 ];
 
 describe('RegionParser.', () => {
@@ -106,17 +120,21 @@ describe('RegionParser.', () => {
                 // rawExpectedNameLocation; /*?*/
 
                 let startOffset = 0;
-                if (code.startsWith('${')) {
-                  startOffset += 2;
+                let expressionType = ExpressionType.None;
+                if (regionType === ViewRegionType.TextInterpolation) {
+                  // startOffset += 2;
+                  expressionType = ExpressionType.Interpolation;
                 }
 
+                code /* ? */
                 const targetParsed =
                   ParseExpressionUtil.getAllExpressionsOfKindV2(
                     code,
                     [ExpressionKind.AccessScope, ExpressionKind.CallScope],
-                    { startOffset }
+                    { startOffset, expressionType }
                   );
                 targetParsed; /* ? */
+                // JSON.stringify(targetParsed, null, 4) /* ? */
                 targetParsed.forEach((scope, scopeIndex) => {
                   // Name
                   const expectedAccessScopes =
@@ -134,28 +152,7 @@ describe('RegionParser.', () => {
                   expect(start).toBe(Number(expectedStart));
                   expect(end).toBe(Number(expectedEnd));
                 });
-
-                if (rawExpectedAccessScopes == null) return;
-                // const expectedAccessScopes =
-                //   rawExpectedAccessScopes[regionIndex].split(COLLECTION_SPLIT);
-
-                // expect(resultNames).toEqual(expectedAccessScopes);
-
-                // if (rawExpectedNameLocation == null) return;
-                // if (rawExpectedNameLocation.length === 0) return;
-
-                // region.accessScopes?.forEach((scope, scopeIndex) => {
-                //   const expectedNameLocation =
-                //     rawExpectedNameLocation[regionIndex].split(
-                //       COLLECTION_SPLIT
-                //     );
-                //   const [expectedStart, expectedEnd] =
-                //     expectedNameLocation[scopeIndex].split(GROUP_SPLIT);
-                //   const { start, end } = scope.nameLocation;
-
-                //   expect(start).toEqual(Number(expectedStart));
-                //   expect(end).toEqual(Number(expectedEnd));
-                // });
+                // expect(true).toBeFalsy();
               });
             }
           });

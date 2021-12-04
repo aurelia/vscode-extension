@@ -761,15 +761,15 @@ export class TextInterpolationRegion extends AbstractRegion {
     //   endOffset,
     // };
     const startOffset = textLocation.startOffset;
-     startOffset/*?*/
+    startOffset; /*?*/
 
     text.text; /*? */
-    const parsed = parseExpression(
-      text.text,
-      ExpressionType.Interpolation,
-      0
-    ) as unknown as Interpolation;
-    parsed /* ? */
+    const parsed = parseExpression(text.text, {
+      expressionType: ExpressionType.Interpolation,
+      startOffset: 0,
+      isInterpolation: true
+    }) as unknown as Interpolation;
+    parsed; /* ? */
 
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
       text.text,

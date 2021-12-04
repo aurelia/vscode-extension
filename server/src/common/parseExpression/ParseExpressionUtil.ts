@@ -82,7 +82,7 @@ export enum ExpressionKind_Dev {
   DestructuringAssignmentLeaf = 0b1000100000000_11001, // IsAssignable
 }
 
-interface ExpressionsOfKindOptions {
+export interface ExpressionsOfKindOptions {
   expressionType?: ExpressionType;
   /**
    * Flatten eg. AccessScope inside CallScope.
@@ -133,20 +133,25 @@ export class ParseExpressionUtil {
 
     // remove ${}
     if (input.startsWith('${')) {
-      input = input.replace('${', '');
+      // input = input.replace('${', '');
       // input = `\${${input}}`;
     }
     if (input.endsWith('}')) {
-      input = input.substring(0, input.length - 1);
+      // input = input.substring(0, input.length - 1);
       // input = `${input}}`;
     }
 
     const parsed = parseExpression(
       input,
-      options?.expressionType ?? ExpressionType.Interpolation,
+      {
+        expressionType: options?.expressionType ?? ExpressionType.Interpolation,
+        startOffset: options?.startOffset ?? 0,
+        isInterpolation:
+          options?.expressionType === ExpressionType.Interpolation,
+      }
       // options?.expressionType ?? ExpressionType.None,
-      options?.startOffset
     ) as unknown as Interpolation;
+    // parsed /* ? */
     // ) as unknown as Interpolation;
 
     // Interpolation
@@ -257,10 +262,10 @@ export class ParseExpressionUtil {
     targetName: string,
     targetKinds: TargetKind[]
   ): KindToActualExpression<TargetKind>[] {
-    const parsed = parseExpression(
-      input,
-      ExpressionType.None
-    ) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+    const parsed = parseExpression(input, {
+      expressionType: ExpressionType.None,
+      startOffset: 0,
+    }) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
     const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
       parsed,
       targetKinds
@@ -288,6 +293,8 @@ function findAllExpressionRecursive(
   if (expressionOrList === undefined) {
     return;
   }
+  // expressionOrList /* ? */
+  // JSON.stringify(expressionOrList, null, 4); /* ? */
 
   // .args
   if (Array.isArray(expressionOrList)) {
@@ -348,6 +355,12 @@ function findAllExpressionRecursive(
   else if (singleExpression instanceof CallMemberExpression) {
     findAllExpressionRecursive(
       singleExpression.object,
+      targetKinds,
+      collector,
+      options
+    );
+    findAllExpressionRecursive(
+      singleExpression.args as Writeable<IsAssign[]>,
       targetKinds,
       collector,
       options
