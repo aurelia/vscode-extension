@@ -124,12 +124,11 @@ export function isAureliaCompletionItem(
 
 async function getVirtualViewModelCompletion(
   aureliaProgram: AureliaProgram,
-  textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
   region?: AbstractRegion
 ): Promise<AureliaCompletionItem[]> {
   // 1. From the region get the part, that should be made virtual.
-  const documentUri = textDocumentPosition.textDocument.uri;
+  const documentUri = document.uri;
 
   if (!region) return [];
   if (region.sourceCodeLocation === undefined) return [];
@@ -307,7 +306,6 @@ function enhanceMethodArguments(methodArguments: string[]): string {
 }
 
 export async function getAureliaVirtualCompletions(
-  _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
   region: AbstractRegion,
   aureliaProgram: AureliaProgram
@@ -319,7 +317,6 @@ export async function getAureliaVirtualCompletions(
   try {
     virtualCompletions = await getVirtualViewModelCompletion(
       aureliaProgram,
-      _textDocumentPosition,
       document,
       region
     );

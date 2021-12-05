@@ -84,7 +84,6 @@ export function createComponentCompletionList(
 
 export async function getBindablesCompletion(
   aureliaProgram: AureliaProgram,
-  _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
   region?: AbstractRegion
 ): Promise<CompletionItem[]> {

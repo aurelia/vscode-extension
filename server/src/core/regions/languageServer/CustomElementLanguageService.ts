@@ -19,14 +19,12 @@ export class CustomElementLanguageService
   public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
-    _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter: string | undefined,
     region?: AbstractRegion
   ) {
     if (triggerCharacter === ' ') {
       const bindablesCompletion = await getBindablesCompletion(
         aureliaProgram,
-        _textDocumentPosition,
         document,
         region
       );

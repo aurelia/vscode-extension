@@ -46,7 +46,6 @@ export async function onCompletion(
     /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }
 
-  if (regions.length === 0) return [];
   const { position } = _textDocumentPosition;
   const offset = document.offsetAt(position);
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
@@ -105,9 +104,9 @@ export async function onCompletion(
       completions = (await doComplete(
         aureliaProgram,
         document,
-        _textDocumentPosition,
         triggerCharacter,
-        region
+        region,
+        offset
       )) as unknown as CompletionItem[];
     } catch (error) {
       console.log('TCL: error', error);

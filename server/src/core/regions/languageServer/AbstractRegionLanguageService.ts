@@ -28,9 +28,9 @@ export interface AbstractRegionLanguageService {
   doComplete?: (
     aureliaProgram: AureliaProgram,
     document: TextDocument,
-    _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter?: string,
-    region?: AbstractRegion
+    region?: AbstractRegion,
+    offset?: number,
   ) => Promise<CompletionList | AureliaCompletionItem[]>;
   doDefinition?: (
     aureliaProgram: AureliaProgram,

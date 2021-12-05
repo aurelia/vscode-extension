@@ -17,14 +17,15 @@ export class TextInterpolationLanguageService
   public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
-    _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter?: string,
-    region?: AbstractRegion
+    region?: AbstractRegion,
+    offset?: number
   ) {
     const completions = aureliaVirtualComplete_vNext(
       aureliaProgram,
       document,
-      region
+      region,
+      offset
     );
     return completions;
   }
