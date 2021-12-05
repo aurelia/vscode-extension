@@ -1,6 +1,6 @@
 import { initCucumberTests } from '../jest-cucumber-setup.spec';
 
-// initCucumberTests();
+initCucumberTests();
 // initCucumberTests('@cli_generated');
 // initCucumberTests('@cli_generated and @focus');
 // initCucumberTests('@core');
@@ -9,4 +9,4 @@ import { initCucumberTests } from '../jest-cucumber-setup.spec';
 // initCucumberTests('@scoped_for_testing');
 // initCucumberTests('@scoped_for_testing and @focus');
 // /* prettier-ignore */ initCucumberTests('@cli_generated or @scoped_for_testing or @monorepo or @core');
-/* prettier-ignore */ initCucumberTests('@cli_generated or @scoped_for_testing');
+// /* prettier-ignore */ initCucumberTests('@cli_generated or @scoped_for_testing');

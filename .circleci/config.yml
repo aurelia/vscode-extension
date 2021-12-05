@@ -30,7 +30,7 @@ jobs:
           command: yarn build
       - run:
           name: Test
-          command: yarn test:unit:gherkin:ci
+          command: yarn test:ci
   publish:
     docker:
       - image: circleci/node:latest
