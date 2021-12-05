@@ -6,7 +6,8 @@ import {
   InsertTextFormat,
 } from 'vscode-languageserver';
 
-import { AureliaLSP } from '../../common/constants';
+import { AureliaLSP, interpolationRegex } from '../../common/constants';
+import { XScopeUtils } from '../../common/documens/xScopeUtils';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
@@ -42,7 +43,8 @@ const PARAMETER_NAME = 'parameterName';
 export function aureliaVirtualComplete_vNext(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
-  region: AbstractRegion | undefined
+  region: AbstractRegion | undefined,
+  offset?: number
 ) {
   if (!region) return [];
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
@@ -64,12 +66,12 @@ export function aureliaVirtualComplete_vNext(
   const copy = sourceFile.copy(COPY_PATH, { overwrite: true });
   const myClass = copy.getClass(targetComponent?.className);
 
-  // 2.1 Convert view content to view model
   if (!region.accessScopes) {
     project.removeSourceFile(copy);
     return [];
   }
 
+  // 2.1 Transform view content to virtual view model
   // 2.1.1 Add `this.`
   let virtualContent: string | undefined;
   const accessScopeNames = region.accessScopes.map((scope) => scope.name);
@@ -91,13 +93,29 @@ export function aureliaVirtualComplete_vNext(
     );
   });
 
-  // 2.1.2 Defalut to class members
+  // 2.1.2 Defalut to any class member
   if (virtualContent === undefined) {
     virtualContent = 'this.';
   }
+  // virtualContent; /*?*/
 
   // 2.2 Perform completions
-  const targetStatementText = `${virtualContent}${COMPLETIONS_ID}`;
+  // 2.2.1 Differentiate Interpolation
+  let interpolationModifier = 0;
+  let targetStatementText = `${virtualContent}${COMPLETIONS_ID}`;
+  if (virtualContent.match(interpolationRegex)?.length != null) {
+    targetStatementText = `\`${virtualContent}\`${COMPLETIONS_ID}`;
+    interpolationModifier = 2; // - 2 we added "\`" because regionValue is ${}, thus in virtualContent we need to do `${}`
+  }
+
+  // 2.2.2 Find specific regionValue from accessScope (Reason: can have multitple interpolations in a region)
+  const targetScope = XScopeUtils.getScopeByOffset(region.accessScopes, offset);
+  let normalizeConstant = 0;
+  if (targetScope != null) {
+    const { endOffset } = region.sourceCodeLocation;
+    normalizeConstant = endOffset - targetScope.nameLocation.end;
+  }
+
   const virMethod = myClass?.addMethod({
     name: VIRTUAL_METHOD_NAME,
     statements: [targetStatementText],
@@ -109,7 +127,16 @@ export function aureliaVirtualComplete_vNext(
   }
   const finalTargetStatementText = `${targetStatement.getFullText()}${COMPLETIONS_ID}`;
   const targetPos = finalTargetStatementText?.indexOf(COMPLETIONS_ID);
-  const finalPos = targetStatement.getPos() + targetPos;
+  const finalPos =
+    targetStatement.getPos() +
+    targetPos -
+    interpolationModifier -
+    normalizeConstant;
+
+  // copy.getText(); /* ? */
+  // copy.getText().length /* ? */
+  // copy.getText().substr(finalPos - 1, 30); /* ? */
+  // copy.getText().substr(finalPos - 9, 30); /* ? */
 
   const languageService = project.getLanguageService().compilerObject;
   // Completions

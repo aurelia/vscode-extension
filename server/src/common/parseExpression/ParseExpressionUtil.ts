@@ -144,10 +144,13 @@ export class ParseExpressionUtil {
       // options?.expressionType ?? ExpressionType.None,
     ) as unknown as Interpolation;
     // parsed; /* ? */
-    // ) as unknown as Interpolation;
+
+    if (parsed === null) {
+      finalExpressions = [];
+    }
 
     // Interpolation
-    if (parsed instanceof Interpolation) {
+    else if (parsed instanceof Interpolation) {
       // if (parsed) {
       //   parsed.parts; /* ? */
       //   // parsed.expressions /* ? */
@@ -254,25 +257,27 @@ export class ParseExpressionUtil {
     targetName: string,
     targetKinds: TargetKind[]
   ): KindToActualExpression<TargetKind>[] {
-    const parsed = parseExpression(input, {
-      expressionType: ExpressionType.None,
-      startOffset: 0,
-    }) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
-      parsed,
-      targetKinds
-    );
-    const hasSourceWordInScope = accessScopes.filter((accessScope) => {
-      const isAccessOrCallScope =
-        accessScope.$kind === ExpressionKind.AccessScope ||
-        accessScope.$kind === ExpressionKind.CallScope;
-      if (isAccessOrCallScope) {
-        return accessScope.name === targetName;
-      }
-      return false;
-    });
+    try {
+      const parsed = parseExpression(input) as unknown as Interpolation; // Cast because, pretty sure we only get Interpolation as return in our use cases
+      const accessScopes = ParseExpressionUtil.getAllExpressionsOfKind(
+        parsed,
+        targetKinds
+      );
+      const hasSourceWordInScope = accessScopes.filter((accessScope) => {
+        const isAccessOrCallScope =
+          accessScope.$kind === ExpressionKind.AccessScope ||
+          accessScope.$kind === ExpressionKind.CallScope;
+        if (isAccessOrCallScope) {
+          return accessScope.name === targetName;
+        }
+        return false;
+      });
 
-    return hasSourceWordInScope;
+      return hasSourceWordInScope;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
   }
 }
 

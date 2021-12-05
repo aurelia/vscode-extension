@@ -1,3 +1,4 @@
+import { interpolationRegex } from '../../../constants';
 import { createLookup } from '../utilities-objects';
 import {
   AccessKeyedExpression,
@@ -691,7 +692,13 @@ export function parseExpression<
   $state.length = input.length;
   $state.index = 0;
   $state._currentChar = input.charCodeAt(0);
-  const { expressionType } = parseOptions;
+
+  let { expressionType } = parseOptions;
+  if (input.match(interpolationRegex)?.length != null) {
+    // @ts-ignore subtype of constraint 'ExpressionType'
+    expressionType = ExpressionType.Interpolation;
+  }
+
   return parse($state, Access.Reset, Precedence.Variadic, {
     ...parseOptions,
     expressionType:

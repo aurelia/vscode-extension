@@ -2,7 +2,7 @@
 import SaxStream, { TextToken } from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaView } from '../../common/constants';
+import { AureliaView, interpolationRegex } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../feature/configuration/DocumentSettings';
 import { IAureliaComponent } from '../viewModel/AureliaProgram';
@@ -44,7 +44,6 @@ export class RegionParser {
     const aureliaCustomElementNames = componentList.map(
       (component) => component.componentName
     );
-    const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
     const documentHasCrlf = document.getText().includes('\r\n');
 
     let hasTemplateTag = false;
@@ -120,9 +119,7 @@ export class RegionParser {
         }
         // 3. Attribute Interpolation
         else {
-          if (interpolationRegex.exec(attr.value) === null) return;
-          // TODO: Weirdly, if this line does not exist, tests fail
-          interpolationRegex.exec(attr.value) == null;
+          if (attr.value.match(interpolationRegex)?.length == null) return;
 
           const viewRegion = AttributeInterpolationRegion.parse5Interpolation(
             startTag,

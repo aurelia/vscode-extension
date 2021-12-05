@@ -152,6 +152,8 @@ export const WORD_SEPARATORS_REGEX_STRING =
   '\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\|\\;\\:\'\\"\\,\\.\\<\\>\\/\\?';
 export const whiteSpaceRegex = /[\s\r\n\t]/;
 
+export const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
+
 export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
   'extension.au.refactor.aTag',
