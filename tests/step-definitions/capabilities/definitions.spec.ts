@@ -16,6 +16,7 @@ export const definitionSteps: StepDefinitions = ({ when, then, and }) => {
   });
 
   then(/^I should land in the file (.*)$/, (fileName: string) => {
+    expect(definitions).toBeDefined();
     expect(definitions?.length).toBeGreaterThan(0);
 
     if (definitions) {
@@ -28,7 +29,8 @@ export const definitionSteps: StepDefinitions = ({ when, then, and }) => {
   and(
     /^the number of definitions should be (.*)$/,
     (numOfDefintions: string) => {
-      expect(definitions).toBeGreaterThan(0);
+      expect(definitions).toBeDefined();
+      expect(definitions?.length).toBeGreaterThan(0);
 
       if (definitions) {
         expect(definitions.length).toBe(Number(numOfDefintions));

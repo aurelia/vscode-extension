@@ -49,7 +49,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
       const target = completions.find((completion) =>
         completion.label.includes(suggestion)
       );
-
+      expect(target?.label).toBeDefined();
       expect(target?.label).toContain(suggestion);
       if (target?.insertText !== undefined) {
         expect(target.insertText).toContain(suggestion);
@@ -62,6 +62,8 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     (methodName: string) => {
       expect(completions).toBeTruthy();
       if (isAureliaCompletionItem(completions)) {
+        expect(completions.length).toBeGreaterThan(0);
+
         const target = completions.find(
           (completion) => completion.label === methodName
         );
