@@ -136,11 +136,11 @@ export class RegionParser {
           viewRegions.push(...valueConverterRegion);
         }
       });
+      viewRegions.push(...attributeRegions);
 
       // 4. Custom elements
       const isCustomElement = aureliaCustomElementNames.includes(tagName);
       if (!isCustomElement) {
-        viewRegions.push(...attributeRegions);
         return;
       }
 
@@ -148,16 +148,12 @@ export class RegionParser {
       if (!customElementViewRegion) return;
 
       // 7. BindableAttribute
-
       const customElementBindableAttributeRegions: AbstractRegion[] = [];
       const targetComponent = componentList.find(
         (component) => component.componentName === tagName
       );
 
       startTag.attrs.forEach((attr) => {
-        if (tagName === 'numeric-input') {
-          // attr.name; /* ?*/
-        }
         const onlyBindableName = getBindableNameFromAttritute(attr.name);
         const isBindableAttribute = targetComponent?.classMembers?.find(
           (member) => {
