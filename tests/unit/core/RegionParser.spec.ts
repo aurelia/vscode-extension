@@ -67,7 +67,7 @@ testCasesMapFileBased['No parse result'] = [
   [{} , '<a href=""></a>'  , {}           , 'ATag'  , 0     , '' ] ,
 ];
 
-describe.only('RegionParser.', () => {
+describe('RegionParser.', () => {
   let shared = getEmptyShared();
   const filteredTestCaseMap = filterTestCaseMap(testCasesMapFileBased);
 
@@ -233,8 +233,8 @@ describe.only('RegionParser.', () => {
                 const document = TextDocument.create('', 'html', 0, code);
                 targetRegions = RegionParser.parse(document, []);
               }
-
               // targetRegions /* ? */
+
               if (!isNaN(shared.line)) {
                 targetRegions = ViewRegionUtils.getManyTargetsRegionByLine(
                   targetRegions,
@@ -243,10 +243,8 @@ describe.only('RegionParser.', () => {
               }
 
               const rawExpectedAccessScopes = parameters.accSco;
-              rawExpectedAccessScopes; /*?*/
               const rawExpectedNameLocation = parameters.nameLoc;
 
-              targetRegions; /* ? */
               // expect(true).toBeFalsy();
               targetRegions.forEach((region, regionIndex) => {
                 const resultNames = region.accessScopes?.map(
