@@ -40,13 +40,16 @@ export function getAureliaComponentInfoFromClassDeclaration(
   let targetClassDeclaration: ts.ClassDeclaration | undefined;
 
   sourceFile.forEachChild((node) => {
-    if (
-      ts.isClassDeclaration(node) &&
-      isNodeExported(node) &&
-      (classDeclarationHasUseViewOrNoView(node) ||
-        hasCustomElementNamingConvention(node) ||
-        hasValueConverterNamingConvention(node))
-    ) {
+    const isClassDeclaration = ts.isClassDeclaration(node);
+    if (!isClassDeclaration) return;
+
+    const fulfillsAureliaConventions =
+      classDeclarationHasUseViewOrNoView(node) ||
+      hasCustomElementNamingConvention(node) ||
+      hasValueConverterNamingConvention(node);
+    const validForAurelia = isNodeExported(node) && fulfillsAureliaConventions;
+
+    if (validForAurelia) {
       targetClassDeclaration = node;
 
       // Note the `!` in the argument: `getSymbolAtLocation` expects a `Node` arg, but returns undefined
@@ -314,7 +317,7 @@ function hasCustomElementNamingConvention(
 
   const { fileName } = classDeclaration.getSourceFile();
   const baseName = Path.parse(fileName).name;
-  const isCorrectFileAndClassConvention = baseName === kebabCase(className);
+  const isCorrectFileAndClassConvention = kebabCase(baseName) === kebabCase(className);
 
   return (
     hasCustomElementDecorator ||

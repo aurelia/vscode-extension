@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { kebabCase } from '@aurelia/kernel';
 import SaxStream, { TextToken } from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaView, interpolationRegex } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
+import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../feature/configuration/DocumentSettings';
 import { IAureliaComponent } from '../viewModel/AureliaProgram';
 import {
@@ -78,7 +80,6 @@ export class RegionParser {
         return;
       }
 
-      const customElementBindableAttributeRegions: AbstractRegion[] = [];
       const attributeRegions: AbstractRegion[] = [];
       startTag.attrs.forEach((attr) => {
         const isAttributeKeyword = AURELIA_ATTRIBUTES_KEYWORDS.some(
@@ -97,15 +98,6 @@ export class RegionParser {
           const attributeRegion = AttributeRegion.parse5(startTag, attr);
           if (attributeRegion) {
             attributeRegions.push(attributeRegion);
-          }
-
-          // 7. BindableAttribute
-          const bindableAttributeRegion = BindableAttributeRegion.parse5Start(
-            startTag,
-            attr
-          );
-          if (bindableAttributeRegion) {
-            customElementBindableAttributeRegions.push(bindableAttributeRegion);
           }
         }
         // 5. Repeat for
@@ -155,6 +147,36 @@ export class RegionParser {
       const customElementViewRegion = CustomElementRegion.parse5Start(startTag);
       if (!customElementViewRegion) return;
 
+      // 7. BindableAttribute
+
+      const customElementBindableAttributeRegions: AbstractRegion[] = [];
+      const targetComponent = componentList.find(
+        (component) => component.componentName === tagName
+      );
+
+      startTag.attrs.forEach((attr) => {
+        if (tagName === 'numeric-input') {
+          // attr.name; /* ?*/
+        }
+        const onlyBindableName = getBindableNameFromAttritute(attr.name);
+        const isBindableAttribute = targetComponent?.classMembers?.find(
+          (member) => {
+            const correctNamingConvetion =
+              kebabCase(member.name) === kebabCase(onlyBindableName);
+            const is = correctNamingConvetion && member.isBindable;
+            return is;
+          }
+        );
+        if (isBindableAttribute == null) return;
+
+        const bindableAttributeRegion = BindableAttributeRegion.parse5Start(
+          startTag,
+          attr
+        );
+        if (bindableAttributeRegion) {
+          customElementBindableAttributeRegions.push(bindableAttributeRegion);
+        }
+      });
       customElementViewRegion.data = [...customElementBindableAttributeRegions];
 
       viewRegions.push(customElementViewRegion);

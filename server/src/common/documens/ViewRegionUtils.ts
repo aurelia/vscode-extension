@@ -161,6 +161,9 @@ function findSmallestRegionAtOffset(regions: AbstractRegion[], offset: number) {
     if (region.sourceCodeLocation === undefined) return;
     const { startOffset, endOffset } = region.sourceCodeLocation;
 
+    if (startOffset > offset) return;
+    if (offset > endOffset) return;
+
     const startDelta = offset - startOffset;
     const endDelta = endOffset - offset;
     const deltaLength = endDelta + startDelta;

@@ -39,6 +39,7 @@ export interface IAureliaComponent {
    */
   valueConverterName?: string;
   /**
+   * Kebab case of eg.
    * \@customElement(">component-name<")
    * export class >ComponentName< {} --> component-name
    */
@@ -48,9 +49,9 @@ export interface IAureliaComponent {
   decoratorEndOffset?: number;
   viewFilePath?: string;
   type: AureliaClassTypes;
-  /** ******** Class Members */
+  /** Class Members */
   classMembers?: IAureliaClassMember[];
-  /** ******** View */
+  /** View */
   viewRegions: AbstractRegion[];
 }
 

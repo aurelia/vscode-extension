@@ -40,7 +40,7 @@ const shouldLog = !isCI;
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: shouldLog,
   focusedLogging: true,
-  // ignoreFirstXLogs: 0,
+  ignoreFirstXLogs: 7,
   // ignoreAfterXLogs: 1,
 
   measurePerf: true,
