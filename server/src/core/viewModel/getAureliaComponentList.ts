@@ -189,10 +189,26 @@ export function getClassDecoratorInfos(
         if (ts.isIdentifier(decoratorChild)) {
           result.decoratorName = childName;
         }
+      }
+      // @customElement({name:>'my-name'<})
+      else if (ts.isObjectLiteralExpression(decoratorChild)) {
+        decoratorChild.forEachChild((decoratorArgChild) => {
+          // {>name:'my-name'<}
+          if (ts.isPropertyAssignment(decoratorArgChild)) {
+            if (decoratorArgChild.name.getText() === 'name') {
+              let value = decoratorArgChild.getLastToken()?.getText();
+              if (value == null) return;
+              result.decoratorArgument = value;
+            }
+          }
+        });
       } else if (ts.isToken(decoratorChild)) {
         result.decoratorArgument = childName;
       }
     });
+
+    const withoutQuotes = result.decoratorArgument.replace(/['"]/g, '');
+    result.decoratorArgument = withoutQuotes;
     classDecoratorInfos.push(result);
   });
 
@@ -317,7 +333,8 @@ function hasCustomElementNamingConvention(
 
   const { fileName } = classDeclaration.getSourceFile();
   const baseName = Path.parse(fileName).name;
-  const isCorrectFileAndClassConvention = kebabCase(baseName) === kebabCase(className);
+  const isCorrectFileAndClassConvention =
+    kebabCase(baseName) === kebabCase(className);
 
   return (
     hasCustomElementDecorator ||
