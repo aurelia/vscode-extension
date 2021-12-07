@@ -43,8 +43,8 @@ export class BindableAttributeLanguageService
 
     const result = {
       lineAndCharacter: {
-        line,
-        character,
+        line: line + 1, // + 1client is 1-based index
+        character: character + 1, // + 1client is 1-based index
       } /** TODO: Find class declaration position. Currently default to top of file */,
       viewModelFilePath: UriUtils.toSysPath(targetComponent.viewModelFilePath),
     };
