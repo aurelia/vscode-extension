@@ -33,6 +33,7 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
+import { isViewModelDocument } from './common/documens/TextDocumentUtils';
 
 const logger = new Logger('Server');
 
@@ -150,6 +151,10 @@ connection.onInitialized(async () => {
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
   if (hasServerInitialized === false) return;
+  const dontTrigger = await dontTriggerInViewModel(
+    codeActionParams.textDocument
+  );
+  if (dontTrigger) return;
 
   const codeAction = await aureliaServer.onCodeAction(codeActionParams);
 
@@ -166,6 +171,8 @@ connection.onCompletion(
     if (!document) {
       throw new Error('No document found');
     }
+    const dontTrigger = await dontTriggerInViewModel(document);
+    if (dontTrigger) return;
 
     const completions = await aureliaServer.onCompletion(
       document,
@@ -243,6 +250,11 @@ documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
 
 connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
   if (hasServerInitialized === false) return;
+  const dontTrigger = await dontTriggerInViewModel({
+    uri: params.textDocument.uri,
+  });
+  if (dontTrigger) return;
+
   const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
   return symbols;
 });
@@ -250,8 +262,12 @@ connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
 connection.onWorkspaceSymbol(async () => {
   if (hasServerInitialized === false) return;
   // const workspaceSymbols = aureliaServer.onWorkspaceSymbol(params.query);
-  const workspaceSymbols = aureliaServer.onWorkspaceSymbol();
-  return workspaceSymbols;
+  try {
+    const workspaceSymbols = aureliaServer.onWorkspaceSymbol();
+    return workspaceSymbols;
+  } catch (error) {
+    error; /* ? */
+  }
 });
 
 // connection.onHover(
@@ -367,3 +383,11 @@ documents.listen(connection);
 
 // Listen on the connection
 connection.listen();
+
+async function dontTriggerInViewModel(document: { uri: string }) {
+  const extensionSettings = (await connection.workspace.getConfiguration({
+    section: settingsName,
+  })) as ExtensionSettings;
+  const dontTrigger = isViewModelDocument(document, extensionSettings);
+  return dontTrigger;
+}

@@ -3,7 +3,10 @@ import * as fs from 'fs';
 import { TextDocuments } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
+import {
+  DocumentSettings,
+  ExtensionSettings,
+} from '../../feature/configuration/DocumentSettings';
 import { UriUtils } from '../view/uri-utils';
 
 export class TextDocumentUtils {
@@ -51,13 +54,19 @@ export class TextDocumentUtils {
 }
 
 export function isViewModelDocument(
-  document: TextDocument,
-  documentSettings: DocumentSettings
+  document: { uri: string },
+  documentSettings: DocumentSettings | ExtensionSettings
 ) {
-  const settings = documentSettings.getSettings();
+  let settings: ExtensionSettings;
+  if (documentSettings instanceof DocumentSettings) {
+    settings = documentSettings.getSettings();
+  } else {
+    settings = documentSettings;
+  }
+
   const scriptExtensions = settings?.relatedFiles?.script;
   const isScript = scriptExtensions?.find((extension) =>
     document.uri.endsWith(extension)
   );
-  return isScript;
+  return Boolean(isScript);
 }
