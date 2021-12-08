@@ -42,6 +42,9 @@ export const CLI_GENERATED = {
 // prettier-ignore
 export const SCOPED_FOR_TESTING = {
   'root': getFixtureDir('scoped-for-testing'),
+  // specific
+  'stage4.html': getAbsPathInScopedForTesting('src/specific/stage4/stage4.html'),
+  // view
   'custom-element-user.html': getAbsPathInScopedForTesting('src/view/custom-element/custom-element-user.html'),
   'custom-element.html': getAbsPathInScopedForTesting('src/view/custom-element/custom-element.html'),
   'custom-element.ts': getAbsPathInScopedForTesting('src/view/custom-element/custom-element.ts'),
