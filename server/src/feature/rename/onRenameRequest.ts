@@ -46,7 +46,8 @@ export async function onRenameRequest(
 
   if (!regions) return;
 
-  const region = ViewRegionUtils.findRegionAtPosition(regions, position);
+  const offset = document.offsetAt(position);
+  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
   if (!region) return normalRename(position, document, newName);
   const doRename = region.languageService.doRename;
 

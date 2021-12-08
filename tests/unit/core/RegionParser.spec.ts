@@ -49,6 +49,9 @@ testCasesMapFileBased['Access scopes'] = [
    [{}    , '<p repeat.for="person of people"></p>'                     , {accSco:['people']}                                                                , 'Attribute'               , NaN   , ''] ,
    [{}    , '<p repeat.for="p of people | foo:bar & qux:\'zed\'"></p>'  , {accSco:['people;bar']}                                                            , 'Attribute'               , NaN   , ''] ,
 
+   // //  , Html-only Custom Elements
+   [{}    , "<template bindable='foo'></template>"      , {accSco:['foo'] ,nameLoc:['20;23'] }                            , 'Attribute'               , NaN   , '' ] ,
+
    // //  , Nested
    [{}    , "<p>a ${zzz} mid ${foo ? `(${foo.bar})` : ''} Max</p>"      , {accSco:['zzz!foo!foo'] ,nameLoc:['7;10!18;21!28;31'] }                            , 'Attribute'               , NaN   , '' ] ,
    [{}    , "<p>foo ${bar}</p>"                                         , {accSco:['bar'] ,nameLoc:['9;12'] }                                                , 'Attribute'               , NaN   , '' ] ,
@@ -106,6 +109,7 @@ describe('RegionParser.', () => {
                 (attribute) =>
                   attribute.type === ViewRegionType.BindableAttribute
               );
+              result /* ? */
               expect(result?.regionValue).toBe('foo');
             });
 

@@ -106,23 +106,12 @@ export class ViewRegionUtils {
 
     regions.forEach((region) => {
       const possibleRegion = region;
+
+      // CustomElementRegion
       if (CustomElementRegion.is(region)) {
         const subTarget = this.findRegionAtOffset(region.data, offset);
         if (subTarget !== undefined) {
           possibleRegions.push(subTarget);
-        }
-
-        if (possibleRegion.startTagLocation) {
-          const { startOffset, endOffset } = possibleRegion.startTagLocation;
-          const isIncluded = OffsetUtils.isIncluded(
-            startOffset,
-            endOffset,
-            offset
-          );
-
-          if (isIncluded) {
-            possibleRegions.push(region);
-          }
         }
       }
 

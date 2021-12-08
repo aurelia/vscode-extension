@@ -73,11 +73,27 @@ export function whenIParseTheFile(fileName: string, shared: Shared) {
   const parsedRegions = RegionParser.parse(
     textDocument,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    [{ componentName: 'custom-element', viewFilePath: 'custom-element.html' }]
+    [
+      // @ts-ignore
+      {
+        componentName: 'custom-element',
+        viewFilePath: 'custom-element.html',
+        classMembers: [
+          // @ts-ignore
+          { name: 'foo', isBindable: true },
+          // @ts-ignore
+          { name: 'bar', isBindable: true },
+          // @ts-ignore
+          { name: 'qux' },
+          // @ts-ignore
+          { name: 'useFoo' },
+        ],
+      },
+    ]
   );
 
   shared.parsedRegions = parsedRegions;
+  parsedRegions; /*?*/
 }
 
 export function andImOnTheLine(line: number, shared: Shared) {
