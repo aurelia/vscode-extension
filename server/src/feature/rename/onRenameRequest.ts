@@ -11,6 +11,7 @@ import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { AureliaProjects } from '../../core/AureliaProjects';
+import { CustomElementRegion } from '../../core/regions/ViewRegions';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaRenameFromViewModel } from './aureliaRename';
 
@@ -48,7 +49,21 @@ export async function onRenameRequest(
 
   const offset = document.offsetAt(position);
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
-  if (!region) return normalRename(position, document, newName);
+  if (CustomElementRegion.is(region)) {
+    const isInCustomElementStartTag = ViewRegionUtils.isInCustomElementStartTag(
+      region,
+      offset
+    );
+    isInCustomElementStartTag; /* ? */
+    if (!isInCustomElementStartTag) {
+      return normalRename(position, document, newName);
+    }
+  }
+  if (region == null) {
+    return;
+  }
+
+  // @ts-ignore TODO: implement rename for CustomElement
   const doRename = region.languageService.doRename;
 
   if (doRename) {

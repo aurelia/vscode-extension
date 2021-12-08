@@ -24,6 +24,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
 
     const document = myMockServer.textDocuments.getActive();
+    document.getText() /* ? */
     const textDocumentPositionParams = createTextDocumentPositionParams(
       document,
       position

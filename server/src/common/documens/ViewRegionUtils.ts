@@ -113,6 +113,19 @@ export class ViewRegionUtils {
         if (subTarget !== undefined) {
           possibleRegions.push(subTarget);
         }
+
+        if (possibleRegion.startTagLocation) {
+          const { startOffset, endOffset } = possibleRegion.startTagLocation;
+          const isIncluded = OffsetUtils.isIncluded(
+            startOffset,
+            endOffset,
+            offset
+          );
+
+          if (isIncluded) {
+            possibleRegions.push(region);
+          }
+        }
       }
 
       const { startOffset, endOffset } = possibleRegion.sourceCodeLocation;
@@ -129,6 +142,20 @@ export class ViewRegionUtils {
     // }
 
     return targetRegion;
+  }
+
+  public static isInCustomElementStartTag(
+    region: AbstractRegion,
+    offset: number
+  ) {
+    if (!CustomElementRegion.is(region)) return;
+
+    const { startOffset, endOffset } = region.sourceCodeLocation;
+    const afterStart = startOffset <= offset;
+    const beforeEnd = offset <= endOffset;
+    const is = afterStart && beforeEnd;
+
+    return is;
   }
 }
 

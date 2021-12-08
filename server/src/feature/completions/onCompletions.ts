@@ -48,6 +48,8 @@ export async function onCompletion(
 
   const { position } = _textDocumentPosition;
   const offset = document.offsetAt(position);
+   offset/*?*/
+   regions /* ? */
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
 
   const text = document.getText();
