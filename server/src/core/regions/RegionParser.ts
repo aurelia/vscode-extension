@@ -86,8 +86,10 @@ export class RegionParser {
           (keyword) => {
             if (keyword === 'ref') {
               return attr.name === keyword;
+            } else if (keyword === 'bindable') {
+              return attr.name === keyword;
             }
-            return attr.name.includes(keyword);
+            return attr.name.endsWith(`.${keyword}`);
           }
         );
         const isRepeatFor = attr.name === AureliaView.REPEAT_FOR;

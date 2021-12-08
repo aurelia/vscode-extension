@@ -32,7 +32,7 @@ export async function onConnectionDidChangeContent(
       break;
     }
     case 'html': {
-      logger.log('Update View');
+      logger.log('Changed to html file');
     }
   }
 }

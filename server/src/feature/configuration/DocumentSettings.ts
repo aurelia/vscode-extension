@@ -15,6 +15,7 @@ export const settingsName = 'aurelia';
 
 export const AURELIA_ATTRIBUTES_KEYWORDS = [
   'bind',
+  'bindable', // html-only custom elements
   'one-way',
   'two-way',
   'one-time',
