@@ -133,61 +133,67 @@ export class ParseExpressionUtil {
 
     if (input.trim() === '') return [];
 
-    const parsed = parseExpression(
-      input,
-      {
-        expressionType: options?.expressionType ?? ExpressionType.None,
-        startOffset: options?.startOffset ?? 0,
-        isInterpolation:
-          options?.expressionType === ExpressionType.Interpolation,
+    try {
+      const parsed = parseExpression(
+        input,
+        {
+          expressionType: options?.expressionType ?? ExpressionType.None,
+          startOffset: options?.startOffset ?? 0,
+          isInterpolation:
+            options?.expressionType === ExpressionType.Interpolation,
+        }
+        // options?.expressionType ?? ExpressionType.None,
+      ) as unknown as Interpolation;
+      // parsed; /* ? */
+
+      if (parsed === null) {
+        finalExpressions = [];
       }
-      // options?.expressionType ?? ExpressionType.None,
-    ) as unknown as Interpolation;
-    // parsed; /* ? */
 
-    if (parsed === null) {
-      finalExpressions = [];
-    }
+      // Interpolation
+      else if (parsed instanceof Interpolation) {
+        // if (parsed) {
+        //   parsed.parts; /* ? */
+        //   // parsed.expressions /* ? */
+        //   JSON.stringify(parsed.expressions, null, 4); /* ? */
+        // }
 
-    // Interpolation
-    else if (parsed instanceof Interpolation) {
-      // if (parsed) {
-      //   parsed.parts; /* ? */
-      //   // parsed.expressions /* ? */
-      //   JSON.stringify(parsed.expressions, null, 4); /* ? */
-      // }
+        parsed.expressions.forEach((expression) => {
+          // ExpressionKind_Dev[expression.$kind]; /*?*/
+          // expression; /*?*/
+          // console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 
-      parsed.expressions.forEach((expression) => {
-        // ExpressionKind_Dev[expression.$kind]; /*?*/
-        // expression; /*?*/
-        // console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+          findAllExpressionRecursive(
+            expression,
+            targetKinds,
+            finalExpressions,
+            options
+          );
+        });
 
+        /*
+         * CONSIDER: Does this make sense for AccessMember?
+         * Eg. for `foo.bar.qux` we return [..."bar", ..."qux"]
+         */
+        if (finalExpressions[0] instanceof AccessMemberExpression) {
+          finalExpressions = finalExpressions.reverse();
+        }
+      }
+      // None
+      else {
+        // parsed; /* ? */
+        // JSON.stringify(parsed, null, 4); /* ? */
         findAllExpressionRecursive(
-          expression,
+          parsed,
           targetKinds,
           finalExpressions,
           options
         );
-      });
-
-      /*
-       * CONSIDER: Does this make sense for AccessMember?
-       * Eg. for `foo.bar.qux` we return [..."bar", ..."qux"]
-       */
-      if (finalExpressions[0] instanceof AccessMemberExpression) {
-        finalExpressions = finalExpressions.reverse();
       }
-    }
-    // None
-    else {
-      // parsed; /* ? */
-      // JSON.stringify(parsed, null, 4); /* ? */
-      findAllExpressionRecursive(
-        parsed,
-        targetKinds,
-        finalExpressions,
-        options
-      );
+    } catch (_error) {
+      const error = _error as Error;
+      console.log(error.message);
+      // console.log(error.stack);
     }
 
     finalExpressions = sortExpressions<ReturnType>(finalExpressions);

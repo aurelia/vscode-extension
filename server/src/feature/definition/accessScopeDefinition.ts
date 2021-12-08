@@ -44,6 +44,8 @@ export function getAccessScopeDefinition(
   const repeatForRegions = regions?.filter(
     (_region) => _region.type === ViewRegionType.RepeatFor
   ) as RepeatForRegion[];
+  if (repeatForRegions == null) return;
+
   const targetRepeatForRegion = repeatForRegions.find(
     (repeatForRegion) => repeatForRegion.data?.iterator === goToSourceWord
   );

@@ -125,6 +125,7 @@ export enum AureliaViewModel {
 }
 
 export enum AureliaView {
+  BINDABLE = 'bindable',
   IF = 'if',
   IMPORT = 'import',
   IMPORT_FROM_ATTRIBUTE = 'from',
