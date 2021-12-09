@@ -742,10 +742,8 @@ export class TextInterpolationRegion extends AbstractRegion {
    */
   public static parse5Text(
     text: SaxStream.TextToken,
-    interpolationMatch: RegExpExecArray | null,
     /** Make up for difference between parse5 (not counting \n) and vscode (counting \n) */
     documentHasCrlf: boolean
-    // newLineCounter: number
   ) {
     const textLocation = text.sourceCodeLocation;
     if (!textLocation) return;
