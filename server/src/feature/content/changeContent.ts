@@ -19,20 +19,19 @@ export async function onConnectionDidChangeContent(
     /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready to use. 🚀',{logMs:true,msEnd:true});
     return;
   }
+  // if (aureliaProjects.preventHydration(document)) return;
 
-  // Updating
-  switch (document.languageId) {
-    case 'javascript':
-    case 'typescript': {
-      if (aureliaProjects.preventHydration(document)) return;
-
-      // await aureliaProjects.hydrate([document]);
-      aureliaProjects.updateManyViewModel([document]);
-      logger.log('Update View models');
-      break;
-    }
-    case 'html': {
-      logger.log('Changed to html file');
-    }
-  }
+  // // Updating
+  // switch (document.languageId) {
+  //   case 'javascript':
+  //   case 'typescript': {
+  //     // await aureliaProjects.hydrate([document]);
+  //     // aureliaProjects.updateManyViewModel([document]);
+  //     logger.log('Update View models');
+  //     break;
+  //   }
+  //   case 'html': {
+  //     logger.log('Changed to html file');
+  //   }
+  // }
 }

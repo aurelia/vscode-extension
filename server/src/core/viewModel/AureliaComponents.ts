@@ -199,6 +199,18 @@ export class AureliaComponents {
     };
   }
 
+  public updateOneView(document: TextDocument): void {
+    const targetComponent = this.getOneBy(
+      'viewFilePath',
+      UriUtils.toSysPath(document.uri)
+    );
+    if (!targetComponent) return;
+
+    const regions = RegionParser.parse(document, this.components);
+
+    targetComponent.viewRegions = regions;
+  }
+
   public setBindables(components: IAureliaComponent[]): void {
     const bindableList: IAureliaBindable[] = [];
     components.forEach((component) => {

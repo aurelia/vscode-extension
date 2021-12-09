@@ -54,7 +54,6 @@ export async function onRenameRequest(
       region,
       offset
     );
-    isInCustomElementStartTag; /* ? */
     if (!isInCustomElementStartTag) {
       return normalRename(position, document, newName);
     }

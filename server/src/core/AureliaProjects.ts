@@ -143,6 +143,19 @@ export class AureliaProjects {
     });
   }
 
+  public updateManyView(documents: TextDocument[]) {
+    documents.forEach((document) => {
+      const targetProject = this.getAll().find((project) =>
+        document.uri.includes(project.tsConfigPath)
+      );
+
+      const aureliaProgram = targetProject?.aureliaProgram;
+      if (!aureliaProgram) return;
+
+      aureliaProgram.aureliaComponents.updateOneView(document);
+    });
+  }
+
   private async initAndSet(packageJsonPaths: string[]) {
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
