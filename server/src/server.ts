@@ -309,7 +309,7 @@ connection.onExecuteCommand(
           extensionSettings,
           documents
         );
-        await aureliaServer.onConnectionInitialized();
+        await aureliaServer.onConnectionInitialized(undefined, true);
 
         break;
       }

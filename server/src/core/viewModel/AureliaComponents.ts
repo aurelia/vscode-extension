@@ -48,10 +48,9 @@ export class AureliaComponents {
         case '.ts': {
           const sourceFile = program.getSourceFile(path);
           if (sourceFile === undefined) {
-            // console.log(
-            //   'These source files are ignored by the extension: ',
-            //   path
-            // );
+            // logger.log(`Source file ignored by the extension: ${path}`, {
+            //   logLevel: 'DEBUG',
+            // });
             return;
           }
 

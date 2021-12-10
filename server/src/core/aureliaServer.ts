@@ -35,7 +35,8 @@ export class AureliaServer {
   }
 
   public async onConnectionInitialized(
-    extensionSettings?: ExtensionSettings
+    extensionSettings?: ExtensionSettings,
+    forceReinit: boolean = false
   ): Promise<void> {
     /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
 
@@ -43,7 +44,8 @@ export class AureliaServer {
       await onConnectionInitialized(
         this.container,
         extensionSettings ?? this.extensionSettings,
-        this.allDocuments.all()
+        this.allDocuments.all(),
+        forceReinit
       );
     } catch (_error) {
       const error = _error as Error;
@@ -118,7 +120,7 @@ export class AureliaServer {
       );
 
       /* prettier-ignore */ logger.log(`Found ${completions?.length ?? 0} completion(s).`,{logMs:true,msEnd:true});
-      completions.map(c=> c.label)/*?*/
+      completions.map((c) => c.label); /*?*/
 
       return completions;
     } catch (_error) {

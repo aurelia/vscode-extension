@@ -70,7 +70,10 @@ export class AureliaProjects {
   /**
    * [PERF]: 2.5s
    */
-  public async hydrate(documents: TextDocument[]): Promise<boolean> {
+  public async hydrate(
+    documents: TextDocument[],
+    forceReinit: boolean = false
+  ): Promise<boolean> {
     /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO' });
     const documentsPaths = documents.map((document) => {
       const result = UriUtils.toSysPath(document.uri);
@@ -89,7 +92,8 @@ export class AureliaProjects {
     // 1. To each map assign a separate program
     await this.addAureliaProgramToEachProject(
       documentsPaths,
-      aureliaProjectSettings
+      aureliaProjectSettings,
+      forceReinit
     );
 
     return true;
@@ -177,7 +181,8 @@ export class AureliaProjects {
 
   private async addAureliaProgramToEachProject(
     documentsPaths: string[],
-    aureliaProjectSettings: IAureliaProjectSetting | undefined
+    aureliaProjectSettings: IAureliaProjectSetting | undefined,
+    forceReinit: boolean = false
   ) {
     const aureliaProjects = this.getAll();
 
@@ -186,7 +191,9 @@ export class AureliaProjects {
       const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
       if (!shouldActivate) return;
 
-      if (aureliaProgram === null) {
+      const shouldHydration = aureliaProgram === null || forceReinit;
+      if (shouldHydration) {
+        // if (aureliaProgram === null) {
         const extensionSettings =
           this.documentSettings.getSettings().aureliaProject;
         this.documentSettings.setSettings({
@@ -196,7 +203,7 @@ export class AureliaProjects {
           },
         });
         aureliaProgram = new AureliaProgram(this.documentSettings);
-        if (!compilerObject) {
+        if (!compilerObject || forceReinit) {
           const tsMorphProject = aureliaProgram.tsMorphProject.create();
           // tsMorphProject
           //   .getSourceFiles()
@@ -213,6 +220,7 @@ export class AureliaProjects {
         rootDirectory: tsConfigPath,
       };
       // [PERF]: 0.67967675s
+      if (aureliaProgram == null) return;
       aureliaProgram.initAureliaComponents(projectOptions);
 
       const targetAureliaProject = aureliaProjects.find(

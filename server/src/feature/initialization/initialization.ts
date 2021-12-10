@@ -15,12 +15,13 @@ const logger = new Logger('initialization');
 export async function onConnectionInitialized(
   container: Container,
   extensionSettings: ExtensionSettings,
-  activeDocuments: TextDocument[] = []
+  activeDocuments: TextDocument[] = [],
+  forceReinit: boolean = false
 ) {
   const aureliaProjects = container.get(AureliaProjects);
   const verified = await aureliaProjects.initAndVerify(extensionSettings);
   if (!verified) return;
-  const hydrated = await aureliaProjects.hydrate(activeDocuments);
+  const hydrated = await aureliaProjects.hydrate(activeDocuments, forceReinit);
 
   if (hydrated) {
     /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready to use. 🚀',{logMs:true,msEnd:true});

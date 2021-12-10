@@ -26,7 +26,9 @@ export class AureliaHtmlLanguageService
     document: TextDocument,
     triggerCharacter: string | undefined
   ) {
-    const finalCompletions: CompletionItem[] = AURELIA_KEY_WORD_COMPLETIONS;
+    const finalCompletions: CompletionItem[] = [
+      ...AURELIA_KEY_WORD_COMPLETIONS,
+    ];
 
     if (triggerCharacter === '<') {
       const aureliaComponents = aureliaProgram.aureliaComponents
