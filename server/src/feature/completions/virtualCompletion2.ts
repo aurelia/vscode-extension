@@ -9,6 +9,7 @@ import {
 import { AureliaLSP, interpolationRegex } from '../../common/constants';
 import { OffsetUtils } from '../../common/documens/OffsetUtils';
 import { XScopeUtils } from '../../common/documens/xScopeUtils';
+import { StringUtils } from '../../common/string/StringUtils';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
@@ -45,6 +46,7 @@ export function aureliaVirtualComplete_vNext(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
   region: AbstractRegion | undefined,
+  triggerCharacter?: string,
   offset?: number
 ) {
   if (!region) return [];
@@ -76,7 +78,11 @@ export function aureliaVirtualComplete_vNext(
   // 2.1.1 Add `this.`
   // region; /* ? */
 
-  let virtualContent = getVirtualContentFromRegion(region, offset); /* ? */
+  let virtualContent = getVirtualContentFromRegion(
+    region,
+    offset,
+    triggerCharacter
+  ); /* ? */
   // virtualContent; /*?*/
 
   // 2.2 Perform completions
@@ -171,14 +177,28 @@ export function aureliaVirtualComplete_vNext(
 
 function getVirtualContentFromRegion(
   region: AbstractRegion,
-  offset: number | undefined
+  offset: number | undefined,
+  triggerCharacter?: string
 ) {
-  let viewInput: string | undefined;
+  // triggerCharacter; /* ? */
+  // offset; /* ? */
+
+  let viewInput: string | undefined = '';
   const isInterpolationRegion = AbstractRegion.isInterpolationRegion(region);
   if (isInterpolationRegion) {
     viewInput = region.regionValue;
   } else {
     viewInput = region.attributeValue;
+  }
+
+  // Add triggerCharacter at offset
+  if (offset != null) {
+    const normalizedOffset = offset - region.sourceCodeLocation.startOffset - 1; // - 1: insert one before
+    viewInput = StringUtils.insert(
+      viewInput,
+      normalizedOffset,
+      triggerCharacter
+    );
   }
 
   // viewInput; /* ? */

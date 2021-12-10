@@ -25,6 +25,7 @@ export class TextInterpolationLanguageService
       aureliaProgram,
       document,
       region,
+      triggerCharacter,
       offset
     );
     return completions;

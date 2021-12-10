@@ -2051,6 +2051,7 @@ function findCharBackUntilNot(state: ParserState, targetChars: string[]) {
 }
 
 // st inpat = '01234567890123456789'/*?*/
+// const input = '${foo.} ${foo}<p></p>'
 // const input = 'foo({  start:  minDate,   end  })'
 // const input = 'foo({ bar})';
 // const input = 'foo({  bar, ok})';
@@ -2077,7 +2078,7 @@ function findCharBackUntilNot(state: ParserState, targetChars: string[]) {
 // `; /*?*/
 
 //               0123 567  012
-// const result = parseExpression(input, ExpressionType.None);
+// const result = parseExpression(input, ExpressionType.Interpolation);
 //  result/*?*/
 // JSON.stringify(result, null, 4); /*?*/
 

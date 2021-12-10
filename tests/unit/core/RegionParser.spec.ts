@@ -36,6 +36,8 @@ testCasesMapFileBased['Offsets'] = [
 /* prettier-ignore */
 testCasesMapFileBased['Access scopes'] = [
    //     , CODE                                                        , PARAMETERS                                                                         , Type                      , LINE  , FILE
+   [{focus:true}    , '${foo.} ${bar}<p></p>'                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , 'Attribute'               , NaN   , '' ] ,
+   [{focus:false}    , '${foo} ${bar.}<p></p>'                                     , {accSco:['foo','bar'] ,nameLoc:['2;5','9;12'] }                                               , 'Attribute'               , NaN   , '' ] ,
    [{}    , '<p id.bind="foo"></p>'                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , 'Attribute'               , NaN   , '' ] ,
    [{}    , '<p>${foo} ${} bar ${qux} zed</p>'                          , {accSco:['foo','','qux'] ,nameLoc: ['5;8','12;12','20;23']}                        , 'Attribute'               , NaN   , ''] ,
    [{}    , '<p>\n..${foo}</p>'                                         , {accSco:['foo'] ,nameLoc: ['8;11']}                                                , 'Attribute'               , NaN   , ''] ,
@@ -75,7 +77,7 @@ testCasesMapFileBased['No parse result'] = [
   [{} , '<a href=""></a>'  , {}           , 'ATag'  , 0     , '' ] ,
 ];
 
-describe('RegionParser.', () => {
+describe.only('RegionParser.', () => {
   let shared = getEmptyShared();
   const filteredTestCaseMap = filterTestCaseMap(testCasesMapFileBased);
 
@@ -240,14 +242,15 @@ describe('RegionParser.', () => {
                 const document = TextDocument.create('', 'html', 0, code);
                 targetRegions = RegionParser.parse(document, []);
               }
-
-              targetRegions /* ? */
               if (!isNaN(shared.line)) {
                 targetRegions = ViewRegionUtils.getManyTargetsRegionByLine(
                   targetRegions,
                   String(shared.line)
                 );
               }
+              expect(targetRegions.length).toBeGreaterThan(0);
+
+              targetRegions; /* ? */
 
               const rawExpectedAccessScopes = parameters.accSco;
               const rawExpectedNameLocation = parameters.nameLoc;
@@ -263,9 +266,6 @@ describe('RegionParser.', () => {
                 const expectedAccessScopes =
                   rawExpectedAccessScopes[regionIndex].split(COLLECTION_SPLIT);
 
-                rawExpectedAccessScopes; /*?*/
-                expectedAccessScopes; /* ? */
-                resultNames; /* ? */
                 expect(resultNames).toEqual(expectedAccessScopes);
 
                 if (rawExpectedNameLocation == null) return;

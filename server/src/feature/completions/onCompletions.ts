@@ -37,19 +37,21 @@ export async function onCompletion(
   // document
   // );
   // const regions = targetComponent?.viewRegions;
-  let regions: AbstractRegion[] = [];
-  const allComponents = aureliaProgram.aureliaComponents.getAll();
-  try {
-    regions = RegionParser.parse(document, allComponents);
-  } catch (error) {
-    /* prettier-ignore */ console.log('TCL: error', error);
-    /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
-  }
+  const targetComponent =
+    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
+  const regions = targetComponent?.viewRegions ?? [];
+  // const allComponents = aureliaProgram.aureliaComponents.getAll();
+  // try {
+  //   regions = RegionParser.parse(document, allComponents);
+  // } catch (error) {
+  //   /* prettier-ignore */ console.log('TCL: error', error);
+  //   /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
+  // }
 
   const { position } = _textDocumentPosition;
   const offset = document.offsetAt(position);
-   offset/*?*/
-   regions /* ? */
+  // offset; /*?*/
+  // regions; /* ? */
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
 
   const text = document.getText();
