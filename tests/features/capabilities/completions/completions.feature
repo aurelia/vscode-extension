@@ -4,6 +4,7 @@ Feature: Completions.
     Given the project is named "cli-generated"
     And I open VSCode with the following file "minimal-component.html"
 
+  @focus
   Scenario Outline: View Model.
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
@@ -18,7 +19,10 @@ Feature: Completions.
       | Attribute Interplolation     | 0    | `<div css="width: ${m\|}px;"></div>`           | minimalVar      |
       | Attribute (object)           | 0    | `<div if.bind="minimalInterfaceVar.\|"></div>` | field           |
       | Custom element               | 0    | `<div></div><\|`                               | compo-user      |
-      | Text Interplolation          | 0    | `${\|}`                                        | minimalVar      |
+      | Text Interplolation          | 0    | `foo ${\|}<p></p>`                             | minimalVar      |
+      | Text Interplolation          | 0    | `${'foo'} ${\|}<p></p>`                        | minimalVar      |
+      | Text Interplolation          | 0    | `${minimalVar} ${\|}<p></p>`                   | minimalVar      |
+      | Text Interplolation          | 0    | `${'foo'} ${\|} bar<p></p>`                    | minimalVar      |
       | Text Interplolation (object) | 0    | `<div>${minimalInterfaceVar.\|}</div>`         | field           |
       | Bindable Attribute           | 0    | `<my-compo \|></my-compo>`                     | string-bindable |
       | Aurelia Attribute Keywords   | 0    | `<div \|></div>`                               | if.bind         |

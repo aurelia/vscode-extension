@@ -70,13 +70,21 @@ export class AureliaProjects {
   /**
    * [PERF]: 2.5s
    */
-  public async hydrate(documents: TextDocument[]) {
+  public async hydrate(
+    documents: TextDocument[],
+    forceReinit: boolean = false
+  ): Promise<boolean> {
     /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO' });
     const documentsPaths = documents.map((document) => {
       const result = UriUtils.toSysPath(document.uri);
       return result;
     });
-    if (documentsPaths.length === 0) return;
+    if (documentsPaths.length === 0) {
+      /* prettier-ignore */ logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('(!) Waiting until you change to an .html, .js, or .ts file.', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
+      return false;
+    }
 
     const settings = this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
@@ -84,8 +92,11 @@ export class AureliaProjects {
     // 1. To each map assign a separate program
     await this.addAureliaProgramToEachProject(
       documentsPaths,
-      aureliaProjectSettings
+      aureliaProjectSettings,
+      forceReinit
     );
+
+    return true;
   }
 
   /**
@@ -112,6 +123,14 @@ export class AureliaProjects {
     return true;
   }
 
+  public isHydrated(): boolean {
+    const projects = this.getAll();
+    const hydrated = projects.every(
+      (project) => project.aureliaProgram !== null
+    );
+    return hydrated;
+  }
+
   public updateManyViewModel(documents: TextDocument[]) {
     documents.forEach((document) => {
       const targetProject = this.getAll().find((project) =>
@@ -125,6 +144,19 @@ export class AureliaProjects {
         aureliaProgram.tsMorphProject.get(),
         document
       );
+    });
+  }
+
+  public updateManyView(documents: TextDocument[]) {
+    documents.forEach((document) => {
+      const targetProject = this.getAll().find((project) =>
+        document.uri.includes(project.tsConfigPath)
+      );
+
+      const aureliaProgram = targetProject?.aureliaProgram;
+      if (!aureliaProgram) return;
+
+      aureliaProgram.aureliaComponents.updateOneView(document);
     });
   }
 
@@ -149,7 +181,8 @@ export class AureliaProjects {
 
   private async addAureliaProgramToEachProject(
     documentsPaths: string[],
-    aureliaProjectSettings: IAureliaProjectSetting | undefined
+    aureliaProjectSettings: IAureliaProjectSetting | undefined,
+    forceReinit: boolean = false
   ) {
     const aureliaProjects = this.getAll();
 
@@ -158,7 +191,9 @@ export class AureliaProjects {
       const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
       if (!shouldActivate) return;
 
-      if (aureliaProgram === null) {
+      const shouldHydration = aureliaProgram === null || forceReinit;
+      if (shouldHydration) {
+        // if (aureliaProgram === null) {
         const extensionSettings =
           this.documentSettings.getSettings().aureliaProject;
         this.documentSettings.setSettings({
@@ -168,7 +203,7 @@ export class AureliaProjects {
           },
         });
         aureliaProgram = new AureliaProgram(this.documentSettings);
-        if (!compilerObject) {
+        if (!compilerObject || forceReinit) {
           const tsMorphProject = aureliaProgram.tsMorphProject.create();
           // tsMorphProject
           //   .getSourceFiles()
@@ -185,6 +220,7 @@ export class AureliaProjects {
         rootDirectory: tsConfigPath,
       };
       // [PERF]: 0.67967675s
+      if (aureliaProgram == null) return;
       aureliaProgram.initAureliaComponents(projectOptions);
 
       const targetAureliaProject = aureliaProjects.find(
@@ -227,13 +263,21 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
   const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
   const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
   const isAuV1PluginDev = devDep['aurelia-binding'] !== undefined;
+  const isAuV1Cli = dep['aurelia-cli'] !== undefined;
+  const isAuV1CliDev = devDep['aurelia-cli'] !== undefined;
 
   const isAuV2App = dep['aurelia'] !== undefined;
   const isAuV2AppDev = devDep['aurelia'] !== undefined;
   const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
   const isAuV2PluginDev = devDep['@aurelia/runtime'] !== undefined;
 
-  const isAuApp = isAuV1App || isAuV1AppDev || isAuV2App || isAuV2AppDev;
+  const isAuApp =
+    isAuV1App ||
+    isAuV1AppDev ||
+    isAuV1Cli ||
+    isAuV1CliDev ||
+    isAuV2App ||
+    isAuV2AppDev;
   const isAuPlugin =
     isAuV1Plugin || isAuV1PluginDev || isAuV2Plugin || isAuV2PluginDev;
 

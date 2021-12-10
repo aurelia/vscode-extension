@@ -1,0 +1,17 @@
+<template>
+  <input
+    ref="element"
+    type="text"
+    value.two-way="innerValue | withCommas"
+    id.to-view="id"
+    class.to-view="css"
+    disabled.to-view="disabled"
+    placeholder.to-view="placeholder"
+    autocomplete.to-view="autocomplete"
+  >
+</template>
+
+<!-- /**
+* From: https://github.com/PrimeDAO/prime-launch-dapp
+* https://github.com/PrimeDAO/prime-launch-dapp/blob/master/src/resources/elements/numericInput/numericInput.ts
+*/ -->

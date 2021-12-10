@@ -13,14 +13,12 @@ export class RepeatForLanguageService implements AbstractRegionLanguageService {
   public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
-    _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter?: string,
     region?: AbstractRegion
   ) {
     if (!region) return [];
 
     const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
-      _textDocumentPosition,
       document,
       region,
       aureliaProgram

@@ -125,6 +125,7 @@ export enum AureliaViewModel {
 }
 
 export enum AureliaView {
+  BINDABLE = 'bindable',
   IF = 'if',
   IMPORT = 'import',
   IMPORT_FROM_ATTRIBUTE = 'from',
@@ -151,6 +152,8 @@ export const WORD_SEPARATORS = '`~!@#%^&*()=+[{]}|;:\'",.<>/?'; // removed -,$
 export const WORD_SEPARATORS_REGEX_STRING =
   '\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\|\\;\\:\'\\"\\,\\.\\<\\>\\/\\?';
 export const whiteSpaceRegex = /[\s\r\n\t]/;
+
+export const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
 
 export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [

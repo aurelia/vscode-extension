@@ -19,14 +19,12 @@ export class CustomElementLanguageService
   public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
-    _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter: string | undefined,
     region?: AbstractRegion
   ) {
     if (triggerCharacter === ' ') {
       const bindablesCompletion = await getBindablesCompletion(
         aureliaProgram,
-        _textDocumentPosition,
         document,
         region
       );
@@ -44,45 +42,21 @@ export class CustomElementLanguageService
     const offset = document.offsetAt(position);
     const goToSourceWord = findSourceWord(customElementRegion, offset);
 
-    const aureliaSourceFiles = aureliaProgram.getAureliaSourceFiles();
-    const targetAureliaFile = aureliaSourceFiles?.find((sourceFile) => {
-      return path.parse(sourceFile.fileName).name === goToSourceWord;
-    });
+    const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
+      'componentName',
+      goToSourceWord
+    );
+    if (targetComponent == null) return;
 
     /**
      * 1. Triggered on <|my-component>
      */
-    if (typeof targetAureliaFile?.fileName === 'string') {
-      return {
-        lineAndCharacter: {
-          line: 1,
-          character: 1,
-        } /** TODO: Find class declaration position. Currently default to top of file */,
-        viewModelFilePath: UriUtils.toSysPath(targetAureliaFile?.fileName),
-      };
-    }
-
-    /**
-     * 2. >inter-bindable<.bind="increaseCounter()"
-     */
-    /** Source file different from view */
-    const targetAureliaFileDifferentViewModel = aureliaSourceFiles?.find(
-      (sourceFile) => {
-        const filePathName = path.parse(sourceFile.fileName).name;
-        return filePathName === customElementRegion?.tagName;
-      }
-    );
-
-    if (targetAureliaFileDifferentViewModel === undefined) return;
-
-    const sourceWordCamelCase = camelCase(goToSourceWord);
-
-    return getVirtualDefinition(
-      UriUtils.toSysPath(targetAureliaFileDifferentViewModel.fileName),
-      aureliaProgram,
-      sourceWordCamelCase
-    );
-
-    return;
+    return {
+      lineAndCharacter: {
+        line: 1,
+        character: 1,
+      } /** TODO: Find class declaration position. Currently default to top of file */,
+      viewModelFilePath: UriUtils.toSysPath(targetComponent.viewModelFilePath),
+    };
   }
 }

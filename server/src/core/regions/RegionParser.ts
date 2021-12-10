@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SaxStream from 'parse5-sax-parser';
+import { kebabCase } from '@aurelia/kernel';
+import SaxStream, { TextToken } from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaView } from '../../common/constants';
+import { AureliaView, interpolationRegex } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
+import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../feature/configuration/DocumentSettings';
 import { IAureliaComponent } from '../viewModel/AureliaProgram';
 import {
@@ -44,7 +46,7 @@ export class RegionParser {
     const aureliaCustomElementNames = componentList.map(
       (component) => component.componentName
     );
-    const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
+    const documentHasCrlf = document.getText().includes('\r\n');
 
     let hasTemplateTag = false;
 
@@ -78,15 +80,16 @@ export class RegionParser {
         return;
       }
 
-      const customElementBindableAttributeRegions: AbstractRegion[] = [];
       const attributeRegions: AbstractRegion[] = [];
       startTag.attrs.forEach((attr) => {
         const isAttributeKeyword = AURELIA_ATTRIBUTES_KEYWORDS.some(
           (keyword) => {
             if (keyword === 'ref') {
               return attr.name === keyword;
+            } else if (keyword === 'bindable') {
+              return attr.name === keyword;
             }
-            return attr.name.includes(keyword);
+            return attr.name.endsWith(`.${keyword}`);
           }
         );
         const isRepeatFor = attr.name === AureliaView.REPEAT_FOR;
@@ -97,15 +100,6 @@ export class RegionParser {
           const attributeRegion = AttributeRegion.parse5(startTag, attr);
           if (attributeRegion) {
             attributeRegions.push(attributeRegion);
-          }
-
-          // 7. BindableAttribute
-          const bindableAttributeRegion = BindableAttributeRegion.parse5Start(
-            startTag,
-            attr
-          );
-          if (bindableAttributeRegion) {
-            customElementBindableAttributeRegions.push(bindableAttributeRegion);
           }
         }
         // 5. Repeat for
@@ -119,16 +113,16 @@ export class RegionParser {
         }
         // 3. Attribute Interpolation
         else {
-          let interpolationMatch;
-          while ((interpolationMatch = interpolationRegex.exec(attr.value))) {
-            const viewRegion = AttributeInterpolationRegion.parse5Interpolation(
-              startTag,
-              attr,
-              interpolationMatch
-            );
-            if (!viewRegion) return;
-            viewRegions.push(viewRegion);
-          }
+          if (attr.value.match(interpolationRegex)?.length == null) return;
+
+          const attributeRegions = AttributeInterpolationRegion.parse5Interpolation(
+            startTag,
+            attr,
+            null,
+            documentHasCrlf
+          );
+          if (!attributeRegions) return;
+          viewRegions.push(...attributeRegions);
         }
 
         const isValueConverterRegion = attr.value.includes(
@@ -144,32 +138,59 @@ export class RegionParser {
           viewRegions.push(...valueConverterRegion);
         }
       });
+      viewRegions.push(...attributeRegions);
 
       // 4. Custom elements
       const isCustomElement = aureliaCustomElementNames.includes(tagName);
       if (!isCustomElement) {
-        viewRegions.push(...attributeRegions);
         return;
       }
 
       const customElementViewRegion = CustomElementRegion.parse5Start(startTag);
       if (!customElementViewRegion) return;
 
+      // 7. BindableAttribute
+      const customElementBindableAttributeRegions: AbstractRegion[] = [];
+      const targetComponent = componentList.find(
+        (component) => component.componentName === tagName
+      );
+
+      startTag.attrs.forEach((attr) => {
+        const onlyBindableName = getBindableNameFromAttritute(attr.name);
+        const isBindableAttribute = targetComponent?.classMembers?.find(
+          (member) => {
+            const correctNamingConvetion =
+              kebabCase(member.name) === kebabCase(onlyBindableName);
+            const is = correctNamingConvetion && member.isBindable;
+            return is;
+          }
+        );
+        if (isBindableAttribute == null) return;
+
+        const bindableAttributeRegion = BindableAttributeRegion.parse5Start(
+          startTag,
+          attr
+        );
+        if (bindableAttributeRegion) {
+          customElementBindableAttributeRegions.push(bindableAttributeRegion);
+        }
+      });
       customElementViewRegion.data = [...customElementBindableAttributeRegions];
 
       viewRegions.push(customElementViewRegion);
     });
 
-    saxStream.on('text', (text) => {
-      let interpolationMatch;
-      while ((interpolationMatch = interpolationRegex.exec(text.text))) {
-        const viewRegion = TextInterpolationRegion.parse5Text(
+    saxStream.on('text', (text: TextToken) => {
+      if (text.text.trim() === '') return;
+
+      const textRegions =
+        TextInterpolationRegion.createRegionsFromExpressionParser(
           text,
-          interpolationMatch
+          documentHasCrlf
         );
-        if (!viewRegion) return;
-        viewRegions.push(viewRegion);
-      }
+      if (!textRegions) return;
+
+      viewRegions.push(...textRegions);
     });
 
     saxStream.on('endTag', (endTag) => {
@@ -345,8 +366,6 @@ export function prettyTable<
         prettyOptions?.maxColWidth ?? Infinity,
         maxTracker[index]
       );
-      finalEntry = finalEntry.replace('\n', '[nl]');
-      // maxTracker; /*?*/
       return finalEntry?.padEnd(padWith, ' ');
     });
     return padded.join(' | ');

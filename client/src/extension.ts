@@ -8,6 +8,10 @@ import {
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
+  StaticFeature,
+  ClientCapabilities,
+  DocumentSelector,
+  ServerCapabilities,
 } from 'vscode-languageclient';
 
 import { RelatedFiles } from './feature/relatedFiles';
@@ -56,6 +60,8 @@ export function activate(context: ExtensionContext) {
     clientOptions
   );
 
+  client.registerFeature(new TriggerCharacterFeature());
+
   context.subscriptions.push(
     commands.registerCommand('aurelia.getAureliaComponents', async () => {
       console.log('Getting...');
@@ -101,4 +107,15 @@ export function deactivate(): Thenable<void> | undefined {
     return undefined;
   }
   return client.stop();
+}
+
+class TriggerCharacterFeature implements StaticFeature {
+  fillClientCapabilities(capabilities: ClientCapabilities): void {
+    // @ts-ignore
+    capabilities.textDocument?.completion?.contextSupport = true;
+  }
+  initialize(
+    capabilities: ServerCapabilities<any>,
+    documentSelector: DocumentSelector | undefined
+  ): void {}
 }

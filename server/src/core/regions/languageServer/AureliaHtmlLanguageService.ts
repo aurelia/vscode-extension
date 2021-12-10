@@ -24,10 +24,11 @@ export class AureliaHtmlLanguageService
   public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
-    _textDocumentPosition: TextDocumentPositionParams,
     triggerCharacter: string | undefined
   ) {
-    const finalCompletions: CompletionItem[] = AURELIA_KEY_WORD_COMPLETIONS;
+    const finalCompletions: CompletionItem[] = [
+      ...AURELIA_KEY_WORD_COMPLETIONS,
+    ];
 
     if (triggerCharacter === '<') {
       const aureliaComponents = aureliaProgram.aureliaComponents

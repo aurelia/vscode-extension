@@ -20,14 +20,14 @@ export class ValueConverterLanguageService
   public async doComplete(
     aureliaProgram: AureliaProgram,
     document: TextDocument,
-    _textDocumentPosition: TextDocumentPositionParams,
-    triggerCharacter: string | undefined
+    triggerCharacter: string | undefined,
+    region?: AbstractRegion
   ) {
     if (triggerCharacter === ':') {
       const completions = await onValueConverterCompletion(
-        _textDocumentPosition,
         document,
-        aureliaProgram
+        aureliaProgram,
+        region
       );
       if (completions === undefined) return [];
       return completions;
@@ -68,16 +68,10 @@ export class ValueConverterLanguageService
 }
 
 async function onValueConverterCompletion(
-  _textDocumentPosition: TextDocumentPositionParams,
   document: TextDocument,
-  aureliaProgram: AureliaProgram
+  aureliaProgram: AureliaProgram,
+  targetRegion?: AbstractRegion
 ): Promise<AureliaCompletionItem[]> {
-  const componentList = aureliaProgram.aureliaComponents.getAll();
-  const regions = RegionParser.parse(document, componentList);
-  const targetRegion = ViewRegionUtils.findRegionAtPosition(
-    regions,
-    _textDocumentPosition.position
-  );
   if (!targetRegion) return [];
 
   if (!ValueConverterRegion.is(targetRegion)) return [];

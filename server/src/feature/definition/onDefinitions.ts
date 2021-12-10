@@ -5,8 +5,11 @@ import { LocationLink, Range } from 'vscode-languageserver';
 
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
+import { ParseHtml } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
+import { RegionParser } from '../../core/regions/RegionParser';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaDefinitionFromViewModel } from './aureliaDefintion';
 
@@ -35,8 +38,19 @@ export async function onDefintion(
 
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
-  if (!targetComponent) return;
-  const regions = targetComponent?.viewRegions;
+
+  let regions: AbstractRegion[] = [];
+  if (targetComponent) {
+    regions = targetComponent?.viewRegions;
+  } else {
+    // Quickfix for Html-only Custom Elements
+    if (!ParseHtml.isHtmlWithRootTemplate(document.getText())) return;
+    regions = RegionParser.parse(
+      document,
+      aureliaProgram.aureliaComponents.getAll()
+    );
+  }
+
   if (regions.length === 0) return;
 
   const offset = document.offsetAt(position);

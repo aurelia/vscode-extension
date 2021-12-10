@@ -41,13 +41,15 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   then(/^I should get the correct suggestions (.*)$/, (suggestion: string) => {
     /* prettier-ignore */ logger.log('I should get the correct suggestion',{env:'test'});
 
+    expect(completions).toBeTruthy();
+
     if (isAureliaCompletionItem(completions)) {
       expect(completions.length).toBeGreaterThan(0);
 
       const target = completions.find((completion) =>
         completion.label.includes(suggestion)
       );
-
+      expect(target?.label).toBeDefined();
       expect(target?.label).toContain(suggestion);
       if (target?.insertText !== undefined) {
         expect(target.insertText).toContain(suggestion);
@@ -58,7 +60,10 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   then(
     /^I should get the correct method (.*) with brackets$/,
     (methodName: string) => {
+      expect(completions).toBeTruthy();
       if (isAureliaCompletionItem(completions)) {
+        expect(completions.length).toBeGreaterThan(0);
+
         const target = completions.find(
           (completion) => completion.label === methodName
         );
@@ -71,6 +76,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   then(
     /^I should get the correct method (.*) with its arguments$/,
     (methodName: string) => {
+      expect(completions).toBeTruthy();
       if (isAureliaCompletionItem(completions)) {
         const target = completions.find(
           (completion) => completion.label === methodName

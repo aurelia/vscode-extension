@@ -11,6 +11,7 @@ import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { AureliaProjects } from '../../core/AureliaProjects';
+import { CustomElementRegion } from '../../core/regions/ViewRegions';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaRenameFromViewModel } from './aureliaRename';
 
@@ -46,8 +47,22 @@ export async function onRenameRequest(
 
   if (!regions) return;
 
-  const region = ViewRegionUtils.findRegionAtPosition(regions, position);
-  if (!region) return normalRename(position, document, newName);
+  const offset = document.offsetAt(position);
+  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
+  if (CustomElementRegion.is(region)) {
+    const isInCustomElementStartTag = ViewRegionUtils.isInCustomElementStartTag(
+      region,
+      offset
+    );
+    if (!isInCustomElementStartTag) {
+      return normalRename(position, document, newName);
+    }
+  }
+  if (region == null) {
+    return;
+  }
+
+  // @ts-ignore TODO: implement rename for CustomElement
   const doRename = region.languageService.doRename;
 
   if (doRename) {
@@ -61,25 +76,6 @@ export async function onRenameRequest(
     // renamed; /* ? */
     return renamed;
   }
-
-  // const modeAndRegion = await languageModes.getModeAndRegionAtPosition(
-  //   document,
-  //   position
-  // );
-
-  // if (!modeAndRegion) return;
-  // const { mode, region } = modeAndRegion;
-
-  // if (!mode) return normalRename(position, document, newName);
-  // if (!region) return normalRename(position, document, newName);
-
-  // // const doRename = mode.doRename;
-
-  // if (doRename) {
-  //   const renamed = await doRename(document, position, newName, region);
-  //   // renamed; /*?*/
-  //   return renamed;
-  // }
 }
 
 function normalRename(

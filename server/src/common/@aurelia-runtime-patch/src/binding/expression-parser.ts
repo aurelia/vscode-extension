@@ -1,3 +1,4 @@
+import { interpolationRegex } from '../../../constants';
 import { createLookup } from '../utilities-objects';
 import {
   AccessKeyedExpression,
@@ -39,6 +40,7 @@ import {
   ExpressionKind,
   DestructuringAssignmentSingleExpression as DASE,
   DestructuringAssignmentExpression as DAE,
+  SourceCodeLocation,
 } from './ast';
 
 const enum Token {
@@ -580,12 +582,11 @@ export class ExpressionParser {
     $state.length = expression.length;
     $state.index = 0;
     $state._currentChar = expression.charCodeAt(0);
-    return parse(
-      $state,
-      Access.Reset,
-      Precedence.Variadic,
-      expressionType === void 0 ? ExpressionType.IsProperty : expressionType
-    );
+    return parse($state, Access.Reset, Precedence.Variadic, {
+      expressionType:
+        expressionType === void 0 ? ExpressionType.IsProperty : expressionType,
+      startOffset: 0,
+    });
   }
 }
 
@@ -676,8 +677,12 @@ export function parseExpression<
   TType extends ExpressionType = ExpressionType.IsProperty
 >(
   input: string,
-  expressionType?: TType,
-  startOffset: number = 0
+  parseOptions: ParseOptions<TType> = {
+    // @ts-ignore
+    expressionType: ExpressionType.None,
+    isInterpolation: false,
+    startOffset: 0,
+  }
 ): TType extends ExpressionType.Interpolation
   ? Interpolation
   : TType extends ExpressionType.IsIterator
@@ -687,13 +692,18 @@ export function parseExpression<
   $state.length = input.length;
   $state.index = 0;
   $state._currentChar = input.charCodeAt(0);
-  return parse(
-    $state,
-    Access.Reset,
-    Precedence.Variadic,
-    expressionType === void 0 ? ExpressionType.IsProperty : expressionType,
-    startOffset
-  );
+
+  let { expressionType } = parseOptions;
+  if (input.match(interpolationRegex)?.length != null) {
+    // @ts-ignore subtype of constraint 'ExpressionType'
+    expressionType = ExpressionType.Interpolation;
+  }
+
+  return parse($state, Access.Reset, Precedence.Variadic, {
+    ...parseOptions,
+    expressionType:
+      expressionType === void 0 ? ExpressionType.IsProperty : expressionType,
+  });
 }
 
 // This is performance-critical code which follows a subset of the well-known ES spec.
@@ -704,12 +714,22 @@ export function parseExpression<
 // It's therefore not considered to have any tangible impact on the maintainability of the code base.
 // For reference, most of the parsing logic is based on: https://tc39.github.io/ecma262/#sec-ecmascript-language-expressions
 
+type ParseOptions<TType extends ExpressionType> = {
+  expressionType: TType;
+  startOffset: number;
+  isInterpolation?: boolean;
+};
+
 export function parse<TPrec extends Precedence, TType extends ExpressionType>(
   state: ParserState,
   access: Access,
   minPrecedence: TPrec,
-  expressionType: TType,
-  startOffset: number = 0
+  parseOptions: ParseOptions<TType> = {
+    // @ts-ignore
+    expressionType: ExpressionType.None,
+    startOffset: 0,
+    isInterpolation: false,
+  }
 ): TPrec extends Precedence.Unary
   ? IsUnary
   : TPrec extends Precedence.Binary
@@ -741,6 +761,8 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
     ? ForOfStatement
     : never
   : never {
+  const { expressionType, isInterpolation, startOffset } = parseOptions;
+
   // state.index/*?*/
   if (expressionType === ExpressionType.IsCustom) {
     return new CustomExpression(state.ip) as any;
@@ -791,7 +813,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
     nextToken(state);
     result = new UnaryExpression(
       op,
-      parse(state, access, Precedence.LeftHandSide, expressionType, startOffset)
+      parse(state, access, Precedence.LeftHandSide, parseOptions)
     );
     state._assignable = false;
   } else {
@@ -870,22 +892,51 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
             state._startIndex - state._tokenValue.toString().length;
           // state.ip[state._startIndex]; /*?*/
           // state.ip[beforeValueIndex]; /*?*/
-          const openBracketIndex = findCharBackUntil(state, ['{', ':', ',']);
+          const targetTokenBackIndex = findCharBackUntil(state, [
+            '{',
+            ':',
+            ',',
+          ]);
 
           // console.log('vvv---vvv');
           // for (let index = beforeValueIndex; index > 0; index -= 1) {
 
           // console.log('^^^');
           // @ts-ignore
-          const token = state.ip[openBracketIndex];
+          const token = state.ip[targetTokenBackIndex];
 
-          if (token === '{') {
+          if (isInterpolation) {
+            // ('isInterpolation'); /* ? */
+            // state; /* ?*/
+            // const accessScopeStart = state._startIndex;
+            const accessScopeStart =
+              startOffset + state.index - state._tokenValue.toString().length;
+            const accessScopeEnd = startOffset + state.index;
             result = new AccessScopeExpression(
               state._tokenValue as string,
               access & Access.Ancestor,
               {
-                start: startOffset + beforeValueIndex,
-                end: startOffset + state._startIndex,
+                start: accessScopeStart,
+                end: accessScopeEnd,
+              }
+            );
+          } else if (token === '{') {
+            ('token === {'); /* ? */
+            // state; /* ?*/
+            startOffset; /* ? */
+            beforeValueIndex; /* ? */
+            const accessScopeStart = startOffset + beforeValueIndex;
+            const accessScopeEnd = startOffset + state._startIndex;
+            // // const accessScopeStart = beforeValueIndex;
+            // const accessScopeStart = state._startIndex;
+            // const accessScopeEnd = state.index;
+            new Error().stack; /*? */
+            result = new AccessScopeExpression(
+              state._tokenValue as string,
+              access & Access.Ancestor,
+              {
+                start: accessScopeStart,
+                end: accessScopeEnd,
               }
             );
           } else if (token === ',') {
@@ -928,30 +979,19 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
         break;
       case Token.OpenParen: // parenthesized expression
         nextToken(state);
-        result = parse(
-          state,
-          Access.Reset,
-          Precedence.Assign,
-          expressionType,
-          startOffset
-        );
+        result = parse(state, Access.Reset, Precedence.Assign, parseOptions);
         consume(state, Token.CloseParen);
         access = Access.Reset;
         break;
       case Token.OpenBracket:
         result =
           state.ip.search(/\s+of\s+/) > state.index
-            ? parseArrayDestructuring(state, startOffset)
-            : parseArrayLiteralExpression(
-                state,
-                access,
-                expressionType,
-                startOffset
-              );
+            ? parseArrayDestructuring(state, parseOptions.startOffset)
+            : parseArrayLiteralExpression(state, access, parseOptions);
         access = Access.Reset;
         break;
       case Token.OpenBrace:
-        result = parseObjectLiteralExpression(state, expressionType);
+        result = parseObjectLiteralExpression(state, parseOptions);
         access = Access.Reset;
         break;
       case Token.TemplateTail:
@@ -964,11 +1004,10 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
         result = parseTemplate(
           state,
           access,
-          expressionType,
           // @ts-ignore
           result,
           false,
-          startOffset
+          parseOptions
         );
         access = Access.Reset;
         break;
@@ -976,8 +1015,8 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
       case Token.NumericLiteral:
         // state._tokenValue; /*?*/
         result = new PrimitiveLiteralExpression(state._tokenValue, {
-          start: startOffset + state._startIndex,
-          end: startOffset + state.index,
+          start: parseOptions.startOffset + state._startIndex,
+          end: parseOptions.startOffset + state.index,
         });
         state._assignable = false;
         nextToken(state);
@@ -1011,7 +1050,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
     if (expressionType & ExpressionType.IsIterator) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // @ts-ignore
-      return parseForOfStatement(state, result, startOffset) as any;
+      return parseForOfStatement(state, result) as any;
     }
     if (Precedence.LeftHandSide < minPrecedence) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1075,7 +1114,10 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
             result = new AccessScopeExpression(
               name,
               (result as AccessScopeExpression | AccessThisExpression).ancestor,
-              { start: startOffset + state._startIndex, end: startOffset + -10 }
+              {
+                start: startOffset + state._startIndex,
+                end: startOffset + -10,
+              }
             );
           } else {
             // if it's not $Scope, it's $Member
@@ -1125,13 +1167,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           result = new AccessKeyedExpression(
             // @ts-ignore
             result,
-            parse(
-              state,
-              Access.Reset,
-              Precedence.Assign,
-              expressionType,
-              startOffset
-            ),
+            parse(state, Access.Reset, Precedence.Assign, parseOptions),
             /** try to get start of index, +1 "]" */
             {
               start: startOffset + state._startIndex - state.index + 1,
@@ -1142,52 +1178,101 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           break;
         case Token.OpenParen:
           state._assignable = false;
+          // '>>>> 1'; /* ? */
           // state._tokenValue; /*?*/
           // state; /*?*/
           const openParentStateStartIndex = state._startIndex;
           nextToken(state);
           while ((state._currentToken as Token) !== Token.CloseParen) {
+            // ('>>>> 1.1'); /* ? */
+            // state._tokenValue; /*?*/
+            // state; /*?*/
+            // foo(bar())
+            let argsOffset = startOffset;
+            if ((state._currentToken as Token) === Token.CloseParen) {
+              argsOffset = startOffset + state._startIndex;
+            }
             args.push(
-              parse(
-                state,
-                Access.Reset,
-                Precedence.Assign,
+              parse(state, Access.Reset, Precedence.Assign, {
                 expressionType,
-                startOffset
-              )
+                startOffset: argsOffset,
+                isInterpolation,
+              })
             );
             if (!consumeOpt(state, Token.Comma)) {
               break;
             }
           }
+          // '>>>> 2'; /* ? */
+          // state; /* ? */
           consume(state, Token.CloseParen);
           if (access & Access.Scope) {
             // state._tokenValue; /*?*/
             // state.index/*?*/
             // state._startIndex/*?*/
-            // state/*?*/
+            // ('>>>> 3'); /* ? */
+            // state; /*?*/
+            // state._tokenValue; /* ? */
             const startCallScopeIndex = state.index - state._startIndex - 1;
+            // foo(bar)
+            let nameLocationStart = startOffset + startCallScopeIndex;
+            let nameLocationEnd =
+              startOffset + startCallScopeIndex + name.toString().length;
+            let scopeLocationStart = startOffset + startCallScopeIndex;
+            let scopeLocationEnd = startOffset + state._startIndex;
+
+            // foo(bar())
+            if ((state._currentToken as Token) === Token.CloseParen) {
+              const openParenIndex = findCharBackUntil(state, ['(']);
+              if (openParenIndex != null) {
+                nameLocationStart =
+                  startOffset +
+                  openParenIndex -
+                  state._tokenValue.toString().length;
+                nameLocationEnd = startOffset + openParenIndex;
+                // TODO scopeLocation
+              }
+            }
+            // ('CallScopeExpression'); /* ? */
+            if (isInterpolation) {
+              // state; /* ? */
+              // isInterpolation; /*?*/
+              // startCallScopeIndex; /*?*/
+              const targetNameLocation =
+                // @ts-ignore
+                result.nameLocation as SourceCodeLocation;
+              if (targetNameLocation) {
+                nameLocationStart = targetNameLocation.start;
+                nameLocationEnd = targetNameLocation.end;
+              } else {
+                console.log('[WARNING] Unconsumed: ');
+                console.log(result);
+              }
+            }
+
             result = new CallScopeExpression(
               name,
               args,
               (result as AccessScopeExpression | AccessThisExpression).ancestor,
               {
-                start: startOffset + startCallScopeIndex,
-                end: startOffset + startCallScopeIndex + name.toString().length,
+                start: nameLocationStart,
+                end: nameLocationEnd,
               },
               {
-                start: startOffset + startCallScopeIndex,
-                end: startOffset + state._startIndex,
+                start: scopeLocationStart,
+                end: scopeLocationEnd,
                 // end: startOffset + state.index,
               }
             );
           } else if (access & Access.Member) {
+            const callMemberStart =
+              startOffset + openParentStateStartIndex - name.length;
+            const callMemberEnd = startOffset + openParentStateStartIndex;
             // name; /*?*/
-            // state/*?*/
             // @ts-ignore
             result = new CallMemberExpression(result, name, args, {
-              start: startOffset + openParentStateStartIndex - name.length,
-              end: startOffset + openParentStateStartIndex,
+              start: callMemberStart,
+              end: callMemberEnd,
             });
           } else {
             // @ts-ignore
@@ -1206,11 +1291,10 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
           result = parseTemplate(
             state,
             access,
-            expressionType,
             // @ts-ignore
             result,
             true,
-            startOffset
+            parseOptions
           );
         default:
       }
@@ -1260,13 +1344,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
       TokenValues[opToken & Token.Type] as BinaryOperator,
       // @ts-ignore
       result,
-      parse(
-        state,
-        access,
-        opToken & Token.Precedence,
-        expressionType,
-        startOffset
-      )
+      parse(state, access, opToken & Token.Precedence, parseOptions)
     );
     state._assignable = false;
   }
@@ -1288,19 +1366,13 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
    */
 
   if (consumeOpt(state, Token.Question)) {
-    const yes = parse(
-      state,
-      access,
-      Precedence.Assign,
-      expressionType,
-      startOffset
-    );
+    const yes = parse(state, access, Precedence.Assign, parseOptions);
     consume(state, Token.Colon);
     result = new ConditionalExpression(
       // @ts-ignore
       result,
       yes,
-      parse(state, access, Precedence.Assign, expressionType, startOffset)
+      parse(state, access, Precedence.Assign, parseOptions)
     );
     state._assignable = false;
   }
@@ -1332,7 +1404,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
     result = new AssignExpression(
       // @ts-ignore
       result,
-      parse(state, access, Precedence.Assign, expressionType, startOffset)
+      parse(state, access, Precedence.Assign, parseOptions)
     );
   }
   if (Precedence.Variadic < minPrecedence) {
@@ -1356,9 +1428,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
     nextToken(state);
     const args = new Array<IsAssign>();
     while (consumeOpt(state, Token.Colon)) {
-      args.push(
-        parse(state, access, Precedence.Assign, expressionType, startOffset)
-      );
+      args.push(parse(state, access, Precedence.Assign, parseOptions));
     }
     // state._tokenValue; /*?*/
     // state; /*?*/
@@ -1384,9 +1454,7 @@ export function parse<TPrec extends Precedence, TType extends ExpressionType>(
     nextToken(state);
     const args = new Array<IsAssign>();
     while (consumeOpt(state, Token.Colon)) {
-      args.push(
-        parse(state, access, Precedence.Assign, expressionType, startOffset)
-      );
+      args.push(parse(state, access, Precedence.Assign, parseOptions));
     }
     // @ts-ignore
     result = new BindingBehaviorExpression(result, name, args);
@@ -1487,12 +1555,12 @@ function parseArrayDestructuring(state: ParserState, startOffset = 0): DAE {
  * ,
  * Elision ,
  */
-function parseArrayLiteralExpression(
+function parseArrayLiteralExpression<TType extends ExpressionType>(
   state: ParserState,
   access: Access,
-  expressionType: ExpressionType,
-  startOffset = 0
+  parseOptions: ParseOptions<TType>
 ): ArrayBindingPattern | ArrayLiteralExpression {
+  const { expressionType } = parseOptions;
   nextToken(state);
   const elements = new Array<IsAssign>();
   while (state._currentToken !== Token.CloseBracket) {
@@ -1503,13 +1571,10 @@ function parseArrayLiteralExpression(
       }
     } else {
       elements.push(
-        parse(
-          state,
-          access,
-          Precedence.Assign,
-          expressionType & ~ExpressionType.IsIterator,
-          startOffset
-        )
+        parse(state, access, Precedence.Assign, {
+          ...parseOptions,
+          expressionType: expressionType & ~ExpressionType.IsIterator,
+        })
       );
       if (consumeOpt(state, Token.Comma)) {
         if ((state._currentToken as Token) === Token.CloseBracket) {
@@ -1531,8 +1596,7 @@ function parseArrayLiteralExpression(
 
 function parseForOfStatement(
   state: ParserState,
-  result: BindingIdentifierOrPattern,
-  startOffset = 0
+  result: BindingIdentifierOrPattern
 ): ForOfStatement {
   if ((result.$kind & ExpressionKind.IsForDeclaration) === 0) {
     if (true /**/)
@@ -1550,13 +1614,10 @@ function parseForOfStatement(
   }
   nextToken(state);
   const declaration = result;
-  const statement = parse(
-    state,
-    Access.Reset,
-    Precedence.Variadic,
-    ExpressionType.None,
-    startOffset
-  );
+  const statement = parse(state, Access.Reset, Precedence.Variadic, {
+    expressionType: ExpressionType.None,
+    startOffset: 0,
+  });
   return new ForOfStatement(declaration, statement as IsBindingBehavior);
 }
 
@@ -1581,11 +1642,12 @@ function parseForOfStatement(
  * StringLiteral
  * NumericLiteral
  */
-function parseObjectLiteralExpression(
+function parseObjectLiteralExpression<TType extends ExpressionType>(
   state: ParserState,
-  expressionType: ExpressionType,
-  startOffset = 0
+  parseOptions: ParseOptions<TType>
 ): ObjectBindingPattern | ObjectLiteralExpression {
+  const { expressionType, startOffset } = parseOptions;
+
   // state.ip; /*?*/
   // state.index; /*?*/
   const openBraceIndex = state.index - 1;
@@ -1600,13 +1662,10 @@ function parseObjectLiteralExpression(
       nextToken(state);
       consume(state, Token.Colon);
       values.push(
-        parse(
-          state,
-          Access.Reset,
-          Precedence.Assign,
-          expressionType & ~ExpressionType.IsIterator,
-          startOffset
-        )
+        parse(state, Access.Reset, Precedence.Assign, {
+          ...parseOptions,
+          expressionType: expressionType & ~ExpressionType.IsIterator,
+        })
       );
     } else if (state._currentToken & Token.IdentifierName) {
       // IdentifierName = optional colon
@@ -1619,13 +1678,10 @@ function parseObjectLiteralExpression(
       nextToken(state);
       if (consumeOpt(state, Token.Colon)) {
         values.push(
-          parse(
-            state,
-            Access.Reset,
-            Precedence.Assign,
-            expressionType & ~ExpressionType.IsIterator,
-            startOffset
-          )
+          parse(state, Access.Reset, Precedence.Assign, {
+            ...parseOptions,
+            expressionType: expressionType & ~ExpressionType.IsIterator,
+          })
         );
       } else {
         // Shorthand
@@ -1636,13 +1692,10 @@ function parseObjectLiteralExpression(
         state.index = index;
         // state.ip[state._startIndex]; /*?*/
         values.push(
-          parse(
-            state,
-            Access.Reset,
-            Precedence.Primary,
-            expressionType & ~ExpressionType.IsIterator,
-            startOffset
-          )
+          parse(state, Access.Reset, Precedence.Primary, {
+            ...parseOptions,
+            expressionType: expressionType & ~ExpressionType.IsIterator,
+          })
         );
       }
     } else {
@@ -1676,25 +1729,42 @@ function parseInterpolation(
 ): Interpolation {
   const parts: string[] = [];
   const expressions: (IsBindingBehavior | Interpolation)[] = [];
+  const interpolationStarts: number[] = [];
+  const interpolationEnds: number[] = [];
   const length = state.length;
   let result = '';
+  let interpolationStart = NaN;
   while (state.index < length) {
     switch (state._currentChar) {
       case Char.Dollar:
         if (state.ip.charCodeAt(state.index + 1) === Char.OpenBrace) {
+          // /* prettier-ignore */ console.log('----------------------------------------')
+          interpolationStart = Math.max(state.index, 0);
+          // const interpolationStart = Math.max(startOffset + state.index, 0);
+          interpolationStarts.push(startOffset + interpolationStart);
+          // interpolationStarts; /*?*/
           parts.push(result);
+          // state; /* ? */
+          // parts; /*?*/
+          interpolationEnds.push(
+            startOffset + interpolationStart - result.length
+          );
+          // interpolationEnds; /*?*/
           result = '';
 
           state.index += 2;
           state._currentChar = state.ip.charCodeAt(state.index);
+          // state; /* ? */
           nextToken(state);
-          const expression = parse(
-            state,
-            Access.Reset,
-            Precedence.Variadic,
-            ExpressionType.Interpolation,
-            startOffset
-          );
+          // startOffset; /* ? */
+          // currentPartLength; /*?*/
+          // const adjustedOffset = startOffset + currentPartLength;
+          // adjustedOffset; /*?*/
+          const expression = parse(state, Access.Reset, Precedence.Variadic, {
+            expressionType: ExpressionType.Interpolation,
+            startOffset,
+            isInterpolation: true,
+          });
           expressions.push(expression);
           continue;
         } else {
@@ -1710,8 +1780,16 @@ function parseInterpolation(
     nextChar(state);
   }
   if (expressions.length) {
+    // interpolationEnds; /* ? */
     parts.push(result);
-    return new Interpolation(parts, expressions as IsBindingBehavior[]);
+    // parts; /* ? */
+    const [, ...finalEnds] = interpolationEnds;
+    return new Interpolation(
+      parts,
+      expressions as IsBindingBehavior[],
+      interpolationStarts,
+      finalEnds
+    );
   }
   return null!;
 }
@@ -1748,28 +1826,23 @@ function parseInterpolation(
  * \ EscapeSequence
  * SourceCharacter (but not one of ` or \ or $)
  */
-function parseTemplate(
+function parseTemplate<TType extends ExpressionType>(
   state: ParserState,
   access: Access,
-  expressionType: ExpressionType,
   result: IsLeftHandSide,
   tagged: boolean,
-  startOffset = 0
+  parseOptions: ParseOptions<TType>
 ): TaggedTemplateExpression | TemplateExpression {
   const cooked = [state._tokenValue as string];
   // TODO: properly implement raw parts / decide whether we want this
   consume(state, Token.TemplateContinuation);
-  const expressions = [
-    parse(state, access, Precedence.Assign, expressionType, startOffset),
-  ];
+  const expressions = [parse(state, access, Precedence.Assign, parseOptions)];
   while (
     (state._currentToken = scanTemplateTail(state)) !== Token.TemplateTail
   ) {
     cooked.push(state._tokenValue as string);
     consume(state, Token.TemplateContinuation);
-    expressions.push(
-      parse(state, access, Precedence.Assign, expressionType, startOffset)
-    );
+    expressions.push(parse(state, access, Precedence.Assign, parseOptions));
   }
   cooked.push(state._tokenValue as string);
   state._assignable = false;
@@ -1978,6 +2051,7 @@ function findCharBackUntilNot(state: ParserState, targetChars: string[]) {
 }
 
 // st inpat = '01234567890123456789'/*?*/
+// const input = '${foo.} ${foo}<p></p>'
 // const input = 'foo({  start:  minDate,   end  })'
 // const input = 'foo({ bar})';
 // const input = 'foo({  bar, ok})';
@@ -2004,7 +2078,7 @@ function findCharBackUntilNot(state: ParserState, targetChars: string[]) {
 // `; /*?*/
 
 //               0123 567  012
-// const result = parseExpression(input, ExpressionType.None);
+// const result = parseExpression(input, ExpressionType.Interpolation);
 //  result/*?*/
 // JSON.stringify(result, null, 4); /*?*/
 

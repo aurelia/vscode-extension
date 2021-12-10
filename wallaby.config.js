@@ -8,6 +8,7 @@ module.exports = function (wallaby) {
       { pattern: 'server/node_modules/@ts-morph/**/*.{d.ts}', instrument: false },
       '**/tsconfig.json',
       'tests/common/**/*.ts',
+      'tests/unit/common/**/*.ts',
       'tests/unit/helpers/**/*.ts',
       { pattern: 'tests/**/*.feature', instrument: false },
       { pattern: 'tests/testFixture/**/*.{ts,html,json}', instrument: false },
@@ -19,9 +20,8 @@ module.exports = function (wallaby) {
     ],
 
     tests: [
-      'tests/testLauncher/withWallaby.spec.ts',
-      // 'tests/unit/step-definitions/embeddedLanguages/embedded-support.spec.ts',
-      // 'tests/unit/core/**/*.spec.ts'
+      // 'tests/testLauncher/withWallaby.spec.ts',
+      'tests/unit/core/**/*.spec.ts'
     ],
 
     testFramework: 'jest',

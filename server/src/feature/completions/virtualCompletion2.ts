@@ -6,7 +6,10 @@ import {
   InsertTextFormat,
 } from 'vscode-languageserver';
 
-import { AureliaLSP } from '../../common/constants';
+import { AureliaLSP, interpolationRegex } from '../../common/constants';
+import { OffsetUtils } from '../../common/documens/OffsetUtils';
+import { XScopeUtils } from '../../common/documens/xScopeUtils';
+import { StringUtils } from '../../common/string/StringUtils';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
@@ -42,7 +45,10 @@ const PARAMETER_NAME = 'parameterName';
 export function aureliaVirtualComplete_vNext(
   aureliaProgram: AureliaProgram,
   document: TextDocument,
-  region: AbstractRegion | undefined
+  region: AbstractRegion | undefined,
+  triggerCharacter?: string,
+  offset?: number,
+  replaceTriggerCharacter?: boolean
 ) {
   if (!region) return [];
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
@@ -64,52 +70,67 @@ export function aureliaVirtualComplete_vNext(
   const copy = sourceFile.copy(COPY_PATH, { overwrite: true });
   const myClass = copy.getClass(targetComponent?.className);
 
-  // 2.1 Convert view content to view model
   if (!region.accessScopes) {
     project.removeSourceFile(copy);
     return [];
   }
 
+  // 2.1 Transform view content to virtual view model
   // 2.1.1 Add `this.`
-  let virtualContent: string | undefined;
-  const accessScopeNames = region.accessScopes.map((scope) => scope.name);
-  let viewInput: string | undefined;
-  if (
-    AttributeInterpolationRegion.is(region) === true ||
-    TextInterpolationRegion.is(region) === true
-  ) {
-    viewInput = region.regionValue;
-  } else {
-    viewInput = region.attributeValue;
-  }
+  // region; /* ? */
 
-  accessScopeNames.forEach((accessScopeName) => {
-    const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
-    virtualContent = viewInput?.replace(
-      replaceRegexp,
-      `this.${accessScopeName}`
-    );
-  });
-
-  // 2.1.2 Defalut to class members
-  if (virtualContent === undefined) {
-    virtualContent = 'this.';
-  }
+  let virtualContent = getVirtualContentFromRegion(
+    region,
+    offset,
+    triggerCharacter,
+    replaceTriggerCharacter
+  ); /* ? */
+  // virtualContent; /*?*/
 
   // 2.2 Perform completions
-  const targetStatementText = `${virtualContent}${COMPLETIONS_ID}`;
-  const virMethod = myClass?.addMethod({
-    name: VIRTUAL_METHOD_NAME,
-    statements: [targetStatementText],
-  });
-  const targetStatement = virMethod?.getStatements()[0]; // we only add one statement
+  // 2.2.1 Differentiate Interpolation
+  let interpolationModifier = 0;
+  let targetStatementText = `${virtualContent}${COMPLETIONS_ID}`;
+  if (virtualContent.match(interpolationRegex)?.length != null) {
+    targetStatementText = `\`${virtualContent}\`${COMPLETIONS_ID}`;
+    interpolationModifier = 2; // - 2 we added "\`" because regionValue is ${}, thus in virtualContent we need to do `${}`
+  }
+
+  // 2.2.2 Find specific regionValue from accessScope (Reason: can have multitple interpolations in a region)
+  const targetScope = XScopeUtils.getScopeByOffset(region.accessScopes, offset);
+  let normalizeConstant = 0;
+  if (targetScope != null) {
+    const { endOffset } = region.sourceCodeLocation;
+    normalizeConstant = endOffset - targetScope.nameLocation.end;
+  }
+
+  let targetStatement;
+  try {
+    const virMethod = myClass?.addMethod({
+      name: VIRTUAL_METHOD_NAME,
+      statements: [targetStatementText],
+    });
+    targetStatement = virMethod?.getStatements()[0];
+  } catch (error) {
+    // Dont pass on ts-morph error
+    return [];
+  }
   if (!targetStatement) {
     project.removeSourceFile(copy);
     return [];
   }
   const finalTargetStatementText = `${targetStatement.getFullText()}${COMPLETIONS_ID}`;
   const targetPos = finalTargetStatementText?.indexOf(COMPLETIONS_ID);
-  const finalPos = targetStatement.getPos() + targetPos;
+  const finalPos =
+    targetStatement.getPos() +
+    targetPos -
+    interpolationModifier -
+    normalizeConstant;
+
+  // copy.getText(); /* ? */
+  // copy.getText().length /* ? */
+  // copy.getText().substr(finalPos - 1, 30); /* ? */
+  // copy.getText().substr(finalPos - 9, 30); /* ? */
 
   const languageService = project.getLanguageService().compilerObject;
   // Completions
@@ -154,6 +175,63 @@ export function aureliaVirtualComplete_vNext(
   project.removeSourceFile(copy);
 
   return result;
+}
+
+function getVirtualContentFromRegion(
+  region: AbstractRegion,
+  offset: number | undefined,
+  triggerCharacter?: string,
+  replaceTriggerCharacter?: boolean
+) {
+  // triggerCharacter; /* ? */
+  // offset; /* ? */
+
+  let viewInput: string | undefined = '';
+  const isInterpolationRegion = AbstractRegion.isInterpolationRegion(region);
+  if (isInterpolationRegion) {
+    viewInput = region.regionValue;
+  } else {
+    viewInput = region.attributeValue;
+  }
+
+  // Add triggerCharacter at offset
+  if (replaceTriggerCharacter) {
+    if (offset != null) {
+      const normalizedOffset =
+        offset - region.sourceCodeLocation.startOffset - 1; // - 1: insert one before
+      viewInput = StringUtils.insert(
+        viewInput,
+        normalizedOffset,
+        triggerCharacter
+      );
+    }
+  }
+
+  // viewInput; /* ? */
+  let virtualContent: string | undefined;
+  region.accessScopes?.forEach((scope) => {
+    const { start, end } = scope.nameLocation;
+    const offsetIncluded = OffsetUtils.isIncluded(start, end, offset);
+    // Need more care for interpolation, because, can have multiple regions
+    // TODO: How to deal/split `${1} ${2} ${3}`, because right now, it is treated as one region
+    if (isInterpolationRegion) {
+      // if (!offsetIncluded) return;
+    }
+
+    const accessScopeName = scope.name;
+    const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
+    virtualContent = viewInput?.replace(
+      replaceRegexp,
+      `this.${accessScopeName}`
+    );
+  });
+
+  // 2.1.2 Defalut to any class member
+  if (virtualContent === undefined) {
+    virtualContent = 'this.';
+  }
+  virtualContent; /* ? */
+  return virtualContent;
 }
 
 function enhanceCompletionItemDocumentation(

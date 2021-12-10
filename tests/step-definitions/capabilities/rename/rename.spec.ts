@@ -43,7 +43,6 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
 
   and(/^all other components (.*)$/, (numOtherComponents: string) => {
     expect(renamed?.changes).toBeDefined();
-    // renamed; /*?*/
     if (renamed?.changes) {
       expect(Object.keys(renamed.changes).length).toBe(
         Number(numOtherComponents)
@@ -53,6 +52,8 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
       const targetChanges = Object.entries(renamed.changes).filter(
         ([fileName]) => fileName.endsWith('.html')
       );
+
+      expect(targetChanges.length).toBeGreaterThan(0);
 
       if (!targetChanges.length) return;
       targetChanges.forEach(([fileName, change]) => {
@@ -128,6 +129,7 @@ export const renameSteps: StepDefinitions = ({ and, when, then }) => {
         filePathOrFragment: 'custom-element.html',
       });
 
+      expect(change).toBeDefined();
       if (change === undefined) return;
       expect(change[0].range.start.character).toBe(Number(scopeStart));
       expect(change[0].range.end.character).toBe(Number(scopeEnd));
@@ -148,7 +150,6 @@ function getRenameChangeFromFilePath({
 
   const [, targetChanges] =
     Object.entries(renamed?.changes).find(([fileUri]) => {
-      UriUtils.toSysPath(fileUri); /* ? */
       const result = UriUtils.toSysPath(fileUri).includes(finalTargetPath);
       return result;
     }) ?? [];

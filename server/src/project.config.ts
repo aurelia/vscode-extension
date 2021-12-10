@@ -4,5 +4,6 @@ export const PROJECT_CONFIG = {
    *
    * @example ~/coding/repos/vscode-extension
    */
-  projectPath: 'C:\\Users\\hdn local\\Desktop\\dev\\aurelia\\vscode-extension',
+  // projectPath: 'C:\\Users\\hdn local\\Desktop\\dev\\aurelia\\vscode-extension',
+  projectPath: '~/coding/repos/vscode-extension',
 };

@@ -11,13 +11,19 @@ export async function onDidSave(
   container: Container,
   { document }: TextDocumentChangeEvent<TextDocument>
 ) {
-  switch (document.languageId) {
-    case 'typescript': {
-      const aureliaProjects = container.get(AureliaProjects);
-      if (aureliaProjects.preventHydration(document)) return;
+  const aureliaProjects = container.get(AureliaProjects);
+  if (aureliaProjects.preventHydration(document)) return;
 
-      logger.log('Updating View model.');
+  switch (document.languageId) {
+    case 'javascript':
+    case 'typescript': {
       aureliaProjects.updateManyViewModel([document]);
+      logger.log('View model updated.');
+      break;
+    }
+    case 'html': {
+      aureliaProjects.updateManyView([document]);
+      logger.log('View updated');
     }
   }
 }

@@ -11,19 +11,27 @@ export async function onConnectionDidChangeContent(
   container: Container,
   { document }: TextDocumentChangeEvent<TextDocument>
 ) {
-  switch (document.languageId) {
-    case 'javascript':
-    case 'typescript': {
-      const aureliaProjects = container.get(AureliaProjects);
-      if (aureliaProjects.preventHydration(document)) return;
+  const aureliaProjects = container.get(AureliaProjects);
 
-      // await aureliaProjects.hydrate([document]);
-      aureliaProjects.updateManyViewModel([document]);
-      logger.log('Update View models');
-      break;
-    }
-    case 'html': {
-      logger.log('Update View');
-    }
+  // Hydration
+  if (!aureliaProjects.isHydrated()) {
+    aureliaProjects.hydrate([document]);
+    /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready to use. 🚀',{logMs:true,msEnd:true});
+    return;
   }
+  // if (aureliaProjects.preventHydration(document)) return;
+
+  // // Updating
+  // switch (document.languageId) {
+  //   case 'javascript':
+  //   case 'typescript': {
+  //     // await aureliaProjects.hydrate([document]);
+  //     // aureliaProjects.updateManyViewModel([document]);
+  //     logger.log('Update View models');
+  //     break;
+  //   }
+  //   case 'html': {
+  //     logger.log('Changed to html file');
+  //   }
+  // }
 }

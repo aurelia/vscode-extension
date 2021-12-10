@@ -1452,6 +1452,8 @@ export class Interpolation {
   public constructor(
     public readonly parts: readonly string[],
     public readonly expressions: readonly IsBindingBehavior[] = emptyArray,
+    public readonly interpolationStarts: number[],
+    public readonly interpolationEnds: number[],
   ) {
     this.isMulti = expressions.length > 1;
     this.firstExpression = expressions[0];

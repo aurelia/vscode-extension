@@ -213,7 +213,7 @@ export function remapWallabyToNormalProject(targetPath: string) {
       if (!normalizedLine.includes(normalizedOriginalCode)) return false;
       return [index + 1, line]; // + 1 Lines are shown 1-indexed
     })
-    .filter((line) => line != null);
+    .filter((line) => line != false);
 
   // - 3. Map back instrumented to project
   // Before: ~/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.317/projects/832463c82f802eb4/instrumented/your/code

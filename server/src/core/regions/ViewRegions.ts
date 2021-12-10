@@ -6,10 +6,17 @@ import {
   AccessScopeExpression,
   CallScopeExpression,
   ExpressionKind,
+  ExpressionType,
+  Interpolation,
+  parseExpression,
 } from '../../common/@aurelia-runtime-patch/src';
+import { SourceCodeLocation as ASTSourceCodeLocation } from '../../common/@aurelia-runtime-patch/src/binding/ast';
 import { AureliaView } from '../../common/constants';
 import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
-import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
+import {
+  findAllExpressionRecursive,
+  ParseExpressionUtil,
+} from '../../common/parseExpression/ParseExpressionUtil';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
 import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
@@ -156,6 +163,14 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
     return region;
   }
 
+  public static isInterpolationRegion(region: AbstractRegion): boolean {
+    const isInterpolationRegion =
+      AttributeInterpolationRegion.is(region) === true ||
+      TextInterpolationRegion.is(region) === true;
+
+    return isInterpolationRegion;
+  }
+
   // public static parse5Start(
   //   startTag: SaxStream.StartTagToken,
   //   attr: parse5.Attribute
@@ -227,8 +242,8 @@ export class AttributeRegion extends AbstractRegion {
       attr.name.length + // click.delegate
       2; // ="
 
-    /** Eg. click.delegate="increaseCounter()>"< */
-    const lastCharIndex = attrLocation.endOffset;
+    /** Eg. click.delegate="increaseCounter()><" */
+    const lastCharIndex = attrLocation.endOffset - 1; // - 1 the quote
 
     const startOffset = attrLocation.startOffset + attrNameLength;
     const updatedLocation: parse5.Location = {
@@ -237,11 +252,12 @@ export class AttributeRegion extends AbstractRegion {
       endOffset: lastCharIndex,
     };
 
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
-      attr.value,
-      [ExpressionKind.AccessScope, ExpressionKind.CallScope],
-      { startOffset }
-    );
+    const { expressions: accessScopes } =
+      ParseExpressionUtil.getAllExpressionsOfKindV2(
+        attr.value,
+        [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+        { startOffset }
+      );
 
     const viewRegion = AttributeRegion.create({
       attributeName: attr.name,
@@ -285,52 +301,119 @@ export class AttributeInterpolationRegion extends AbstractRegion {
   public static parse5Interpolation(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute,
-    interpolationMatch: RegExpExecArray | null
+    interpolationMatch: RegExpExecArray | null,
+    documentHasCrlf: boolean
   ) {
-    if (interpolationMatch === null) return;
     const attrLocation = startTag.sourceCodeLocation?.attrs[attr.name];
     if (!attrLocation) return;
 
-    /** Eg. >css="width: ${<message}px;" */
-    const startInterpolationLength =
-      attr.name.length + // css
-      2 + // ="
-      interpolationMatch.index + // width:_
-      2; // ${
+    /** Eg. >click.delegate="<increaseCounter()" */
+    const attrNameLength =
+      attr.name.length + // click.delegate
+      2; // ="
+    // attrNameLength /* ? */
 
-    const startOffset = attrLocation.startOffset + startInterpolationLength;
-    const startCol = attrLocation.startCol + startInterpolationLength;
+    /** Eg. click.delegate="increaseCounter()><" */
+    // const lastCharIndex = attrLocation.endOffset - 1; // - 1 the quote
 
-    const interpolationValue = interpolationMatch[1];
-    /** Eg. css="width: ${>message}<px;" */
-    const endInterpolationLength = Number(interpolationValue.length); // message
-    // 1; // "embrace" end char // need?
+    const startOffset = attrLocation.startOffset + attrNameLength;
+    // const updatedLocation: parse5.Location = {
+    //   ...attrLocation,
+    //   startOffset,
+    //   endOffset: lastCharIndex,
+    // };
 
-    const updatedLocation: parse5.Location = {
-      ...attrLocation,
-      startOffset,
-      startCol: startCol,
-      endOffset: startOffset + endInterpolationLength,
-      endCol: startCol + endInterpolationLength,
-    };
+    try {
+      // text.text; /* ? */
+      const parsed = ParseExpressionUtil.parseInterpolation(
+        attr.value,
+        startOffset
+      );
+      // parsed; /* ? */
+      // parsed.parts; /* ? */
 
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
-      interpolationValue,
-      [ExpressionKind.AccessScope, ExpressionKind.CallScope],
-      { startOffset }
-    );
+      // Used to find interpolation(s) inside string
+      let stringTracker = attr.value;
+      // For each expression "group", create a region
+      const finalRegions = parsed?.expressions.map(
+        (expression, expressionIndex) => {
+          const accessScopes: ViewRegionInfoV2['accessScopes'] = [];
+          findAllExpressionRecursive(
+            expression,
+            [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+            accessScopes
+          );
 
-    const viewRegion = AttributeInterpolationRegion.create({
-      attributeName: attr.name,
-      attributeValue: attr.value,
-      sourceCodeLocation: updatedLocation,
-      tagName: startTag.tagName,
-      accessScopes,
-      regionValue: interpolationMatch[1],
-    });
-    // viewRegion; /* ? */
+          if (documentHasCrlf) {
+            accessScopes.forEach((scope) => {
+              const { start } = scope.nameLocation;
+              const textUntilMatch = attr.value.substring(0, start);
+              // crlf = carriage return, line feed (windows specific)
+              let numberOfCrlfs = 0;
+              const crlfRegex = /\n/g;
+              numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
 
-    return viewRegion;
+              scope.nameLocation.start += numberOfCrlfs;
+              scope.nameLocation.end += numberOfCrlfs;
+            });
+          }
+
+          const isLastIndex = expressionIndex === parsed.expressions.length - 1;
+          const startInterpol =
+            parsed.interpolationStarts[expressionIndex] - startOffset;
+          let endInterpol;
+          if (isLastIndex) {
+            const lastPartLength = parsed.parts[expressionIndex + 1].length;
+            endInterpol = attrLocation.endOffset - lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
+          } else {
+            endInterpol =
+              parsed.interpolationEnds[expressionIndex] - startOffset;
+          }
+          const potentialRegionValue = stringTracker.substring(
+            startInterpol,
+            endInterpol
+          );
+
+          const updatedStartOffset = startInterpol + startOffset;
+          const updatedLocation: SourceCodeLocation = {
+            ...attrLocation,
+            startOffset: updatedStartOffset,
+            endOffset: updatedStartOffset + potentialRegionValue.length,
+          };
+
+          // Create default Access scope
+          if (accessScopes.length === 0) {
+            const nameLocation: ASTSourceCodeLocation = {
+              start: updatedLocation.startOffset + 2, // + 2: ${
+              end: updatedLocation.endOffset - 1, // - 1: }
+            };
+            const emptyAccessScope = new AccessScopeExpression(
+              '',
+              0,
+              nameLocation
+            );
+            accessScopes.push(emptyAccessScope);
+          }
+
+          const viewRegion = AttributeInterpolationRegion.create({
+            attributeName: attr.name,
+            attributeValue: attr.value,
+            sourceCodeLocation: updatedLocation,
+            tagName: startTag.tagName,
+            accessScopes,
+            regionValue: potentialRegionValue,
+          });
+
+          return viewRegion;
+        }
+      );
+
+      // finalRegions; /* ?*/
+      return finalRegions;
+    } catch (error) {
+      /* prettier-ignore */ console.log('TCL: TextInterpolationRegion -> error', error)
+      return [];
+    }
   }
 
   public accept<T>(visitor: IViewRegionsVisitor<T>): T {
@@ -461,6 +544,7 @@ export class CustomElementRegion extends AbstractRegion {
   }
 
   public static parse5Start(startTag: SaxStream.StartTagToken) {
+    //  startTag/*?*/
     const tagName = startTag.tagName;
     const { sourceCodeLocation } = startTag;
     if (!sourceCodeLocation) return;
@@ -608,6 +692,7 @@ export class RepeatForRegion extends AbstractRegion {
   public languageService: RepeatForLanguageService;
   public readonly type: ViewRegionType.RepeatFor;
   public readonly data: RepeatForRegionData;
+  public readonly accessScopes: AccessScopeExpression[];
 
   constructor(info: ViewRegionInfoV2) {
     super(info);
@@ -634,8 +719,8 @@ export class RepeatForRegion extends AbstractRegion {
       attr.name.length + // click.delegate
       2; // ="
 
-    /** Eg. click.delegate="increaseCounter()>"< */
-    const endInterpolationLength = attrLocation.endOffset;
+    /** Eg. click.delegate="increaseCounter()><" */
+    const endInterpolationLength = attrLocation.endOffset - 1; // - 1 the quote
 
     // __<label repeat.for="rule of grammarRules">
     const startColAdjust =
@@ -663,12 +748,22 @@ export class RepeatForRegion extends AbstractRegion {
         iterator,
         iterableName: iterable,
         iterableStartOffset,
-        iterableEndOffset: iterableStartOffset + iterable.length + 1,
+        iterableEndOffset: iterableStartOffset + iterable.length,
       };
       return repeatForData;
     }
+
+    const { expressions: accessScopes } =
+      ParseExpressionUtil.getAllExpressionsOfKindV2(
+        attr.value,
+        [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+        { startOffset, expressionType: ExpressionType.IsIterator }
+      );
+
     const repeatForViewRegion = RepeatForRegion.create({
+      accessScopes,
       attributeName: attr.name,
+      attributeValue: attr.value,
       sourceCodeLocation: updatedLocation,
       type: ViewRegionType.RepeatFor,
       data: getRepeatForData(),
@@ -717,45 +812,145 @@ export class TextInterpolationRegion extends AbstractRegion {
    */
   public static parse5Text(
     text: SaxStream.TextToken,
-    interpolationMatch: RegExpExecArray | null
+    /** Make up for difference between parse5 (not counting \n) and vscode (counting \n) */
+    documentHasCrlf: boolean
   ) {
-    if (interpolationMatch === null) return;
     const textLocation = text.sourceCodeLocation;
     if (!textLocation) return;
 
-    /** Eg. \n\n  ${grammarRules.length} */
-    const startInterpolationLength =
-      interpolationMatch.index + // width:_
-      2; // ${
+    const startOffset = textLocation.startOffset;
+    let { expressions: accessScopes, parts } =
+      ParseExpressionUtil.getAllExpressionsOfKindV2(
+        text.text,
+        [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+        { expressionType: ExpressionType.Interpolation, startOffset }
+      );
 
-    const startOffset = textLocation.startOffset + startInterpolationLength;
-    /** Eg. >css="width: ${message}<px;" */
-    const interpolationValue = interpolationMatch[1];
-    const endInterpolationLength =
-      Number(interpolationValue.length) + // message
-      1; // "embrace" end char
-    const endOffset = startOffset + endInterpolationLength;
+    // crlf fix
+    if (documentHasCrlf) {
+      accessScopes.forEach((scope) => {
+        const { start } = scope.nameLocation;
+        const textUntilMatch = text.text.substring(0, start);
+        // crlf = carriage return, line feed (windows specific)
+        let numberOfCrlfs = 0;
+        const crlfRegex = /\n/g;
+        numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
 
-    const updatedLocation: parse5.Location = {
-      ...textLocation,
-      startOffset,
-      endOffset,
-    };
+        scope.nameLocation.start += numberOfCrlfs;
+        scope.nameLocation.end += numberOfCrlfs;
+      });
+    }
 
-    const accessScopes = ParseExpressionUtil.getAllExpressionsOfKindV2(
-      interpolationValue,
-      [ExpressionKind.AccessScope, ExpressionKind.CallScope],
-      { startOffset }
-    );
+    if (text.sourceCodeLocation == null) return;
 
     const textRegion = TextInterpolationRegion.create({
-      regionValue: interpolationValue,
-      sourceCodeLocation: updatedLocation,
+      regionValue: text.text,
+      sourceCodeLocation: text.sourceCodeLocation,
       textValue: text.text,
       accessScopes,
     });
 
     return textRegion;
+  }
+
+  public static createRegionsFromExpressionParser(
+    text: SaxStream.TextToken,
+    documentHasCrlf: boolean
+  ): TextInterpolationRegion[] | undefined {
+    const textLocation = text.sourceCodeLocation;
+    if (!textLocation) return;
+
+    const startOffset = textLocation.startOffset;
+    // startOffset; /*?*/
+    try {
+      // text.text; /* ? */
+      const parsed = ParseExpressionUtil.parseInterpolation(
+        text.text,
+        startOffset
+      );
+      // parsed; /* ? */
+      // parsed.parts; /* ? */
+
+      // Used to find interpolation(s) inside string
+      let stringTracker = text.text;
+      // For each expression "group", create a region
+      const finalRegions = parsed?.expressions.map(
+        (expression, expressionIndex) => {
+          const accessScopes: ViewRegionInfoV2['accessScopes'] = [];
+          findAllExpressionRecursive(
+            expression,
+            [ExpressionKind.AccessScope, ExpressionKind.CallScope],
+            accessScopes
+          );
+
+          if (documentHasCrlf) {
+            accessScopes.forEach((scope) => {
+              const { start } = scope.nameLocation;
+              const textUntilMatch = text.text.substring(0, start);
+              // crlf = carriage return, line feed (windows specific)
+              let numberOfCrlfs = 0;
+              const crlfRegex = /\n/g;
+              numberOfCrlfs = textUntilMatch.match(crlfRegex)?.length ?? 0;
+
+              scope.nameLocation.start += numberOfCrlfs;
+              scope.nameLocation.end += numberOfCrlfs;
+            });
+          }
+
+          const isLastIndex = expressionIndex === parsed.expressions.length - 1;
+          const startInterpol =
+            parsed.interpolationStarts[expressionIndex] - startOffset;
+          let endInterpol;
+          if (isLastIndex) {
+            const lastPartLength = parsed.parts[expressionIndex + 1].length;
+            endInterpol = textLocation.endOffset - lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
+          } else {
+            endInterpol =
+              parsed.interpolationEnds[expressionIndex] - startOffset;
+          }
+          const potentialRegionValue = stringTracker.substring(
+            startInterpol,
+            endInterpol
+          );
+
+          const updatedStartOffset = startInterpol + startOffset;
+          const updatedLocation: SourceCodeLocation = {
+            ...textLocation,
+            startOffset: updatedStartOffset,
+            endOffset: updatedStartOffset + potentialRegionValue.length,
+          };
+
+          // Create default Access scope
+          if (accessScopes.length === 0) {
+            const nameLocation: ASTSourceCodeLocation = {
+              start: updatedLocation.startOffset + 2, // + 2: ${
+              end: updatedLocation.endOffset - 1, // - 1: }
+            };
+            const emptyAccessScope = new AccessScopeExpression(
+              '',
+              0,
+              nameLocation
+            );
+            accessScopes.push(emptyAccessScope);
+          }
+
+          const textRegion = TextInterpolationRegion.create({
+            regionValue: potentialRegionValue,
+            sourceCodeLocation: updatedLocation,
+            textValue: text.text,
+            accessScopes,
+          });
+
+          return textRegion;
+        }
+      );
+
+      // finalRegions; /* ?*/
+      return finalRegions;
+    } catch (error) {
+      /* prettier-ignore */ console.log('TCL: TextInterpolationRegion -> error', error)
+      return [];
+    }
   }
 
   public accept<T>(visitor: IViewRegionsVisitor<T>): T {
@@ -865,16 +1060,22 @@ export class ValueConverterRegion extends AbstractRegion {
 function convertToRegionInfo(info: Partial<ViewRegionInfoV2>) {
   // Convert to zero-based (col and line from parse5 is one-based)
   if (info.sourceCodeLocation) {
-    info.sourceCodeLocation.startCol -= 1;
-    info.sourceCodeLocation.startLine -= 1;
-    info.sourceCodeLocation.endCol -= 1;
-    info.sourceCodeLocation.endLine -= 1;
+    const copySourceLocation = { ...info.sourceCodeLocation };
+    copySourceLocation.startCol -= 1;
+    copySourceLocation.startLine -= 1;
+    copySourceLocation.endCol -= 1;
+    copySourceLocation.endLine -= 1;
+
+    info.sourceCodeLocation = copySourceLocation;
   }
   if (info.startTagLocation) {
-    info.startTagLocation.startCol -= 1;
-    info.startTagLocation.startLine -= 1;
-    info.startTagLocation.endCol -= 1;
-    info.startTagLocation.endLine -= 1;
+    const copyStartTagLocation = { ...info.startTagLocation };
+    copyStartTagLocation.startCol -= 1;
+    copyStartTagLocation.startLine -= 1;
+    copyStartTagLocation.endCol -= 1;
+    copyStartTagLocation.endLine -= 1;
+
+    info.startTagLocation = copyStartTagLocation;
   }
 
   return info as ViewRegionInfoV2;

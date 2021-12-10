@@ -5,6 +5,7 @@ import { completions } from '../completions.spec';
 
 export const completionValueConverterSteps: StepDefinitions = ({ then }) => {
   then('I should get the correct Value converters suggestions', () => {
+    expect(completions).toBeTruthy();
     if (isAureliaCompletionItem(completions)) {
       const valueConverterName = 'sort';
       const target = completions.find(

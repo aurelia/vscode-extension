@@ -12,13 +12,18 @@ import { CUSTOM_ELEMENT_SUFFIX } from './constants';
 export function getElementNameFromClassDeclaration(
   classDeclaration: ts.ClassDeclaration
 ): string {
+  const className = classDeclaration.name?.getText() ?? '';
   const classDecoratorInfos = getClassDecoratorInfos(classDeclaration);
 
-  classDecoratorInfos
-    .find((info) => info.decoratorName === 'customElement')
-    ?.decoratorArgument.replace(/['"]/g, ''); // The argument is a string with the quotes. We don' want the quotes.
+  const customElementDecoratorName = classDecoratorInfos.find(
+    (info) => info.decoratorName === 'customElement'
+  )?.decoratorArgument;
 
-  const className = classDeclaration.name?.getText() ?? '';
+  // Prioritize decorator name over class name convention
+  if (customElementDecoratorName) {
+    return customElementDecoratorName;
+  }
+
   const withoutCustomElementSuffix = className.replace(
     CUSTOM_ELEMENT_SUFFIX,
     ''

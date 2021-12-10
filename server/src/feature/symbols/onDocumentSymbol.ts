@@ -29,8 +29,9 @@ export async function onDocumentSymbol(
   const { aureliaProgram } = targetProject;
   if (!aureliaProgram) return [];
 
-  const componentList = aureliaProgram.aureliaComponents.getAll();
-  const regions = RegionParser.parse(document, componentList);
+  const targetComponent =
+    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
+  const regions = targetComponent?.viewRegions ?? [];
 
   const finalSymbols: DocumentSymbol[] = [];
   regions.forEach((region) => {

@@ -36,12 +36,11 @@ interface ILogOptions extends LogOptions {
 }
 
 const isCI = Boolean(process.env.CI);
-console.log('TCL: isCI', isCI);
 const shouldLog = !isCI;
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
   log: shouldLog,
   focusedLogging: true,
-  // ignoreFirstXLogs: 0,
+  // ignoreFirstXLogs: 9,
   // ignoreAfterXLogs: 1,
 
   measurePerf: true,

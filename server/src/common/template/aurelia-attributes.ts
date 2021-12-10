@@ -29,15 +29,12 @@ export function getAureliaAttributeKeywordIndex(input: string): number {
  *   getBindableNameFromAttritute(input) // inter-bindable
  */
 export function getBindableNameFromAttritute(input: string): string {
-  // Sth like: (.*)(?=.(bind|call))
+  // Sth like: .(bind|call)$
   const asRegex = new RegExp(
-    `(.*)(?=.(${AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST.join('|')}))`
+    `.(${AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST.join('|')})$`
   );
-  const match = asRegex.exec(input);
-
-  if (!match) return '';
-
-  return match[0];
+  const result = input.replace(asRegex, '');
+  return result;
 }
 
 // getBindableNameFromAttritute('inter-bindable.bind');

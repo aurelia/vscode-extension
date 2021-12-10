@@ -48,10 +48,9 @@ export class AureliaComponents {
         case '.ts': {
           const sourceFile = program.getSourceFile(path);
           if (sourceFile === undefined) {
-            // console.log(
-            //   'These source files are ignored by the extension: ',
-            //   path
-            // );
+            // logger.log(`Source file ignored by the extension: ${path}`, {
+            //   logLevel: 'DEBUG',
+            // });
             return;
           }
 
@@ -197,6 +196,18 @@ export class AureliaComponents {
       ...this.components[targetIndex],
       ...componentInfo,
     };
+  }
+
+  public updateOneView(document: TextDocument): void {
+    const targetComponent = this.getOneBy(
+      'viewFilePath',
+      UriUtils.toSysPath(document.uri)
+    );
+    if (!targetComponent) return;
+
+    const regions = RegionParser.parse(document, this.components);
+
+    targetComponent.viewRegions = regions;
   }
 
   public setBindables(components: IAureliaComponent[]): void {

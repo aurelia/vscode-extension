@@ -10,13 +10,15 @@ module.exports = {
   },
   // preset: 'ts-jest',
   // verbose: true,
-  testRegex: '.[j,t]s$',
+  // testRegex: '.spec.[j,t]s$',
+  // testMatch: ['*.spec.ts'],
+  // testMatch: ['**/unit/core/**/*.spec.ts'],
   // coverageDirectory: '.coverage',
   // coverageReporters: ['text', 'text-summary'],
   // coverageThreshold: {
   //   global: { statements: 90, lines: 90, functions: 90 },
   // },
-  testPathIgnorePatterns: ['/build/', '/node_modules/', '/testFixture/'],
+  testPathIgnorePatterns: ['/build/', '/node_modules/', '/testFixture/', '/server/out', '/tests/out'],
   // globals: {
   //   'ts-jest': {
   //     tsconfig: 'tests/tsconfig.json',

@@ -126,20 +126,20 @@ export async function findRegionsByWord(
       region.regionValue ?? region.attributeValue ?? region.textValue ?? '';
     if (parseInput === '') return false;
 
-    if (parseInput.startsWith('${')) {
-      parseInput = parseInput.replace('${', '');
-    }
-    if (parseInput.endsWith('}')) {
-      parseInput = parseInput.substring(0, parseInput.length - 1);
-    }
+    try {
+      // TODO: Gives parser error for parsing eg './custom-element'
+      if (region.type === ViewRegionType.Import) return;
 
-    const expressionsWithName = ParseExpressionUtil.getAllExpressionsByName(
-      parseInput,
-      sourceWord,
-      [ExpressionKind.AccessScope, ExpressionKind.CallScope]
-    );
-    const hasSourceWordInScope = expressionsWithName.length > 0;
-    return hasSourceWordInScope;
+      const expressionsWithName = ParseExpressionUtil.getAllExpressionsByName(
+        parseInput,
+        sourceWord,
+        [ExpressionKind.AccessScope, ExpressionKind.CallScope]
+      );
+      const hasSourceWordInScope = expressionsWithName.length > 0;
+      return hasSourceWordInScope;
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   return targetRegions;

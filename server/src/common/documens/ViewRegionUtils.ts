@@ -49,7 +49,14 @@ export class ViewRegionUtils {
     line: string
   ) {
     const result = regions.filter((region) => {
-      return region.sourceCodeLocation.startLine === Number(line);
+      const isSameLine = region.sourceCodeLocation.startLine === Number(line);
+      if (isSameLine) {
+        // Excluded TextInterpolation regions, because text regions start on "line before" in parse5
+        if (region.textValue?.startsWith('\n')) {
+          return false;
+        }
+      }
+      return isSameLine;
     });
     return result;
   }
@@ -99,6 +106,8 @@ export class ViewRegionUtils {
 
     regions.forEach((region) => {
       const possibleRegion = region;
+
+      // CustomElementRegion
       if (CustomElementRegion.is(region)) {
         const subTarget = this.findRegionAtOffset(region.data, offset);
         if (subTarget !== undefined) {
@@ -134,6 +143,20 @@ export class ViewRegionUtils {
 
     return targetRegion;
   }
+
+  public static isInCustomElementStartTag(
+    region: AbstractRegion,
+    offset: number
+  ) {
+    if (!CustomElementRegion.is(region)) return;
+
+    const { startOffset, endOffset } = region.sourceCodeLocation;
+    const afterStart = startOffset <= offset;
+    const beforeEnd = offset <= endOffset;
+    const is = afterStart && beforeEnd;
+
+    return is;
+  }
 }
 
 /**
@@ -153,6 +176,9 @@ function findSmallestRegionAtOffset(regions: AbstractRegion[], offset: number) {
   regions.forEach((region, index) => {
     if (region.sourceCodeLocation === undefined) return;
     const { startOffset, endOffset } = region.sourceCodeLocation;
+
+    if (startOffset > offset) return;
+    if (offset > endOffset) return;
 
     const startDelta = offset - startOffset;
     const endDelta = endOffset - offset;

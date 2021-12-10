@@ -1,5 +1,6 @@
 import { Position } from 'vscode-html-languageservice';
 import {
+  CompletionParams,
   PublishDiagnosticsParams,
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
@@ -35,23 +36,35 @@ export class AureliaServer {
   }
 
   public async onConnectionInitialized(
-    extensionSettings: ExtensionSettings
+    extensionSettings?: ExtensionSettings,
+    forceReinit: boolean = false
   ): Promise<void> {
     /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
 
-    await onConnectionInitialized(
-      this.container,
-      extensionSettings,
-      this.allDocuments.all()
-    );
-
-    /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready. 🚀',{logMs:true,msEnd:true});
+    try {
+      await onConnectionInitialized(
+        this.container,
+        extensionSettings ?? this.extensionSettings,
+        this.allDocuments.all(),
+        forceReinit
+      );
+    } catch (_error) {
+      const error = _error as Error;
+      logger.log(error.message);
+      logger.log(error.stack ?? '');
+    }
   }
 
   public async onConnectionDidChangeContent(
     change: TextDocumentChangeEvent<TextDocument>
   ): Promise<void> {
-    await onConnectionDidChangeContent(this.container, change);
+    try {
+      await onConnectionDidChangeContent(this.container, change);
+    } catch (_error) {
+      const error = _error as Error;
+      logger.log(error.message);
+      logger.log(error.stack ?? '');
+    }
   }
 
   // listen() {}
@@ -95,19 +108,27 @@ export class AureliaServer {
 
   public async onCompletion(
     document: TextDocument,
-    textDocumentPosition: TextDocumentPositionParams
+    completionParams: CompletionParams
   ) {
     if (this.extensionSettings.capabilities?.completions === false) return;
     /* prettier-ignore */ logger.log('Completion triggered.',{logMs:true,msStart:true});
 
-    const completions = await onCompletion(
-      this.container,
-      textDocumentPosition,
-      document
-    );
+    try {
+      const completions = await onCompletion(
+        this.container,
+        completionParams,
+        document
+      );
 
-    /* prettier-ignore */ logger.log(`Found ${completions?.length ?? 0} completion(s).`,{logMs:true,msEnd:true});
-    return completions;
+      /* prettier-ignore */ logger.log(`Found ${completions?.length ?? 0} completion(s).`,{logMs:true,msEnd:true});
+      completions.map((c) => c.label); /*?*/
+
+      return completions;
+    } catch (_error) {
+      const error = _error as Error;
+      logger.log(error.message);
+      logger.log(error.stack ?? '');
+    }
   }
 
   // onCompletionResolve() {}
@@ -118,10 +139,16 @@ export class AureliaServer {
     if (this.extensionSettings.capabilities?.definitions === false) return;
     /* prettier-ignore */ logger.log('Definition triggered.',{logMs:true,msStart:true});
 
-    const definition = await onDefintion(document, position, this.container);
+    try {
+      const definition = await onDefintion(document, position, this.container);
 
-    /* prettier-ignore */ logger.log(`Found ${definition?.length ?? 0} definition(s).`,{logMs:true,msEnd:true});
-    return definition;
+      /* prettier-ignore */ logger.log(`Found ${definition?.length ?? 0} definition(s).`,{logMs:true,msEnd:true});
+      return definition;
+    } catch (_error) {
+      const error = _error as Error;
+      logger.log(error.message);
+      logger.log(error.stack ?? '');
+    }
   }
 
   // onTypeDefinition() {}
@@ -131,13 +158,17 @@ export class AureliaServer {
 
   public async onDocumentSymbol(documentUri: string) {
     if (this.extensionSettings.capabilities?.documentSymbols === false) return;
-    // Too spammy
+    // Too spammy, since Vscode basically triggers this after every file change.
     // /* prettier-ignore */ logger.log('Document symbol triggered.',{logMs:true,msStart:true});
 
-    const symbols = await onDocumentSymbol(this.container, documentUri);
-
-    // /* prettier-ignore */ logger.log(`Found ${symbols?.length ?? 0} symbol(s).`,{logMs:true,msEnd:true});
-    return symbols;
+    try {
+      const symbols = await onDocumentSymbol(this.container, documentUri);
+      return symbols;
+    } catch (_error) {
+      const error = _error as Error;
+      logger.log(error.message);
+      logger.log(error.stack ?? '');
+    }
   }
 
   public onWorkspaceSymbol() {
@@ -156,14 +187,20 @@ export class AureliaServer {
     // Too spammy
     // /* prettier-ignore */ logger.log('Code action triggered.',{logMs:true,msStart:true});
 
-    const codeAction = await onCodeAction(
-      this.container,
-      codeActionParams,
-      this.allDocuments
-    );
+    try {
+      const codeAction = await onCodeAction(
+        this.container,
+        codeActionParams,
+        this.allDocuments
+      );
 
-    // /* prettier-ignore */ logger.log(`Found ${codeAction?.length ?? 0} code action(s).`,{logMs:true,msEnd:true});
-    return codeAction;
+      // /* prettier-ignore */ logger.log(`Found ${codeAction?.length ?? 0} code action(s).`,{logMs:true,msEnd:true});
+      return codeAction;
+    } catch (_error) {
+      const error = _error as Error;
+      logger.log(error.message);
+      logger.log(error.stack ?? '');
+    }
   }
 
   // onCodeLens() {}
@@ -180,16 +217,22 @@ export class AureliaServer {
     if (this.extensionSettings.capabilities?.renames === false) return;
     /* prettier-ignore */ logger.log('Rename triggered.',{logMs:true,msStart:true});
 
-    const renamed = await onRenameRequest(
-      document,
-      position,
-      newName,
-      this.container
-    );
+    try {
+      const renamed = await onRenameRequest(
+        document,
+        position,
+        newName,
+        this.container
+      );
 
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    /* prettier-ignore */ logger.log(`Found ${renamed?.changes?.length ?? '0'} rename(s).`,{logMs:true,msEnd:true});
-    return renamed;
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      /* prettier-ignore */ logger.log(`Found ${Object.keys(renamed?.changes ?? {}).length ?? '0'} file(s) to rename.`,{logMs:true,msEnd:true});
+      return renamed;
+    } catch (_error) {
+      const error = _error as Error;
+      logger.log(error.message);
+      logger.log(error.stack ?? '');
+    }
   }
 
   // onPrepareRename() {}

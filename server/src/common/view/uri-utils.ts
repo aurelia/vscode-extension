@@ -35,8 +35,10 @@ export class UriUtils {
     let uri = filePath;
     if (this.isWin()) {
       uri = this.encodeWinPath(filePath);
+      uri = `file:///${uri}`;
+    } else {
+      uri = `file://${uri}`;
     }
-    uri = `file:///${uri}`;
 
     return uri;
   }
