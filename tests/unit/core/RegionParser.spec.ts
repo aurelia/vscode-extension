@@ -241,6 +241,7 @@ describe.only('RegionParser.', () => {
                 targetRegions = RegionParser.parse(document, []);
               }
 
+              targetRegions /* ? */
               if (!isNaN(shared.line)) {
                 targetRegions = ViewRegionUtils.getManyTargetsRegionByLine(
                   targetRegions,

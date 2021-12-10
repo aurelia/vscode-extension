@@ -115,14 +115,14 @@ export class RegionParser {
         else {
           if (attr.value.match(interpolationRegex)?.length == null) return;
 
-          const viewRegion = AttributeInterpolationRegion.parse5Interpolation(
+          const attributeRegions = AttributeInterpolationRegion.parse5Interpolation(
             startTag,
             attr,
             null,
             documentHasCrlf
           );
-          if (!viewRegion) return;
-          viewRegions.push(viewRegion);
+          if (!attributeRegions) return;
+          viewRegions.push(...attributeRegions);
         }
 
         const isValueConverterRegion = attr.value.includes(
