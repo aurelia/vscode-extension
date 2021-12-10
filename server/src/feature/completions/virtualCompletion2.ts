@@ -47,7 +47,8 @@ export function aureliaVirtualComplete_vNext(
   document: TextDocument,
   region: AbstractRegion | undefined,
   triggerCharacter?: string,
-  offset?: number
+  offset?: number,
+  replaceTriggerCharacter?: boolean
 ) {
   if (!region) return [];
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
@@ -81,7 +82,8 @@ export function aureliaVirtualComplete_vNext(
   let virtualContent = getVirtualContentFromRegion(
     region,
     offset,
-    triggerCharacter
+    triggerCharacter,
+    replaceTriggerCharacter
   ); /* ? */
   // virtualContent; /*?*/
 
@@ -178,7 +180,8 @@ export function aureliaVirtualComplete_vNext(
 function getVirtualContentFromRegion(
   region: AbstractRegion,
   offset: number | undefined,
-  triggerCharacter?: string
+  triggerCharacter?: string,
+  replaceTriggerCharacter?: boolean
 ) {
   // triggerCharacter; /* ? */
   // offset; /* ? */
@@ -192,13 +195,16 @@ function getVirtualContentFromRegion(
   }
 
   // Add triggerCharacter at offset
-  if (offset != null) {
-    const normalizedOffset = offset - region.sourceCodeLocation.startOffset - 1; // - 1: insert one before
-    viewInput = StringUtils.insert(
-      viewInput,
-      normalizedOffset,
-      triggerCharacter
-    );
+  if (replaceTriggerCharacter) {
+    if (offset != null) {
+      const normalizedOffset =
+        offset - region.sourceCodeLocation.startOffset - 1; // - 1: insert one before
+      viewInput = StringUtils.insert(
+        viewInput,
+        normalizedOffset,
+        triggerCharacter
+      );
+    }
   }
 
   // viewInput; /* ? */

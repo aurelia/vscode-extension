@@ -19,14 +19,16 @@ export class AttributeInterpolationLanguageService
     document: TextDocument,
     triggerCharacter?: string,
     region?: AbstractRegion,
-    offset?: number
+    offset?: number,
+    replaceTriggerCharacter?: boolean
   ) {
     const completions = aureliaVirtualComplete_vNext(
       aureliaProgram,
       document,
       region,
       triggerCharacter,
-      offset
+      offset,
+      replaceTriggerCharacter
     );
     return completions;
   }

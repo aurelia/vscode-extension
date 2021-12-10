@@ -1,7 +1,8 @@
 import { getLanguageService } from 'vscode-html-languageservice';
 import {
-  TextDocumentPositionParams,
   CompletionItem,
+  CompletionParams,
+  CompletionTriggerKind,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -24,7 +25,7 @@ import {
 
 export async function onCompletion(
   container: Container,
-  _textDocumentPosition: TextDocumentPositionParams,
+  completionParams: CompletionParams,
   document: TextDocument
 ) {
   const aureliaProjects = container.get(AureliaProjects);
@@ -33,29 +34,50 @@ export async function onCompletion(
   const aureliaProgram = targetProject?.aureliaProgram;
   if (!aureliaProgram) return [];
 
-  // const targetComponent = aureliaProgram.aureliaComponents.getOneByFromDocument(
-  // document
-  // );
-  // const regions = targetComponent?.viewRegions;
+  const { position } = completionParams;
+  const offset = document.offsetAt(position);
+  const text = document.getText();
+  const triggerCharacter =
+    completionParams.context?.triggerCharacter ??
+    text.substring(offset - 1, offset);
+
+  // First check if we are inside a region
+  // Because, then we have to ignore the triggerCharacter.
+  // We ignore, to allow the parser to have a valid state.
+  // At least we want to maximize the chance, that given state is valid (for the parser).
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
-  const regions = targetComponent?.viewRegions ?? [];
-  // const allComponents = aureliaProgram.aureliaComponents.getAll();
-  // try {
-  //   regions = RegionParser.parse(document, allComponents);
-  // } catch (error) {
-  //   /* prettier-ignore */ console.log('TCL: error', error);
-  //   /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
-  // }
+  const existingRegions = targetComponent?.viewRegions ?? [];
+  const existingRegion = ViewRegionUtils.findRegionAtOffset(
+    existingRegions,
+    offset
+  );
 
-  const { position } = _textDocumentPosition;
-  const offset = document.offsetAt(position);
-  // offset; /*?*/
-  // regions; /* ? */
+  let regions: AbstractRegion[] = [];
+  let replaceTriggerCharacter = false;
+  const wasInvoked =
+    completionParams.context?.triggerKind !== CompletionTriggerKind.Invoked;
+  const shouldReplaceTriggerCharacter = existingRegion != null && wasInvoked;
+  if (shouldReplaceTriggerCharacter) {
+    // replace trigger character
+    regions = existingRegions;
+    replaceTriggerCharacter = true;
+  } else {
+    // re parse
+    const allComponents = aureliaProgram.aureliaComponents.getAll();
+    try {
+      regions = RegionParser.parse(document, allComponents);
+    } catch (error) {
+      /* prettier-ignore */ console.log('TCL: error', error);
+      /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
+    }
+  }
+
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
 
-  const text = document.getText();
-  const triggerCharacter = text.substring(offset - 1, offset);
+  // offset; /*?*/
+  // regions; /* ? */
+
   let accumulateCompletions: CompletionItem[] = [];
 
   if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {
@@ -110,7 +132,8 @@ export async function onCompletion(
         document,
         triggerCharacter,
         region,
-        offset
+        offset,
+        replaceTriggerCharacter
       )) as unknown as CompletionItem[];
     } catch (error) {
       console.log('TCL: error', error);

@@ -1,5 +1,6 @@
 import { Position } from 'vscode-html-languageservice';
 import {
+  CompletionParams,
   PublishDiagnosticsParams,
   TextDocumentChangeEvent,
   TextDocumentPositionParams,
@@ -107,7 +108,7 @@ export class AureliaServer {
 
   public async onCompletion(
     document: TextDocument,
-    textDocumentPosition: TextDocumentPositionParams
+    completionParams: CompletionParams
   ) {
     if (this.extensionSettings.capabilities?.completions === false) return;
     /* prettier-ignore */ logger.log('Completion triggered.',{logMs:true,msStart:true});
@@ -115,7 +116,7 @@ export class AureliaServer {
     try {
       const completions = await onCompletion(
         this.container,
-        textDocumentPosition,
+        completionParams,
         document
       );
 

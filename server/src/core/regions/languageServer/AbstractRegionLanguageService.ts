@@ -31,6 +31,7 @@ export interface AbstractRegionLanguageService {
     triggerCharacter?: string,
     region?: AbstractRegion,
     offset?: number,
+    replaceTriggerCharacter?: boolean,
   ) => Promise<CompletionList | AureliaCompletionItem[]>;
   doDefinition?: (
     aureliaProgram: AureliaProgram,

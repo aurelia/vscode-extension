@@ -11,6 +11,7 @@ import {
   RenameParams,
   DocumentSymbolParams,
   ExecuteCommandParams,
+  CompletionParams,
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -164,26 +165,24 @@ connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
 });
 
 // This handler provides the initial list of the completion items.
-connection.onCompletion(
-  async (_textDocumentPosition: TextDocumentPositionParams) => {
-    const documentUri = _textDocumentPosition.textDocument.uri;
-    const document = documents.get(documentUri);
-    if (!document) {
-      throw new Error('No document found');
-    }
-    const dontTrigger = await dontTriggerInViewModel(document);
-    if (dontTrigger) return;
-
-    const completions = await aureliaServer.onCompletion(
-      document,
-      _textDocumentPosition
-    );
-
-    if (completions != null) {
-      return completions;
-    }
+connection.onCompletion(async (completionParams: CompletionParams) => {
+  const documentUri = completionParams.textDocument.uri;
+  const document = documents.get(documentUri);
+  if (!document) {
+    throw new Error('No document found');
   }
-);
+  const dontTrigger = await dontTriggerInViewModel(document);
+  if (dontTrigger) return;
+
+  const completions = await aureliaServer.onCompletion(
+    document,
+    completionParams
+  );
+
+  if (completions != null) {
+    return completions;
+  }
+});
 
 // This handler resolves additional information for the item selected in
 // the completion list.
