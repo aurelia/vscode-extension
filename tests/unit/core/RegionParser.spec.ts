@@ -36,24 +36,29 @@ testCasesMapFileBased['Offsets'] = [
 /* prettier-ignore */
 testCasesMapFileBased['Access scopes'] = [
    //     , CODE                                                        , PARAMETERS                                                                         , Type                      , LINE  , FILE
-
    [{}    , '<p id.bind="foo"></p>'                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , 'Attribute'               , NaN   , '' ] ,
-   [{}    , '<p>${foo}</p>'                                             , {accSco:['foo'] ,nameLoc: ['5;8']}                                                 , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>${foo} ${} bar ${qux} zed</p>'                          , {accSco:['foo','','qux'] ,nameLoc: ['5;8','12;12','20;23']}                        , 'Attribute'               , NaN   , ''] ,
    [{}    , '<p>\n..${foo}</p>'                                         , {accSco:['foo'] ,nameLoc: ['8;11']}                                                , 'Attribute'               , NaN   , ''] ,
    [{}    , '<p>\r\n..${foo}</p>'                                       , {accSco:['foo'] ,nameLoc: ['9;12']}                                                , 'Attribute'               , NaN   , ''] ,
    [{}    , '<p>\n\n..${foo}</p>'                                       , {accSco:['foo'] ,nameLoc: ['9;12']}                                                , 'Attribute'               , NaN   , ''] ,
-   [{}    , '<p>\n\n..${foo} ${bar}</p>'                                , {accSco:['foo!bar'] ,nameLoc: ['9;12!16;19']}                                      , 'Attribute'               , NaN   , ''] ,
-   [{}    , '<p>\n..${foo}\n..${bar}</p>'                               , {accSco:['foo!bar'] ,nameLoc: ['8;11!17;20']}                                      , 'Attribute'               , NaN   , ''] ,
-   [{}    , '<p>\n\n..${foo} ${bar}\n..${qux}</p>'                      , {accSco:['foo!bar!qux'] ,nameLoc: ['9;12!16;19!25;28']}                            , 'Attribute'               , NaN   , ''] ,
-   [{}    , '<p>\r\n\r\n..${foo} ${bar}\r\n..${qux}</p>'                , {accSco:['foo!bar!qux'] ,nameLoc: ['11;14!18;21!28;31']}                           , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n\n..${foo} ${bar}</p>'                                , {accSco:['foo','bar'] ,nameLoc: ['9;12','16;19']}                                  , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n\n..${foo} ${}</p>'                                   , {accSco:['foo',''] ,nameLoc: ['9;12','16;16']}                                     , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n\n..${foo} ${} ${bar}</p>'                            , {accSco:['foo','','bar'] ,nameLoc: ['9;12','16;16','20;23']}                       , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n\n..${`${foo} bar`} ${} ${qux}</p>'                   , {accSco:['foo','','qux'] ,nameLoc: ['12;15','25;25','29;32']}                      , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n\n..${`${foo} ${bar} qux`} ${} ${zed}</p>'            , {accSco:['foo!bar','','zed'] ,nameLoc: ['12;15!19;22','32;32','36;39']}            , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n..${foo}\n..${bar}</p>'                               , {accSco:['foo','bar'] ,nameLoc: ['8;11','17;20']}                                  , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n\n..${foo} ${bar}\n..${qux}</p>'                      , {accSco:['foo','bar','qux'] ,nameLoc: ['9;12','16;19','25;28']}                    , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\n\n..${foo[bar]} ${qux}</p>'                           , {accSco:['foo!bar','qux'] ,nameLoc: ['9;12!13;16','21;24']}                        , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p>\r\n\r\n..${foo} ${bar}\r\n..${qux}</p>'                , {accSco:['foo','bar','qux'] ,nameLoc: ['11;14','18;21','28;31']}                   , 'Attribute'               , NaN   , ''] ,
    [{}    , '<p repeat.for="person of people"></p>'                     , {accSco:['people']}                                                                , 'Attribute'               , NaN   , ''] ,
-   [{}    , '<p repeat.for="p of people | foo:bar & qux:\'zed\'"></p>'  , {accSco:['people;bar']}                                                            , 'Attribute'               , NaN   , ''] ,
+   [{}    , '<p repeat.for="p of people | foo:bar & qux:\'zed\'"></p>'  , {accSco:['people;bar']}                                                            , 'Many'               , NaN   , ''] ,
 
    // //  , Html-only Custom Elements
-   [{}    , "<template bindable='foo'></template>"      , {accSco:['foo'] ,nameLoc:['20;23'] }                            , 'Attribute'               , NaN   , '' ] ,
+   [{}    , "<template bindable='foo'></template>"                      , {accSco:['foo'] ,nameLoc:['20;23'] }                                               , 'Attribute'               , NaN   , '' ] ,
 
    // //  , Nested
-   [{}    , "<p>a ${zzz} mid ${foo ? `(${foo.bar})` : ''} Max</p>"      , {accSco:['zzz!foo!foo'] ,nameLoc:['7;10!18;21!28;31'] }                            , 'Attribute'               , NaN   , '' ] ,
+   [{}    , "<p>a ${zzz} mid ${foo ? `(${foo.bar})` : ''} Max</p>"      , {accSco:['zzz','foo!foo'] ,nameLoc:['7;10','18;21!28;31'] }                        , 'Attribute'               , NaN   , '' ] ,
+   [{}    , "<p>foo ${bar}</p>"                                         , {accSco:['bar'] ,nameLoc:['9;12'] }                                                , 'Attribute'               , NaN   , '' ] ,
    [{}    , "<p>foo ${bar}</p>"                                         , {accSco:['bar'] ,nameLoc:['9;12'] }                                                , 'Attribute'               , NaN   , '' ] ,
 
    // //  , File based
@@ -70,7 +75,7 @@ testCasesMapFileBased['No parse result'] = [
   [{} , '<a href=""></a>'  , {}           , 'ATag'  , 0     , '' ] ,
 ];
 
-describe('RegionParser.', () => {
+describe.only('RegionParser.', () => {
   let shared = getEmptyShared();
   const filteredTestCaseMap = filterTestCaseMap(testCasesMapFileBased);
 
@@ -109,7 +114,6 @@ describe('RegionParser.', () => {
                 (attribute) =>
                   attribute.type === ViewRegionType.BindableAttribute
               );
-              result /* ? */
               expect(result?.regionValue).toBe('foo');
             });
 
@@ -121,7 +125,6 @@ describe('RegionParser.', () => {
                 ViewRegionType.CustomElement
               );
               const openingCustomElementTag = target[0];
-              openingCustomElementTag; /*?*/
 
               const { startTagLocation } = openingCustomElementTag;
               expect(startTagLocation.startLine).toBe(5);
@@ -237,7 +240,6 @@ describe('RegionParser.', () => {
                 const document = TextDocument.create('', 'html', 0, code);
                 targetRegions = RegionParser.parse(document, []);
               }
-              // targetRegions /* ? */
 
               if (!isNaN(shared.line)) {
                 targetRegions = ViewRegionUtils.getManyTargetsRegionByLine(
@@ -250,6 +252,7 @@ describe('RegionParser.', () => {
               const rawExpectedNameLocation = parameters.nameLoc;
 
               // expect(true).toBeFalsy();
+              // targetRegions /* ? */
               targetRegions.forEach((region, regionIndex) => {
                 const resultNames = region.accessScopes?.map(
                   (scope) => scope.name
@@ -258,8 +261,10 @@ describe('RegionParser.', () => {
                 if (rawExpectedAccessScopes == null) return;
                 const expectedAccessScopes =
                   rawExpectedAccessScopes[regionIndex].split(COLLECTION_SPLIT);
-                expectedAccessScopes; /* ? */
 
+                rawExpectedAccessScopes; /*?*/
+                expectedAccessScopes; /* ? */
+                resultNames; /* ? */
                 expect(resultNames).toEqual(expectedAccessScopes);
 
                 if (rawExpectedNameLocation == null) return;
@@ -278,6 +283,7 @@ describe('RegionParser.', () => {
                   expect(end).toEqual(Number(expectedEnd));
                 });
               });
+              // expect(true).toBeFalsy();
             });
           }
 

@@ -115,6 +115,11 @@ export interface ExpressionsOfKindOptions {
   startOffset: number;
 }
 
+export interface ExpressionsOfKindOptions_ForceInterpolation
+  extends ExpressionsOfKindOptions {
+  expressionType?: ExpressionType.Interpolation;
+}
+
 export class ParseExpressionUtil {
   /**
    * V2: pass input (parsing internal)
@@ -122,19 +127,20 @@ export class ParseExpressionUtil {
    */
   public static getAllExpressionsOfKindV2<
     TargetKind extends ExpressionKind,
-    ReturnType extends KindToActualExpression<TargetKind>
+    TargetExpression extends KindToActualExpression<TargetKind>
   >(
     input: string,
     targetKinds: TargetKind[],
     options?: ExpressionsOfKindOptions
-  ): ReturnType[] {
+  ): { expressions: TargetExpression[]; parts?: readonly string[] } {
     // /* prettier-ignore */ console.log('----------------------------------------')
-    let finalExpressions: ReturnType[] = [];
+    let finalExpressions: TargetExpression[] = [];
 
-    if (input.trim() === '') return [];
+    if (input.trim() === '') return { expressions: [] };
 
+    let parsed: ReturnType<typeof parseExpression> | undefined;
     try {
-      const parsed = parseExpression(
+      parsed = parseExpression(
         input,
         {
           expressionType: options?.expressionType ?? ExpressionType.None,
@@ -196,9 +202,14 @@ export class ParseExpressionUtil {
       // console.log(error.stack);
     }
 
-    finalExpressions = sortExpressions<ReturnType>(finalExpressions);
+    finalExpressions = sortExpressions<TargetExpression>(finalExpressions);
 
-    return finalExpressions;
+    const finalReturn = {
+      expressions: finalExpressions,
+      parts: parsed instanceof Interpolation ? parsed.parts : undefined,
+    };
+
+    return finalReturn;
   }
 
   public static getAllExpressionsOfKind<
@@ -246,6 +257,23 @@ export class ParseExpressionUtil {
     return finalExpressions;
   }
 
+  public static parseInterpolation(input: string, startOffset: number) {
+    if (input.trim() === '') return;
+
+    try {
+      const parsed = parseExpression(input, {
+        expressionType: ExpressionType.Interpolation,
+        startOffset: startOffset ?? 0,
+        isInterpolation: true,
+      });
+      return parsed;
+    } catch (_error) {
+      const error = _error as Error;
+      console.log(error.message);
+      // console.log(error.stack);
+    }
+  }
+
   public static getFirstExpressionByKind<
     TargetKind extends ExpressionKind,
     ReturnType extends KindToActualExpression<TargetKind>
@@ -287,7 +315,7 @@ export class ParseExpressionUtil {
   }
 }
 
-function findAllExpressionRecursive(
+export function findAllExpressionRecursive(
   expressionOrList: AnyBindingExpression | AnyBindingExpression[],
   targetKinds: ExpressionKind[],
   collector: unknown[],

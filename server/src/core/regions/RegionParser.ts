@@ -183,13 +183,14 @@ export class RegionParser {
     saxStream.on('text', (text: TextToken) => {
       if (text.text.trim() === '') return;
 
-      const viewRegion = TextInterpolationRegion.parse5Text(
-        text,
-        documentHasCrlf
-      );
-      if (!viewRegion) return;
+      const textRegions =
+        TextInterpolationRegion.createRegionsFromExpressionParser(
+          text,
+          documentHasCrlf
+        );
+      if (!textRegions) return;
 
-      viewRegions.push(viewRegion);
+      viewRegions.push(...textRegions);
     });
 
     saxStream.on('endTag', (endTag) => {
