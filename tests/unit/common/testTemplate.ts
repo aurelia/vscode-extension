@@ -93,7 +93,6 @@ export function whenIParseTheFile(fileName: string, shared: Shared) {
   );
 
   shared.parsedRegions = parsedRegions;
-  parsedRegions; /*?*/
 }
 
 export function andImOnTheLine(line: number, shared: Shared) {

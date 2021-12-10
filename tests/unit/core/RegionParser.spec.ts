@@ -75,7 +75,7 @@ testCasesMapFileBased['No parse result'] = [
   [{} , '<a href=""></a>'  , {}           , 'ATag'  , 0     , '' ] ,
 ];
 
-describe.only('RegionParser.', () => {
+describe('RegionParser.', () => {
   let shared = getEmptyShared();
   const filteredTestCaseMap = filterTestCaseMap(testCasesMapFileBased);
 

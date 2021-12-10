@@ -3,7 +3,6 @@ Feature: Rename in View.
   Background:
     Given the project is named "scoped-for-testing"
 
-  @focus
   Scenario Outline: Normal rename - View.
     And I open VSCode with the following file "other-custom-element-user.html"
     And I'm on the line <LINE> at character <CODE>

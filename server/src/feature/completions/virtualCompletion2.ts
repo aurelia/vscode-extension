@@ -7,6 +7,7 @@ import {
 } from 'vscode-languageserver';
 
 import { AureliaLSP, interpolationRegex } from '../../common/constants';
+import { OffsetUtils } from '../../common/documens/OffsetUtils';
 import { XScopeUtils } from '../../common/documens/xScopeUtils';
 import {
   AbstractRegion,
@@ -73,30 +74,9 @@ export function aureliaVirtualComplete_vNext(
 
   // 2.1 Transform view content to virtual view model
   // 2.1.1 Add `this.`
-  let virtualContent: string | undefined;
-  const accessScopeNames = region.accessScopes.map((scope) => scope.name);
-  let viewInput: string | undefined;
-  if (
-    AttributeInterpolationRegion.is(region) === true ||
-    TextInterpolationRegion.is(region) === true
-  ) {
-    viewInput = region.regionValue;
-  } else {
-    viewInput = region.attributeValue;
-  }
+  // region; /* ? */
 
-  accessScopeNames.forEach((accessScopeName) => {
-    const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
-    virtualContent = viewInput?.replace(
-      replaceRegexp,
-      `this.${accessScopeName}`
-    );
-  });
-
-  // 2.1.2 Defalut to any class member
-  if (virtualContent === undefined) {
-    virtualContent = 'this.';
-  }
+  let virtualContent = getVirtualContentFromRegion(region, offset); /* ? */
   // virtualContent; /*?*/
 
   // 2.2 Perform completions
@@ -181,6 +161,45 @@ export function aureliaVirtualComplete_vNext(
   project.removeSourceFile(copy);
 
   return result;
+}
+
+function getVirtualContentFromRegion(
+  region: AbstractRegion,
+  offset: number | undefined
+) {
+  let viewInput: string | undefined;
+  const isInterpolationRegion = AbstractRegion.isInterpolationRegion(region);
+  if (isInterpolationRegion) {
+    viewInput = region.regionValue;
+  } else {
+    viewInput = region.attributeValue;
+  }
+
+  // viewInput; /* ? */
+  let virtualContent: string | undefined;
+  region.accessScopes?.forEach((scope) => {
+    const { start, end } = scope.nameLocation;
+    const offsetIncluded = OffsetUtils.isIncluded(start, end, offset);
+    // Need more care for interpolation, because, can have multiple regions
+    // TODO: How to deal/split `${1} ${2} ${3}`, because right now, it is treated as one region
+    if (isInterpolationRegion) {
+      // if (!offsetIncluded) return;
+    }
+
+    const accessScopeName = scope.name;
+    const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
+    virtualContent = viewInput?.replace(
+      replaceRegexp,
+      `this.${accessScopeName}`
+    );
+  });
+
+  // 2.1.2 Defalut to any class member
+  if (virtualContent === undefined) {
+    virtualContent = 'this.';
+  }
+  virtualContent; /* ? */
+  return virtualContent;
 }
 
 function enhanceCompletionItemDocumentation(
