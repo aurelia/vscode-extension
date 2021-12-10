@@ -96,11 +96,17 @@ export function aureliaVirtualComplete_vNext(
     normalizeConstant = endOffset - targetScope.nameLocation.end;
   }
 
-  const virMethod = myClass?.addMethod({
-    name: VIRTUAL_METHOD_NAME,
-    statements: [targetStatementText],
-  });
-  const targetStatement = virMethod?.getStatements()[0]; // we only add one statement
+  let targetStatement;
+  try {
+    const virMethod = myClass?.addMethod({
+      name: VIRTUAL_METHOD_NAME,
+      statements: [targetStatementText],
+    });
+    targetStatement = virMethod?.getStatements()[0];
+  } catch (error) {
+    // Dont pass on ts-morph error
+    return [];
+  }
   if (!targetStatement) {
     project.removeSourceFile(copy);
     return [];
