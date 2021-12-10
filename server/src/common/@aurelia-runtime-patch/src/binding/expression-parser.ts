@@ -1729,20 +1729,32 @@ function parseInterpolation(
 ): Interpolation {
   const parts: string[] = [];
   const expressions: (IsBindingBehavior | Interpolation)[] = [];
+  const interpolationStarts: number[] = [];
+  const interpolationEnds: number[] = [];
   const length = state.length;
   let result = '';
+  let interpolationStart = NaN;
   while (state.index < length) {
     switch (state._currentChar) {
       case Char.Dollar:
         if (state.ip.charCodeAt(state.index + 1) === Char.OpenBrace) {
+          // /* prettier-ignore */ console.log('----------------------------------------')
+          interpolationStart = Math.max(state.index, 0);
+          // const interpolationStart = Math.max(startOffset + state.index, 0);
+          interpolationStarts.push(startOffset + interpolationStart);
+          // interpolationStarts; /*?*/
           parts.push(result);
+          // state; /* ? */
           // parts; /*?*/
-          // result; /*?*/
-          const currentPartLength = result.length;
+          interpolationEnds.push(
+            startOffset + interpolationStart - result.length
+          );
+          // interpolationEnds; /*?*/
           result = '';
 
           state.index += 2;
           state._currentChar = state.ip.charCodeAt(state.index);
+          // state; /* ? */
           nextToken(state);
           // startOffset; /* ? */
           // currentPartLength; /*?*/
@@ -1768,8 +1780,16 @@ function parseInterpolation(
     nextChar(state);
   }
   if (expressions.length) {
+    // interpolationEnds; /* ? */
     parts.push(result);
-    return new Interpolation(parts, expressions as IsBindingBehavior[]);
+    // parts; /* ? */
+    const [, ...finalEnds] = interpolationEnds;
+    return new Interpolation(
+      parts,
+      expressions as IsBindingBehavior[],
+      interpolationStarts,
+      finalEnds
+    );
   }
   return null!;
 }

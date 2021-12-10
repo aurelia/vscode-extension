@@ -129,7 +129,7 @@ describe('RegionParser.', () => {
                 }
 
                 // code /* ? */
-                const targetParsed =
+                const { expressions: targetParsed } =
                   ParseExpressionUtil.getAllExpressionsOfKindV2(
                     code,
                     [ExpressionKind.AccessScope, ExpressionKind.CallScope],
