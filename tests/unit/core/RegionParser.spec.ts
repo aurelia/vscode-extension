@@ -36,8 +36,8 @@ testCasesMapFileBased['Offsets'] = [
 /* prettier-ignore */
 testCasesMapFileBased['Access scopes'] = [
    //     , CODE                                                        , PARAMETERS                                                                         , Type                      , LINE  , FILE
-   [{focus:true}    , '${foo.} ${bar}<p></p>'                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , 'Attribute'               , NaN   , '' ] ,
-   [{focus:false}    , '${foo} ${bar.}<p></p>'                                     , {accSco:['foo','bar'] ,nameLoc:['2;5','9;12'] }                                               , 'Attribute'               , NaN   , '' ] ,
+   [{}    , '${foo.} ${bar}<p></p>'                                     , {accSco:['foo'] ,nameLoc:['2;5','9;12'] }                                               , 'Attribute'               , NaN   , '' ] ,
+   [{}    , '${foo} ${bar.}<p></p>'                                     , {accSco:['foo','bar'] ,nameLoc:['2;5','9;12'] }                                               , 'Attribute'               , NaN   , '' ] ,
    [{}    , '<p id.bind="foo"></p>'                                     , {accSco:['foo'] ,nameLoc:['12;15'] }                                               , 'Attribute'               , NaN   , '' ] ,
    [{}    , '<p>${foo} ${} bar ${qux} zed</p>'                          , {accSco:['foo','','qux'] ,nameLoc: ['5;8','12;12','20;23']}                        , 'Attribute'               , NaN   , ''] ,
    [{}    , '<p>\n..${foo}</p>'                                         , {accSco:['foo'] ,nameLoc: ['8;11']}                                                , 'Attribute'               , NaN   , ''] ,
