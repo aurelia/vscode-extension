@@ -9,7 +9,7 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}",
-        "--disable-extensions"
+        // "--disable-extensions"
       ],
       "outFiles": ["${workspaceRoot}/client/out/**/*.js"],
       "preLaunchTask": {
