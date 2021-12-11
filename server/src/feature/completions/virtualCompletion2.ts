@@ -99,7 +99,7 @@ export function aureliaVirtualComplete_vNext(
   // 2.2.2 Find specific regionValue from accessScope (Reason: can have multitple interpolations in a region)
   const targetScope = XScopeUtils.getScopeByOffset(region.accessScopes, offset);
   let normalizeConstant = 0;
-  if (targetScope != null) {
+  if (targetScope != null && targetScope.name !== '') {
     const { endOffset } = region.sourceCodeLocation;
     normalizeConstant = endOffset - targetScope.nameLocation.end;
   }
@@ -147,6 +147,7 @@ export function aureliaVirtualComplete_vNext(
     project.removeSourceFile(copy);
     return [];
   }
+  // virtualCompletions /* ? */
 
   const virtualCompletionEntryDetails = virtualCompletions
     .map((completion) => {
@@ -210,15 +211,9 @@ function getVirtualContentFromRegion(
   // viewInput; /* ? */
   let virtualContent: string | undefined;
   region.accessScopes?.forEach((scope) => {
-    const { start, end } = scope.nameLocation;
-    const offsetIncluded = OffsetUtils.isIncluded(start, end, offset);
-    // Need more care for interpolation, because, can have multiple regions
-    // TODO: How to deal/split `${1} ${2} ${3}`, because right now, it is treated as one region
-    if (isInterpolationRegion) {
-      // if (!offsetIncluded) return;
-    }
-
     const accessScopeName = scope.name;
+    if (accessScopeName === '') return;
+
     const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
     virtualContent = viewInput?.replace(
       replaceRegexp,

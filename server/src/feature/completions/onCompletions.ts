@@ -56,8 +56,8 @@ export async function onCompletion(
   let regions: AbstractRegion[] = [];
   let replaceTriggerCharacter = false;
   const wasInvoked =
-    completionParams.context?.triggerKind !== CompletionTriggerKind.Invoked;
-  const shouldReplaceTriggerCharacter = existingRegion != null && wasInvoked;
+    completionParams.context?.triggerKind === CompletionTriggerKind.Invoked;
+  const shouldReplaceTriggerCharacter = existingRegion != null && !wasInvoked;
   if (shouldReplaceTriggerCharacter) {
     // replace trigger character
     regions = existingRegions;
@@ -135,6 +135,7 @@ export async function onCompletion(
         offset,
         replaceTriggerCharacter
       )) as unknown as CompletionItem[];
+      // completions /* ? */
     } catch (error) {
       console.log('TCL: error', error);
       /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
