@@ -20,6 +20,10 @@ export const commonCapabilitiesStep: StepDefinitions = ({ given, and }) => {
 
       code = removeCursorFromCode(codeWithCursor);
       myMockServer.textDocuments.changeActive(code);
+      const activeDocument = myMockServer.textDocuments.getActive();
+      myMockServer
+        .getAureliaProgram()
+        ?.aureliaComponents.updateOneView(activeDocument);
       // /* prettier-ignore */ logger.log(`after`, { logPerf: true });
     }
   );

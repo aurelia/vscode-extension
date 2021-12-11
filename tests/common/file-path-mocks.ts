@@ -48,6 +48,7 @@ export const SCOPED_FOR_TESTING = {
   'custom-element-user.html': getAbsPathInScopedForTesting('src/view/custom-element/custom-element-user.html'),
   'custom-element.html': getAbsPathInScopedForTesting('src/view/custom-element/custom-element.html'),
   'custom-element.ts': getAbsPathInScopedForTesting('src/view/custom-element/custom-element.ts'),
+  'empty-view.ts': getAbsPathInScopedForTesting('src/view/empty-view.ts'),
   'empty-view.html': getAbsPathInScopedForTesting('src/view/empty-view.html'),
   'other-custom-element-user.html': getAbsPathInScopedForTesting('src/view/custom-element/other-custom-element-user.html'),
   'view-diagnostics.html': getAbsPathInScopedForTesting('src/view/diagnostics/view-diagnostics.html')

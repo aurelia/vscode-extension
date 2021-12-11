@@ -4,7 +4,11 @@ import {
   Position,
   TextDocument,
 } from 'vscode-html-languageservice';
-import { TextDocumentPositionParams } from 'vscode-languageserver-protocol';
+import { CompletionParams } from 'vscode-languageserver';
+import {
+  CompletionTriggerKind,
+  TextDocumentPositionParams,
+} from 'vscode-languageserver-protocol';
 
 import { Logger } from '../../../server/src/common/logging/logger';
 import {
@@ -20,23 +24,32 @@ const logger = new Logger('[Test] Completions');
 export let completions: AureliaCompletionItem[] | CompletionList | undefined;
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
-  when('I trigger Suggestions', async () => {
-    /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
+  when(
+    /^I trigger Suggestions with (.*)$/,
+    async (triggerCharacter: string) => {
+      /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
 
-    const document = myMockServer.textDocuments.getActive();
-    const textDocumentPositionParams = createTextDocumentPositionParams(
-      document,
-      position
-    );
+      triggerCharacter; /* ? */
+      if (triggerCharacter === "' '") {
+        triggerCharacter = ' ';
+      }
 
-    completions = await myMockServer
-      .getAureliaServer()
-      .onCompletion(document, textDocumentPositionParams);
+      const document = myMockServer.textDocuments.getActive();
+      const textDocumentPositionParams = createTextDocumentPositionParams(
+        document,
+        position,
+        triggerCharacter
+      );
 
-    if (!isAureliaCompletionItem(completions)) {
-      throw new Error('Not AureliaCompletionItem[]');
+      completions = await myMockServer
+        .getAureliaServer()
+        .onCompletion(document, textDocumentPositionParams);
+
+      if (!isAureliaCompletionItem(completions)) {
+        throw new Error('Not AureliaCompletionItem[]');
+      }
     }
-  });
+  );
 
   then(/^I should get the correct suggestions (.*)$/, (suggestion: string) => {
     /* prettier-ignore */ logger.log('I should get the correct suggestion',{env:'test'});
@@ -93,13 +106,18 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
 
 export function createTextDocumentPositionParams(
   document: TextDocument,
-  position: Position
-): TextDocumentPositionParams {
-  const textDocument: TextDocumentPositionParams = {
+  position: Position,
+  triggerCharacter: string
+): CompletionParams {
+  const textDocument: CompletionParams = {
     textDocument: {
       uri: document.uri,
     },
     position,
+    context: {
+      triggerKind: CompletionTriggerKind.Invoked,
+      triggerCharacter,
+    },
   };
 
   return textDocument;

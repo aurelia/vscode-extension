@@ -42,9 +42,11 @@ export async function givenIOpenVsCodeWithTheFollowingFiles(
     .mock(textDocumentPaths)
     .setActive(textDocumentPaths)
     .getAll();
-  await myMockServer.getAureliaServer().onConnectionInitialized({
-    aureliaProject: {
-      rootDirectory: myMockServer.getWorkspaceUri(),
+  await myMockServer.getAureliaServer().onConnectionInitialized(
+    {
+      aureliaProject: {
+        rootDirectory: myMockServer.getWorkspaceUri(),
+      },
     },
-  });
+  );
 }

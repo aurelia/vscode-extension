@@ -7,7 +7,7 @@ Feature: Completions - Methods.
   Scenario Outline: Empty brackets.
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
-    When I trigger Suggestions
+    When I trigger Suggestions with ''
     Then I should get the correct method <METHOD_NAME> with brackets
 
     Examples:
@@ -17,7 +17,7 @@ Feature: Completions - Methods.
   Scenario Outline: Method Argument completion.
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
-    When I trigger Suggestions
+    When I trigger Suggestions with ''
     Then I should get the correct method <METHOD_NAME> with its arguments
 
     Examples:
