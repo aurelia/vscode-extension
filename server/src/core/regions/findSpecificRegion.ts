@@ -26,7 +26,9 @@ export async function findAllBindableAttributeRegions(
   const componentList = aureliaProgram.aureliaComponents.getAll();
   await Promise.all(
     componentList.map(async (component) => {
-      const path = component.viewFilePath!;
+      const path = component.viewFilePath;
+      if (path == null) return;
+
       const uri = pathToFileURL(path).toString();
       const content = fs.readFileSync(path, 'utf-8');
       const document = TextDocument.create(uri, 'html', 0, content);
