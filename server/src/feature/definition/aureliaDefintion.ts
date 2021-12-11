@@ -15,7 +15,7 @@ import {
   findRegionsByWord,
   forEachRegionOfType,
 } from '../../core/regions/findSpecificRegion';
-import { AbstractRegion, ViewRegionType } from '../../core/regions/ViewRegions';
+import { AbstractRegion, ViewRegionSubType, ViewRegionType } from '../../core/regions/ViewRegions';
 import {
   AureliaProgram,
   IAureliaComponent,
@@ -118,6 +118,7 @@ async function getAureliaCustomElementDefinitions_OtherViews(
     ViewRegionType.CustomElement,
     (region, document) => {
       if (region.tagName !== targetComponent?.componentName) return;
+      if (region.subType === ViewRegionSubType.EndTag) return;
 
       const locationLink = createLocationLinkFromRegion(region, document);
       if (!locationLink) return;
