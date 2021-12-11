@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 
 import { kebabCase } from 'lodash';
-import { ts } from 'ts-morph';
+import { SyntaxKind, ts } from 'ts-morph';
 
 import { getElementNameFromClassDeclaration } from '../../common/className';
 import {
@@ -222,7 +222,38 @@ function getAureliaViewModelClassMembers(
   const classMembers: IAureliaClassMember[] = [];
 
   classDeclaration.forEachChild((classMember) => {
-    if (
+    // Constructor members
+    if (ts.isConstructorDeclaration(classMember)) {
+      const constructorMember = classMember;
+      constructorMember.forEachChild((constructorArgument) => {
+        if (constructorArgument.kind !== SyntaxKind.Parameter) return;
+        const hasModifier = getConstructorHasModifier(constructorArgument);
+        if (hasModifier === false) return;
+
+        constructorArgument.forEachChild((argumentPart) => {
+          if (argumentPart.kind !== SyntaxKind.Identifier) return;
+
+          const name = argumentPart.getText();
+          const symbol = checker.getSymbolAtLocation(argumentPart);
+          const commentDoc = ts.displayPartsToString(
+            symbol?.getDocumentationComment(checker)
+          );
+
+          const result: IAureliaClassMember = {
+            name,
+            documentation: commentDoc,
+            isBindable: false,
+            syntaxKind: argumentPart.kind,
+            start: constructorArgument.getStart(),
+            end: constructorArgument.getEnd(),
+          };
+          classMembers.push(result);
+        });
+      });
+    }
+
+    // Class Members
+    else if (
       ts.isPropertyDeclaration(classMember) ||
       ts.isGetAccessorDeclaration(classMember) ||
       ts.isMethodDeclaration(classMember)
@@ -271,6 +302,20 @@ function getAureliaViewModelClassMembers(
   });
 
   return classMembers;
+}
+
+function getConstructorHasModifier(constructorArgument: ts.Node) {
+  let hasModifier = false;
+  constructorArgument.forEachChild((argumentPart) => {
+    if (hasModifier === true) return;
+
+    const isPrivate = argumentPart.kind === SyntaxKind.PrivateKeyword;
+    const isPublic = argumentPart.kind === SyntaxKind.PublicKeyword;
+    const isProtected = argumentPart.kind === SyntaxKind.ProtectedKeyword;
+    const isReadonly = argumentPart.kind === SyntaxKind.ReadonlyKeyword;
+    hasModifier = isPrivate || isPublic || isProtected || isReadonly;
+  });
+  return hasModifier;
 }
 
 /**
