@@ -51,29 +51,20 @@ export function aureliaVirtualComplete_vNext(
   replaceTriggerCharacter?: boolean
 ) {
   if (!region) return [];
+  if (!region.accessScopes) return [];
+
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
 
   // 1. Component
   const project = aureliaProgram.tsMorphProject.project;
-  const tsConfigPath =
-    aureliaProgram.documentSettings.getSettings().aureliaProject
-      ?.rootDirectory ?? '';
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   if (!targetComponent) return [];
 
-  // 2. Virtual copy with content
-  const sourceFile = project.addSourceFileAtPath(
-    targetComponent.viewModelFilePath
-  );
-  const COPY_PATH = `${tsConfigPath}/copy.ts`;
-  const copy = sourceFile.copy(COPY_PATH, { overwrite: true });
-  const myClass = copy.getClass(targetComponent?.className);
-
-  if (!region.accessScopes) {
-    project.removeSourceFile(copy);
-    return [];
-  }
+  const sourceFile = project.getSourceFile(targetComponent.viewModelFilePath);
+  if (sourceFile == null) return [];
+  const sourceFilePath = sourceFile.getFilePath();
+  const myClass = sourceFile.getClass(targetComponent?.className);
 
   // 2.1 Transform view content to virtual view model
   // 2.1.1 Add `this.`
@@ -96,7 +87,8 @@ export function aureliaVirtualComplete_vNext(
     interpolationModifier = 2; // - 2 we added "\`" because regionValue is ${}, thus in virtualContent we need to do `${}`
   }
 
-  // 2.2.2 Find specific regionValue from accessScope (Reason: can have multitple interpolations in a region)
+  // 2.2.2 (Obsolete? Now only one region for one interpolatin again)
+  // Find specific regionValue from accessScope (Reason: can have multitple interpolations in a region)
   const targetScope = XScopeUtils.getScopeByOffset(region.accessScopes, offset);
   let normalizeConstant = 0;
   if (targetScope != null && targetScope.name !== '') {
@@ -115,10 +107,8 @@ export function aureliaVirtualComplete_vNext(
     // Dont pass on ts-morph error
     return [];
   }
-  if (!targetStatement) {
-    project.removeSourceFile(copy);
-    return [];
-  }
+  if (!targetStatement) return [];
+
   const finalTargetStatementText = `${targetStatement.getFullText()}${COMPLETIONS_ID}`;
   const targetPos = finalTargetStatementText?.indexOf(COMPLETIONS_ID);
   const finalPos =
@@ -136,23 +126,21 @@ export function aureliaVirtualComplete_vNext(
   // Completions
   const virtualCompletions = languageService
     .getCompletionsAtPosition(
-      COPY_PATH.replace('file:///', 'file:/'),
+      sourceFilePath.replace('file:///', 'file:/'),
       finalPos,
       {}
     )
     ?.entries.filter((result) => {
       return !result?.name.includes(VIRTUAL_METHOD_NAME);
     });
-  if (!virtualCompletions) {
-    project.removeSourceFile(copy);
-    return [];
-  }
+  if (!virtualCompletions) return [];
+
   // virtualCompletions /* ? */
 
   const virtualCompletionEntryDetails = virtualCompletions
     .map((completion) => {
       return languageService.getCompletionEntryDetails(
-        COPY_PATH.replace('file:///', 'file:/'),
+        sourceFilePath.replace('file:///', 'file:/'),
         finalPos,
         completion.name,
         undefined,
@@ -173,7 +161,6 @@ export function aureliaVirtualComplete_vNext(
     entryDetailsMap,
     virtualCompletions
   );
-  project.removeSourceFile(copy);
 
   return result;
 }
