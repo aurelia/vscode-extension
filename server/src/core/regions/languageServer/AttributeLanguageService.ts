@@ -21,7 +21,8 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
     const completions = aureliaVirtualComplete_vNext(
       aureliaProgram,
       document,
-      region
+      region,
+      triggerCharacter
     );
     return completions;
   }

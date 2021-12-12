@@ -17,7 +17,10 @@ import { Container } from '../../core/container';
 import { AbstractRegionLanguageService } from '../../core/regions/languageServer/AbstractRegionLanguageService';
 import { AureliaHtmlLanguageService } from '../../core/regions/languageServer/AureliaHtmlLanguageService';
 import { RegionParser } from '../../core/regions/RegionParser';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
+import {
+  AbstractRegion,
+  CustomElementRegion,
+} from '../../core/regions/ViewRegions';
 import {
   createAureliaTemplateAttributeKeywordCompletions,
   createAureliaTemplateAttributeCompletions,
@@ -81,12 +84,14 @@ export async function onCompletion(
   let accumulateCompletions: CompletionItem[] = [];
 
   if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {
-    const isNotRegion = region === undefined;
+    const isAcceptableRegion =
+      region === undefined || CustomElementRegion.is(region);
     const isInsideTag = await checkInsideTag(document, offset);
 
-    if (isNotRegion && isInsideTag) {
+    if (isAcceptableRegion && isInsideTag) {
+      const nextChar = text.substring(offset, offset + 1);
       const atakCompletions =
-        createAureliaTemplateAttributeKeywordCompletions();
+        createAureliaTemplateAttributeKeywordCompletions(nextChar);
       return atakCompletions;
     }
   } else if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER) {
@@ -124,26 +129,24 @@ export async function onCompletion(
   }
 
   const doComplete = languageService.doComplete;
-  if (doComplete !== undefined) {
-    let completions: CompletionItem[] = [CompletionItem.create('')];
-    try {
-      completions = (await doComplete(
-        aureliaProgram,
-        document,
-        triggerCharacter,
-        region,
-        offset,
-        replaceTriggerCharacter
-      )) as unknown as CompletionItem[];
-      // completions /* ? */
-    } catch (error) {
-      console.log('TCL: error', error);
-      /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
-    }
+  if (doComplete === undefined) return [];
 
-    accumulateCompletions.push(...completions);
-    return accumulateCompletions;
+  let completions: CompletionItem[] = [CompletionItem.create('')];
+  try {
+    completions = (await doComplete(
+      aureliaProgram,
+      document,
+      triggerCharacter,
+      region,
+      offset,
+      replaceTriggerCharacter
+    )) as unknown as CompletionItem[];
+    // completions /* ? */
+  } catch (error) {
+    console.log('TCL: error', error);
+    /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }
 
-  return [];
+  accumulateCompletions.push(...completions);
+  return accumulateCompletions;
 }
