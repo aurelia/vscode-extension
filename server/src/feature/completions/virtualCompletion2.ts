@@ -212,7 +212,7 @@ function getVirtualContentFromRegion(
   if (virtualContent === undefined) {
     virtualContent = 'this.';
   }
-  virtualContent; /* ? */
+  // virtualContent; /* ? */
   return virtualContent;
 }
 
