@@ -12,7 +12,7 @@ Feature: Definition in View Model.
 
     Examples:
       | DESCRIPTION    | LINE | CODE                                          | NUM_DEFINTIONS | TARGET_FILE_NAME         |
-      | Bindable       | 1    | `export class \|CustomElementCustomElement {` | 17             | custom-element-user.html |
+      | Bindable       | 1    | `export class \|CustomElementCustomElement {` | 10             | custom-element-user.html |
       | Bindable       | 2    | `  @bindable \|foo;`                          | 11             | custom-element.html      |
       | Bindable       | 3    | `  @bindable \|bar;`                          | 6              | custom-element.html      |
       | Class Variable | 4    | `  \|qux;`                                    | 5              | custom-element.html      |
