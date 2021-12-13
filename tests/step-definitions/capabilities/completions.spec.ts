@@ -29,7 +29,6 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     async (triggerCharacter: string) => {
       /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
 
-      triggerCharacter; /* ? */
       if (triggerCharacter === "' '") {
         triggerCharacter = ' ';
       }
@@ -57,6 +56,11 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     expect(completions).toBeTruthy();
 
     if (isAureliaCompletionItem(completions)) {
+      if (suggestion === '') {
+        expect(completions.length).toBe(0);
+        return;
+      }
+
       expect(completions.length).toBeGreaterThan(0);
 
       const target = completions.find((completion) =>

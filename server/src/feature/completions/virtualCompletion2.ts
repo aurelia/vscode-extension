@@ -75,7 +75,7 @@ export function aureliaVirtualComplete_vNext(
     offset,
     triggerCharacter,
     replaceTriggerCharacter
-  ); /* ? */
+  );
   // virtualContent; /*?*/
 
   // 2.2 Perform completions

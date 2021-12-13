@@ -121,7 +121,6 @@ export class AureliaServer {
       );
 
       /* prettier-ignore */ logger.log(`Found ${completions?.length ?? 0} completion(s).`,{logMs:true,msEnd:true});
-      completions.map((c) => c.label); /*?*/
 
       return completions;
     } catch (_error) {
