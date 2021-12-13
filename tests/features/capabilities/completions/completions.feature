@@ -18,11 +18,15 @@ Feature: Completions.
       | Attribute Interplolation     | 0    | `<div css="width: ${m\|}px;"></div>`           | minimalVar          |                   |
       | Attribute (object)           | 0    | `<div if.bind="minimalInterfaceVar.\|"></div>` | field               | .                 |
       | Custom element               | 0    | `<div></div><\|`                               | compo-user          | <                 |
+      | Repeat For                   | 0    | `<p repeat.for="\|\ of "></p><\|`              | minimalVar          | <                 |
+      | Repeat For                   | 0    | `<p repeat.for=" of \|"></p><\|`               | minimalVar          | <                 |
       | Text Interplolation          | 0    | `foo ${\|}<p></p>`                             | minimalVar          |                   |
       | Text Interplolation          | 0    | `${'foo'} ${\|}<p></p>`                        | minimalVar          |                   |
       | Text Interplolation          | 0    | `${minimalVar} ${\|}<p></p>`                   | minimalVar          |                   |
       | Text Interplolation          | 0    | `${'foo'} ${\|} bar<p></p>`                    | minimalVar          |                   |
       | Text Interplolation          | 0    | `<div>${minimalI\|}</div>`                     | minimalInterfaceVar | .                 |
-      | Text Interplolation (object) | 0    | `<div>${minimalInterfaceVar.\|}</div>`         | field               | .                 |
+      | Text Inter - Methods on var  | 0    | `${minimalVar.\|}<p>${minimalVar}</p>`         | toLowerCase         | .                 |
+      | Text Inter - Methods on var  | 0    | `<p>${minimalVar}</p>${minimalVar.\|}<p></p>`  | toLowerCase         | .                 |
+      | Text Interplolation - Object | 0    | `<div>${minimalInterfaceVar.\|}</div>`         | field               | .                 |
       | Bindable Attribute           | 0    | `<my-compo \|></my-compo>`                     | string-bindable     | ' '               |
       | Aurelia Attribute Keywords   | 0    | `<div \|></div>`                               | if.bind             | ' '               |

@@ -4,7 +4,6 @@ Feature: Completions.
     Given the project is named "scoped-for-testing"
     And I open VSCode with the following file "empty-view.html"
 
-  @focus
   Scenario Outline: When completions should trigger
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
