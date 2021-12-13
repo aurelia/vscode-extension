@@ -120,6 +120,11 @@ export class AureliaServer {
         document
       );
 
+      if (completions == null) {
+        /* prettier-ignore */ logger.log(`No Aurelia completions found.`,{logMs:true,msEnd:true});
+        return;
+      }
+
       /* prettier-ignore */ logger.log(`Found ${completions?.length ?? 0} completion(s).`,{logMs:true,msEnd:true});
 
       return completions;
@@ -139,10 +144,15 @@ export class AureliaServer {
     /* prettier-ignore */ logger.log('Definition triggered.',{logMs:true,msStart:true});
 
     try {
-      const definition = await onDefintion(document, position, this.container);
+      const definitions = await onDefintion(document, position, this.container);
 
-      /* prettier-ignore */ logger.log(`Found ${definition?.length ?? 0} definition(s).`,{logMs:true,msEnd:true});
-      return definition;
+      if (definitions == null) {
+        /* prettier-ignore */ logger.log(`No Aurelia defintions found.`,{logMs:true,msEnd:true});
+        return;
+      }
+
+      /* prettier-ignore */ logger.log(`Found ${definitions?.length ?? 0} definition(s).`,{logMs:true,msEnd:true});
+      return definitions;
     } catch (_error) {
       const error = _error as Error;
       logger.log(error.message);
@@ -217,16 +227,21 @@ export class AureliaServer {
     /* prettier-ignore */ logger.log('Rename triggered.',{logMs:true,msStart:true});
 
     try {
-      const renamed = await onRenameRequest(
+      const renames = await onRenameRequest(
         document,
         position,
         newName,
         this.container
       );
 
+      if (renames == null) {
+        /* prettier-ignore */ logger.log(`No Aurelia renames found.`,{logMs:true,msEnd:true});
+        return;
+      }
+
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      /* prettier-ignore */ logger.log(`Found ${Object.keys(renamed?.changes ?? {}).length ?? '0'} file(s) to rename.`,{logMs:true,msEnd:true});
-      return renamed;
+      /* prettier-ignore */ logger.log(`Found ${Object.keys(renames?.changes ?? {}).length ?? '0'} file(s) to rename.`,{logMs:true,msEnd:true});
+      return renames;
     } catch (_error) {
       const error = _error as Error;
       logger.log(error.message);

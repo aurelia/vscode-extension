@@ -1,6 +1,6 @@
 import { pathToFileURL } from 'url';
 
-import { DocumentSpan } from 'ts-morph';
+import { DocumentSpan, Project, SyntaxKind } from 'ts-morph';
 import { LocationLink, Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -15,13 +15,22 @@ import {
   findRegionsByWord,
   forEachRegionOfType,
 } from '../../core/regions/findSpecificRegion';
-import { AbstractRegion, ViewRegionSubType, ViewRegionType } from '../../core/regions/ViewRegions';
+import {
+  AbstractRegion,
+  ViewRegionSubType,
+  ViewRegionType,
+} from '../../core/regions/ViewRegions';
 import {
   AureliaProgram,
   IAureliaComponent,
 } from '../../core/viewModel/AureliaProgram';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 
+/**
+ * 1. Only allow for Class or Bindable
+ * 2. For Bindable, check if source or reference
+ * 3. Find references in own and other Views
+ */
 export async function aureliaDefinitionFromViewModel(
   container: Container,
   document: TextDocument,
@@ -38,29 +47,7 @@ export async function aureliaDefinitionFromViewModel(
   const { aureliaProgram } = targetProject;
   if (!aureliaProgram) return;
 
-  const finalDefinitions: LocationLink[] = [];
-  const regularDefintions =
-    findRegularTypescriptDefinitions(aureliaProgram, viewModelPath, offset) ??
-    [];
-  const isSourceDefinition = getIsSourceDefinition(
-    regularDefintions,
-    viewModelPath,
-    position
-  );
-
-  /** Not source, so push source */
-  if (!isSourceDefinition) {
-    finalDefinitions.push(...regularDefintions);
-
-    return finalDefinitions;
-  } else {
-    /** Source, so push references */
-    const regularReferences =
-      findRegularTypescriptReferences(aureliaProgram, viewModelPath, offset) ??
-      [];
-    finalDefinitions.push(...regularReferences);
-  }
-
+  const tsMorphProject = aureliaProgram.tsMorphProject.get();
   const sourceWord = getWordAtOffset(document.getText(), offset);
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneBy('className', sourceWord) ??
@@ -68,6 +55,41 @@ export async function aureliaDefinitionFromViewModel(
       'viewModelFilePath',
       viewModelPath
     );
+
+  // 1. Only for Class and Bindables
+  const isIdentifier = getIsIdentifier(tsMorphProject, viewModelPath, offset);
+  if (!isIdentifier) return;
+
+  const regularDefintions =
+    findRegularTypescriptDefinitions(tsMorphProject, viewModelPath, offset) ??
+    [];
+  const sourceDefinition = getSourceDefinition(
+    regularDefintions,
+    viewModelPath,
+    position
+  );
+
+  const finalDefinitions: LocationLink[] = [];
+
+  /** Not source, so default */
+  if (!sourceDefinition) return;
+
+  // Note, we need to handle references (instead of just letting it be the job of the TS Server),
+  // because as long as we only return one valid defintion, the "default" suggestions are not returned
+  // to the client anymore.
+  // I made sure to test this out throughly by just returning one definition (any defintion data), then
+  // check the client (ie. trigger suggestion inside a .ts file in VSCode).
+  /** Source, so push references */
+  const regularReferences =
+    findRegularTypescriptReferences(aureliaProgram, viewModelPath, offset) ??
+    [];
+  // We filter out the definition source, else it would be duplicated
+  const withoutTriggerDefinition = filterOutTriggerDefinition(
+    regularReferences,
+    sourceDefinition
+  );
+  finalDefinitions.push(...withoutTriggerDefinition);
+
   const targetMember = targetComponent?.classMembers?.find(
     (member) => member.name === sourceWord
   );
@@ -182,12 +204,11 @@ async function getAureliaClassMemberDefinitions_OtherViewBindables(
 }
 
 function findRegularTypescriptDefinitions(
-  aureliaProgram: AureliaProgram,
+  tsMorphProject: Project,
   viewModelPath: string,
   offset: number
 ) {
   const finalDefinitions: LocationLink[] = [];
-  const tsMorphProject = aureliaProgram.tsMorphProject.get();
   const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
   if (!sourceFile) return;
   const sourceDefinitions = tsMorphProject
@@ -268,7 +289,11 @@ function createLocationLinkFromRegion(
   return locationLink;
 }
 
-function getIsSourceDefinition(
+/**
+ * Given a position, check if the defintion is the source.
+ * (If not source, then it would be a reference.)
+ */
+function getSourceDefinition(
   definitions: LocationLink[],
   viewModelPath: string,
   position: Position
@@ -285,4 +310,50 @@ function getIsSourceDefinition(
   });
 
   return targetDefinition;
+}
+
+function getIsIdentifier(
+  tsMorphProject: Project,
+  viewModelPath: string,
+  offset: number
+) {
+  const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
+  const descandant = sourceFile?.getDescendantAtPos(offset);
+  const is = descandant?.getKind() === SyntaxKind.Identifier;
+
+  return is;
+}
+
+function filterOutTriggerDefinition(
+  regularReferences: LocationLink[],
+  sourceDefinition: LocationLink
+) {
+  const withoutTriggerDefinition = regularReferences.filter((reference) => {
+    const referenceIsInSameUri =
+      reference.targetUri === sourceDefinition.targetUri;
+    if (!referenceIsInSameUri) return true;
+
+    const { targetRange, targetSelectionRange } = reference;
+    const sameRange = isSameRange(targetRange, sourceDefinition.targetRange);
+    const sameSelectionRange = isSameRange(
+      targetSelectionRange,
+      sourceDefinition.targetSelectionRange
+    );
+
+    const same = sameRange && sameSelectionRange;
+    return !same;
+  });
+
+  return withoutTriggerDefinition;
+}
+
+function isSameRange(rangeA: Range, rangeB: Range) {
+  const sameStartChar = rangeA.start.character === rangeB.start.character;
+  const sameStartLine = rangeA.start.line === rangeB.start.line;
+  const sameEndChar = rangeA.end.character === rangeB.end.character;
+  const sameEndLine = rangeA.end.line === rangeB.end.line;
+
+  const same = sameStartChar && sameStartLine && sameEndChar && sameEndLine;
+
+  return same;
 }

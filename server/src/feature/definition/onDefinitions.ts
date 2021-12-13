@@ -18,6 +18,15 @@ export async function onDefintion(
   position: Position,
   container: Container
 ): Promise<LocationLink[] | undefined> {
+  const aureliaProjects = container.get(AureliaProjects);
+  const targetProject = aureliaProjects.getFromUri(document.uri);
+  if (!targetProject) return;
+  const aureliaProgram = targetProject?.aureliaProgram;
+  if (!aureliaProgram) return;
+
+  const targetComponent =
+    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
+
   const documentSettings = container.get(DocumentSettings);
   const isViewModel = isViewModelDocument(document, documentSettings);
 
@@ -29,15 +38,6 @@ export async function onDefintion(
     );
     return defintion;
   }
-
-  const aureliaProjects = container.get(AureliaProjects);
-  const targetProject = aureliaProjects.getFromUri(document.uri);
-  if (!targetProject) return;
-  const aureliaProgram = targetProject?.aureliaProgram;
-  if (!aureliaProgram) return;
-
-  const targetComponent =
-    aureliaProgram.aureliaComponents.getOneByFromDocument(document);
 
   let regions: AbstractRegion[] = [];
   if (targetComponent) {
