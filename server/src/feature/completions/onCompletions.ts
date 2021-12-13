@@ -6,10 +6,7 @@ import {
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER,
-  AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER,
-} from '../../common/constants';
+import { TemplateAttributeTriggers } from '../../common/constants';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { checkInsideTag } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
@@ -19,6 +16,7 @@ import { AureliaHtmlLanguageService } from '../../core/regions/languageServer/Au
 import { RegionParser } from '../../core/regions/RegionParser';
 import {
   AbstractRegion,
+  BindableAttributeRegion,
   CustomElementRegion,
 } from '../../core/regions/ViewRegions';
 import {
@@ -83,44 +81,49 @@ export async function onCompletion(
 
   let accumulateCompletions: CompletionItem[] = [];
 
-  if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER) {
-    const isAcceptableRegion =
-      region === undefined || CustomElementRegion.is(region);
+  const isAcceptableRegion =
+    region === undefined || CustomElementRegion.is(region);
+  if (triggerCharacter === TemplateAttributeTriggers.DOT) {
     const isInsideTag = await checkInsideTag(document, offset);
 
-    if (isAcceptableRegion && isInsideTag) {
+    const allowKeywordCompletion =
+      (isAcceptableRegion || BindableAttributeRegion.is(region)) && isInsideTag;
+    if (allowKeywordCompletion) {
       const nextChar = text.substring(offset, offset + 1);
       const atakCompletions =
         createAureliaTemplateAttributeKeywordCompletions(nextChar);
       return atakCompletions;
     }
-  } else if (triggerCharacter === AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER) {
-    let ataCompletions: CompletionItem[];
-    const isNotRegion = region === undefined;
-    const isInsideTag = await checkInsideTag(document, offset);
+  }
 
-    if (isInsideTag) {
-      ataCompletions = createAureliaTemplateAttributeCompletions();
-      const htmlLanguageService = getLanguageService();
-      const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
-      const htmlLSResult = htmlLanguageService.doComplete(
-        document,
-        position,
-        htmlDocument
-      );
+  const isNotRegion = region === undefined;
+  const isInsideTag = await checkInsideTag(document, offset);
 
-      const completionsWithStandardHtml = [
-        ...ataCompletions,
-        ...htmlLSResult.items,
-      ];
-      if (isNotRegion) {
-        return completionsWithStandardHtml;
-      }
+  // Attribute completions
+  if (isInsideTag) {
+    const ataCompletions = createAureliaTemplateAttributeCompletions();
+    const htmlLanguageService = getLanguageService();
+    const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
+    const htmlLSResult = htmlLanguageService.doComplete(
+      document,
+      position,
+      htmlDocument
+    );
 
+    const completionsWithStandardHtml = [
+      ...ataCompletions,
+      ...htmlLSResult.items,
+    ];
+    if (isNotRegion) {
+      return completionsWithStandardHtml;
+    }
+
+    if (isAcceptableRegion) {
       accumulateCompletions = completionsWithStandardHtml;
     }
   }
 
+  // Completions, that need Language service
   let languageService: AbstractRegionLanguageService;
   if (region === undefined) {
     languageService = new AureliaHtmlLanguageService();

@@ -6,6 +6,11 @@ export const TEMPLATE_TAG_NAME = 'template';
 export const VIRTUAL_SOURCE_FILENAME = 'virtual.ts';
 
 export const AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER = ' ';
+export enum TemplateAttributeTriggers {
+  SPACE = ' ',
+  DOT = '.',
+}
+
 export const AURELIA_ATTRIBUTE_WITH_BIND_KEYWORD = [
   'accesskey',
   'class',
