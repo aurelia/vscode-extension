@@ -8,7 +8,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { TemplateAttributeTriggers } from '../../common/constants';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
-import { checkInsideTag } from '../../common/view/document-parsing';
+import { checkInsideTag, ParseHtml } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
 import { AbstractRegionLanguageService } from '../../core/regions/languageServer/AbstractRegionLanguageService';
@@ -29,20 +29,25 @@ export async function onCompletion(
   completionParams: CompletionParams,
   document: TextDocument
 ) {
+  const { position } = completionParams;
+  const offset = document.offsetAt(position);
+  const text = document.getText();
+
+  // Stop if inside comment
+  const isInsideComment = ParseHtml.findCommentAtOffset(text, offset);
+  if (isInsideComment != null) return [];
+
   const aureliaProjects = container.get(AureliaProjects);
   const targetProject = aureliaProjects.getFromUri(document.uri);
   if (!targetProject) return [];
   const aureliaProgram = targetProject?.aureliaProgram;
   if (!aureliaProgram) return [];
 
-  const { position } = completionParams;
-  const offset = document.offsetAt(position);
-  const text = document.getText();
   const triggerCharacter =
     completionParams.context?.triggerCharacter ??
     text.substring(offset - 1, offset);
 
-  // First check if we are inside a region
+  // Check if we are inside a region
   // Because, then we have to ignore the triggerCharacter.
   // We ignore, to allow the parser to have a valid state.
   // At least we want to maximize the chance, that given state is valid (for the parser).
@@ -109,15 +114,24 @@ export async function onCompletion(
       position,
       htmlDocument
     );
+    const isInsideAttributeValue = ParseHtml.findAttributeValueAtOffset(
+      document.getText(),
+      offset
+    );
 
-    const completionsWithStandardHtml = [
-      ...ataCompletions,
-      ...htmlLSResult.items,
-    ];
+    const completionsWithStandardHtml = [...htmlLSResult.items];
+
+    // Inside eg. attr=">here<", then don't push Aurelia completions
+    if (!isInsideAttributeValue) {
+      completionsWithStandardHtml.push(...ataCompletions);
+    }
+
+    // Early return to get some HTML completions + generic Aurelia completions
     if (isNotRegion) {
       return completionsWithStandardHtml;
     }
 
+    // HTML + Generic Aurelia completions for eg. Custom Element and Bindable Attributes
     if (isAcceptableRegion) {
       accumulateCompletions = completionsWithStandardHtml;
     }
