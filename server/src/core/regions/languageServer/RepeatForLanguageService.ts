@@ -1,7 +1,7 @@
-import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
+import { Position } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { getAureliaVirtualCompletions } from '../../../feature/completions/virtualCompletion';
+import { aureliaVirtualComplete_vNext } from '../../../feature/completions/virtualCompletion2';
 import { getAccessScopeViewModelDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
@@ -16,18 +16,13 @@ export class RepeatForLanguageService implements AbstractRegionLanguageService {
     triggerCharacter?: string,
     region?: AbstractRegion
   ) {
-    if (!region) return [];
-
-    const aureliaVirtualCompletions = await getAureliaVirtualCompletions(
+    const completions = aureliaVirtualComplete_vNext(
+      aureliaProgram,
       document,
       region,
-      aureliaProgram
+      triggerCharacter
     );
-    if (aureliaVirtualCompletions.length > 0) {
-      return aureliaVirtualCompletions;
-    }
-
-    return [];
+    return completions;
   }
   public async doDefinition(
     aureliaProgram: AureliaProgram,
