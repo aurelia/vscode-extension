@@ -26,11 +26,11 @@ export class AureliaHtmlLanguageService
     document: TextDocument,
     triggerCharacter: string | undefined
   ) {
-    const finalCompletions: CompletionItem[] = [
-      ...AURELIA_KEY_WORD_COMPLETIONS,
-    ];
-
     if (triggerCharacter === '<') {
+      const finalCompletions: CompletionItem[] = [
+        ...AURELIA_KEY_WORD_COMPLETIONS,
+      ];
+
       const aureliaComponents = aureliaProgram.aureliaComponents
         .getAll()
         .filter(
@@ -40,9 +40,10 @@ export class AureliaHtmlLanguageService
         createComponentCompletionList(aureliaComponents);
 
       finalCompletions.push(...componentCompletions);
+      return finalCompletions;
     }
 
-    return finalCompletions;
+    return [];
   }
 
   public async doCodeAction(

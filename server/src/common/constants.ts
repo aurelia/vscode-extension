@@ -1,3 +1,6 @@
+import { InsertTextFormat } from 'vscode-languageserver';
+import { CompletionItemKind, MarkupKind } from 'vscode-languageserver-types';
+
 export const CUSTOM_ELEMENT_SUFFIX = 'CustomElement';
 export const VALUE_CONVERTER_SUFFIX = 'ValueConverter';
 
@@ -9,6 +12,12 @@ export const AURELIA_TEMPLATE_ATTRIBUTE_CHARACTER = ' ';
 export enum TemplateAttributeTriggers {
   SPACE = ' ',
   DOT = '.',
+}
+
+export enum AureliaVersion {
+  V1 = 'V1',
+  V2 = 'V2',
+  ALL = 'ALL',
 }
 
 export const AURELIA_ATTRIBUTE_WITH_BIND_KEYWORD = [
@@ -28,17 +37,21 @@ export const AURELIA_ATTRIBUTE_WITH_BIND_KEYWORD = [
   'innerhtml',
   'textcontent',
 ];
+
+export const AURELIA_ATTRIBUTE_WITH_TRIGGER_KEYWORD = [
+  'blur',
+  'focus',
+  'load',
+  'unload',
+];
+
 export const AURELIA_ATTRIBUTE_WITH_DELEGATE_KEYWORD = [
   'cached',
   'error',
   'abort',
-  'load',
   'beforeunload',
-  'unload',
   'online',
   'offline',
-  'focus',
-  'blur',
   'animationstart',
   'animationend',
   'animationiteration',
@@ -101,6 +114,33 @@ export const AURELIA_WITH_SPECIAL_KEYWORD = [
   ['else', ''],
 ];
 
+export const AURELIA_WITH_SPECIAL_KEYWORD_V2 = [
+  ['switch.bind', '="$0"'],
+  ['case', '="$0"'],
+  ['default-case', '="$0"'],
+  ['promise.bind', '="$0"'],
+  ['pending', '="$0"'],
+  ['then.from-view', '="$0"'],
+  ['catch.from-view', '="$0"'],
+  ['portal', '="$0"'],
+  ['property', '="$0"'], // local templates
+];
+
+export const AURELIA_COMPLETION_ITEMS_V2 = [
+  {
+    data: AureliaVersion.V2,
+    detail: 'Aurelia As Custom Element',
+    label: '(Au2) as-custom-element',
+    kind: CompletionItemKind.Property,
+    insertText: 'as-custom-element="${0:elementName}"',
+    insertTextFormat: InsertTextFormat.Snippet,
+    documentation: {
+      kind: MarkupKind.Markdown,
+      value: 'Makes a tag inerit the view model of the as custom element.',
+    },
+  },
+];
+
 export const AURELIA_TEMPLATE_ATTRIBUTE_TRIGGER_CHARACTER = '.';
 export const AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST = [
   'bind',
@@ -112,12 +152,6 @@ export const AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST = [
   'delegate',
   'trigger',
 ] as const;
-
-export enum AureliaVersion {
-  V1 = 'V1',
-  V2 = 'V2',
-  ALL = 'ALL',
-}
 
 export enum AureliaClassTypes {
   CUSTOM_ELEMENT = 'CustomElement',

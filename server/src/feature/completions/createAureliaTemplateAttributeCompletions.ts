@@ -3,8 +3,11 @@ import { CompletionItem, InsertTextFormat } from 'vscode-languageserver';
 import {
   AURELIA_ATTRIBUTE_WITH_BIND_KEYWORD,
   AURELIA_ATTRIBUTE_WITH_DELEGATE_KEYWORD,
+  AURELIA_ATTRIBUTE_WITH_TRIGGER_KEYWORD,
+  AURELIA_COMPLETION_ITEMS_V2,
   AURELIA_TEMPLATE_ATTRIBUTE_KEYWORD_LIST,
   AURELIA_WITH_SPECIAL_KEYWORD,
+  AURELIA_WITH_SPECIAL_KEYWORD_V2,
 } from '../../common/constants';
 
 export function createAureliaTemplateAttributeKeywordCompletions(
@@ -35,16 +38,43 @@ export function createAureliaTemplateAttributeCompletions(): CompletionItem[] {
     return completionItem;
   });
 
-  const events = AURELIA_ATTRIBUTE_WITH_DELEGATE_KEYWORD.map((attribute) => {
-    const completionItem = CompletionItem.create(attribute);
-    const insertText = `${attribute}.delegate="$0"`;
-    // const insertText = `${attribute}.\${1|delegate,trigger|}="$0"`;
-    completionItem.insertText = insertText;
-    completionItem.insertTextFormat = InsertTextFormat.Snippet;
-    completionItem.label = `${attribute}.delegate`;
+  const keywordsV2 = AURELIA_WITH_SPECIAL_KEYWORD_V2.map(
+    ([keyword, suffix]) => {
+      const completionItem = CompletionItem.create(keyword);
+      const insertText = `${keyword}${suffix}`;
+      completionItem.insertText = insertText;
+      completionItem.insertTextFormat = InsertTextFormat.Snippet;
+      completionItem.label = `(Au2) ${keyword}`;
 
-    return completionItem;
-  });
+      return completionItem;
+    }
+  );
+
+  const eventsWithDelegate = AURELIA_ATTRIBUTE_WITH_DELEGATE_KEYWORD.map(
+    (attribute) => {
+      const completionItem = CompletionItem.create(attribute);
+      const insertText = `${attribute}.delegate="$0"`;
+      // const insertText = `${attribute}.\${1|delegate,trigger|}="$0"`;
+      completionItem.insertText = insertText;
+      completionItem.insertTextFormat = InsertTextFormat.Snippet;
+      completionItem.label = `${attribute}.delegate`;
+
+      return completionItem;
+    }
+  );
+
+  const eventsWithTrigger = AURELIA_ATTRIBUTE_WITH_TRIGGER_KEYWORD.map(
+    (attribute) => {
+      const completionItem = CompletionItem.create(attribute);
+      const insertText = `${attribute}.trigger="$0"`;
+      // const insertText = `${attribute}.\${1|delegate,trigger|}="$0"`;
+      completionItem.insertText = insertText;
+      completionItem.insertTextFormat = InsertTextFormat.Snippet;
+      completionItem.label = `${attribute}.trigger`;
+
+      return completionItem;
+    }
+  );
 
   const attributesWithBind = AURELIA_ATTRIBUTE_WITH_BIND_KEYWORD.map(
     (attributeWithBind) => {
@@ -59,6 +89,13 @@ export function createAureliaTemplateAttributeCompletions(): CompletionItem[] {
     }
   );
 
-  const result = [...keywords, ...events, ...attributesWithBind];
+  const result = [
+    ...AURELIA_COMPLETION_ITEMS_V2,
+    ...keywords,
+    ...keywordsV2,
+    ...eventsWithDelegate,
+    ...eventsWithTrigger,
+    ...attributesWithBind,
+  ];
   return result;
 }
