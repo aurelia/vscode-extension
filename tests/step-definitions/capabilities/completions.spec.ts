@@ -71,6 +71,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
       if (target?.insertText !== undefined) {
         expect(target.insertText).toContain(suggestion);
       }
+      // expect(true).toBeFalsy();
     }
   });
 
@@ -113,6 +114,9 @@ export function createTextDocumentPositionParams(
   position: Position,
   triggerCharacter: string
 ): CompletionParams {
+  const finalTriggerCharacter =
+    triggerCharacter === '' ? undefined : triggerCharacter;
+
   const textDocument: CompletionParams = {
     textDocument: {
       uri: document.uri,
@@ -120,7 +124,7 @@ export function createTextDocumentPositionParams(
     position,
     context: {
       triggerKind: CompletionTriggerKind.Invoked,
-      triggerCharacter,
+      triggerCharacter: finalTriggerCharacter,
     },
   };
 

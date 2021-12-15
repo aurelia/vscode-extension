@@ -2,7 +2,9 @@ import { customElement, bindable } from 'aurelia';
 import template from './minimal-component.html';
 
 interface MyInter {
-  field: string;
+  field: {
+    nested: string;
+  };
 }
 
 @customElement({

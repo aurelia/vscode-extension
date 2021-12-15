@@ -18,8 +18,8 @@ Feature: Completions.
       | Attribute Interplolation     | 0    | `<div css="width: ${m\|}px;"></div>`           | minimalVar          |                   |
       | Attribute (object)           | 0    | `<div if.bind="minimalInterfaceVar.\|"></div>` | field               | .                 |
       | Custom element               | 0    | `<div></div><\|`                               | compo-user          | <                 |
-      | Repeat For                   | 0    | `<p repeat.for="\|\ of "></p><\|`              | minimalVar          | <                 |
-      | Repeat For                   | 0    | `<p repeat.for=" of \|"></p><\|`               | minimalVar          | <                 |
+      | Repeat For                   | 0    | `<p repeat.for=" \|of "></p>`                   | minimalVar          | <                 |
+      | Repeat For                   | 0    | `<p repeat.for=" of \|"></p>`                  | minimalVar          | <                 |
       | Text Interplolation          | 0    | `foo ${\|}<p></p>`                             | minimalVar          |                   |
       | Text Interplolation          | 0    | `${'foo'} ${\|}<p></p>`                        | minimalVar          |                   |
       | Text Interplolation          | 0    | `${minimalVar} ${\|}<p></p>`                   | minimalVar          |                   |
