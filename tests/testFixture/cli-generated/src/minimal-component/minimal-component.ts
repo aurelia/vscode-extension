@@ -7,6 +7,12 @@ interface MyInter {
   };
 }
 
+interface ShortInter {
+  interA: {
+    Binter: number;
+  };
+}
+
 @customElement({
   name: 'minimal-component',
   template,
@@ -19,4 +25,6 @@ export class MinimalComponent {
   minimalBindable: number = 789;
 
   minimalInterfaceVar: MyInter;
+
+  inter: ShortInter;
 }
