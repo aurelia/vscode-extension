@@ -48,7 +48,7 @@ export function aureliaVirtualComplete_vNext(
   region: AbstractRegion | undefined,
   triggerCharacter?: string,
   offset?: number,
-  replaceTriggerCharacter?: boolean
+  insertTriggerCharacter?: boolean
 ) {
   if (!region) return [];
   if (!region.accessScopes) return [];
@@ -74,7 +74,7 @@ export function aureliaVirtualComplete_vNext(
     region,
     offset,
     triggerCharacter,
-    replaceTriggerCharacter
+    insertTriggerCharacter
   );
   // virtualContent; /*?*/
 
@@ -169,7 +169,7 @@ function getVirtualContentFromRegion(
   region: AbstractRegion,
   offset: number | undefined,
   triggerCharacter?: string,
-  replaceTriggerCharacter?: boolean
+  insertTriggerCharacter?: boolean
 ) {
   // triggerCharacter; /* ? */
   // offset; /* ? */
@@ -183,7 +183,7 @@ function getVirtualContentFromRegion(
   }
 
   // Add triggerCharacter at offset
-  if (replaceTriggerCharacter) {
+  if (insertTriggerCharacter) {
     if (offset != null) {
       const normalizedOffset =
         offset - region.sourceCodeLocation.startOffset - 1; // - 1: insert one before

@@ -20,7 +20,7 @@ export class TextInterpolationLanguageService
     triggerCharacter?: string,
     region?: AbstractRegion,
     offset?: number,
-    replaceTriggerCharacter?: boolean
+    insertTriggerCharacter?: boolean
   ) {
     const completions = aureliaVirtualComplete_vNext(
       aureliaProgram,
@@ -28,7 +28,7 @@ export class TextInterpolationLanguageService
       region,
       triggerCharacter,
       offset,
-    replaceTriggerCharacter
+    insertTriggerCharacter
     );
     return completions;
   }

@@ -60,14 +60,14 @@ export async function onCompletion(
   );
 
   let regions: AbstractRegion[] = [];
-  let replaceTriggerCharacter = false;
+  let isInsertTriggerCharacter = false;
   const wasInvoked =
     completionParams.context?.triggerKind === CompletionTriggerKind.Invoked;
-  const shouldReplaceTriggerCharacter = existingRegion != null && !wasInvoked;
-  if (shouldReplaceTriggerCharacter) {
+  const shouldInsertTriggerCharacter = existingRegion != null && !wasInvoked;
+  if (shouldInsertTriggerCharacter) {
     // replace trigger character
     regions = existingRegions;
-    replaceTriggerCharacter = true;
+    isInsertTriggerCharacter = true;
   } else {
     // re parse
     const allComponents = aureliaProgram.aureliaComponents.getAll();
@@ -156,7 +156,7 @@ export async function onCompletion(
       triggerCharacter,
       region,
       offset,
-      replaceTriggerCharacter
+      isInsertTriggerCharacter
     )) as unknown as CompletionItem[];
     // completions /* ? */
   } catch (error) {
