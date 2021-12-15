@@ -7,14 +7,9 @@ import {
 } from 'vscode-languageserver';
 
 import { AureliaLSP, interpolationRegex } from '../../common/constants';
-import { OffsetUtils } from '../../common/documens/OffsetUtils';
 import { XScopeUtils } from '../../common/documens/xScopeUtils';
 import { StringUtils } from '../../common/string/StringUtils';
-import {
-  AbstractRegion,
-  AttributeInterpolationRegion,
-  TextInterpolationRegion,
-} from '../../core/regions/ViewRegions';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { AureliaCompletionItem } from './virtualCompletion';
 
@@ -162,6 +157,13 @@ export function aureliaVirtualComplete_vNext(
     virtualCompletions
   );
 
+  try {
+    targetStatement?.remove();
+  } catch (error) {
+    // Dont pass on ts-morph error
+    return [];
+  }
+
   return result;
 }
 
@@ -171,6 +173,7 @@ function getVirtualContentFromRegion(
   triggerCharacter?: string,
   insertTriggerCharacter?: boolean
 ) {
+  if (offset == null) return '';
   // triggerCharacter; /* ? */
   // offset; /* ? */
 
@@ -182,18 +185,18 @@ function getVirtualContentFromRegion(
     viewInput = region.attributeValue;
   }
 
+  const normalizedOffset = offset - region.sourceCodeLocation.startOffset;
+
   // Add triggerCharacter at offset
   if (insertTriggerCharacter) {
-    if (offset != null) {
-      const normalizedOffset =
-        offset - region.sourceCodeLocation.startOffset - 1; // - 1: insert one before
-      viewInput = StringUtils.insert(
-        viewInput,
-        normalizedOffset,
-        triggerCharacter
-      );
-    }
+    const insertLocation = normalizedOffset - 1; // - 1: insert one before
+    viewInput = StringUtils.insert(viewInput, insertLocation, triggerCharacter);
   }
+
+  // Cut off content after offset
+  const cutOff = viewInput?.substring(0, normalizedOffset);
+  // Readd `}`
+  const removeWhitespaceAtEnd = `${cutOff}}`;
 
   // viewInput; /* ? */
   let virtualContent: string | undefined;
@@ -202,7 +205,7 @@ function getVirtualContentFromRegion(
     if (accessScopeName === '') return;
 
     const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
-    virtualContent = viewInput?.replace(
+    virtualContent = removeWhitespaceAtEnd?.replace(
       replaceRegexp,
       `this.${accessScopeName}`
     );
