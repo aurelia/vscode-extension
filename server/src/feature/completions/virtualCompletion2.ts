@@ -82,15 +82,6 @@ export function aureliaVirtualComplete_vNext(
     interpolationModifier = 2; // - 2 we added "\`" because regionValue is ${}, thus in virtualContent we need to do `${}`
   }
 
-  // 2.2.2 (Obsolete? Now only one region for one interpolatin again)
-  // Find specific regionValue from accessScope (Reason: can have multitple interpolations in a region)
-  const targetScope = XScopeUtils.getScopeByOffset(region.accessScopes, offset);
-  let normalizeConstant = 0;
-  if (targetScope != null && targetScope.name !== '') {
-    const { endOffset } = region.sourceCodeLocation;
-    normalizeConstant = endOffset - targetScope.nameLocation.end;
-  }
-
   let targetStatement;
   try {
     const virMethod = myClass?.addMethod({
@@ -106,16 +97,12 @@ export function aureliaVirtualComplete_vNext(
 
   const finalTargetStatementText = `${targetStatement.getFullText()}${COMPLETIONS_ID}`;
   const targetPos = finalTargetStatementText?.indexOf(COMPLETIONS_ID);
-  const finalPos =
-    targetStatement.getPos() +
-    targetPos -
-    interpolationModifier -
-    normalizeConstant;
+  const finalPos = targetStatement.getPos() + targetPos - interpolationModifier;
 
-  // copy.getText(); /* ? */
-  // copy.getText().length /* ? */
-  // copy.getText().substr(finalPos - 1, 30); /* ? */
-  // copy.getText().substr(finalPos - 9, 30); /* ? */
+  // sourceFile.getText(); /* ? */
+  // sourceFile.getText().length /* ? */
+  // sourceFile.getText().substr(finalPos - 1, 30); /* ? */
+  // sourceFile.getText().substr(finalPos - 9, 30); /* ? */
 
   const languageService = project.getLanguageService().compilerObject;
   // Completions
@@ -196,7 +183,8 @@ function getVirtualContentFromRegion(
   // Cut off content after offset
   const cutOff = viewInput?.substring(0, normalizedOffset);
   // Readd `}`
-  const removeWhitespaceAtEnd = `${cutOff}}`;
+  let ending = AbstractRegion.isInterpolationRegion(region) ? '}' : '';
+  const removeWhitespaceAtEnd = `${cutOff}${ending}`;
 
   // viewInput; /* ? */
   let virtualContent: string | undefined;

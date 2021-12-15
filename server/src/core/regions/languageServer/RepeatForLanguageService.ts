@@ -14,13 +14,15 @@ export class RepeatForLanguageService implements AbstractRegionLanguageService {
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     triggerCharacter?: string,
-    region?: AbstractRegion
+    region?: AbstractRegion,
+    offset?: number
   ) {
     const completions = aureliaVirtualComplete_vNext(
       aureliaProgram,
       document,
       region,
-      triggerCharacter
+      triggerCharacter,
+      offset
     );
     return completions;
   }

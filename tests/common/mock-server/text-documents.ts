@@ -89,9 +89,10 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     const startPosition: Position = { line: 0, character: 0 };
     const endChar = targetDocument.getText().length;
     const endPosition: Position = { line: 0, character: endChar };
+    const range = { start: startPosition, end: endPosition };
     TextDocument.update(
       targetDocument,
-      [{ range: { start: startPosition, end: endPosition }, text: change }],
+      [{ range: range, text: change }],
       targetDocument.version + 1
     );
   }
