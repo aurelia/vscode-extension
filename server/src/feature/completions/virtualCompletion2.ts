@@ -192,11 +192,10 @@ function getVirtualContentFromRegion(
     const accessScopeName = scope.name;
     if (accessScopeName === '') return;
 
-    const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
-    virtualContent = removeWhitespaceAtEnd?.replace(
-      replaceRegexp,
-      `this.${accessScopeName}`
-    );
+    const replaceRegexp = new RegExp(`\\b${accessScopeName}\\b`, 'g');
+    virtualContent = removeWhitespaceAtEnd?.replace(replaceRegexp, (match) => {
+      return `this.${match}`;
+    });
   });
 
   // 2.1.2 Defalut to any class member

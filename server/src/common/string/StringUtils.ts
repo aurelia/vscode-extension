@@ -4,7 +4,7 @@ export class StringUtils {
     searchValue: string,
     replaceValue: string
   ) {
-    const searchRegex = new RegExp(searchValue, 'g');
+    const searchRegex = new RegExp(`\\b${searchValue}\\b`, 'g');
     const result = input.replace(searchRegex, () => {
       return replaceValue;
     });
