@@ -78,15 +78,16 @@ export async function onCompletion(
   const allComponents = aureliaProgram.aureliaComponents.getAll();
   try {
     regions = RegionParser.parse(document, allComponents);
+    // regions = existingRegions;
   } catch (error) {
     /* prettier-ignore */ console.log('TCL: error', error);
     /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }
-
-  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
+  // regions; /* ? */
 
   // offset; /*?*/
-  // regions; /* ? */
+  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
+  //  region/*?*/
 
   let accumulateCompletions: CompletionItem[] = [];
 
@@ -149,9 +150,9 @@ export async function onCompletion(
     languageService = region.languageService;
   }
 
-  document.getText(); /* ? */
-  triggerCharacter; /* ? */
-  offset; /* ? */
+  // document.getText(); /* ? */
+  // triggerCharacter; /* ? */
+  // offset; /* ? */
   region; /* ? */
 
   const doComplete = languageService.doComplete;

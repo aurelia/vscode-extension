@@ -324,7 +324,7 @@ export class AttributeInterpolationRegion extends AbstractRegion {
     // };
 
     try {
-      // text.text; /* ? */
+      // attr.value /* ? */
       const parsed = ParseExpressionUtil.parseInterpolation(
         attr.value,
         startOffset
@@ -366,6 +366,7 @@ export class AttributeInterpolationRegion extends AbstractRegion {
             const lastPartLength = parsed.parts[expressionIndex + 1].length;
             endInterpol =
               attrLocation.endOffset -
+              1 - // " (closing quote)
               startOffset - //
               lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
           } else {

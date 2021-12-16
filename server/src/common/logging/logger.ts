@@ -38,14 +38,15 @@ interface ILogOptions extends LogOptions {
 const isCI = Boolean(process.env.CI);
 const shouldLog = !isCI;
 const DEFAULT_LOG_OPTIONS: ILogOptions = {
+  // log: false,
   log: shouldLog,
-  focusedLogging: true,
-  // ignoreFirstXLogs: 8,
+  // focusedLogging: true,
+  // ignoreFirstXLogs: 5,
   // ignoreAfterXLogs: 1,
 
-  measurePerf: true,
-  focusedPerf: true,
-  logPerf: false,
+  // measurePerf: true,
+  // focusedPerf: true,
+  // logPerf: false,
 
   shouldLogMs: true,
 
@@ -135,6 +136,7 @@ export class Logger {
       ignoreLogCount++;
 
       if (shouldIgnore) {
+        // ('Early return because of ignore...Logs'); /* ? */ // LOGDEBUG
         return;
       }
     }
@@ -144,6 +146,7 @@ export class Logger {
       localOptions.ignoreFirstXLogs != null &&
       ignoreLogCount < localOptions.ignoreFirstXLogs
     ) {
+      // ('Early return because of ignoreFirstXLogs'); /* ? */ // LOGDEBUG
       ignoreLogCount++;
       return;
     }
@@ -151,6 +154,9 @@ export class Logger {
 
     // region measure ms
     if (localOptions.shouldLogMs === true) {
+      if (finalMessage === 'parse start') {
+        localOptions.msStart; /* ? */
+      }
       if (localOptions.msStart === true) {
         this.msStartTime = performance.now();
       } else if (localOptions.msEnd === true) {
