@@ -75,7 +75,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       completionProvider: {
         resolveProvider: false,
         // eslint-disable-next-line @typescript-eslint/quotes
-        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
+        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|', '$'],
       },
       definitionProvider: true,
       // hoverProvider: true,

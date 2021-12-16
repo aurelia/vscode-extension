@@ -8,6 +8,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { TemplateAttributeTriggers } from '../../common/constants';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
+import { Logger } from '../../common/logging/logger';
 import { checkInsideTag, ParseHtml } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
@@ -23,6 +24,8 @@ import {
   createAureliaTemplateAttributeKeywordCompletions,
   createAureliaTemplateAttributeCompletions,
 } from './createAureliaTemplateAttributeCompletions';
+
+const logger = new Logger('onCompletions');
 
 export async function onCompletion(
   container: Container,
@@ -64,19 +67,20 @@ export async function onCompletion(
   const wasInvoked =
     completionParams.context?.triggerKind === CompletionTriggerKind.Invoked;
   const shouldInsertTriggerCharacter = existingRegion != null && !wasInvoked;
+  shouldInsertTriggerCharacter; /*?*/
   if (shouldInsertTriggerCharacter) {
     // replace trigger character
-    regions = existingRegions;
+    // regions = existingRegions;
     isInsertTriggerCharacter = true;
   } else {
-    // re parse
-    const allComponents = aureliaProgram.aureliaComponents.getAll();
-    try {
-      regions = RegionParser.parse(document, allComponents);
-    } catch (error) {
-      /* prettier-ignore */ console.log('TCL: error', error);
-      /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
-    }
+  }
+  // re parse
+  const allComponents = aureliaProgram.aureliaComponents.getAll();
+  try {
+    regions = RegionParser.parse(document, allComponents);
+  } catch (error) {
+    /* prettier-ignore */ console.log('TCL: error', error);
+    /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }
 
   const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
@@ -144,6 +148,11 @@ export async function onCompletion(
   } else {
     languageService = region.languageService;
   }
+
+  document.getText(); /* ? */
+  triggerCharacter; /* ? */
+  offset; /* ? */
+  region; /* ? */
 
   const doComplete = languageService.doComplete;
   if (doComplete === undefined) return [];

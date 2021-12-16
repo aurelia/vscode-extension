@@ -203,6 +203,10 @@ function getVirtualContentFromRegion(
     virtualContent = 'this.';
   }
   // virtualContent; /* ? */
+
+  // 2.1.3 Return if no `this.` included, because we don't want (do we?) support any Javascript completion
+  if (!virtualContent.includes('this.')) return '';
+
   return virtualContent;
 }
 
