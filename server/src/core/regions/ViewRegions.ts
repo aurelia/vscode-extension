@@ -364,7 +364,10 @@ export class AttributeInterpolationRegion extends AbstractRegion {
           let endInterpol;
           if (isLastIndex) {
             const lastPartLength = parsed.parts[expressionIndex + 1].length;
-            endInterpol = attrLocation.endOffset - lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
+            endInterpol =
+              attrLocation.endOffset -
+              startOffset - //
+              lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
           } else {
             endInterpol =
               parsed.interpolationEnds[expressionIndex] - startOffset;
@@ -903,7 +906,10 @@ export class TextInterpolationRegion extends AbstractRegion {
           let endInterpol;
           if (isLastIndex) {
             const lastPartLength = parsed.parts[expressionIndex + 1].length;
-            endInterpol = textLocation.endOffset - lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
+            endInterpol =
+              textLocation.endOffset -
+              startOffset - //
+              lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
           } else {
             endInterpol =
               parsed.interpolationEnds[expressionIndex] - startOffset;
