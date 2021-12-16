@@ -15,6 +15,7 @@ import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
 } from '../../../server/src/feature/completions/virtualCompletion';
+import { testError } from '../../common/errors/TestErrors';
 import { position } from './new-common/file.step';
 import { myMockServer } from './new-common/project.step';
 
@@ -34,7 +35,33 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
       }
 
       const document = myMockServer.textDocuments.getActive();
-      const textDocumentPositionParams = createTextDocumentPositionParams(
+      const textDocumentPositionParams = createCompletionParams_Invoked(
+        document,
+        position,
+        triggerCharacter
+      );
+
+      completions = await myMockServer
+        .getAureliaServer()
+        .onCompletion(document, textDocumentPositionParams);
+
+      if (!isAureliaCompletionItem(completions)) {
+        throw new Error('Not AureliaCompletionItem[]');
+      }
+    }
+  );
+
+  when(
+    /^I trigger Suggestions by typing (.*)$/,
+    async (triggerCharacter: string) => {
+      /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
+
+      if (triggerCharacter === "' '") {
+        triggerCharacter = ' ';
+      }
+
+      const document = myMockServer.textDocuments.getActive();
+      const textDocumentPositionParams = createCompletionParams_Typed(
         document,
         position,
         triggerCharacter
@@ -109,7 +136,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   );
 };
 
-export function createTextDocumentPositionParams(
+export function createCompletionParams_Invoked(
   document: TextDocument,
   position: Position,
   triggerCharacter: string
@@ -125,6 +152,29 @@ export function createTextDocumentPositionParams(
     context: {
       triggerKind: CompletionTriggerKind.Invoked,
       triggerCharacter: finalTriggerCharacter,
+    },
+  };
+
+  return textDocument;
+}
+
+export function createCompletionParams_Typed(
+  document: TextDocument,
+  position: Position,
+  triggerCharacter: string
+): CompletionParams {
+  if (triggerCharacter === '') {
+    testError.log('Typed trigger character. Need value, was [Empty string]');
+  }
+
+  const textDocument: CompletionParams = {
+    textDocument: {
+      uri: document.uri,
+    },
+    position,
+    context: {
+      triggerKind: CompletionTriggerKind.TriggerCharacter,
+      triggerCharacter,
     },
   };
 
