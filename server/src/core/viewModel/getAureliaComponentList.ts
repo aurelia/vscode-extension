@@ -117,22 +117,33 @@ export function getAureliaComponentInfoFromClassDeclaration(
       if (customElementDecorator) {
         // get argument for name property in decorator
         customElementDecorator.expression.forEachChild((decoratorChild) => {
-          if (!ts.isObjectLiteralExpression(decoratorChild)) return;
-          decoratorChild.forEachChild((decoratorArgument) => {
-            if (!ts.isPropertyAssignment(decoratorArgument)) return;
-            decoratorArgument.forEachChild((decoratorProp) => {
-              if (!ts.isStringLiteral(decoratorProp)) {
-                // TODO: What if name is not a string? --> Notify users [ISSUE-8Rh31VAG]
-                return;
-              }
+          // @customElement('empty-view')
+          if (ts.isStringLiteral(decoratorChild)) {
+            decoratorComponentName = decoratorChild
+              .getText()
+              .replace(/['"]/g, '');
+            decoratorStartOffset = decoratorChild.getStart() + 1; // start quote
+            decoratorEndOffset = decoratorChild.getEnd(); // include the last character, ie. the end quote
+          }
 
-              decoratorComponentName = decoratorProp
-                .getText()
-                .replace(/['"]/g, '');
-              decoratorStartOffset = decoratorProp.getStart() + 1; // start quote
-              decoratorEndOffset = decoratorProp.getEnd(); // include the last character, ie. the end quote
+          // @customElement({ name: 'my-view', template })
+          else if (ts.isObjectLiteralExpression(decoratorChild)) {
+            decoratorChild.forEachChild((decoratorArgument) => {
+              if (!ts.isPropertyAssignment(decoratorArgument)) return;
+              decoratorArgument.forEachChild((decoratorProp) => {
+                if (!ts.isStringLiteral(decoratorProp)) {
+                  // TODO: What if name is not a string? --> Notify users [ISSUE-8Rh31VAG]
+                  return;
+                }
+
+                decoratorComponentName = decoratorProp
+                  .getText()
+                  .replace(/['"]/g, '');
+                decoratorStartOffset = decoratorProp.getStart() + 1; // start quote
+                decoratorEndOffset = decoratorProp.getEnd(); // include the last character, ie. the end quote
+              });
             });
-          });
+          }
         });
       }
 
