@@ -50,5 +50,6 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
     const auProjects = AureliaProjects.getAll();
     expect(auProjects.length).toBeGreaterThanOrEqual(2);
     // expect(AureliaProjects.hydrate).toHaveBeenCalled();
+    // expect(true).toBeFalsy();
   });
 };

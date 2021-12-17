@@ -7,6 +7,19 @@ Feature: Hydrate on initialization
     Then the extension should hydrate the Aurelia project
 
   @monorepo
+  Scenario Outline: Hydrate monorepo project - only one project
+    Given the project is named "monorepo"
+    When I only specify for <PROPERTY> "package-aurelia"
+    Then the extension should only hydrate "package-aurelia"
+
+    Examples:
+      | PROPERTY      |
+      | rootDirectory |
+      | include       |
+      | exclude       |
+
+
+  @monorepo
   Scenario Outline: Hydrate monorepo project
     Given the project is named "monorepo"
     And I open VSCode with the following file "<FILE_NAME>"
