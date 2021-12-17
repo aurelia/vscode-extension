@@ -113,13 +113,13 @@ connection.onInitialized(async () => {
     const workspaceFolders = await connection.workspace.getWorkspaceFolders();
     if (workspaceFolders === null) return;
 
-    const workspaceRootUri = workspaceFolders[0].uri;
     const extensionSettings = (await connection.workspace.getConfiguration({
       section: settingsName,
     })) as ExtensionSettings;
-
+    const workspaceRootUri = workspaceFolders[0].uri;
     extensionSettings.aureliaProject = {
-      rootDirectory: workspaceRootUri,
+      rootDirectory:
+        extensionSettings.aureliaProject?.rootDirectory ?? workspaceRootUri,
     };
 
     aureliaServer = new AureliaServer(
@@ -294,13 +294,14 @@ connection.onExecuteCommand(
           await connection.workspace.getWorkspaceFolders();
         if (workspaceFolders === null) return;
 
-        const workspaceRootUri = workspaceFolders[0].uri;
         const extensionSettings = (await connection.workspace.getConfiguration({
           section: settingsName,
         })) as ExtensionSettings;
-
+        const workspaceRootUri = workspaceFolders[0].uri;
         extensionSettings.aureliaProject = {
-          rootDirectory: workspaceRootUri,
+          rootDirectory:
+            extensionSettings.aureliaProject?.rootDirectory ??
+            workspaceRootUri,
         };
 
         aureliaServer = new AureliaServer(
@@ -308,7 +309,7 @@ connection.onExecuteCommand(
           extensionSettings,
           documents
         );
-        await aureliaServer.onConnectionInitialized(undefined, true);
+        await aureliaServer.onConnectionInitialized(extensionSettings, true);
 
         break;
       }

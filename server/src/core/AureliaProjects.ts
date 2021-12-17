@@ -309,14 +309,21 @@ function getAureliaProjectPaths(packageJsonPaths: string[]): string[] {
 }
 
 function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
-  const workspaceRootUri =
-    extensionSettings.aureliaProject?.rootDirectory ?? '';
+  const aureliaProject = extensionSettings.aureliaProject;
+  const workspaceRootUri = aureliaProject?.rootDirectory?.trim() ?? '';
   const cwd = UriUtils.toSysPath(workspaceRootUri);
   /* prettier-ignore */ logger.log(`Get package.json based on: ${cwd}`,{env:'test'});
 
+  const ignoresBasedOnInclude = getIgnoreForGlob(aureliaProject);
+
+  const ignore = ['node_modules'];
+  if (ignoresBasedOnInclude) {
+    ignore.push(...ignoresBasedOnInclude);
+  }
+
   const packageJsonPaths = fastGlob.sync('**/package.json', {
     absolute: true,
-    ignore: ['node_modules'],
+    ignore,
     cwd,
   });
   return packageJsonPaths;
@@ -339,4 +346,30 @@ function logHasNoAureliaProject() {
  */
 function hasDocumentChanged({ version }: TextDocument): boolean {
   return version > 1;
+}
+
+/**
+ * Turn allow list into glob-deny-list (aka. ignore)
+ */
+function getIgnoreForGlob(
+  aureliaProjectSetting: IAureliaProjectSetting | undefined
+) {
+  const ignores: string[] = [];
+  const include = aureliaProjectSetting?.include;
+  const exclude = aureliaProjectSetting?.exclude;
+
+  if (include != null) {
+    // Not Patterns !(a|b)
+    const includeJoined = include.join('|'); // | glob pattern for matching many
+    const ignoreGlob = `**/!(${includeJoined})/*`;
+    ignores.push(ignoreGlob);
+  }
+  if (exclude != null) {
+    // Zero or More Patterns *(a|b)
+    const excludeJoined = exclude.join('|'); // | glob pattern for matching many
+    const ignoreGlob = `**/*(${excludeJoined})/*`;
+    ignores.push(ignoreGlob);
+  }
+
+  return ignores;
 }
