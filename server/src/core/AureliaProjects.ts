@@ -24,7 +24,7 @@ export interface IAureliaProject {
 }
 
 export class AureliaProjects {
-  private readonly aureliaProjects: IAureliaProject[] = [];
+  private aureliaProjects: IAureliaProject[] = [];
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
@@ -161,6 +161,8 @@ export class AureliaProjects {
   }
 
   private async initAndSet(packageJsonPaths: string[]) {
+    this.resetAureliaProjects();
+
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
@@ -241,6 +243,10 @@ export class AureliaProjects {
       return uri.includes(tsConfigPath);
     });
     return isIncluded;
+  }
+
+  private resetAureliaProjects(): void {
+    this.aureliaProjects = [];
   }
 }
 

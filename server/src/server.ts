@@ -110,29 +110,10 @@ connection.onInitialized(async () => {
       undefined
     );
 
-    const workspaceFolders = await connection.workspace.getWorkspaceFolders();
-    if (workspaceFolders === null) return;
+    await initAurelia();
 
-    const extensionSettings = (await connection.workspace.getConfiguration({
-      section: settingsName,
-    })) as ExtensionSettings;
-    const workspaceRootUri = workspaceFolders[0].uri;
-    extensionSettings.aureliaProject = {
-      rootDirectory:
-        extensionSettings.aureliaProject?.rootDirectory ?? workspaceRootUri,
-    };
-
-    aureliaServer = new AureliaServer(
-      globalContainer,
-      extensionSettings,
-      documents
-    );
-    await aureliaServer.onConnectionInitialized();
-
-    const tsConfigPath = UriUtils.toSysPath(workspaceRootUri);
-    const aureliaProjects = globalContainer.get(AureliaProjects);
-    const targetProject = aureliaProjects.getBy(tsConfigPath);
-    if (!targetProject) return;
+    const should = await shouldInit();
+    if (!should) return
 
     hasServerInitialized = true;
   }
@@ -224,18 +205,12 @@ documents.onDidChangeContent(
   )
 );
 
-connection.onDidChangeConfiguration(() => {
+connection.onDidChangeConfiguration(async () => {
   console.log('[server.ts] onDidChangeConfiguration');
 
-  // if (hasConfigurationCapability) {
-  //   // Reset all cached document settings
-  //   documentSettings.settingsMap.clear();
-  // } else {
-  //   documentSettings.globalSettings = (change.settings[settingsName] ||
-  //     documentSettings.defaultSettings) as ExtensionSettings;
-  // }
+  if (!hasConfigurationCapability) return;
 
-  // void createAureliaWatchProgram(aureliaProgram);
+  await initAurelia(true);
 });
 
 connection.onDidChangeWatchedFiles((_change) => {
@@ -290,26 +265,7 @@ connection.onExecuteCommand(
     const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
     switch (command) {
       case 'extension.au.reloadExtension': {
-        const workspaceFolders =
-          await connection.workspace.getWorkspaceFolders();
-        if (workspaceFolders === null) return;
-
-        const extensionSettings = (await connection.workspace.getConfiguration({
-          section: settingsName,
-        })) as ExtensionSettings;
-        const workspaceRootUri = workspaceFolders[0].uri;
-        extensionSettings.aureliaProject = {
-          rootDirectory:
-            extensionSettings.aureliaProject?.rootDirectory ??
-            workspaceRootUri,
-        };
-
-        aureliaServer = new AureliaServer(
-          globalContainer,
-          extensionSettings,
-          documents
-        );
-        await aureliaServer.onConnectionInitialized(extensionSettings, true);
+        await initAurelia(true);
 
         break;
       }
@@ -390,4 +346,37 @@ async function dontTriggerInViewModel(document: { uri: string }) {
   })) as ExtensionSettings;
   const dontTrigger = isViewModelDocument(document, extensionSettings);
   return dontTrigger;
+}
+
+async function initAurelia(forceReinit?: boolean) {
+  const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+  if (workspaceFolders === null) return;
+
+  const extensionSettings = (await connection.workspace.getConfiguration({
+    section: settingsName,
+  })) as ExtensionSettings;
+  const workspaceRootUri = workspaceFolders[0].uri;
+  extensionSettings.aureliaProject = {
+    rootDirectory:
+      extensionSettings.aureliaProject?.rootDirectory ?? workspaceRootUri,
+  };
+
+  aureliaServer = new AureliaServer(
+    globalContainer,
+    extensionSettings,
+    documents
+  );
+  await aureliaServer.onConnectionInitialized(extensionSettings, forceReinit);
+}
+
+async function shouldInit() {
+  const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+  if (workspaceFolders === null) return false;
+  const workspaceRootUri = workspaceFolders[0].uri;
+  const tsConfigPath = UriUtils.toSysPath(workspaceRootUri);
+  const aureliaProjects = globalContainer.get(AureliaProjects);
+  const targetProject = aureliaProjects.getBy(tsConfigPath);
+  if (!targetProject) return false;
+
+  return true
 }

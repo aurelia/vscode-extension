@@ -154,9 +154,6 @@ export class Logger {
 
     // region measure ms
     if (localOptions.shouldLogMs === true) {
-      if (finalMessage === 'parse start') {
-        localOptions.msStart; /* ? */
-      }
       if (localOptions.msStart === true) {
         this.msStartTime = performance.now();
       } else if (localOptions.msEnd === true) {
