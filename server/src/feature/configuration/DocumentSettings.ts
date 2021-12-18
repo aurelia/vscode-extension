@@ -1,15 +1,8 @@
 import 'reflect-metadata';
-import { Logger } from 'culog';
 import { Connection } from 'vscode-languageserver';
+import { Logger } from '../../common/logging/logger';
 
-const logger = new Logger({ scope: 'DocumentSettings' });
-// logger.setLogOptions({ logLevel: 'INFO' });
-logger.overwriteDefaultLogOtpions({
-  // log: false,
-  logLevel: 'INFO',
-  focusedLogging: false,
-  // logScope: false,
-});
+const logger = new Logger('DocumentSettings');
 
 export const settingsName = 'aurelia';
 
@@ -107,17 +100,17 @@ export class DocumentSettings {
       ];
       finalExcludes.push(...defaultExcludes);
     }
-    logger.debug(['Exclude paths globs: '], { logLevel: 'INFO' });
-    logger.debug([finalExcludes.join(', ')], { logLevel: 'INFO' });
+    logger.culogger.debug(['Exclude paths globs: '], { logLevel: 'INFO' });
+    logger.culogger.debug([finalExcludes.join(', ')], { logLevel: 'INFO' });
 
     exclude = finalExcludes;
 
     const include = this.extensionSettings.aureliaProject?.include;
-    logger.debug(['Include paths globs: '], { logLevel: 'INFO' });
+    logger.culogger.debug(['Include paths globs: '], { logLevel: 'INFO' });
     if (include !== undefined) {
-      logger.debug([include.join(', ')], { logLevel: 'INFO' });
+      logger.culogger.debug([include.join(', ')], { logLevel: 'INFO' });
     } else {
-      logger.debug(['No includes provided.'], { logLevel: 'INFO' });
+      logger.culogger.debug(['No includes provided.'], { logLevel: 'INFO' });
     }
   }
 

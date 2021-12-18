@@ -39,6 +39,15 @@ export class TsMorphProject {
   }
 
   public create(): Project {
+    const project = createTsMorphProject({
+      targetSourceDirectory: this.targetSourceDirectory,
+      tsConfigPath: this.tsconfigPath,
+    });
+
+    this.set(project);
+
+    return project;
+
     // const compilerSettings: ts.CompilerOptions = {
     //   module: ts.ModuleKind.CommonJS,
     //   target: ts.ScriptTarget.ESNext,
@@ -49,18 +58,6 @@ export class TsMorphProject {
     //   sourceMap: true,
     //   rootDir: '.',
     // };
-
-    const project = createTsMorphProject({
-      // customCompilerOptions: {
-      //   ...compilerSettings,
-      // },
-      targetSourceDirectory: this.targetSourceDirectory,
-      tsConfigPath: this.tsconfigPath,
-    });
-
-    this.set(project);
-
-    return project;
   }
 
   public get() {

@@ -113,7 +113,7 @@ connection.onInitialized(async () => {
     await initAurelia();
 
     const should = await shouldInit();
-    if (!should) return
+    if (!should) return;
 
     hasServerInitialized = true;
   }
@@ -349,16 +349,14 @@ async function dontTriggerInViewModel(document: { uri: string }) {
 }
 
 async function initAurelia(forceReinit?: boolean) {
-  const workspaceFolders = await connection.workspace.getWorkspaceFolders();
-  if (workspaceFolders === null) return;
-
   const extensionSettings = (await connection.workspace.getConfiguration({
     section: settingsName,
   })) as ExtensionSettings;
-  const workspaceRootUri = workspaceFolders[0].uri;
+
+  const rootDirectory = await getRootDirectory(extensionSettings);
+
   extensionSettings.aureliaProject = {
-    rootDirectory:
-      extensionSettings.aureliaProject?.rootDirectory ?? workspaceRootUri,
+    rootDirectory,
   };
 
   aureliaServer = new AureliaServer(
@@ -367,6 +365,20 @@ async function initAurelia(forceReinit?: boolean) {
     documents
   );
   await aureliaServer.onConnectionInitialized(extensionSettings, forceReinit);
+}
+
+async function getRootDirectory(extensionSettings: ExtensionSettings) {
+  const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+  if (workspaceFolders === null) return;
+  const workspaceRootUri = workspaceFolders[0].uri;
+
+  let rootDirectory = workspaceRootUri;
+  const settingRoot = extensionSettings.aureliaProject?.rootDirectory;
+  if (settingRoot != null && settingRoot !== '') {
+    rootDirectory = settingRoot;
+  }
+
+  return rootDirectory;
 }
 
 async function shouldInit() {
@@ -378,5 +390,5 @@ async function shouldInit() {
   const targetProject = aureliaProjects.getBy(tsConfigPath);
   if (!targetProject) return false;
 
-  return true
+  return true;
 }

@@ -16,7 +16,7 @@ import { AureliaProgram } from './viewModel/AureliaProgram';
 
 const logger = new Logger('AureliaProject');
 
-let compilerObject: ts.Program | undefined;
+const compilerObjectMap = new Map<string, ts.Program | undefined>();
 
 export interface IAureliaProject {
   tsConfigPath: string;
@@ -81,7 +81,7 @@ export class AureliaProjects {
     });
     if (documentsPaths.length === 0) {
       /* prettier-ignore */ logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
-      /* prettier-ignore */ logger.log('(!) Waiting until you change to an .html, .js, or .ts file.', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('(!) Waiting until .html, .js, or .ts file focused.', { logLevel: 'INFO' });
       /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
       return false;
     }
@@ -195,7 +195,6 @@ export class AureliaProjects {
 
       const shouldHydration = aureliaProgram === null || forceReinit;
       if (shouldHydration) {
-        // if (aureliaProgram === null) {
         const extensionSettings =
           this.documentSettings.getSettings().aureliaProject;
         this.documentSettings.setSettings({
@@ -206,16 +205,18 @@ export class AureliaProjects {
         });
         aureliaProgram = new AureliaProgram(this.documentSettings);
         const tsMorphProject = aureliaProgram.tsMorphProject.create();
-        if (!compilerObject || forceReinit) {
-          // tsMorphProject
-          //   .getSourceFiles()
-          //   .map((f) => f.getSourceFile().getFilePath()); /*?*/
+
+        let compilerObject = compilerObjectMap.get(tsConfigPath);
+        if (compilerObject == null || forceReinit) {
           const program = tsMorphProject.getProgram();
           // [PERF]: 1.87967675s
           compilerObject = program.compilerObject;
-        } else {
+          compilerObjectMap.set(tsConfigPath, compilerObject);
         }
-        aureliaProgram.setProgram(compilerObject);
+
+        if (compilerObject != null) {
+          aureliaProgram.setProgram(compilerObject);
+        }
       }
 
       const projectOptions: IAureliaProjectSetting = {
@@ -321,13 +322,20 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   const cwd = UriUtils.toSysPath(workspaceRootUri);
   /* prettier-ignore */ logger.log(`Get package.json based on: ${cwd}`,{env:'test'});
 
-  const ignoresBasedOnInclude = getIgnoreForGlob(aureliaProject);
   const ignore = ['node_modules'];
-  if (ignoresBasedOnInclude) {
-    ignore.push(...ignoresBasedOnInclude);
+  const exclude = aureliaProject?.exclude;
+  if (exclude != null) {
+    ignore.push(...exclude);
+  }
+  const include = aureliaProject?.include;
+  let globIncludePattern = ['**/package.json'];
+  if (include != null) {
+    const packageJsonIncludes = include.map((path) => `${path}/**/package.json`);
+    globIncludePattern = packageJsonIncludes;
   }
 
-  const packageJsonPaths = fastGlob.sync('**/package.json', {
+  const packageJsonPaths = fastGlob.sync(globIncludePattern, {
+    // const packageJsonPaths = fastGlob.sync('**/package.json', {
     absolute: true,
     ignore,
     cwd,
@@ -352,30 +360,4 @@ function logHasNoAureliaProject() {
  */
 function hasDocumentChanged({ version }: TextDocument): boolean {
   return version > 1;
-}
-
-/**
- * Turn allow list into glob-deny-list (aka. ignore)
- */
-function getIgnoreForGlob(
-  aureliaProjectSetting: IAureliaProjectSetting | undefined
-) {
-  const ignores: string[] = [];
-  const include = aureliaProjectSetting?.include;
-  const exclude = aureliaProjectSetting?.exclude;
-
-  if (include != null) {
-    // Not Patterns !(a|b)
-    const includeJoined = include.join('|'); // | glob pattern for matching many
-    const ignoreGlob = `**/!(${includeJoined})/*`;
-    ignores.push(ignoreGlob);
-  }
-  if (exclude != null) {
-    // Zero or More Patterns *(a|b)
-    const excludeJoined = exclude.join('|'); // | glob pattern for matching many
-    const ignoreGlob = `**/*(${excludeJoined})/*`;
-    ignores.push(ignoreGlob);
-  }
-
-  return ignores;
 }
