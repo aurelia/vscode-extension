@@ -203,14 +203,15 @@ export class AureliaProjects {
           },
         });
         aureliaProgram = new AureliaProgram(this.documentSettings);
+        const tsMorphProject = aureliaProgram.tsMorphProject.create();
         if (!compilerObject || forceReinit) {
-          const tsMorphProject = aureliaProgram.tsMorphProject.create();
           // tsMorphProject
           //   .getSourceFiles()
           //   .map((f) => f.getSourceFile().getFilePath()); /*?*/
           const program = tsMorphProject.getProgram();
           // [PERF]: 1.87967675s
           compilerObject = program.compilerObject;
+        } else {
         }
         aureliaProgram.setProgram(compilerObject);
       }
@@ -315,7 +316,6 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   /* prettier-ignore */ logger.log(`Get package.json based on: ${cwd}`,{env:'test'});
 
   const ignoresBasedOnInclude = getIgnoreForGlob(aureliaProject);
-
   const ignore = ['node_modules'];
   if (ignoresBasedOnInclude) {
     ignore.push(...ignoresBasedOnInclude);

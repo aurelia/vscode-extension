@@ -51,7 +51,7 @@ export function aureliaVirtualComplete_vNext(
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
 
   // 1. Component
-  const project = aureliaProgram.tsMorphProject.project;
+  const project = aureliaProgram.tsMorphProject.get();
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   if (!targetComponent) return [];

@@ -67,7 +67,7 @@ export async function onCompletion(
   const wasInvoked =
     completionParams.context?.triggerKind === CompletionTriggerKind.Invoked;
   const shouldInsertTriggerCharacter = existingRegion != null && !wasInvoked;
-  shouldInsertTriggerCharacter; /*?*/
+  // shouldInsertTriggerCharacter; /*?*/
   if (shouldInsertTriggerCharacter) {
     // replace trigger character
     // regions = existingRegions;
