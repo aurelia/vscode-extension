@@ -6,8 +6,11 @@ import {
   InsertTextFormat,
 } from 'vscode-languageserver';
 
-import { AureliaLSP, interpolationRegex } from '../../common/constants';
-import { XScopeUtils } from '../../common/documens/xScopeUtils';
+import {
+  AureliaLSP,
+  interpolationRegex,
+  TemplateAttributeTriggers,
+} from '../../common/constants';
 import { StringUtils } from '../../common/string/StringUtils';
 import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
@@ -47,6 +50,12 @@ export function aureliaVirtualComplete_vNext(
 ) {
   if (!region) return [];
   if (!region.accessScopes) return [];
+  // In Interpolation dont allow ` ` (Space) to trigger completions for view model,
+  // otherwise it will trigger 800 JS completions too often which takes +1.5secs
+  if (AbstractRegion.isInterpolationRegion(region)) {
+    const isSpace = triggerCharacter === TemplateAttributeTriggers.SPACE;
+    if (isSpace) return '';
+  }
 
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
 
