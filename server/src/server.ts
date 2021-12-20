@@ -34,7 +34,6 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
-import { isViewModelDocument } from './common/documens/TextDocumentUtils';
 
 const logger = new Logger('Server');
 
@@ -133,10 +132,6 @@ connection.onInitialized(async () => {
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
   if (hasServerInitialized === false) return;
-  const dontTrigger = await dontTriggerInViewModel(
-    codeActionParams.textDocument
-  );
-  if (dontTrigger) return;
 
   const codeAction = await aureliaServer.onCodeAction(codeActionParams);
 
@@ -145,16 +140,12 @@ connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
   }
 });
 
-// This handler provides the initial list of the completion items.
 connection.onCompletion(async (completionParams: CompletionParams) => {
   const documentUri = completionParams.textDocument.uri;
   const document = documents.get(documentUri);
   if (!document) {
     throw new Error('No document found');
   }
-  const dontTrigger = await dontTriggerInViewModel(document);
-  if (dontTrigger) return;
-
   const completions = await aureliaServer.onCompletion(
     document,
     completionParams
@@ -224,10 +215,6 @@ documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
 
 connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
   if (hasServerInitialized === false) return;
-  const dontTrigger = await dontTriggerInViewModel({
-    uri: params.textDocument.uri,
-  });
-  if (dontTrigger) return;
 
   const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
   return symbols;
@@ -339,14 +326,6 @@ documents.listen(connection);
 
 // Listen on the connection
 connection.listen();
-
-async function dontTriggerInViewModel(document: { uri: string }) {
-  const extensionSettings = (await connection.workspace.getConfiguration({
-    section: settingsName,
-  })) as ExtensionSettings;
-  const dontTrigger = isViewModelDocument(document, extensionSettings);
-  return dontTrigger;
-}
 
 async function initAurelia(forceReinit?: boolean) {
   const extensionSettings = (await connection.workspace.getConfiguration({

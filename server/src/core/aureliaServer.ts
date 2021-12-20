@@ -8,6 +8,7 @@ import {
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { isViewModelDocument } from '../common/documens/TextDocumentUtils';
 
 import { Logger } from '../common/logging/logger';
 import { onCodeAction } from '../feature/codeAction/onCodeAction';
@@ -110,6 +111,9 @@ export class AureliaServer {
     document: TextDocument,
     completionParams: CompletionParams
   ) {
+    const dontTrigger = await this.dontTriggerInViewModel(document);
+    if (dontTrigger) return;
+
     if (this.extensionSettings.capabilities?.completions === false) return;
     /* prettier-ignore */ logger.log('Completion triggered.',{logMs:true,msStart:true});
 
@@ -166,6 +170,10 @@ export class AureliaServer {
   // onDocumentHighlight() {}
 
   public async onDocumentSymbol(documentUri: string) {
+    const dontTrigger = await this.dontTriggerInViewModel({
+      uri: documentUri,
+    });
+    if (dontTrigger) return;
     if (this.extensionSettings.capabilities?.documentSymbols === false) return;
     // Too spammy, since Vscode basically triggers this after every file change.
     // /* prettier-ignore */ logger.log('Document symbol triggered.',{logMs:true,msStart:true});
@@ -192,6 +200,11 @@ export class AureliaServer {
   }
 
   public async onCodeAction(codeActionParams: CodeActionParams) {
+    const dontTrigger = await this.dontTriggerInViewModel(
+      codeActionParams.textDocument
+    );
+    if (dontTrigger) return;
+
     if (this.extensionSettings.capabilities?.codeActions === false) return;
     // Too spammy
     // /* prettier-ignore */ logger.log('Code action triggered.',{logMs:true,msStart:true});
@@ -277,4 +290,9 @@ export class AureliaServer {
   // window;
   // workspace;
   // languages;
+
+  private dontTriggerInViewModel(document: { uri: string }) {
+    const dontTrigger = isViewModelDocument(document, this.extensionSettings);
+    return dontTrigger;
+  }
 }
