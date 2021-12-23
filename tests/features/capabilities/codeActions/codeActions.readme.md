@@ -4,7 +4,7 @@ https://code.visualstudio.com/docs/editor/refactoring
 Aka: Refactoring, Quick Fix
 
 ## How to trigger in VSCode
-Shortcut: `Ctrl+.`
+Shortcut: `Ctrl+.` or `Cmd+.`
 Command: Quick Fix
 
 ## Usage inside the Aurelia extension
