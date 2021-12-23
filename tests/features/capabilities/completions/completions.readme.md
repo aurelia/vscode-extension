@@ -1,13 +1,14 @@
+# Completion
 
-## Definition
+## General information
+https://code.visualstudio.com/docs/editor/intellisense
+Aka: Completions
 
 ## How to trigger in VSCode
 Shortcut: `Ctrl+i` or `Cmd+i`, or by typing a trigger character (eg. <, ", Space, [other](https://github.com/aurelia/vscode-extension/blob/61376419796275b4e3b8e56dce069282e4697dde/server/src/server.ts#L78))
 Command: Trigger Suggest
 
-## Usage inside the Aurelia extension
-
-### Feature list
+## Feature list
 Note: The `|` indicates your cursor position *after* the character, that should have been typed, eg.
 if `foo.|` is written, then you should type `.` (Dot) after `foo`.
 
@@ -48,7 +49,7 @@ if `foo.|` is written, then you should type `.` (Dot) after `foo`.
     <p if.bind="foo || "></p>
     ```
 
-### Limitations
+## Limitations
 - Method/Object completions don't work for imports, that are aliases, eg.
   - `import 'alias/dir/files'` <- Does not work
   - `import '../../dir/files'` <- Works
@@ -58,10 +59,13 @@ if `foo.|` is written, then you should type `.` (Dot) after `foo`.
 - Typing in the middle of an Interpolation, eg. `${foo| && bar}` will not reliably trigger suggestions
 - Custom Attributes not supported
 
+## Development
+
 ### Backlog
 - Value Converter arguments
 - Binding Behavior
 - Repeat for regions iterator (`repeat.for="foo of fooList"`, then in the view, you should also get completions for `foo`. Ideally, the type of foo should be correct, but we could be hard to do)
+  - Workaround: Define `foo` in your View Model, to get completions in other Aurelia regions.
 - Access `<let>` definitions in view (Ideally, the typeshould be correct, but that could be hard to do)
 - Access definitions from promise binding in view (Ideally, the typeshould be correct, but that could be hard to do). [Promise attribute docs](https://docs.aurelia.io/getting-to-know-aurelia/introduction/built-in-template-features/promise.bind)
 - Contextual variables (`$index` or `$odd`)

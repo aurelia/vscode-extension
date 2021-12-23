@@ -1,5 +1,6 @@
+## Code Action
 
-## Definition
+## General information
 https://code.visualstudio.com/docs/editor/refactoring
 Aka: Refactoring, Quick Fix
 
@@ -7,11 +8,11 @@ Aka: Refactoring, Quick Fix
 Shortcut: `Ctrl+.` or `Cmd+.`
 Command: Quick Fix
 
-## Usage inside the Aurelia extension
-
-### Feature list
+## Feature list
 - Turn `<a href="xyz">` into `<import from="xyz">`
   - Why: In the absence of extension like [Path intellisense](https://github.com/ChristianKohler/PathIntellisense) one could leverage the completions capabilities of the a tag, then turn it into an `<import>` tag
+
+## Development
 
 ### Backlog
 - Turn `<a href="xyz">` into `<require from="xyz">`
