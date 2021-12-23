@@ -335,6 +335,7 @@ async function initAurelia(forceReinit?: boolean) {
   const rootDirectory = await getRootDirectory(extensionSettings);
 
   extensionSettings.aureliaProject = {
+    ...extensionSettings.aureliaProject,
     rootDirectory,
   };
 

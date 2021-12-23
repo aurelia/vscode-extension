@@ -263,35 +263,36 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
     fs.readFileSync(packageJsonPath, 'utf-8')
   ) as Record<string, Record<string, string>>;
   const dep = packageJson['dependencies'];
-  if (dep === undefined) return false;
+  if (dep != null) {
+    const isAuV1App = dep['aurelia-framework'] !== undefined;
+    const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
+    const isAuV1Cli = dep['aurelia-cli'] !== undefined;
+    const isAuV2App = dep['aurelia'] !== undefined;
+    const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
+
+    const isAuApp = isAuV1App || isAuV1Cli || isAuV2App;
+    const isAuPlugin = isAuV1Plugin || isAuV2Plugin;
+    const isAu = isAuApp || isAuPlugin;
+
+    return isAu;
+  }
+
   const devDep = packageJson['devDependencies'];
-  if (devDep === undefined) return false;
+  if (devDep != null) {
+    const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
+    const isAuV1PluginDev = devDep['aurelia-binding'] !== undefined;
+    const isAuV1CliDev = devDep['aurelia-cli'] !== undefined;
+    const isAuV2AppDev = devDep['aurelia'] !== undefined;
+    const isAuV2PluginDev = devDep['@aurelia/runtime'] !== undefined;
 
-  const isAuV1App = dep['aurelia-framework'] !== undefined;
-  const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
-  const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
-  const isAuV1PluginDev = devDep['aurelia-binding'] !== undefined;
-  const isAuV1Cli = dep['aurelia-cli'] !== undefined;
-  const isAuV1CliDev = devDep['aurelia-cli'] !== undefined;
+    const isAuApp = isAuV1AppDev || isAuV1CliDev || isAuV2AppDev;
+    const isAuPlugin = isAuV1PluginDev || isAuV2PluginDev;
+    const isAu = isAuApp || isAuPlugin;
 
-  const isAuV2App = dep['aurelia'] !== undefined;
-  const isAuV2AppDev = devDep['aurelia'] !== undefined;
-  const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
-  const isAuV2PluginDev = devDep['@aurelia/runtime'] !== undefined;
+    return isAu;
+  }
 
-  const isAuApp =
-    isAuV1App ||
-    isAuV1AppDev ||
-    isAuV1Cli ||
-    isAuV1CliDev ||
-    isAuV2App ||
-    isAuV2AppDev;
-  const isAuPlugin =
-    isAuV1Plugin || isAuV1PluginDev || isAuV2Plugin || isAuV2PluginDev;
-
-  const isAu = isAuApp || isAuPlugin;
-
-  return isAu;
+  return false;
 }
 
 /**
@@ -330,17 +331,24 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   const include = aureliaProject?.include;
   let globIncludePattern = ['**/package.json'];
   if (include != null) {
-    const packageJsonIncludes = include.map((path) => `${path}/**/package.json`);
-    globIncludePattern = packageJsonIncludes;
+    const packageJsonIncludes = include.map(
+      (path) => `**/${path}/**/package.json`
+    );
+    globIncludePattern.push(...packageJsonIncludes);
   }
 
-  const packageJsonPaths = fastGlob.sync(globIncludePattern, {
-    // const packageJsonPaths = fastGlob.sync('**/package.json', {
-    absolute: true,
-    ignore,
-    cwd,
-  });
-  return packageJsonPaths;
+  try {
+    const packageJsonPaths = fastGlob.sync(globIncludePattern, {
+      // const packageJsonPaths = fastGlob.sync('**/package.json', {
+      absolute: true,
+      ignore,
+      cwd,
+    });
+    return packageJsonPaths;
+  } catch (error) {
+    /* prettier-ignore */ console.log('TCL: getPackageJsonPaths -> error', error)
+    return [];
+  }
 }
 
 function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {

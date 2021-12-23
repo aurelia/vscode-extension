@@ -197,9 +197,9 @@ export class ParseExpressionUtil {
         );
       }
     } catch (_error) {
-      const error = _error as Error;
-      console.log(error.message);
-      // console.log(error.stack);
+      // const _error = error as Error
+      // logger.log(_error.message,{logLevel:'DEBUG'})
+      // logger.log(_error.stack,{logLevel:'DEBUG'})
     }
 
     finalExpressions = sortExpressions<TargetExpression>(finalExpressions);
@@ -309,7 +309,10 @@ export class ParseExpressionUtil {
 
       return hasSourceWordInScope;
     } catch (error) {
-      console.log(error);
+      // const _error = error as Error
+      // logger.log(_error.message,{logLevel:'DEBUG'})
+      // logger.log(_error.stack,{logLevel:'DEBUG'})
+      // console.log(error);
       return [];
     }
   }

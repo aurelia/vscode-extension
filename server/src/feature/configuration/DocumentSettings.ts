@@ -88,9 +88,9 @@ export class DocumentSettings {
 
     let exclude = this.extensionSettings.aureliaProject?.exclude;
 
-    const finalExcludes: string[] = [];
-
+    let finalExcludes: string[] = []
     if (exclude === undefined) {
+      logger.log('No excludes provided. Defaulting to', { logLevel: 'INFO' });
       const defaultExcludes = [
         '**/node_modules',
         'aurelia_project',
@@ -99,18 +99,20 @@ export class DocumentSettings {
         '**/dist',
       ];
       finalExcludes.push(...defaultExcludes);
+    } else {
+      finalExcludes = exclude
     }
-    logger.culogger.debug(['Exclude paths globs: '], { logLevel: 'INFO' });
-    logger.culogger.debug([finalExcludes.join(', ')], { logLevel: 'INFO' });
+    logger.log('Exclude paths globs: ', { logLevel: 'INFO' });
+    logger.log(finalExcludes.join(', '), { logLevel: 'INFO' });
 
     exclude = finalExcludes;
 
     const include = this.extensionSettings.aureliaProject?.include;
-    logger.culogger.debug(['Include paths globs: '], { logLevel: 'INFO' });
+    logger.log('Include paths globs: ', { logLevel: 'INFO' });
     if (include !== undefined) {
-      logger.culogger.debug([include.join(', ')], { logLevel: 'INFO' });
+      logger.log(include.join(', '), { logLevel: 'INFO' });
     } else {
-      logger.culogger.debug(['No includes provided.'], { logLevel: 'INFO' });
+      logger.log('No includes provided.', { logLevel: 'INFO' });
     }
   }
 

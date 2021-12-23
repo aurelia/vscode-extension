@@ -415,7 +415,9 @@ export class AttributeInterpolationRegion extends AbstractRegion {
       // finalRegions; /* ?*/
       return finalRegions;
     } catch (error) {
-      /* prettier-ignore */ console.log('TCL: TextInterpolationRegion -> error', error)
+      // const _error = error as Error
+      // logger.log(_error.message,{logLevel:'DEBUG'})
+      // logger.log(_error.stack,{logLevel:'DEBUG'})
       return [];
     }
   }
@@ -955,7 +957,9 @@ export class TextInterpolationRegion extends AbstractRegion {
       // finalRegions; /* ?*/
       return finalRegions;
     } catch (error) {
-      /* prettier-ignore */ console.log('TCL: TextInterpolationRegion -> error', error)
+      // const _error = error as Error
+      // logger.log(_error.message,{logLevel:'DEBUG'})
+      // logger.log(_error.stack,{logLevel:'DEBUG'})
       return [];
     }
   }
