@@ -54,7 +54,7 @@ export function aureliaVirtualComplete_vNext(
   // otherwise it will trigger 800 JS completions too often which takes +1.5secs
   if (AbstractRegion.isInterpolationRegion(region)) {
     const isSpace = triggerCharacter === TemplateAttributeTriggers.SPACE;
-    if (isSpace) return '';
+    if (isSpace) return [];
   }
 
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
