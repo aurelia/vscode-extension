@@ -50,6 +50,7 @@ Will go to definition in View model
 ### Limitations
 - HTML-only Custom Element not supported yet
 - Router views not supported
+- Custom Attributes not supported
 
 
 ### Backlog
