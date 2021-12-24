@@ -1,38 +1,135 @@
-<p align="center">
-  <a href="https://aurelia.io/" target="_blank">
-    <img alt="Aurelia" src="./images/aurelia-logo.png">
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://opensource.org/licenses/MIT">
-  <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.png">
-  </a>
-  <a href="https://app.circleci.com/pipelines/github/aurelia/vscode-extension">
-  <img alt="CircleCI" src="https://circleci.com/gh/aurelia/aurelia.png?style=shield">
-  </a>
-  <a href="http://www.typescriptlang.org/">
-  <img alt="TypeScript" src="https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.png">
-  </a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=AureliaEffect.aurelia">
-    <img alt="VS Code Marketplace Downloads" src="https://img.shields.io/visual-studio-marketplace/d/AureliaEffect.aurelia">
-  </a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=AureliaEffect.aurelia">
-    <img alt="VS Code Marketplace Installs" src="https://img.shields.io/visual-studio-marketplace/i/AureliaEffect.aurelia">
-  </a>
-</p>
-
 # Aurelia VSCode Extension
+
+
+
+## Init
+- Monorepo, will only init active
+
+### Typescript
+- cli generate project works out of the box (`npx makes au`)
+### Javascript
+- cli generate project works out of the box (`au new`)
+
+## Setup
+<!-- CLI -->
+<table>
+  <thead>
+    <tr>
+      <th>CLI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <pre>
+  + --- root/
+  |     + --- src/              // [1] Default place where the Extension tries to search for Aurelia files
+  |     + --- tsconfig.json     // [2] (Optional) Powers all the language features (through a Typescript Program)
+  |     + --- jsconfig.json     // [2]
+  |     + --- package.json      // [3] Used to determine, if given project is an Aurelia (v1/2) project
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Monorepo -->
+<table>
+  <thead>
+    <tr>
+      <th>Monorepo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <pre>
+  + --- root/
+  |    + --- aurelia/
+  |        + --- src/             // [1] Default place where the Extension tries to search for Aurelia files
+  |        + --- tsconfig.json    // [2] (Optional) Powers all the language features (through a Typescript Program)
+  |        + --- package.json     // [3] Used to determine, if given project is an Aurelia (v1/2) project
+  |    + --- burelia/
+  |        + (same as aurelia/)   // Behaves the same as `aurelia/`
+  |    + --- non-aurelia/         // Will not get picked up
+  |        + ...
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Complex -->
+<table>
+  <thead>
+    <tr>
+      <th>Complex</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <pre>
+  + --- root/
+  |    + --- frontend/
+  |        + --- aurelia/
+  |            + --- src/             // [1] Default place where the Extension tries to search for Aurelia files
+  |            + --- tsconfig.json    // [2] (Optional) Powers all the language features (through a Typescript Program)
+  |            + --- package.json     // [3] Used to determine, if given project is an Aurelia (v1/2) project
+  |    + --- backend/
+  |    + --- service/
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Configuration
+<!-- Complex -->
+<table>
+  <thead>
+    <tr>
+      <th>Complex</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <pre>
+  + --- root/
+  |    + --- frontend/                 // aureliaProject.rootDirectory = absolute/path/root/frontend
+  |        + --- aurelia/
+  |            + --- deeper-path/
+  |                + --- src/          // aureliaProject.pathToAureliaFiles = absolute/path/root/.../deeper-path/src
+  |            + --- tsconfig.json     // aureliaProject.pathToAureliaFiles = absolute/path/root/.../aurelia/tsconfig.json
+  |        + --- package.json          // aureliaProject.packageJsonInclude = absolute/path/root/.../frontend/package.json
+  |    + --- backend/
+  |    + --- service/
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## Table of contents
 
-- [1. Usage](#1-usage)
-  - [Minimal Setup](#minimal-setup)
+- [Aurelia VSCode Extension](#aurelia-vscode-extension)
+  - [Init](#init)
+    - [Typescript](#typescript)
+    - [Javascript](#javascript)
+  - [Setup](#setup)
   - [Configuration](#configuration)
-- [2. Features](#2-features)
-  - [New](#new)
-  - [Missing (from v1)](#missing-from-v1)
-- [3. More Info](#3-more-info)
+  - [Table of contents](#table-of-contents)
+  - [1. Usage](#1-usage)
+    - [Minimal Setup](#minimal-setup)
+    - [Configuration](#configuration-1)
+      - [Project](#project)
+  - [2. Features](#2-features)
+    - [New](#new)
+    - [Missing (from v1)](#missing-from-v1)
+  - [3. More Info](#3-more-info)
+- [Acknowledgment](#acknowledgment)
 
 ## 1. Usage
 
@@ -171,7 +268,7 @@ You are able to configure `root`, `src`, and `tsconfig.json` (cf. [Minimal Setup
 
 ## 3. More Info
 
-Check out the [Architecture document](docs/architechture.md#5-architecturepng) for a skeleton overview.
+Check out the [Architecture document](docs/developer/architechture.md#5-architecturepng) for a skeleton overview.
 
 # Acknowledgment
 
