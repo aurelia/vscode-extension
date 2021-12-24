@@ -90,7 +90,7 @@ export class AureliaProgram {
     this.determineFilePaths(projectOptions);
     const filePaths = this.getFilePaths();
 
-    this.aureliaComponents.init(program, filePaths);
+    this.aureliaComponents.init(this.tsMorphProject.get(), filePaths);
   }
 
   /**

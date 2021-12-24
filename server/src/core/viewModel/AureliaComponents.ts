@@ -22,13 +22,13 @@ export class AureliaComponents {
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
-  public init(program: ts.Program, filePaths: string[]): void {
+  public init(project: Project, filePaths: string[]): void {
     if (filePaths.length === 0) {
       logger.log('Error: No Aurelia files found.');
       return;
     }
     if (this.checker === undefined) {
-      this.checker = program.getTypeChecker();
+      this.checker = project.getTypeChecker().compilerObject;
     }
 
     const componentListWithoutRegions: Optional<
@@ -41,12 +41,14 @@ export class AureliaComponents {
 
       const isDTs = Path.basename(path).endsWith('.d.ts');
       if (isDTs) return;
+      const isNodeModules = path.includes('node_modules');
+      if (isNodeModules) return;
 
       const ext = Path.extname(path);
       switch (ext) {
         case '.js':
         case '.ts': {
-          const sourceFile = program.getSourceFile(path);
+          const sourceFile = project.getSourceFile(path)?.compilerNode;
           if (sourceFile === undefined) {
             // logger.log(`Source file ignored by the extension: ${path}`, {
             //   logLevel: 'DEBUG',

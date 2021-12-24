@@ -52,16 +52,17 @@ export function getAureliaComponentInfoFromClassDeclaration(
     if (validForAurelia) {
       targetClassDeclaration = node;
 
-      // Note the `!` in the argument: `getSymbolAtLocation` expects a `Node` arg, but returns undefined
-      const symbol = checker.getSymbolAtLocation(node.name!);
-      if (symbol === undefined) {
-        console.log('No symbol found for: ', node.name);
-        return;
-      }
+      if (node.name == null) return;
+      const symbol = checker.getSymbolAtLocation(node.name);
 
-      const documentation = ts.displayPartsToString(
-        symbol.getDocumentationComment(checker)
-      );
+      let documentation = '';
+      if (symbol != null) {
+        // console.log('No symbol found for: ', node.name.getText());
+
+        documentation = ts.displayPartsToString(
+          symbol.getDocumentationComment(checker)
+        );
+      }
 
       // Value Converter
       const isValueConverterModel = checkValueConverter(targetClassDeclaration);
