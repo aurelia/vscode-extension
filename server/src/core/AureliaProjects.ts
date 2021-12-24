@@ -329,12 +329,14 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
     ignore.push(...exclude);
   }
   const include = aureliaProject?.include;
-  let globIncludePattern = ['**/package.json'];
+  let globIncludePattern = [];
   if (include != null) {
     const packageJsonIncludes = include.map(
       (path) => `**/${path}/**/package.json`
     );
     globIncludePattern.push(...packageJsonIncludes);
+  } else {
+    globIncludePattern = ['**/package.json'];
   }
 
   try {
