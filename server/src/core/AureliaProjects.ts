@@ -323,15 +323,17 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   const cwd = UriUtils.toSysPath(workspaceRootUri);
   /* prettier-ignore */ logger.log(`Get package.json based on: ${cwd}`,{env:'test'});
 
-  const ignore = ['node_modules'];
+  const ignore = [];
   const exclude = aureliaProject?.exclude;
   if (exclude != null) {
     ignore.push(...exclude);
   }
-  const include = aureliaProject?.include;
+  const packageJsonInclude = aureliaProject?.packageJsonInclude;
   let globIncludePattern = [];
-  if (include != null) {
-    const packageJsonIncludes = include.map(
+  if (packageJsonInclude != null && packageJsonInclude.length > 0) {
+    /* prettier-ignore */ logger.log('Using setting `aureliaProject.packageJsonInclude`.', { logLevel: 'INFO' });
+
+    const packageJsonIncludes = packageJsonInclude.map(
       (path) => `**/${path}/**/package.json`
     );
     globIncludePattern.push(...packageJsonIncludes);
@@ -346,6 +348,9 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
       ignore,
       cwd,
     });
+
+    logPackageJsonInfo(packageJsonPaths, globIncludePattern, ignore);
+
     return packageJsonPaths;
   } catch (error) {
     /* prettier-ignore */ console.log('TCL: getPackageJsonPaths -> error', error)
@@ -356,13 +361,27 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
 function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
   /* prettier-ignore */ logger.log(`Found ${aureliaProjects.length} Aurelia project(s) in: `, { logLevel: 'INFO' });
   aureliaProjects.forEach(({ tsConfigPath }) => {
-    /* prettier-ignore */ logger.log(tsConfigPath, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`  ${tsConfigPath}`, { logLevel: 'INFO' });
   });
 }
 
 function logHasNoAureliaProject() {
   /* prettier-ignore */ logger.log('No active Aurelia project found.', { logLevel: 'INFO' });
   /* prettier-ignore */ logger.log('Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
+}
+
+function logPackageJsonInfo(
+  packageJsonPaths: string[],
+  globIncludePattern: string[],
+  ignore: string[]
+) {
+  if (globIncludePattern.length === 0) {
+    /* prettier-ignore */ logger.log(`Did not found a package.json file. Searched in: ${globIncludePattern.join(', ')} `, { logLevel: 'INFO' });
+  } else {
+    /* prettier-ignore */ logger.log(`Found ${packageJsonPaths.length} package.json file(s).`, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`  Searched in: ${globIncludePattern.join(', ')}`, { logLevel: 'INFO' });
+  }
+  /* prettier-ignore */ logger.log(`  Excluded: ${ignore.join(', ')}`, { logLevel: 'INFO' });
 }
 
 /**

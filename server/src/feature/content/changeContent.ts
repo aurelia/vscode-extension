@@ -15,6 +15,7 @@ export async function onConnectionDidChangeContent(
 
   // Hydration
   if (!aureliaProjects.isHydrated()) {
+    /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
     aureliaProjects.hydrate([document]);
     /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready to use. 🚀',{logMs:true,msEnd:true});
     return;

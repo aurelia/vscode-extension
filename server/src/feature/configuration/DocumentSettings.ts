@@ -23,6 +23,7 @@ export const AURELIA_ATTRIBUTES_KEYWORDS = [
 
 export interface IAureliaProjectSetting {
   include?: string[];
+  packageJsonInclude?: string[];
   exclude?: string[];
   rootDirectory?: string;
   /** Difference to `rootDirectory`: root can be monorepo, this one is the specific project */
@@ -104,15 +105,15 @@ export class DocumentSettings {
     } else {
       finalExcludes = exclude;
     }
-    logger.log('Exclude paths globs: ', { logLevel: 'INFO' });
-    logger.log(finalExcludes.join(', '), { logLevel: 'INFO' });
+    logger.log('Exclude files based on globs (from setting: aureliaProject.exclude): ', { logLevel: 'INFO' });
+    logger.log(`  ${finalExcludes.join(', ')}`, { logLevel: 'INFO' });
 
     exclude = finalExcludes;
 
     const include = this.extensionSettings.aureliaProject?.include;
-    logger.log('Include paths globs: ', { logLevel: 'INFO' });
+    logger.log('Include files based on globs (from setting: aureliaProject.include): ', { logLevel: 'INFO' });
     if (include !== undefined) {
-      logger.log(include.join(', '), { logLevel: 'INFO' });
+      logger.log(`  ${include.join(', ')}`, { logLevel: 'INFO' });
     } else {
       logger.log('No includes provided.', { logLevel: 'INFO' });
     }

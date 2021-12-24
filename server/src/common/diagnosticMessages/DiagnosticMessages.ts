@@ -17,12 +17,12 @@ export class DiagnosticMessages {
     const targetMessage = diagnosticMessagesData[this.message];
     const consoleMessage = `[${targetMessage.category}] ${this.message} ${this.diagnosticCodeForMessage}`;
 
-    logger.log(consoleMessage);
+    // logger.log(consoleMessage);
 
   }
 
   public additionalLog(message: string, data: unknown): void {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    logger.log(`${message}: ${data} ${this.diagnosticCodeForMessage}`);
+    // logger.log(`${message}: ${data} ${this.diagnosticCodeForMessage}`);
   }
 }

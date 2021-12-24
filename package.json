@@ -71,9 +71,12 @@
     "configuration": {
       "title": "aurelia",
       "properties": {
+        "aurelia.readme": {
+          "markdownDescription": "For more information, visit the Repo at https://github.com/aurelia/vscode-extension"
+        },
         "aurelia.aureliaProject": {
           "type": "object",
-          "markdownDescription": "The extension scans your View model files to extract information for various features. This setting provides customization."
+          "markdownDescription": "The extension scans your View model files to extract information for various features. This setting provides customization. (For more information, visit the Repo at https://github.com/aurelia/vscode-extension)"
         },
         "aurelia.aureliaProject.exclude": {
           "type": "array",
@@ -101,6 +104,16 @@
           },
           "uniqueItems": true,
           "markdownDescription": "Specifies include globs for your View model files.",
+          "scope": "language-overridable"
+        },
+        "aurelia.aureliaProject.packageJsonInclude": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Specifies include globs for package.json files (Used to determine eg. version of your Aurelia project). This settings should only be needed for a Monorepo setup.",
           "scope": "language-overridable"
         },
         "aurelia.aureliaProject.rootDirectory": {
