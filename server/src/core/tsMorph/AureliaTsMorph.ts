@@ -6,6 +6,9 @@ import {
   DocumentSettings,
   ExtensionSettings,
 } from '../../feature/configuration/DocumentSettings';
+import { Logger } from '../../common/logging/logger';
+
+const logger = new Logger('AureliaTsMorph');
 
 export class TsMorphProject {
   public project: Project;
@@ -110,22 +113,12 @@ export function createTsMorphProject(
     const normalized = UriUtils.toSysPath(tsConfigPath);
     project.addSourceFilesFromTsConfig(normalized);
   }
-  // No tsconfigPath means js project?!
-  else if (targetSourceDirectory != null) {
-    const glob = `${targetSourceDirectory}/**/*.js`;
-    const matchNodeModules = '**/node_modules/**/*.js';
-    const files = fastGlob.sync(glob, {
-      cwd: targetSourceDirectory,
-      ignore: [matchNodeModules],
-    });
 
-    files.forEach((file) => {
-      // Manually add files, because TSMorph#addSourceFileAtPaths does not provide a exclude for the path globs
-      project.addSourceFileAtPath(file);
-    });
-  }
 
   if (pathToAureliaFiles != null) {
+    logger.log('`pathToAureliaFiles` to found')
+    logger.log(`Including files based on: ${pathToAureliaFiles.join(', ')}`)
+
     const finalFiles: string[] = [];
     pathToAureliaFiles.forEach((filePath) => {
       const glob = `${filePath}/**/*.js`;
@@ -139,6 +132,22 @@ export function createTsMorphProject(
     });
 
     finalFiles.forEach((file) => {
+      // Manually add files, because TSMorph#addSourceFileAtPaths does not provide a exclude for the path globs
+      project.addSourceFileAtPath(file);
+    });
+  }
+  // No tsconfigPath means js project?!
+  else if (targetSourceDirectory != null) {
+    logger.log(`Including files based on: ${targetSourceDirectory}`)
+
+    const glob = `${targetSourceDirectory}/**/*.js`;
+    const matchNodeModules = '**/node_modules/**/*.js';
+    const files = fastGlob.sync(glob, {
+      cwd: targetSourceDirectory,
+      ignore: [matchNodeModules],
+    });
+
+    files.forEach((file) => {
       // Manually add files, because TSMorph#addSourceFileAtPaths does not provide a exclude for the path globs
       project.addSourceFileAtPath(file);
     });
