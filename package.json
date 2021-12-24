@@ -108,6 +108,16 @@
           "description": "Provide a custom directory for the root. (Defaults to workspace root)",
           "default": ""
         },
+        "aurelia.aureliaProject.pathToAureliaFiles": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Absolute paths, that include Aurelia files. Use if the Extension did not pick up expected files.",
+          "scope": "language-overridable"
+        },
         "aurelia.capabilities": {
           "type": "object",
           "markdownDescription": "Control capabilities for the extension.",

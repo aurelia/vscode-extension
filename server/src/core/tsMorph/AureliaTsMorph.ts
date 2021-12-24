@@ -1,4 +1,5 @@
 import { Project, ts } from 'ts-morph';
+import * as fastGlob from 'fast-glob';
 
 import { UriUtils } from '../../common/view/uri-utils';
 import {
@@ -11,11 +12,13 @@ export class TsMorphProject {
 
   private readonly tsconfigPath: string | undefined;
   private readonly targetSourceDirectory: string;
+  private readonly pathToAureliaFiles: string[] | undefined;
 
   constructor(public readonly documentSettings: DocumentSettings) {
     const settings = this.documentSettings.getSettings();
     const targetSourceDirectory = getTargetSourceDirectory(settings);
     this.targetSourceDirectory = targetSourceDirectory;
+    this.pathToAureliaFiles = settings.aureliaProject?.pathToAureliaFiles;
 
     let potentialTsConfigPath =
       // eslint-disable-next-line
@@ -40,6 +43,7 @@ export class TsMorphProject {
 
   public create(): Project {
     const project = createTsMorphProject({
+      pathToAureliaFiles: this.pathToAureliaFiles,
       targetSourceDirectory: this.targetSourceDirectory,
       tsConfigPath: this.tsconfigPath,
     });
@@ -85,13 +89,18 @@ export function createTsMorphProject(
     customCompilerOptions?: ts.CompilerOptions;
     tsConfigPath?: string;
     targetSourceDirectory?: string;
+    pathToAureliaFiles?: string[];
   } = {
     customCompilerOptions: {},
     tsConfigPath: undefined,
   }
 ) {
-  const { customCompilerOptions, tsConfigPath, targetSourceDirectory } =
-    customProjectSettings;
+  const {
+    customCompilerOptions,
+    tsConfigPath,
+    targetSourceDirectory,
+    pathToAureliaFiles,
+  } = customProjectSettings;
 
   const project = new Project({
     compilerOptions: customCompilerOptions,
@@ -103,8 +112,36 @@ export function createTsMorphProject(
   }
   // No tsconfigPath means js project?!
   else if (targetSourceDirectory != null) {
-    const pathGlob = `${targetSourceDirectory}/**/*.{j,t}s`;
-    project.addSourceFilesAtPaths(pathGlob);
+    const glob = `${targetSourceDirectory}/**/*.js`;
+    const matchNodeModules = '**/node_modules/**/*.js';
+    const files = fastGlob.sync(glob, {
+      cwd: targetSourceDirectory,
+      ignore: [matchNodeModules],
+    });
+
+    files.forEach((file) => {
+      // Manually add files, because TSMorph#addSourceFileAtPaths does not provide a exclude for the path globs
+      project.addSourceFileAtPath(file);
+    });
+  }
+
+  if (pathToAureliaFiles != null) {
+    const finalFiles: string[] = [];
+    pathToAureliaFiles.forEach((filePath) => {
+      const glob = `${filePath}/**/*.js`;
+      const matchNodeModules = '**/node_modules/**/*.js';
+      const files = fastGlob.sync(glob, {
+        cwd: filePath,
+        ignore: [matchNodeModules],
+      });
+
+      finalFiles.push(...files);
+    });
+
+    finalFiles.forEach((file) => {
+      // Manually add files, because TSMorph#addSourceFileAtPaths does not provide a exclude for the path globs
+      project.addSourceFileAtPath(file);
+    });
   }
 
   return project;

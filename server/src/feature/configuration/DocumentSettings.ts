@@ -27,6 +27,8 @@ export interface IAureliaProjectSetting {
   rootDirectory?: string;
   /** Difference to `rootDirectory`: root can be monorepo, this one is the specific project */
   projectDirectory?: string;
+  /** Absolute paths, that include Aurelia files. Use if the Extension did not pick up expected files. */
+  pathToAureliaFiles?: string[];
 }
 
 export const defaultProjectOptions: IAureliaProjectSetting = {
@@ -88,7 +90,7 @@ export class DocumentSettings {
 
     let exclude = this.extensionSettings.aureliaProject?.exclude;
 
-    let finalExcludes: string[] = []
+    let finalExcludes: string[] = [];
     if (exclude === undefined) {
       logger.log('No excludes provided. Defaulting to', { logLevel: 'INFO' });
       const defaultExcludes = [
@@ -100,7 +102,7 @@ export class DocumentSettings {
       ];
       finalExcludes.push(...defaultExcludes);
     } else {
-      finalExcludes = exclude
+      finalExcludes = exclude;
     }
     logger.log('Exclude paths globs: ', { logLevel: 'INFO' });
     logger.log(finalExcludes.join(', '), { logLevel: 'INFO' });
