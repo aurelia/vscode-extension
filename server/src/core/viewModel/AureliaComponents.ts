@@ -261,8 +261,6 @@ export class AureliaComponents {
           /* prettier-ignore */ logger.culogger.debug([`${index} - ${component.viewModelFilePath}`], { logLevel: 'INFO', });
         });
       }
-    } else {
-      logger.log('[WARNING]: No components found');
     }
   }
 }

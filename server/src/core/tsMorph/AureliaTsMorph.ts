@@ -1,4 +1,4 @@
-import { Project, ts } from 'ts-morph';
+import { ModuleKind, ModuleResolutionKind, Project, ts } from 'ts-morph';
 import * as fastGlob from 'fast-glob';
 
 import { UriUtils } from '../../common/view/uri-utils';
@@ -23,15 +23,20 @@ export class TsMorphProject {
     this.targetSourceDirectory = targetSourceDirectory;
     this.pathToAureliaFiles = settings.aureliaProject?.pathToAureliaFiles;
 
+    const foundTsConfigFile = ts.findConfigFile(
+      /* searchPath */ UriUtils.toSysPath(targetSourceDirectory),
+      ts.sys.fileExists,
+      'tsconfig.json'
+    );
+    const foundJsConfigFile = ts.findConfigFile(
+      /* searchPath */ UriUtils.toSysPath(targetSourceDirectory),
+      ts.sys.fileExists,
+      'jsConfig.json'
+    );
+
     let potentialTsConfigPath =
       // eslint-disable-next-line
-      settings.pathToTsConfig ||
-      (ts.findConfigFile(
-        /* searchPath */ UriUtils.toSysPath(targetSourceDirectory),
-        ts.sys.fileExists,
-        'tsconfig.json'
-      ) ??
-        '');
+      (settings.pathToTsConfig || foundTsConfigFile || foundJsConfigFile) ?? '';
     // potentialTsConfigPath = UriUtils.normalize(potentialTsConfigPath);
     potentialTsConfigPath = UriUtils.toSysPath(potentialTsConfigPath);
 
@@ -46,7 +51,7 @@ export class TsMorphProject {
 
   public create(): Project {
     const project = createTsMorphProject({
-      pathToAureliaFiles: this.pathToAureliaFiles,
+      settings: this.documentSettings.getSettings(),
       targetSourceDirectory: this.targetSourceDirectory,
       tsConfigPath: this.tsconfigPath,
     });
@@ -92,7 +97,7 @@ export function createTsMorphProject(
     customCompilerOptions?: ts.CompilerOptions;
     tsConfigPath?: string;
     targetSourceDirectory?: string;
-    pathToAureliaFiles?: string[];
+    settings?: ExtensionSettings;
   } = {
     customCompilerOptions: {},
     tsConfigPath: undefined,
@@ -102,11 +107,29 @@ export function createTsMorphProject(
     customCompilerOptions,
     tsConfigPath,
     targetSourceDirectory,
-    pathToAureliaFiles,
+    settings,
   } = customProjectSettings;
+  const pathToAureliaFiles = settings?.aureliaProject?.pathToAureliaFiles;
+
+  const allowJs = tsConfigPath == null;
+  let finalCompilerOptions: ts.CompilerOptions = {
+    ...customCompilerOptions,
+    allowJs,
+  };
+  const configs = ts.readConfigFile(tsConfigPath ?? '', ts.sys.readFile);
+  if (configs?.config != null) {
+    const config = configs.config as { compilerOptions: ts.CompilerOptions };
+    const readCompilerOptions = config.compilerOptions;
+    finalCompilerOptions = {
+      ...finalCompilerOptions,
+      ...readCompilerOptions,
+      module: ModuleKind.CommonJS,
+      moduleResolution: ModuleResolutionKind.NodeJs,
+    };
+  }
 
   const project = new Project({
-    compilerOptions: customCompilerOptions,
+    compilerOptions: finalCompilerOptions,
   });
 
   if (tsConfigPath != null) {
@@ -114,10 +137,9 @@ export function createTsMorphProject(
     project.addSourceFilesFromTsConfig(normalized);
   }
 
-
   if (pathToAureliaFiles != null) {
-    logger.log('`pathToAureliaFiles` to found')
-    logger.log(`Including files based on: ${pathToAureliaFiles.join(', ')}`)
+    logger.log('Using setting `aureliaProject.pathToAureliaFiles`');
+    logger.log(`  Including files based on: ${pathToAureliaFiles.join(', ')}`);
 
     const finalFiles: string[] = [];
     pathToAureliaFiles.forEach((filePath) => {
@@ -138,7 +160,7 @@ export function createTsMorphProject(
   }
   // No tsconfigPath means js project?!
   else if (targetSourceDirectory != null) {
-    logger.log(`Including files based on: ${targetSourceDirectory}`)
+    logger.log(`Including files based on: ${targetSourceDirectory}`);
 
     const glob = `${targetSourceDirectory}/**/*.js`;
     const matchNodeModules = '**/node_modules/**/*.js';
