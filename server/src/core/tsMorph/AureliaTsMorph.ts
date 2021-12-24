@@ -137,7 +137,7 @@ export function createTsMorphProject(
     project.addSourceFilesFromTsConfig(normalized);
   }
 
-  if (pathToAureliaFiles != null) {
+  if (pathToAureliaFiles != null && pathToAureliaFiles.length > 0) {
     logger.log('Using setting `aureliaProject.pathToAureliaFiles`');
     logger.log(`  Including files based on: ${pathToAureliaFiles.join(', ')}`);
 

@@ -378,7 +378,8 @@ function logPackageJsonInfo(
   if (globIncludePattern.length === 0) {
     /* prettier-ignore */ logger.log(`Did not found a package.json file. Searched in: ${globIncludePattern.join(', ')} `, { logLevel: 'INFO' });
   } else {
-    /* prettier-ignore */ logger.log(`Found ${packageJsonPaths.length} package.json file(s).`, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`Found ${packageJsonPaths.length} package.json file(s):`, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`  ${packageJsonPaths.join(', ')}`, { logLevel: 'INFO' });
     /* prettier-ignore */ logger.log(`  Searched in: ${globIncludePattern.join(', ')}`, { logLevel: 'INFO' });
   }
   /* prettier-ignore */ logger.log(`  Excluded: ${ignore.join(', ')}`, { logLevel: 'INFO' });
