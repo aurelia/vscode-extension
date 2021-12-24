@@ -18,6 +18,8 @@ export async function onConnectionInitialized(
   activeDocuments: TextDocument[] = [],
   forceReinit: boolean = false
 ) {
+  /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
+
   const aureliaProjects = container.get(AureliaProjects);
   const verified = await aureliaProjects.initAndVerify(extensionSettings);
   if (!verified) return;

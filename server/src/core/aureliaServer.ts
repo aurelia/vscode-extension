@@ -40,8 +40,6 @@ export class AureliaServer {
     extensionSettings?: ExtensionSettings,
     forceReinit: boolean = false
   ): Promise<void> {
-    /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
-
     try {
       await onConnectionInitialized(
         this.container,
