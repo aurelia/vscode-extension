@@ -263,6 +263,7 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
     fs.readFileSync(packageJsonPath, 'utf-8')
   ) as Record<string, Record<string, string>>;
   const dep = packageJson['dependencies'];
+  let hasAuInDep = false;
   if (dep != null) {
     const isAuV1App = dep['aurelia-framework'] !== undefined;
     const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
@@ -272,11 +273,10 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
 
     const isAuApp = isAuV1App || isAuV1Cli || isAuV2App;
     const isAuPlugin = isAuV1Plugin || isAuV2Plugin;
-    const isAu = isAuApp || isAuPlugin;
-
-    return isAu;
+    const hasAuInDep = isAuApp || isAuPlugin;
   }
 
+  let hasAuInDevDep = false;
   const devDep = packageJson['devDependencies'];
   if (devDep != null) {
     const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
@@ -287,12 +287,12 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
 
     const isAuApp = isAuV1AppDev || isAuV1CliDev || isAuV2AppDev;
     const isAuPlugin = isAuV1PluginDev || isAuV2PluginDev;
-    const isAu = isAuApp || isAuPlugin;
-
-    return isAu;
+    hasAuInDevDep = isAuApp || isAuPlugin;
   }
 
-  return false;
+  const isAu = hasAuInDep || hasAuInDevDep;
+
+  return isAu;
 }
 
 /**
