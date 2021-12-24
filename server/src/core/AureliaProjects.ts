@@ -83,6 +83,7 @@ export class AureliaProjects {
       /* prettier-ignore */ logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
       /* prettier-ignore */ logger.log('(!) Waiting until .html, .js, or .ts file focused.', { logLevel: 'INFO' });
       /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('    (Execute command "Aurelia: Reload Extension", if nothing happens.)', { logLevel: 'INFO' });
       return false;
     }
 
@@ -367,7 +368,8 @@ function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
 
 function logHasNoAureliaProject() {
   /* prettier-ignore */ logger.log('No active Aurelia project found.', { logLevel: 'INFO' });
-  /* prettier-ignore */ logger.log('Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
+  /* prettier-ignore */ logger.log('  Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
+  /* prettier-ignore */ logger.log('  Or execute command "Aurelia: Reload Extension", if nothing happens.', { logLevel: 'INFO' });
 }
 
 function logPackageJsonInfo(
