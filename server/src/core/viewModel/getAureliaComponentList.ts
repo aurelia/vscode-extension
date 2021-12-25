@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 
 import { kebabCase } from 'lodash';
-import { ts } from 'ts-morph';
+import { SyntaxKind, ts } from 'ts-morph';
 
 import { getElementNameFromClassDeclaration } from '../../common/className';
 import {
@@ -52,16 +52,17 @@ export function getAureliaComponentInfoFromClassDeclaration(
     if (validForAurelia) {
       targetClassDeclaration = node;
 
-      // Note the `!` in the argument: `getSymbolAtLocation` expects a `Node` arg, but returns undefined
-      const symbol = checker.getSymbolAtLocation(node.name!);
-      if (symbol === undefined) {
-        console.log('No symbol found for: ', node.name);
-        return;
-      }
+      if (node.name == null) return;
+      const symbol = checker.getSymbolAtLocation(node.name);
 
-      const documentation = ts.displayPartsToString(
-        symbol.getDocumentationComment(checker)
-      );
+      let documentation = '';
+      if (symbol != null) {
+        // console.log('No symbol found for: ', node.name.getText());
+
+        documentation = ts.displayPartsToString(
+          symbol.getDocumentationComment(checker)
+        );
+      }
 
       // Value Converter
       const isValueConverterModel = checkValueConverter(targetClassDeclaration);
@@ -117,22 +118,33 @@ export function getAureliaComponentInfoFromClassDeclaration(
       if (customElementDecorator) {
         // get argument for name property in decorator
         customElementDecorator.expression.forEachChild((decoratorChild) => {
-          if (!ts.isObjectLiteralExpression(decoratorChild)) return;
-          decoratorChild.forEachChild((decoratorArgument) => {
-            if (!ts.isPropertyAssignment(decoratorArgument)) return;
-            decoratorArgument.forEachChild((decoratorProp) => {
-              if (!ts.isStringLiteral(decoratorProp)) {
-                // TODO: What if name is not a string? --> Notify users [ISSUE-8Rh31VAG]
-                return;
-              }
+          // @customElement('empty-view')
+          if (ts.isStringLiteral(decoratorChild)) {
+            decoratorComponentName = decoratorChild
+              .getText()
+              .replace(/['"]/g, '');
+            decoratorStartOffset = decoratorChild.getStart() + 1; // start quote
+            decoratorEndOffset = decoratorChild.getEnd(); // include the last character, ie. the end quote
+          }
 
-              decoratorComponentName = decoratorProp
-                .getText()
-                .replace(/['"]/g, '');
-              decoratorStartOffset = decoratorProp.getStart() + 1; // start quote
-              decoratorEndOffset = decoratorProp.getEnd(); // include the last character, ie. the end quote
+          // @customElement({ name: 'my-view', template })
+          else if (ts.isObjectLiteralExpression(decoratorChild)) {
+            decoratorChild.forEachChild((decoratorArgument) => {
+              if (!ts.isPropertyAssignment(decoratorArgument)) return;
+              decoratorArgument.forEachChild((decoratorProp) => {
+                if (!ts.isStringLiteral(decoratorProp)) {
+                  // TODO: What if name is not a string? --> Notify users [ISSUE-8Rh31VAG]
+                  return;
+                }
+
+                decoratorComponentName = decoratorProp
+                  .getText()
+                  .replace(/['"]/g, '');
+                decoratorStartOffset = decoratorProp.getStart() + 1; // start quote
+                decoratorEndOffset = decoratorProp.getEnd(); // include the last character, ie. the end quote
+              });
             });
-          });
+          }
         });
       }
 
@@ -222,7 +234,38 @@ function getAureliaViewModelClassMembers(
   const classMembers: IAureliaClassMember[] = [];
 
   classDeclaration.forEachChild((classMember) => {
-    if (
+    // Constructor members
+    if (ts.isConstructorDeclaration(classMember)) {
+      const constructorMember = classMember;
+      constructorMember.forEachChild((constructorArgument) => {
+        if (constructorArgument.kind !== SyntaxKind.Parameter) return;
+        const hasModifier = getConstructorHasModifier(constructorArgument);
+        if (hasModifier === false) return;
+
+        constructorArgument.forEachChild((argumentPart) => {
+          if (argumentPart.kind !== SyntaxKind.Identifier) return;
+
+          const name = argumentPart.getText();
+          const symbol = checker.getSymbolAtLocation(argumentPart);
+          const commentDoc = ts.displayPartsToString(
+            symbol?.getDocumentationComment(checker)
+          );
+
+          const result: IAureliaClassMember = {
+            name,
+            documentation: commentDoc,
+            isBindable: false,
+            syntaxKind: argumentPart.kind,
+            start: constructorArgument.getStart(),
+            end: constructorArgument.getEnd(),
+          };
+          classMembers.push(result);
+        });
+      });
+    }
+
+    // Class Members
+    else if (
       ts.isPropertyDeclaration(classMember) ||
       ts.isGetAccessorDeclaration(classMember) ||
       ts.isMethodDeclaration(classMember)
@@ -271,6 +314,20 @@ function getAureliaViewModelClassMembers(
   });
 
   return classMembers;
+}
+
+function getConstructorHasModifier(constructorArgument: ts.Node) {
+  let hasModifier = false;
+  constructorArgument.forEachChild((argumentPart) => {
+    if (hasModifier === true) return;
+
+    const isPrivate = argumentPart.kind === SyntaxKind.PrivateKeyword;
+    const isPublic = argumentPart.kind === SyntaxKind.PublicKeyword;
+    const isProtected = argumentPart.kind === SyntaxKind.ProtectedKeyword;
+    const isReadonly = argumentPart.kind === SyntaxKind.ReadonlyKeyword;
+    hasModifier = isPrivate || isPublic || isProtected || isReadonly;
+  });
+  return hasModifier;
 }
 
 /**

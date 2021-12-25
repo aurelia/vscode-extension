@@ -39,12 +39,12 @@ function createWorkspaceSymbol(
 
   const symbolName = `Au: ${converted.value}`;
   const start: Position = {
-    line: region.sourceCodeLocation.startLine - 1,
-    character: region.sourceCodeLocation.startCol - 1,
+    line: region.sourceCodeLocation.startLine,
+    character: region.sourceCodeLocation.startCol,
   };
   const end: Position = {
-    line: region.sourceCodeLocation.endLine - 1,
-    character: region.sourceCodeLocation.endCol - 1,
+    line: region.sourceCodeLocation.endLine,
+    character: region.sourceCodeLocation.endCol,
   };
   const range = Range.create(start, end);
   const symbolInformation = SymbolInformation.create(

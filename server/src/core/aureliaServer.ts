@@ -8,6 +8,7 @@ import {
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { isViewModelDocument } from '../common/documens/TextDocumentUtils';
 
 import { Logger } from '../common/logging/logger';
 import { onCodeAction } from '../feature/codeAction/onCodeAction';
@@ -39,8 +40,6 @@ export class AureliaServer {
     extensionSettings?: ExtensionSettings,
     forceReinit: boolean = false
   ): Promise<void> {
-    /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
-
     try {
       await onConnectionInitialized(
         this.container,
@@ -110,6 +109,9 @@ export class AureliaServer {
     document: TextDocument,
     completionParams: CompletionParams
   ) {
+    const dontTrigger = await this.dontTriggerInViewModel(document);
+    if (dontTrigger) return;
+
     if (this.extensionSettings.capabilities?.completions === false) return;
     /* prettier-ignore */ logger.log('Completion triggered.',{logMs:true,msStart:true});
 
@@ -120,8 +122,12 @@ export class AureliaServer {
         document
       );
 
+      if (completions == null) {
+        /* prettier-ignore */ logger.log(`No Aurelia completions found.`,{logMs:true,msEnd:true});
+        return;
+      }
+
       /* prettier-ignore */ logger.log(`Found ${completions?.length ?? 0} completion(s).`,{logMs:true,msEnd:true});
-      completions.map((c) => c.label); /*?*/
 
       return completions;
     } catch (_error) {
@@ -140,10 +146,15 @@ export class AureliaServer {
     /* prettier-ignore */ logger.log('Definition triggered.',{logMs:true,msStart:true});
 
     try {
-      const definition = await onDefintion(document, position, this.container);
+      const definitions = await onDefintion(document, position, this.container);
 
-      /* prettier-ignore */ logger.log(`Found ${definition?.length ?? 0} definition(s).`,{logMs:true,msEnd:true});
-      return definition;
+      if (definitions == null) {
+        /* prettier-ignore */ logger.log(`No Aurelia defintions found.`,{logMs:true,msEnd:true});
+        return;
+      }
+
+      /* prettier-ignore */ logger.log(`Found ${definitions?.length ?? 0} definition(s).`,{logMs:true,msEnd:true});
+      return definitions;
     } catch (_error) {
       const error = _error as Error;
       logger.log(error.message);
@@ -157,6 +168,10 @@ export class AureliaServer {
   // onDocumentHighlight() {}
 
   public async onDocumentSymbol(documentUri: string) {
+    const dontTrigger = await this.dontTriggerInViewModel({
+      uri: documentUri,
+    });
+    if (dontTrigger) return;
     if (this.extensionSettings.capabilities?.documentSymbols === false) return;
     // Too spammy, since Vscode basically triggers this after every file change.
     // /* prettier-ignore */ logger.log('Document symbol triggered.',{logMs:true,msStart:true});
@@ -183,6 +198,11 @@ export class AureliaServer {
   }
 
   public async onCodeAction(codeActionParams: CodeActionParams) {
+    const dontTrigger = await this.dontTriggerInViewModel(
+      codeActionParams.textDocument
+    );
+    if (dontTrigger) return;
+
     if (this.extensionSettings.capabilities?.codeActions === false) return;
     // Too spammy
     // /* prettier-ignore */ logger.log('Code action triggered.',{logMs:true,msStart:true});
@@ -218,16 +238,21 @@ export class AureliaServer {
     /* prettier-ignore */ logger.log('Rename triggered.',{logMs:true,msStart:true});
 
     try {
-      const renamed = await onRenameRequest(
+      const renames = await onRenameRequest(
         document,
         position,
         newName,
         this.container
       );
 
+      if (renames == null) {
+        /* prettier-ignore */ logger.log(`No Aurelia renames found.`,{logMs:true,msEnd:true});
+        return;
+      }
+
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      /* prettier-ignore */ logger.log(`Found ${Object.keys(renamed?.changes ?? {}).length ?? '0'} file(s) to rename.`,{logMs:true,msEnd:true});
-      return renamed;
+      /* prettier-ignore */ logger.log(`Found ${Object.keys(renames?.changes ?? {}).length ?? '0'} file(s) to rename.`,{logMs:true,msEnd:true});
+      return renames;
     } catch (_error) {
       const error = _error as Error;
       logger.log(error.message);
@@ -263,4 +288,9 @@ export class AureliaServer {
   // window;
   // workspace;
   // languages;
+
+  private dontTriggerInViewModel(document: { uri: string }) {
+    const dontTrigger = isViewModelDocument(document, this.extensionSettings);
+    return dontTrigger;
+  }
 }

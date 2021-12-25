@@ -34,4 +34,17 @@ export const IAureliaComponentSteps: StepDefinitions = ({ when, then }) => {
       startOffset + componentName.length + 1
     );
   });
+
+  then('the constructor arguments should have been processed correctly', () => {
+    expect(targetComponent).toBeDefined();
+    if (!targetComponent) return;
+
+    const componentName = 'empty-view';
+    expect(targetComponent.componentName).toBe(componentName);
+    const expectedClassMemberNames = ['pri', 'pub', 'prot', 'readOnly'];
+    const actualNames = targetComponent.classMembers?.map(
+      (member) => member.name
+    );
+    expect(actualNames).toEqual(expectedClassMemberNames);
+  });
 };

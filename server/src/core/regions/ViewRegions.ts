@@ -324,7 +324,7 @@ export class AttributeInterpolationRegion extends AbstractRegion {
     // };
 
     try {
-      // text.text; /* ? */
+      // attr.value /* ? */
       const parsed = ParseExpressionUtil.parseInterpolation(
         attr.value,
         startOffset
@@ -364,7 +364,11 @@ export class AttributeInterpolationRegion extends AbstractRegion {
           let endInterpol;
           if (isLastIndex) {
             const lastPartLength = parsed.parts[expressionIndex + 1].length;
-            endInterpol = attrLocation.endOffset - lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
+            endInterpol =
+              attrLocation.endOffset -
+              1 - // " (closing quote)
+              startOffset - //
+              lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
           } else {
             endInterpol =
               parsed.interpolationEnds[expressionIndex] - startOffset;
@@ -411,7 +415,9 @@ export class AttributeInterpolationRegion extends AbstractRegion {
       // finalRegions; /* ?*/
       return finalRegions;
     } catch (error) {
-      /* prettier-ignore */ console.log('TCL: TextInterpolationRegion -> error', error)
+      // const _error = error as Error
+      // logger.log(_error.message,{logLevel:'DEBUG'})
+      // logger.log(_error.stack,{logLevel:'DEBUG'})
       return [];
     }
   }
@@ -903,7 +909,10 @@ export class TextInterpolationRegion extends AbstractRegion {
           let endInterpol;
           if (isLastIndex) {
             const lastPartLength = parsed.parts[expressionIndex + 1].length;
-            endInterpol = textLocation.endOffset - lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
+            endInterpol =
+              textLocation.endOffset -
+              startOffset - //
+              lastPartLength; // - lastPartLength: last part can be a normal string, we don't want to include that
           } else {
             endInterpol =
               parsed.interpolationEnds[expressionIndex] - startOffset;
@@ -948,7 +957,9 @@ export class TextInterpolationRegion extends AbstractRegion {
       // finalRegions; /* ?*/
       return finalRegions;
     } catch (error) {
-      /* prettier-ignore */ console.log('TCL: TextInterpolationRegion -> error', error)
+      // const _error = error as Error
+      // logger.log(_error.message,{logLevel:'DEBUG'})
+      // logger.log(_error.stack,{logLevel:'DEBUG'})
       return [];
     }
   }

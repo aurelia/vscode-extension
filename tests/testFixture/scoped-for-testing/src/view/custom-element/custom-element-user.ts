@@ -6,6 +6,10 @@ export class CustomElementUserCustomElement {
   @bindable barUser;
   quxUser;
   userObject: OtherInterface;
+
+  binding() {
+    this.quxUser
+  }
 }
 
 CustomElementCustomElement;

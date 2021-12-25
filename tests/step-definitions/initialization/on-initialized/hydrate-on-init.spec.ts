@@ -14,7 +14,7 @@ import {
 
 const logger = new Logger('[Test] Hydrate on init');
 
-export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
+export const hydrateSteps: StepDefinitions = ({ given, when, then, and }) => {
   given(
     'I open VSCode with the following files:',
     async (table: FileNameStepTable) => {
@@ -30,7 +30,7 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
     async (fileName: string) => {
       /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$',{env:'test'});
       // const { AureliaProjects } = myMockServer.getContainerDirectly();
-      // spyOn(AureliaProjects, 'hydrate');
+      // jest.spyOn(AureliaProjects, 'hydrate');
 
       myMockServer.setActiveFilePath(fileName);
       await givenIOpenVsCodeWithTheFollowingFiles([
@@ -43,6 +43,41 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
 
   and(/the active file is "(.*)"/, async (fileName: string) => {
     myMockServer.setActiveFilePath(fileName);
+  });
+
+  when(
+    /^I only specify for (.*) "package-aurelia"$/,
+    async (property: 'rootDirectory' | 'include' | 'exclude') => {
+      const fileName = 'aurelia.ts';
+      myMockServer.setActiveFilePath(fileName);
+      const packageRoot = 'package-aurelia';
+      const workspaceUri = myMockServer.getWorkspaceUri();
+      const root = `${workspaceUri}/${packageRoot}`;
+
+      let targetProperty: string | string[] = '';
+      if (property === 'rootDirectory') {
+        targetProperty = root;
+      } else {
+        targetProperty = [packageRoot];
+      }
+
+      await givenIOpenVsCodeWithTheFollowingFiles(
+        [myMockServer.getActiveFilePath()],
+        {
+          aureliaProject: {
+            [property]: targetProperty,
+          },
+        }
+      );
+    }
+  );
+
+  then(/^the extension should only hydrate "(.*)"$/, (packageRoot: string) => {
+    const { AureliaProjects } = myMockServer.getContainerDirectly();
+    const num = AureliaProjects.getAll().length;
+    AureliaProjects.getAll().map((p) => p.tsConfigPath); /* ? */
+
+    expect(num).toBe(1); // Wrong is 0 or 2
   });
 
   then('the extension should hydrate the Aurelia project', () => {
@@ -61,8 +96,11 @@ export const hydrateSteps: StepDefinitions = ({ given, then, and }) => {
       );
       if (!isIncluded) return;
 
-      expect(AureliaProjects.getAll()[0].aureliaProgram).toBeTruthy();
-
+      const activeFilePath = myMockServer.getActiveFilePath();
+      const target = AureliaProjects.getAll().find((p) =>
+        activeFilePath.includes(p.tsConfigPath)
+      );
+      expect(target?.aureliaProgram).toBeTruthy();
       return;
     }
 

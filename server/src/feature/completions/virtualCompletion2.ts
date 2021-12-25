@@ -6,15 +6,13 @@ import {
   InsertTextFormat,
 } from 'vscode-languageserver';
 
-import { AureliaLSP, interpolationRegex } from '../../common/constants';
-import { OffsetUtils } from '../../common/documens/OffsetUtils';
-import { XScopeUtils } from '../../common/documens/xScopeUtils';
-import { StringUtils } from '../../common/string/StringUtils';
 import {
-  AbstractRegion,
-  AttributeInterpolationRegion,
-  TextInterpolationRegion,
-} from '../../core/regions/ViewRegions';
+  AureliaLSP,
+  interpolationRegex,
+  TemplateAttributeTriggers,
+} from '../../common/constants';
+import { StringUtils } from '../../common/string/StringUtils';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { AureliaCompletionItem } from './virtualCompletion';
 
@@ -48,32 +46,29 @@ export function aureliaVirtualComplete_vNext(
   region: AbstractRegion | undefined,
   triggerCharacter?: string,
   offset?: number,
-  replaceTriggerCharacter?: boolean
+  insertTriggerCharacter?: boolean
 ) {
   if (!region) return [];
+  if (!region.accessScopes) return [];
+  // In Interpolation dont allow ` ` (Space) to trigger completions for view model,
+  // otherwise it will trigger 800 JS completions too often which takes +1.5secs
+  if (AbstractRegion.isInterpolationRegion(region)) {
+    const isSpace = triggerCharacter === TemplateAttributeTriggers.SPACE;
+    if (isSpace) return [];
+  }
+
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
 
   // 1. Component
-  const project = aureliaProgram.tsMorphProject.project;
-  const tsConfigPath =
-    aureliaProgram.documentSettings.getSettings().aureliaProject
-      ?.rootDirectory ?? '';
+  const project = aureliaProgram.tsMorphProject.get();
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   if (!targetComponent) return [];
 
-  // 2. Virtual copy with content
-  const sourceFile = project.addSourceFileAtPath(
-    targetComponent.viewModelFilePath
-  );
-  const COPY_PATH = `${tsConfigPath}/copy.ts`;
-  const copy = sourceFile.copy(COPY_PATH, { overwrite: true });
-  const myClass = copy.getClass(targetComponent?.className);
-
-  if (!region.accessScopes) {
-    project.removeSourceFile(copy);
-    return [];
-  }
+  const sourceFile = project.getSourceFile(targetComponent.viewModelFilePath);
+  if (sourceFile == null) return [];
+  const sourceFilePath = sourceFile.getFilePath();
+  const myClass = sourceFile.getClass(targetComponent?.className);
 
   // 2.1 Transform view content to virtual view model
   // 2.1.1 Add `this.`
@@ -83,8 +78,8 @@ export function aureliaVirtualComplete_vNext(
     region,
     offset,
     triggerCharacter,
-    replaceTriggerCharacter
-  ); /* ? */
+    insertTriggerCharacter
+  );
   // virtualContent; /*?*/
 
   // 2.2 Perform completions
@@ -94,14 +89,6 @@ export function aureliaVirtualComplete_vNext(
   if (virtualContent.match(interpolationRegex)?.length != null) {
     targetStatementText = `\`${virtualContent}\`${COMPLETIONS_ID}`;
     interpolationModifier = 2; // - 2 we added "\`" because regionValue is ${}, thus in virtualContent we need to do `${}`
-  }
-
-  // 2.2.2 Find specific regionValue from accessScope (Reason: can have multitple interpolations in a region)
-  const targetScope = XScopeUtils.getScopeByOffset(region.accessScopes, offset);
-  let normalizeConstant = 0;
-  if (targetScope != null) {
-    const { endOffset } = region.sourceCodeLocation;
-    normalizeConstant = endOffset - targetScope.nameLocation.end;
   }
 
   let targetStatement;
@@ -115,43 +102,36 @@ export function aureliaVirtualComplete_vNext(
     // Dont pass on ts-morph error
     return [];
   }
-  if (!targetStatement) {
-    project.removeSourceFile(copy);
-    return [];
-  }
+  if (!targetStatement) return [];
+
   const finalTargetStatementText = `${targetStatement.getFullText()}${COMPLETIONS_ID}`;
   const targetPos = finalTargetStatementText?.indexOf(COMPLETIONS_ID);
-  const finalPos =
-    targetStatement.getPos() +
-    targetPos -
-    interpolationModifier -
-    normalizeConstant;
+  const finalPos = targetStatement.getPos() + targetPos - interpolationModifier;
 
-  // copy.getText(); /* ? */
-  // copy.getText().length /* ? */
-  // copy.getText().substr(finalPos - 1, 30); /* ? */
-  // copy.getText().substr(finalPos - 9, 30); /* ? */
+  // sourceFile.getText(); /* ? */
+  // sourceFile.getText().length /* ? */
+  // sourceFile.getText().substr(finalPos - 1, 30); /* ? */
+  // sourceFile.getText().substr(finalPos - 9, 30); /* ? */
 
   const languageService = project.getLanguageService().compilerObject;
   // Completions
   const virtualCompletions = languageService
     .getCompletionsAtPosition(
-      COPY_PATH.replace('file:///', 'file:/'),
+      sourceFilePath.replace('file:///', 'file:/'),
       finalPos,
       {}
     )
     ?.entries.filter((result) => {
       return !result?.name.includes(VIRTUAL_METHOD_NAME);
     });
-  if (!virtualCompletions) {
-    project.removeSourceFile(copy);
-    return [];
-  }
+  if (!virtualCompletions) return [];
+
+  // virtualCompletions /* ? */
 
   const virtualCompletionEntryDetails = virtualCompletions
     .map((completion) => {
       return languageService.getCompletionEntryDetails(
-        COPY_PATH.replace('file:///', 'file:/'),
+        sourceFilePath.replace('file:///', 'file:/'),
         finalPos,
         completion.name,
         undefined,
@@ -172,7 +152,13 @@ export function aureliaVirtualComplete_vNext(
     entryDetailsMap,
     virtualCompletions
   );
-  project.removeSourceFile(copy);
+
+  try {
+    targetStatement?.remove();
+  } catch (error) {
+    // Dont pass on ts-morph error
+    return [];
+  }
 
   return result;
 }
@@ -181,8 +167,9 @@ function getVirtualContentFromRegion(
   region: AbstractRegion,
   offset: number | undefined,
   triggerCharacter?: string,
-  replaceTriggerCharacter?: boolean
+  insertTriggerCharacter?: boolean
 ) {
+  if (offset == null) return '';
   // triggerCharacter; /* ? */
   // offset; /* ? */
 
@@ -194,43 +181,41 @@ function getVirtualContentFromRegion(
     viewInput = region.attributeValue;
   }
 
+  const normalizedOffset = offset - region.sourceCodeLocation.startOffset;
+
   // Add triggerCharacter at offset
-  if (replaceTriggerCharacter) {
-    if (offset != null) {
-      const normalizedOffset =
-        offset - region.sourceCodeLocation.startOffset - 1; // - 1: insert one before
-      viewInput = StringUtils.insert(
-        viewInput,
-        normalizedOffset,
-        triggerCharacter
-      );
-    }
+  if (insertTriggerCharacter) {
+    const insertLocation = normalizedOffset - 1; // - 1: insert one before
+    viewInput = StringUtils.insert(viewInput, insertLocation, triggerCharacter);
   }
+
+  // Cut off content after offset
+  const cutOff = viewInput?.substring(0, normalizedOffset);
+  // Readd `}`
+  let ending = AbstractRegion.isInterpolationRegion(region) ? '}' : '';
+  const removeWhitespaceAtEnd = `${cutOff}${ending}`;
 
   // viewInput; /* ? */
   let virtualContent: string | undefined;
   region.accessScopes?.forEach((scope) => {
-    const { start, end } = scope.nameLocation;
-    const offsetIncluded = OffsetUtils.isIncluded(start, end, offset);
-    // Need more care for interpolation, because, can have multiple regions
-    // TODO: How to deal/split `${1} ${2} ${3}`, because right now, it is treated as one region
-    if (isInterpolationRegion) {
-      // if (!offsetIncluded) return;
-    }
-
     const accessScopeName = scope.name;
-    const replaceRegexp = new RegExp(`${accessScopeName}`, 'g');
-    virtualContent = viewInput?.replace(
-      replaceRegexp,
-      `this.${accessScopeName}`
-    );
+    if (accessScopeName === '') return;
+
+    const replaceRegexp = new RegExp(`\\b${accessScopeName}\\b`, 'g');
+    virtualContent = removeWhitespaceAtEnd?.replace(replaceRegexp, (match) => {
+      return `this.${match}`;
+    });
   });
 
   // 2.1.2 Defalut to any class member
   if (virtualContent === undefined) {
     virtualContent = 'this.';
   }
-  virtualContent; /* ? */
+  // virtualContent; /* ? */
+
+  // 2.1.3 Return if no `this.` included, because we don't want (do we?) support any Javascript completion
+  if (!virtualContent.includes('this.')) return '';
+
   return virtualContent;
 }
 

@@ -34,7 +34,6 @@ import {
   ExtensionSettings,
   settingsName,
 } from './feature/configuration/DocumentSettings';
-import { isViewModelDocument } from './common/documens/TextDocumentUtils';
 
 const logger = new Logger('Server');
 
@@ -75,7 +74,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       completionProvider: {
         resolveProvider: false,
         // eslint-disable-next-line @typescript-eslint/quotes
-        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|'],
+        triggerCharacters: [' ', '.', '[', '"', "'", '{', '<', ':', '|', '$'],
       },
       definitionProvider: true,
       // hoverProvider: true,
@@ -110,29 +109,10 @@ connection.onInitialized(async () => {
       undefined
     );
 
-    const workspaceFolders = await connection.workspace.getWorkspaceFolders();
-    if (workspaceFolders === null) return;
+    await initAurelia();
 
-    const workspaceRootUri = workspaceFolders[0].uri;
-    const extensionSettings = (await connection.workspace.getConfiguration({
-      section: settingsName,
-    })) as ExtensionSettings;
-
-    extensionSettings.aureliaProject = {
-      rootDirectory: workspaceRootUri,
-    };
-
-    aureliaServer = new AureliaServer(
-      globalContainer,
-      extensionSettings,
-      documents
-    );
-    await aureliaServer.onConnectionInitialized();
-
-    const tsConfigPath = UriUtils.toSysPath(workspaceRootUri);
-    const aureliaProjects = globalContainer.get(AureliaProjects);
-    const targetProject = aureliaProjects.getBy(tsConfigPath);
-    if (!targetProject) return;
+    const should = await shouldInit();
+    if (!should) return;
 
     hasServerInitialized = true;
   }
@@ -152,10 +132,6 @@ connection.onInitialized(async () => {
 
 connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
   if (hasServerInitialized === false) return;
-  const dontTrigger = await dontTriggerInViewModel(
-    codeActionParams.textDocument
-  );
-  if (dontTrigger) return;
 
   const codeAction = await aureliaServer.onCodeAction(codeActionParams);
 
@@ -164,16 +140,12 @@ connection.onCodeAction(async (codeActionParams: CodeActionParams) => {
   }
 });
 
-// This handler provides the initial list of the completion items.
 connection.onCompletion(async (completionParams: CompletionParams) => {
   const documentUri = completionParams.textDocument.uri;
   const document = documents.get(documentUri);
   if (!document) {
     throw new Error('No document found');
   }
-  const dontTrigger = await dontTriggerInViewModel(document);
-  if (dontTrigger) return;
-
   const completions = await aureliaServer.onCompletion(
     document,
     completionParams
@@ -224,18 +196,12 @@ documents.onDidChangeContent(
   )
 );
 
-connection.onDidChangeConfiguration(() => {
+connection.onDidChangeConfiguration(async () => {
   console.log('[server.ts] onDidChangeConfiguration');
 
-  // if (hasConfigurationCapability) {
-  //   // Reset all cached document settings
-  //   documentSettings.settingsMap.clear();
-  // } else {
-  //   documentSettings.globalSettings = (change.settings[settingsName] ||
-  //     documentSettings.defaultSettings) as ExtensionSettings;
-  // }
+  if (!hasConfigurationCapability) return;
 
-  // void createAureliaWatchProgram(aureliaProgram);
+  await initAurelia(true);
 });
 
 connection.onDidChangeWatchedFiles((_change) => {
@@ -249,10 +215,6 @@ documents.onDidSave(async (change: TextDocumentChangeEvent<TextDocument>) => {
 
 connection.onDocumentSymbol(async (params: DocumentSymbolParams) => {
   if (hasServerInitialized === false) return;
-  const dontTrigger = await dontTriggerInViewModel({
-    uri: params.textDocument.uri,
-  });
-  if (dontTrigger) return;
 
   const symbols = await aureliaServer.onDocumentSymbol(params.textDocument.uri);
   return symbols;
@@ -290,25 +252,7 @@ connection.onExecuteCommand(
     const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
     switch (command) {
       case 'extension.au.reloadExtension': {
-        const workspaceFolders =
-          await connection.workspace.getWorkspaceFolders();
-        if (workspaceFolders === null) return;
-
-        const workspaceRootUri = workspaceFolders[0].uri;
-        const extensionSettings = (await connection.workspace.getConfiguration({
-          section: settingsName,
-        })) as ExtensionSettings;
-
-        extensionSettings.aureliaProject = {
-          rootDirectory: workspaceRootUri,
-        };
-
-        aureliaServer = new AureliaServer(
-          globalContainer,
-          extensionSettings,
-          documents
-        );
-        await aureliaServer.onConnectionInitialized(undefined, true);
+        await initAurelia(true);
 
         break;
       }
@@ -383,10 +327,48 @@ documents.listen(connection);
 // Listen on the connection
 connection.listen();
 
-async function dontTriggerInViewModel(document: { uri: string }) {
+async function initAurelia(forceReinit?: boolean) {
   const extensionSettings = (await connection.workspace.getConfiguration({
     section: settingsName,
   })) as ExtensionSettings;
-  const dontTrigger = isViewModelDocument(document, extensionSettings);
-  return dontTrigger;
+
+  const rootDirectory = await getRootDirectory(extensionSettings);
+
+  extensionSettings.aureliaProject = {
+    ...extensionSettings.aureliaProject,
+    rootDirectory,
+  };
+
+  aureliaServer = new AureliaServer(
+    globalContainer,
+    extensionSettings,
+    documents
+  );
+  await aureliaServer.onConnectionInitialized(extensionSettings, forceReinit);
+}
+
+async function getRootDirectory(extensionSettings: ExtensionSettings) {
+  const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+  if (workspaceFolders === null) return;
+  const workspaceRootUri = workspaceFolders[0].uri;
+
+  let rootDirectory = workspaceRootUri;
+  const settingRoot = extensionSettings.aureliaProject?.rootDirectory;
+  if (settingRoot != null && settingRoot !== '') {
+    rootDirectory = settingRoot;
+  }
+
+  return rootDirectory;
+}
+
+async function shouldInit() {
+  const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+  if (workspaceFolders === null) return false;
+  const workspaceRootUri = workspaceFolders[0].uri;
+  const tsConfigPath = UriUtils.toSysPath(workspaceRootUri);
+  const aureliaProjects = globalContainer.get(AureliaProjects);
+  const targetProject = aureliaProjects.getBy(tsConfigPath);
+  if (!targetProject) return false;
+
+  return true;
 }

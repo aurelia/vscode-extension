@@ -31,7 +31,16 @@ export interface AbstractRegionLanguageService {
     triggerCharacter?: string,
     region?: AbstractRegion,
     offset?: number,
-    replaceTriggerCharacter?: boolean,
+    /**
+     * This was introduced when introducing TriggerKind (eg. invoked).
+     * We need to handle the previous trigger character depending on
+     * 1. Triggered (invoked)
+     * 2. On typed
+     *
+     * for 1. No trigger character is passed
+     * for 2. the trigger character is substring from offset - 1.
+     */
+    insertTriggerCharacter?: boolean
   ) => Promise<CompletionList | AureliaCompletionItem[]>;
   doDefinition?: (
     aureliaProgram: AureliaProgram,

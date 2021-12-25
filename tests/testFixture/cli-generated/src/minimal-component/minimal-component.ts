@@ -2,7 +2,15 @@ import { customElement, bindable } from 'aurelia';
 import template from './minimal-component.html';
 
 interface MyInter {
-  field: string;
+  field: {
+    nested: string;
+  };
+}
+
+interface ShortInter {
+  interA: {
+    Binter: number;
+  };
 }
 
 @customElement({
@@ -17,4 +25,6 @@ export class MinimalComponent {
   minimalBindable: number = 789;
 
   minimalInterfaceVar: MyInter;
+
+  inter: ShortInter;
 }

@@ -16,12 +16,15 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     triggerCharacter?: string,
-    region?: AbstractRegion
+    region?: AbstractRegion,
+    offset?: number
   ) {
     const completions = aureliaVirtualComplete_vNext(
       aureliaProgram,
       document,
-      region
+      region,
+      triggerCharacter,
+      offset
     );
     return completions;
   }
@@ -32,9 +35,10 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
     position: Position,
     region: AbstractRegion
   ): Promise<DefinitionResult | undefined> {
-    const regions = aureliaProgram.aureliaComponents.getOneByFromDocument(
-      document
-    )?.viewRegions;
+    const regions =
+      aureliaProgram.aureliaComponents.getOneByFromDocument(
+        document
+      )?.viewRegions;
 
     return getAccessScopeDefinition(
       aureliaProgram,

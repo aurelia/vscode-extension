@@ -20,8 +20,8 @@ module.exports = function (wallaby) {
     ],
 
     tests: [
-      // 'tests/testLauncher/withWallaby.spec.ts',
-      'tests/unit/core/**/*.spec.ts'
+      'tests/testLauncher/withWallaby.spec.ts',
+      // 'tests/unit/core/**/*.spec.ts'
     ],
 
     testFramework: 'jest',

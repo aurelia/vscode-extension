@@ -4,13 +4,18 @@ import {
   Position,
   TextDocument,
 } from 'vscode-html-languageservice';
-import { TextDocumentPositionParams } from 'vscode-languageserver-protocol';
+import { CompletionParams } from 'vscode-languageserver';
+import {
+  CompletionTriggerKind,
+  TextDocumentPositionParams,
+} from 'vscode-languageserver-protocol';
 
 import { Logger } from '../../../server/src/common/logging/logger';
 import {
   AureliaCompletionItem,
   isAureliaCompletionItem,
 } from '../../../server/src/feature/completions/virtualCompletion';
+import { testError } from '../../common/errors/TestErrors';
 import { position } from './new-common/file.step';
 import { myMockServer } from './new-common/project.step';
 
@@ -20,23 +25,57 @@ const logger = new Logger('[Test] Completions');
 export let completions: AureliaCompletionItem[] | CompletionList | undefined;
 
 export const completionSteps: StepDefinitions = ({ when, then }) => {
-  when('I trigger Suggestions', async () => {
-    /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
+  when(
+    /^I trigger Suggestions with (.*)$/,
+    async (triggerCharacter: string) => {
+      /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
 
-    const document = myMockServer.textDocuments.getActive();
-    const textDocumentPositionParams = createTextDocumentPositionParams(
-      document,
-      position
-    );
+      if (triggerCharacter === "' '") {
+        triggerCharacter = ' ';
+      }
 
-    completions = await myMockServer
-      .getAureliaServer()
-      .onCompletion(document, textDocumentPositionParams);
+      const document = myMockServer.textDocuments.getActive();
+      const textDocumentPositionParams = createCompletionParams_Invoked(
+        document,
+        position,
+        triggerCharacter
+      );
 
-    if (!isAureliaCompletionItem(completions)) {
-      throw new Error('Not AureliaCompletionItem[]');
+      completions = await myMockServer
+        .getAureliaServer()
+        .onCompletion(document, textDocumentPositionParams);
+
+      if (!isAureliaCompletionItem(completions)) {
+        throw new Error('Not AureliaCompletionItem[]');
+      }
     }
-  });
+  );
+
+  when(
+    /^I trigger Suggestions by typing (.*)$/,
+    async (triggerCharacter: string) => {
+      /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
+
+      if (triggerCharacter === "' '") {
+        triggerCharacter = ' ';
+      }
+
+      const document = myMockServer.textDocuments.getActive();
+      const textDocumentPositionParams = createCompletionParams_Typed(
+        document,
+        position,
+        triggerCharacter
+      );
+
+      completions = await myMockServer
+        .getAureliaServer()
+        .onCompletion(document, textDocumentPositionParams);
+
+      if (!isAureliaCompletionItem(completions)) {
+        throw new Error('Not AureliaCompletionItem[]');
+      }
+    }
+  );
 
   then(/^I should get the correct suggestions (.*)$/, (suggestion: string) => {
     /* prettier-ignore */ logger.log('I should get the correct suggestion',{env:'test'});
@@ -44,6 +83,11 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     expect(completions).toBeTruthy();
 
     if (isAureliaCompletionItem(completions)) {
+      if (suggestion === '') {
+        expect(completions.length).toBe(0);
+        return;
+      }
+
       expect(completions.length).toBeGreaterThan(0);
 
       const target = completions.find((completion) =>
@@ -54,6 +98,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
       if (target?.insertText !== undefined) {
         expect(target.insertText).toContain(suggestion);
       }
+      // expect(true).toBeFalsy();
     }
   });
 
@@ -91,15 +136,46 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
   );
 };
 
-export function createTextDocumentPositionParams(
+export function createCompletionParams_Invoked(
   document: TextDocument,
-  position: Position
-): TextDocumentPositionParams {
-  const textDocument: TextDocumentPositionParams = {
+  position: Position,
+  triggerCharacter: string
+): CompletionParams {
+  const finalTriggerCharacter =
+    triggerCharacter === '' ? undefined : triggerCharacter;
+
+  const textDocument: CompletionParams = {
     textDocument: {
       uri: document.uri,
     },
     position,
+    context: {
+      triggerKind: CompletionTriggerKind.Invoked,
+      triggerCharacter: finalTriggerCharacter,
+    },
+  };
+
+  return textDocument;
+}
+
+export function createCompletionParams_Typed(
+  document: TextDocument,
+  position: Position,
+  triggerCharacter: string
+): CompletionParams {
+  if (triggerCharacter === '') {
+    testError.log('Typed trigger character. Need value, was [Empty string]');
+  }
+
+  const textDocument: CompletionParams = {
+    textDocument: {
+      uri: document.uri,
+    },
+    position,
+    context: {
+      triggerKind: CompletionTriggerKind.TriggerCharacter,
+      triggerCharacter,
+    },
   };
 
   return textDocument;

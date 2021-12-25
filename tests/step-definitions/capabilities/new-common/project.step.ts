@@ -1,6 +1,7 @@
 import { Logger } from '../../../../server/src/common/logging/logger';
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
 import { Container } from '../../../../server/src/core/container';
+import { ExtensionSettings } from '../../../../server/src/feature/configuration/DocumentSettings';
 import { testError } from '../../../common/errors/TestErrors';
 import {
   FixtureNames,
@@ -8,7 +9,6 @@ import {
 } from '../../../common/fixtures/get-fixture-dir';
 import { MockServer } from '../../../common/mock-server/mock-server';
 
-const testContainer = new Container();
 const logger = new Logger('Project steps');
 
 // eslint-disable-next-line import/no-mutable-exports
@@ -22,8 +22,9 @@ export function theProjectIsNamed(projectName: FixtureNames): void {
 
   const workspaceRootUri = getFixtureUri(projectName);
   const useCached = workspaceRootUri !== _WORKSPACE_URI_CACHE;
-  if (useCached) {
-    // if (true) {
+  // if (useCached) {
+  if (true) {
+    const testContainer = new Container();
     myMockServer = new MockServer(testContainer, workspaceRootUri, {
       aureliaProject: {
         rootDirectory: UriUtils.toSysPath(workspaceRootUri),
@@ -36,7 +37,8 @@ export function theProjectIsNamed(projectName: FixtureNames): void {
 }
 
 export async function givenIOpenVsCodeWithTheFollowingFiles(
-  textDocumentPaths: string[] = []
+  textDocumentPaths: string[] = [],
+  extensionSettings?: ExtensionSettings
 ): Promise<void> {
   myMockServer.textDocuments
     .mock(textDocumentPaths)
@@ -45,6 +47,7 @@ export async function givenIOpenVsCodeWithTheFollowingFiles(
   await myMockServer.getAureliaServer().onConnectionInitialized({
     aureliaProject: {
       rootDirectory: myMockServer.getWorkspaceUri(),
+      ...extensionSettings?.aureliaProject,
     },
   });
 }

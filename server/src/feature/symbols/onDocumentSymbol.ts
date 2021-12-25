@@ -69,25 +69,23 @@ function createAureliaDocumentSymbol(region: AbstractRegion) {
   return symbol;
 }
 
-type SymbolMap = Record<
-  ViewRegionType,
-  {
-    label: string;
-    icon: SymbolKind;
-    value: string;
-    children?: DocumentSymbol[];
-  }
->;
+type RegionSymbol = {
+  label: string;
+  icon: SymbolKind;
+  value: string;
+  children?: DocumentSymbol[];
+};
+
+type SymbolMap = Record<ViewRegionType, RegionSymbol>;
 
 export function convertToSymbolName(region: AbstractRegion) {
   const regionType = region.type;
   if (!regionType) return;
   if (region.subType === ViewRegionSubType.EndTag) return;
-  if (region.attributeName === undefined) return;
-  if (region.attributeValue === undefined) return;
-  if (region.regionValue === undefined) return;
 
-  const attributeValue = `${region.attributeName}="${region.attributeValue}"`;
+  const attributeValue = `${region.attributeName ?? ''}="${
+    region.attributeValue ?? ''
+  }"`;
   const symbolMap: SymbolMap = {
     Attribute: { label: 'attr', icon: SymbolKind.Class, value: attributeValue },
     AttributeInterpolation: {
@@ -113,7 +111,7 @@ export function convertToSymbolName(region: AbstractRegion) {
     Import: {
       label: 'import',
       icon: SymbolKind.Constructor,
-      value: region.regionValue,
+      value: region.regionValue ?? '',
     }, //
     RepeatFor: {
       label: 'repeat',

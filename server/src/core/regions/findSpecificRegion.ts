@@ -26,7 +26,9 @@ export async function findAllBindableAttributeRegions(
   const componentList = aureliaProgram.aureliaComponents.getAll();
   await Promise.all(
     componentList.map(async (component) => {
-      const path = component.viewFilePath!;
+      const path = component.viewFilePath;
+      if (path == null) return;
+
       const uri = pathToFileURL(path).toString();
       const content = fs.readFileSync(path, 'utf-8');
       const document = TextDocument.create(uri, 'html', 0, content);
@@ -81,13 +83,15 @@ export async function forEachRegionOfType<RegionType extends ViewRegionType>(
   const componentList = aureliaProgram.aureliaComponents.getAll();
   await Promise.all(
     componentList.map(async (component) => {
-      const path = component.viewFilePath!;
+      const path = component.viewFilePath;
+      if (path == null) return;
+
       const uri = pathToFileURL(path).toString();
       const content = fs.readFileSync(path, 'utf-8');
       const document = TextDocument.create(uri, 'html', 0, content);
       if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
-      const regions = RegionParser.parse(document, componentList);
+      const regions = component.viewRegions;
       const finalRegions = ViewRegionUtils.getRegionsOfType(
         regions,
         regionType

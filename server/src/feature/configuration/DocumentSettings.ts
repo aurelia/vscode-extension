@@ -1,15 +1,8 @@
 import 'reflect-metadata';
-import { Logger } from 'culog';
 import { Connection } from 'vscode-languageserver';
+import { Logger } from '../../common/logging/logger';
 
-const logger = new Logger({ scope: 'DocumentSettings' });
-// logger.setLogOptions({ logLevel: 'INFO' });
-logger.overwriteDefaultLogOtpions({
-  // log: false,
-  logLevel: 'INFO',
-  focusedLogging: false,
-  // logScope: false,
-});
+const logger = new Logger('DocumentSettings');
 
 export const settingsName = 'aurelia';
 
@@ -30,10 +23,13 @@ export const AURELIA_ATTRIBUTES_KEYWORDS = [
 
 export interface IAureliaProjectSetting {
   include?: string[];
+  packageJsonInclude?: string[];
   exclude?: string[];
   rootDirectory?: string;
   /** Difference to `rootDirectory`: root can be monorepo, this one is the specific project */
   projectDirectory?: string;
+  /** Absolute paths, that include Aurelia files. Use if the Extension did not pick up expected files. */
+  pathToAureliaFiles?: string[];
 }
 
 export const defaultProjectOptions: IAureliaProjectSetting = {
@@ -95,9 +91,9 @@ export class DocumentSettings {
 
     let exclude = this.extensionSettings.aureliaProject?.exclude;
 
-    const finalExcludes: string[] = [];
-
+    let finalExcludes: string[] = [];
     if (exclude === undefined) {
+      logger.log('No excludes provided. Defaulting to', { logLevel: 'INFO' });
       const defaultExcludes = [
         '**/node_modules',
         'aurelia_project',
@@ -106,18 +102,20 @@ export class DocumentSettings {
         '**/dist',
       ];
       finalExcludes.push(...defaultExcludes);
+    } else {
+      finalExcludes = exclude;
     }
-    logger.debug(['Exclude paths globs: '], { logLevel: 'INFO' });
-    logger.debug([finalExcludes.join(', ')], { logLevel: 'INFO' });
+    logger.log('Exclude files based on globs (from setting: aureliaProject.exclude): ', { logLevel: 'INFO' });
+    logger.log(`  ${finalExcludes.join(', ')}`, { logLevel: 'INFO' });
 
     exclude = finalExcludes;
 
     const include = this.extensionSettings.aureliaProject?.include;
-    logger.debug(['Include paths globs: '], { logLevel: 'INFO' });
+    logger.log('Include files based on globs (from setting: aureliaProject.include): ', { logLevel: 'INFO' });
     if (include !== undefined) {
-      logger.debug([include.join(', ')], { logLevel: 'INFO' });
+      logger.log(`  ${include.join(', ')}`, { logLevel: 'INFO' });
     } else {
-      logger.debug(['No includes provided.'], { logLevel: 'INFO' });
+      logger.log('No includes provided.', { logLevel: 'INFO' });
     }
   }
 

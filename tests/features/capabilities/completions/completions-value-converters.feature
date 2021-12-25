@@ -7,7 +7,7 @@ Feature: Completions - Value converters
   Scenario Outline: Completions for Value converters
     Given I'm replacing the file content with <CODE>
     And I'm on the line <LINE> at character <CODE>
-    When I trigger Suggestions
+    When I trigger Suggestions with ''
     Then I should get the correct Value converters suggestions
 
     Examples:

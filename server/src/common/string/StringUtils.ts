@@ -4,7 +4,7 @@ export class StringUtils {
     searchValue: string,
     replaceValue: string
   ) {
-    const searchRegex = new RegExp(searchValue, 'g');
+    const searchRegex = new RegExp(`\\b${searchValue}\\b`, 'g');
     const result = input.replace(searchRegex, () => {
       return replaceValue;
     });
@@ -21,5 +21,10 @@ export class StringUtils {
 
     const ind = index < 0 ? this.length + index : index;
     return str.substr(0, ind) + value + str.substr(ind);
+  }
+
+  static removeQuotes(rawPackageRoot: string) {
+    const withOutQuotes = rawPackageRoot.replace(/['"]/g, '');
+    return withOutQuotes;
   }
 }

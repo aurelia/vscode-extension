@@ -3,7 +3,7 @@
   "description": "A VSCode extension for Aurelia",
   "author": "AureliaEffect",
   "license": "MIT",
-  "version": "2.0.7",
+  "version": "2.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/aurelia/vscode-extension"
@@ -71,9 +71,12 @@
     "configuration": {
       "title": "aurelia",
       "properties": {
+        "aurelia.readme": {
+          "markdownDescription": "For more information, visit the Repo at https://github.com/aurelia/vscode-extension"
+        },
         "aurelia.aureliaProject": {
           "type": "object",
-          "markdownDescription": "The extension scans your View model files to extract information for various features. This setting provides customization."
+          "markdownDescription": "The extension scans your View model files to extract information for various features. This setting provides customization. (For more information, visit the Repo at https://github.com/aurelia/vscode-extension)"
         },
         "aurelia.aureliaProject.exclude": {
           "type": "array",
@@ -103,10 +106,30 @@
           "markdownDescription": "Specifies include globs for your View model files.",
           "scope": "language-overridable"
         },
+        "aurelia.aureliaProject.packageJsonInclude": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Specifies include globs for package.json files (Used to determine eg. version of your Aurelia project). This settings should only be needed for a Monorepo setup.",
+          "scope": "language-overridable"
+        },
         "aurelia.aureliaProject.rootDirectory": {
           "type": "string",
           "description": "Provide a custom directory for the root. (Defaults to workspace root)",
           "default": ""
+        },
+        "aurelia.aureliaProject.pathToAureliaFiles": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "markdownDescription": "Absolute paths, that include Aurelia files. Use if the Extension did not pick up expected files.",
+          "scope": "language-overridable"
         },
         "aurelia.capabilities": {
           "type": "object",
@@ -282,7 +305,6 @@
     "watch:client": "tsc -w -p ./client/tsconfig.json",
     "watch:server": "tsc -w -p ./server/tsconfig.json",
     "postinstall": "cd client && yarn && cd ../server && yarn && cd ..",
-    "test": "sh ./scripts/e2e.sh",
     "test:ci": "yarn test:unit",
     "test:unit": "npm run test:unit:core && npm run test:unit:gherkin",
     "test:unit:core": "npx jest --testMatch=\"**/unit/core/**/*.spec.ts\"",
@@ -295,7 +317,6 @@
     "start:depCruise": "depcruise --include-only '^server/src' --output-type dot server/src | dot -T svg > dependencygraph.svg"
   },
   "devDependencies": {
-    "@code-dependency/cli": "^0.5.0",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@sucrase/jest-plugin": "^2.2.0",
     "@types/assert": "^1.5.4",
@@ -306,19 +327,16 @@
     "@typescript-eslint/parser": "^5.3.0",
     "conventional-changelog-cli": "^2.1.1",
     "core-js": "^3.6.5",
-    "dependency-cruiser": "^9.23.3",
-    "eslint": "^8.3.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-jsdoc": "^37.0.3",
-    "jest": "~25.1.0",
+    "eslint": "^8.5.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsdoc": "^37.4.0",
+    "jest": "^27.4.5",
     "jest-cucumber": "^3.0.1",
     "mocha": "^8.3.0",
-    "prettier": "^2.4.1",
+    "prettier": "^2.5.1",
     "prettier-eslint": "^13.0.0",
     "sucrase": "^3.20.1",
-    "ts-jest": "~25.2.1",
-    "ts-node": "^9.1.1",
-    "webpack": "^4.46.0"
+    "ts-node": "^9.1.1"
   },
   "dependencies": {
     "aurelia-dependency-injection": "^1.5.2",

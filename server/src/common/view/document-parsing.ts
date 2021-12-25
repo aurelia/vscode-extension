@@ -1,21 +1,26 @@
-import SaxStream, { StartTagToken } from 'parse5-sax-parser';
+import { Location } from 'parse5';
+import SaxStream, { StartTagToken, CommentToken } from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-html-languageservice';
 import { AureliaView } from '../constants';
+import { OffsetUtils } from '../documens/OffsetUtils';
 
 export class ParseHtml {
   public static findTagAtOffset(content: string, offset: number) {
-    const parsedTags = this.parseHtmlStartTags(content);
-    const target = parsedTags.find((tag) => {
-      if (tag.sourceCodeLocation === undefined) return false;
+    const saxStream = new SaxStream({ sourceCodeLocationInfo: true });
+    let targetStartTag: StartTagToken | undefined;
 
-      const isStart = tag.sourceCodeLocation.startOffset <= offset;
-      const isEnd = offset <= tag.sourceCodeLocation.endOffset;
-      const isAt = isStart && isEnd;
-      // parsePoint.attrs
+    saxStream.on('startTag', (startTag: StartTagToken) => {
+      const { startOffset, endOffset } = startTag.sourceCodeLocation ?? {};
+      const isAt = OffsetUtils.isIncluded(startOffset, endOffset, offset);
+      if (isAt) {
+        targetStartTag = startTag;
+      }
       return isAt;
     });
 
-    return target;
+    saxStream.write(content);
+
+    return targetStartTag;
   }
 
   public static findAttributeAtOffset(
@@ -33,6 +38,52 @@ export class ParseHtml {
     if (verifiedLocation === false) return;
 
     return targetAttribute;
+  }
+
+  public static findAttributeValueAtOffset(content: string, offset: number) {
+    const targetTag = this.findTagAtOffset(content, offset);
+
+    const targetAttributeLocation: [string, Location] | undefined =
+      Object.entries(targetTag?.sourceCodeLocation?.attrs ?? {}).find(
+        ([attributeName, location]) => {
+          const attrStart =
+            location.startOffset +
+            attributeName.length + // >attr<=""
+            2; // ="
+          const attrEnd = location.endOffset - 1; // - 1: '"'
+          const verifiedLocation = OffsetUtils.isIncluded(
+            attrStart,
+            attrEnd,
+            offset
+          );
+
+          return verifiedLocation;
+        }
+      );
+
+    return targetAttributeLocation;
+  }
+
+  public static findCommentAtOffset(content: string, offset: number) {
+    const saxStream = new SaxStream({ sourceCodeLocationInfo: true });
+    let targetComment: CommentToken | undefined;
+
+    saxStream.on('comment', (comment: CommentToken) => {
+      const { startOffset, endOffset } = comment.sourceCodeLocation ?? {};
+      const isOffsetIncluded = OffsetUtils.isIncluded(
+        startOffset,
+        endOffset,
+        offset
+      );
+      if (isOffsetIncluded) {
+        targetComment = comment;
+        saxStream.stop();
+      }
+    });
+
+    saxStream.write(content);
+
+    return targetComment;
   }
 
   /**

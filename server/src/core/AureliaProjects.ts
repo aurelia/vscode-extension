@@ -16,7 +16,7 @@ import { AureliaProgram } from './viewModel/AureliaProgram';
 
 const logger = new Logger('AureliaProject');
 
-let compilerObject: ts.Program | undefined;
+const compilerObjectMap = new Map<string, ts.Program | undefined>();
 
 export interface IAureliaProject {
   tsConfigPath: string;
@@ -24,7 +24,7 @@ export interface IAureliaProject {
 }
 
 export class AureliaProjects {
-  private readonly aureliaProjects: IAureliaProject[] = [];
+  private aureliaProjects: IAureliaProject[] = [];
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
@@ -81,8 +81,9 @@ export class AureliaProjects {
     });
     if (documentsPaths.length === 0) {
       /* prettier-ignore */ logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
-      /* prettier-ignore */ logger.log('(!) Waiting until you change to an .html, .js, or .ts file.', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('(!) Waiting until .html, .js, or .ts file focused.', { logLevel: 'INFO' });
       /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
+      /* prettier-ignore */ logger.log('    (Execute command "Aurelia: Reload Extension", if nothing happens.)', { logLevel: 'INFO' });
       return false;
     }
 
@@ -161,6 +162,8 @@ export class AureliaProjects {
   }
 
   private async initAndSet(packageJsonPaths: string[]) {
+    this.resetAureliaProjects();
+
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
 
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
@@ -193,7 +196,6 @@ export class AureliaProjects {
 
       const shouldHydration = aureliaProgram === null || forceReinit;
       if (shouldHydration) {
-        // if (aureliaProgram === null) {
         const extensionSettings =
           this.documentSettings.getSettings().aureliaProject;
         this.documentSettings.setSettings({
@@ -203,16 +205,19 @@ export class AureliaProjects {
           },
         });
         aureliaProgram = new AureliaProgram(this.documentSettings);
-        if (!compilerObject || forceReinit) {
-          const tsMorphProject = aureliaProgram.tsMorphProject.create();
-          // tsMorphProject
-          //   .getSourceFiles()
-          //   .map((f) => f.getSourceFile().getFilePath()); /*?*/
+        const tsMorphProject = aureliaProgram.tsMorphProject.create();
+
+        let compilerObject = compilerObjectMap.get(tsConfigPath);
+        if (compilerObject == null || forceReinit) {
           const program = tsMorphProject.getProgram();
           // [PERF]: 1.87967675s
           compilerObject = program.compilerObject;
+          compilerObjectMap.set(tsConfigPath, compilerObject);
         }
-        aureliaProgram.setProgram(compilerObject);
+
+        if (compilerObject != null) {
+          aureliaProgram.setProgram(compilerObject);
+        }
       }
 
       const projectOptions: IAureliaProjectSetting = {
@@ -241,6 +246,10 @@ export class AureliaProjects {
     });
     return isIncluded;
   }
+
+  private resetAureliaProjects(): void {
+    this.aureliaProjects = [];
+  }
 }
 
 function getShouldActivate(documentsPaths: string[], tsConfigPath: string) {
@@ -255,33 +264,34 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
     fs.readFileSync(packageJsonPath, 'utf-8')
   ) as Record<string, Record<string, string>>;
   const dep = packageJson['dependencies'];
-  if (dep === undefined) return false;
+  let hasAuInDep = false;
+  if (dep != null) {
+    const isAuV1App = dep['aurelia-framework'] !== undefined;
+    const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
+    const isAuV1Cli = dep['aurelia-cli'] !== undefined;
+    const isAuV2App = dep['aurelia'] !== undefined;
+    const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
+
+    const isAuApp = isAuV1App || isAuV1Cli || isAuV2App;
+    const isAuPlugin = isAuV1Plugin || isAuV2Plugin;
+    const hasAuInDep = isAuApp || isAuPlugin;
+  }
+
+  let hasAuInDevDep = false;
   const devDep = packageJson['devDependencies'];
-  if (devDep === undefined) return false;
+  if (devDep != null) {
+    const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
+    const isAuV1PluginDev = devDep['aurelia-binding'] !== undefined;
+    const isAuV1CliDev = devDep['aurelia-cli'] !== undefined;
+    const isAuV2AppDev = devDep['aurelia'] !== undefined;
+    const isAuV2PluginDev = devDep['@aurelia/runtime'] !== undefined;
 
-  const isAuV1App = dep['aurelia-framework'] !== undefined;
-  const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
-  const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
-  const isAuV1PluginDev = devDep['aurelia-binding'] !== undefined;
-  const isAuV1Cli = dep['aurelia-cli'] !== undefined;
-  const isAuV1CliDev = devDep['aurelia-cli'] !== undefined;
+    const isAuApp = isAuV1AppDev || isAuV1CliDev || isAuV2AppDev;
+    const isAuPlugin = isAuV1PluginDev || isAuV2PluginDev;
+    hasAuInDevDep = isAuApp || isAuPlugin;
+  }
 
-  const isAuV2App = dep['aurelia'] !== undefined;
-  const isAuV2AppDev = devDep['aurelia'] !== undefined;
-  const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
-  const isAuV2PluginDev = devDep['@aurelia/runtime'] !== undefined;
-
-  const isAuApp =
-    isAuV1App ||
-    isAuV1AppDev ||
-    isAuV1Cli ||
-    isAuV1CliDev ||
-    isAuV2App ||
-    isAuV2AppDev;
-  const isAuPlugin =
-    isAuV1Plugin || isAuV1PluginDev || isAuV2Plugin || isAuV2PluginDev;
-
-  const isAu = isAuApp || isAuPlugin;
+  const isAu = hasAuInDep || hasAuInDevDep;
 
   return isAu;
 }
@@ -309,29 +319,72 @@ function getAureliaProjectPaths(packageJsonPaths: string[]): string[] {
 }
 
 function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
-  const workspaceRootUri =
-    extensionSettings.aureliaProject?.rootDirectory ?? '';
+  const aureliaProject = extensionSettings.aureliaProject;
+  const workspaceRootUri = aureliaProject?.rootDirectory?.trim() ?? '';
   const cwd = UriUtils.toSysPath(workspaceRootUri);
   /* prettier-ignore */ logger.log(`Get package.json based on: ${cwd}`,{env:'test'});
 
-  const packageJsonPaths = fastGlob.sync('**/package.json', {
-    absolute: true,
-    ignore: ['node_modules'],
-    cwd,
-  });
-  return packageJsonPaths;
+  const ignore: string[] = [];
+  const exclude = aureliaProject?.exclude;
+  if (exclude != null) {
+    ignore.push(...exclude);
+  }
+  const packageJsonInclude = aureliaProject?.packageJsonInclude;
+  let globIncludePattern: string[] = [];
+  if (packageJsonInclude != null && packageJsonInclude.length > 0) {
+    /* prettier-ignore */ logger.log('Using setting `aureliaProject.packageJsonInclude`.', { logLevel: 'INFO' });
+
+    const packageJsonIncludes = packageJsonInclude.map(
+      (path) => `**/${path}/**/package.json`
+    );
+    globIncludePattern.push(...packageJsonIncludes);
+  } else {
+    globIncludePattern = ['**/package.json'];
+  }
+
+  try {
+    const packageJsonPaths = fastGlob.sync(globIncludePattern, {
+      // const packageJsonPaths = fastGlob.sync('**/package.json', {
+      absolute: true,
+      ignore,
+      cwd,
+    });
+
+    logPackageJsonInfo(packageJsonPaths, globIncludePattern, ignore);
+
+    return packageJsonPaths;
+  } catch (error) {
+    /* prettier-ignore */ console.log('TCL: getPackageJsonPaths -> error', error)
+    return [];
+  }
 }
 
 function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
   /* prettier-ignore */ logger.log(`Found ${aureliaProjects.length} Aurelia project(s) in: `, { logLevel: 'INFO' });
   aureliaProjects.forEach(({ tsConfigPath }) => {
-    /* prettier-ignore */ logger.log(tsConfigPath, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`  ${tsConfigPath}`, { logLevel: 'INFO' });
   });
 }
 
 function logHasNoAureliaProject() {
   /* prettier-ignore */ logger.log('No active Aurelia project found.', { logLevel: 'INFO' });
-  /* prettier-ignore */ logger.log('Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
+  /* prettier-ignore */ logger.log('  Extension will activate, as soon as a file inside an Aurelia project is opened.', { logLevel: 'INFO' });
+  /* prettier-ignore */ logger.log('  Or execute command "Aurelia: Reload Extension", if nothing happens.', { logLevel: 'INFO' });
+}
+
+function logPackageJsonInfo(
+  packageJsonPaths: string[],
+  globIncludePattern: string[],
+  ignore: string[]
+) {
+  if (globIncludePattern.length === 0) {
+    /* prettier-ignore */ logger.log(`Did not found a package.json file. Searched in: ${globIncludePattern.join(', ')} `, { logLevel: 'INFO' });
+  } else {
+    /* prettier-ignore */ logger.log(`Found ${packageJsonPaths.length} package.json file(s):`, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`  ${packageJsonPaths.join(', ')}`, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`  Searched in: ${globIncludePattern.join(', ')}`, { logLevel: 'INFO' });
+  }
+  /* prettier-ignore */ logger.log(`  Excluded: ${ignore.join(', ')}`, { logLevel: 'INFO' });
 }
 
 /**
