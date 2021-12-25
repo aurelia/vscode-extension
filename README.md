@@ -193,6 +193,7 @@ Furthermore, our tests are in a readable format and can provide much deeper insi
 
 ### Features table
 *(Legend below)*
+
 | Feature/Region     | A/AI/TI | BA  | BB  | CA  | CE  | HTML | I/R | RF  | Signal | VC  |
 | ------------------ | ------- | --- | --- | --- | --- | ---- | --- | --- | ------ | --- |
 | Code Action        | ➖       | ➖   | ➖   | ➖   | ➖   | ➕    | ➖   | ➖   | ➖      | ➖   |

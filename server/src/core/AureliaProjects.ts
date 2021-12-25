@@ -274,7 +274,7 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
 
     const isAuApp = isAuV1App || isAuV1Cli || isAuV2App;
     const isAuPlugin = isAuV1Plugin || isAuV2Plugin;
-    const hasAuInDep = isAuApp || isAuPlugin;
+    hasAuInDep = isAuApp || isAuPlugin;
   }
 
   let hasAuInDevDep = false;
