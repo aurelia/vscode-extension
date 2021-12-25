@@ -50,12 +50,10 @@ export function aureliaVirtualComplete_vNext(
 ) {
   if (!region) return [];
   if (!region.accessScopes) return [];
-  // In Interpolation dont allow ` ` (Space) to trigger completions for view model,
+  // Dont allow ` ` (Space) to trigger completions for view model,
   // otherwise it will trigger 800 JS completions too often which takes +1.5secs
-  if (AbstractRegion.isInterpolationRegion(region)) {
-    const isSpace = triggerCharacter === TemplateAttributeTriggers.SPACE;
-    if (isSpace) return [];
-  }
+  const isSpace = triggerCharacter === TemplateAttributeTriggers.SPACE;
+  if (isSpace) return [];
 
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
 
@@ -196,13 +194,16 @@ function getVirtualContentFromRegion(
   const removeWhitespaceAtEnd = `${cutOff}${ending}`;
 
   // viewInput; /* ? */
-  let virtualContent: string | undefined;
+  let virtualContent: string | undefined = removeWhitespaceAtEnd;
   region.accessScopes?.forEach((scope) => {
     const accessScopeName = scope.name;
     if (accessScopeName === '') return;
 
     const replaceRegexp = new RegExp(`\\b${accessScopeName}\\b`, 'g');
-    virtualContent = removeWhitespaceAtEnd?.replace(replaceRegexp, (match) => {
+    const alreadyHasThis = checkAlreadyHasThis(virtualContent, accessScopeName);
+    if (alreadyHasThis) return;
+
+    virtualContent = virtualContent?.replace(replaceRegexp, (match) => {
       return `this.${match}`;
     });
   });
@@ -313,4 +314,16 @@ function enhanceMethodArguments(methodArguments: string[]): string {
       return `\${${index + 1}:${argName}}`;
     })
     .join(', ');
+}
+
+function checkAlreadyHasThis(
+  virtualContent: string | undefined,
+  accessScopeName: string
+) {
+  if (virtualContent == null) return false;
+
+  const checkHasThisRegex = new RegExp(`\\b(this.${accessScopeName})\\b`);
+  const has = checkHasThisRegex.exec(virtualContent ?? '');
+
+  return Boolean(has);
 }
