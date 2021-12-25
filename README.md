@@ -1,3 +1,27 @@
+<p align="center">
+  <a href="https://aurelia.io/" target="_blank">
+    <img alt="Aurelia" src="./images/aurelia-logo.png">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT">
+  <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.png">
+  </a>
+  <a href="https://app.circleci.com/pipelines/github/aurelia/vscode-extension">
+  <img alt="CircleCI" src="https://circleci.com/gh/aurelia/aurelia.png?style=shield">
+  </a>
+  <a href="http://www.typescriptlang.org/">
+  <img alt="TypeScript" src="https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.png">
+  </a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=AureliaEffect.aurelia">
+    <img alt="VS Code Marketplace Downloads" src="https://img.shields.io/visual-studio-marketplace/d/AureliaEffect.aurelia">
+  </a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=AureliaEffect.aurelia">
+    <img alt="VS Code Marketplace Installs" src="https://img.shields.io/visual-studio-marketplace/i/AureliaEffect.aurelia">
+  </a>
+</p>
+
 # Aurelia VSCode Extension
 
 *Quick links:* [Troubleshooting](#troubleshooting) - [Setup](#setup) - [Configuration](#configuration)
@@ -7,6 +31,14 @@ For a complete list, check out the [Features](#features).
 The extension works out of the box on Linux/Mac/Windows, but still allows you to customize it to your projects needs.
 
 *⚠️ [Unstable warning](#unstable-warning)*
+
+## Table of contents
+
+- [Setup](#setup)
+- [Configuration](#configuration)
+- [Features](#features)
+- [Behavior](#behavior)
+- [Troubleshooting](#troubleshooting)
 
 ## Setup
 - Works out of the box, with zero configs, for any CLI generated project.
@@ -218,174 +250,7 @@ Please note, that due to the low iteration count, all features may not be as sta
 If you still haven't found a solution to your problem, you are more than welcome to [open an issue](https://github.com/aurelia/vscode-extension/issues/new).
 The extension is in active use by the authors, so you can expect a swift response, but do note, that an actual fix cannot be guaranteed. Regardless, we are thankful, that you took the time to troubleshoot with us!
 
-
-
-## Table of contents
-
-- [Aurelia VSCode Extension](#aurelia-vscode-extension)
-  - [Setup](#setup)
-    - [Typescript](#typescript)
-    - [Javascript](#javascript)
-  - [Configuration](#configuration)
-  - [Features](#features)
-      - [Features table](#features-table)
-        - [Legend](#legend)
-  - [Behavior](#behavior)
-  - [Troubleshooting](#troubleshooting)
-    - [General issues](#general-issues)
-    - [Self diagnostics](#self-diagnostics)
-    - [Unstable warning](#unstable-warning)
-  - [Table of contents](#table-of-contents)
-  - [1. Usage](#1-usage)
-    - [Minimal Setup](#minimal-setup)
-    - [Configuration](#configuration-1)
-      - [Project](#project)
-  - [2. Features](#2-features)
-    - [New](#new)
-    - [Missing (from v1)](#missing-from-v1)
-  - [3. More Info](#3-more-info)
-- [Acknowledgment](#acknowledgment)
-
-## 1. Usage
-
-- Have a tsconfig.json in the root
-- Rest should be automatic
-
-  - Debugging: In the VSCode Output Panel look for `Aurelia`, there you should see how many components where picked up
-
-    <details>
-      <summary>Example.png (expand)</summary>
-
-    ![image](https://user-images.githubusercontent.com/30693990/109438150-e689c080-7a28-11eb-99c5-b9a744862642.png)
-    </details>
-
-### Minimal Setup
-
-```
-+ --- root/
-|      + --- src/
-|      + --- tsconfig.json
-```
-
-### Configuration
-
-#### Project
-
-You are able to configure `root`, `src`, and `tsconfig.json` (cf. [Minimal Setup](#minimal-setup))
-
-- `root`
-
-  <details>
-    <summary>Configs (expand)</summary>
-
-  ```json
-    "aurelia.aureliaProject": {
-      "rootDirectory": {
-        "type": "string",
-        "description": "Provide a custom directory for the root."
-      }
-    },
-  ```
-
-  </details>
-
-- `src`
-  You don't have to name this folder `src`.
-  Change it via the `include` field below (as glob).
-
-    <details>
-      <summary>Configs (expand)</summary>
-
-      ```json
-        "aurelia.aureliaProject": {
-          "include": {
-            "type": "array",
-            "description": "Includes for your Aurelia Project",
-            "default": ["src"]
-          },
-          "exclude": {
-            "type": "array",
-            "description": "Exlcudes for your Aurelia Project",
-            "default": [
-              "**/node_modules",
-              "aurelia_project",
-              "**/out",
-              "**/build",
-              "**/dist"
-            ]
-          }
-        },
-      ```
-
-    </details>
-
-- `tsconfig.json`
-
-  <details>
-    <summary>Configs (expand)</summary>
-
-  ```json
-    "aurelia.pathToTsConfig": {
-      "type": "string",
-      "description": "Provide an absolute path to a tsconfig.json"
-    }
-  ```
-
-  </details>
-
-## 2. Features
-
-### New
-
-- Aurelia v2 compatible
-  - Tested against [examples/realworld-advanced](https://github.com/aurelia/aurelia/tree/master/examples/realworld-advanced)
-- Changes are now immediately available (no need to restart)
-- **Completions**
-
-  - Object completions in View
-
-    - Example
-      <details>
-        <summary>Completions.gif (expand)</summary>
-
-      ![completions.gif](/images/completions.gif "hello")
-      </details>
-
-    - Possible limitations:
-      - Imported types do not work
-        - Thus, types from standard (typescript) lib will not complete either.
-        - Arrays do not work (eg. `myVar[0].` will not show completions)
-
-- **Definitions**
-  - Now, Value Converter can be "go to definition"
-    - Limitation: Chained Value Converters only works for first one
-- **Hover**
-
-  <details>
-  <summary>Hover.gif (expand)</summary>
-  <p>
-
-  ![au-hover-5](/images/hover.gif)
-
-  </p>
-  </details>
-
-### Missing (from v1)
-
-- `mousedown.delegate`, and alike
-  - Currently, you would need to type `mousedown`, and _only after_ typing `.` you would get completion for `delegate`
-- Some diagnostics, eg.
-  - eg. `.one-way=""` is deprecated
-  - casing
-- Aurelia Themes
-- Au CLI commands
-- .js support. (You would need a tsconfig.json file in the root, which would work then.)
-
-## 3. More Info
-
-Check out the [Architecture document](docs/developer/architechture.md#5-architecturepng) for a skeleton overview.
-
-# Acknowledgment
+## Acknowledgment
 
 - This extension started as a clone from [microsoft / vscode-extension-samples / lsp-embedded-language-service](https://github.com/microsoft/vscode-extension-samples/tree/main/lsp-embedded-language-service)
 - The "virtual completions" approach was inspired by Vetur [Vetur docs](https://vuejs.github.io/vetur/guide/interpolation.html#generic-language-features)
