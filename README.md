@@ -24,13 +24,16 @@
 
 # Aurelia VSCode Extension
 
-*Quick links:* [Troubleshooting](#troubleshooting) - [Setup](#setup) - [Configuration](#configuration)
+*Quick links: --- [Troubleshooting](#troubleshooting) --- [Setup](#setup) --- [Configuration](#configuration) ---*
 
 Provide Intellisense capabilities to your Aurelia project (through the [LSP](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)) by letting you access View Model variables in your Views, rename them across your components, and many other features.
 For a complete list, check out the [Features](#features).
 The extension works out of the box on Linux/Mac/Windows, but still allows you to customize it to your projects needs.
 
 *⚠️ [Unstable warning](#unstable-warning)*
+
+*(Defintions: Show all places where `<custom-element>` component is used)*
+![defintions](images/definitions.png "defintions")
 
 ## Table of contents
 
@@ -55,10 +58,10 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
       <td>
         <pre>
   + --- root/
-  |     + --- src/              // Default place where the Extension tries to search for
-  |                                  Aurelia files
-  |     + --- tsconfig.json     // (Optional) Powers all the language features (through a
-  |                                  Typescript Program)
+  |     + --- src/              // Default place where the Extension tries to search
+  |                                  for Aurelia files
+  |     + --- tsconfig.json     // (Optional) Powers all the language features
+  |                                  (through a Typescript Program)
   |     + --- jsconfig.json     // Same as `tsconfig.json`
   |     + --- package.json      // Determine, if given project is an Aurelia project
         </pre>
@@ -80,10 +83,10 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
         <pre>
   + --- root/
   |    + --- aurelia/
-  |        + --- src/             // Default place where the Extension tries to search for
-  |                                    Aurelia files
-  |        + --- tsconfig.json    // (Optional) Powers all the language features (through a
-  |                                    Typescript Program)
+  |        + --- src/             // Default place where the Extension tries to search
+  |                                    for Aurelia files
+  |        + --- tsconfig.json    // (Optional) Powers all the language features
+  |                                    (through a Typescript Program)
   |        + --- package.json     // Determine, if given project is an Aurelia project
   |    + --- burelia/
   |        + (same as aurelia/)   // Behaves the same as `aurelia/`
@@ -110,9 +113,9 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
   |    + --- frontend/
   |        + --- aurelia/
   |            + --- src/             // Default place where the Extension tries to search for
-  |                                        Aurelia files
-  |            + --- tsconfig.json    // (Optional) Powers all the language features (through
-  |                                        a Typescript Program)
+  |                                        for Aurelia files
+  |            + --- tsconfig.json    // (Optional) Powers all the language features
+  |                                        (through a Typescript Program)
   |            + --- package.json     // Determine, if given project is an Aurelia project
   |    + --- backend/
   |    + --- service/
@@ -143,15 +146,15 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
       <td>
         <pre>
   + --- root/
-  |    + --- frontend/                 // aureliaProject.rootDirectory =
+  |    + --- frontend/                // aureliaProject.rootDirectory =
   |                                         absolute/path/root/frontend
   |        + --- aurelia/
   |            + --- deeper-path/
-  |                + --- src/          // aureliaProject.pathToAureliaFiles =
+  |                + --- src/         // aureliaProject.pathToAureliaFiles =
   |                                         absolute/path/root/.../deeper-path/src
-  |            + --- tsconfig.json     // aureliaProject.pathToAureliaFiles =
+  |            + --- tsconfig.json    // aureliaProject.pathToAureliaFiles =
   |                                         absolute/path/root/.../aurelia/tsconfig.json
-  |        + --- package.json          // aureliaProject.packageJsonInclude =
+  |        + --- package.json         // aureliaProject.packageJsonInclude =
   |                                         absolute/path/root/.../frontend/package.json
   |    + --- backend/
   |    + --- service/
@@ -163,10 +166,10 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
 
 ## Features
 You can find a more detailed list of features [here](https://github.com/aurelia/vscode-extension/tree/develop/docs/developer).
-Furthermore, our tests are readable and can provide much deeper insights into the extension behavior. You are encouraged to check those out:
+Furthermore, our tests are in a readable format and can provide much deeper insights into the extension behavior. You are encouraged to check those out:
 
   <details>
-    <summary>Sneak peak (expand)</summary>
+    <summary>Preview test format (expand)</summary>
     The format, that is used is named [Gherkin](https://cucumber.io/docs/gherkin/)
 
   ```feature
@@ -188,7 +191,7 @@ Furthermore, our tests are readable and can provide much deeper insights into th
 
   </details>
 
-#### Features table
+### Features table
 *(Legend below)*
 | Feature/Region     | A/AI/TI | BA  | BB  | CA  | CE  | HTML | I/R | RF  | Signal | VC  |
 | ------------------ | ------- | --- | --- | --- | --- | ---- | --- | --- | ------ | --- |
@@ -203,7 +206,7 @@ Furthermore, our tests are readable and can provide much deeper insights into th
 
 *Missing*: Router, Promise, `<let>`
 
-##### Legend
+#### Legend
 
 ➕ : Supported  ➕* : Partially (or unsable) supported  ➖ : Not supported
 |                            |                     |                       |
