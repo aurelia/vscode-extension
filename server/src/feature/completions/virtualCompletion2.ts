@@ -4,6 +4,8 @@ import {
   TextDocument,
   MarkupKind,
   InsertTextFormat,
+  CompletionParams,
+  CompletionTriggerKind,
 } from 'vscode-languageserver';
 
 import {
@@ -11,8 +13,12 @@ import {
   interpolationRegex,
   TemplateAttributeTriggers,
 } from '../../common/constants';
+import { OffsetUtils } from '../../common/documens/OffsetUtils';
 import { StringUtils } from '../../common/string/StringUtils';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
+import {
+  AbstractRegion,
+  RepeatForRegion,
+} from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { AureliaCompletionItem } from './virtualCompletion';
 
@@ -46,14 +52,18 @@ export function aureliaVirtualComplete_vNext(
   region: AbstractRegion | undefined,
   triggerCharacter?: string,
   offset?: number,
-  insertTriggerCharacter?: boolean
+  insertTriggerCharacter?: boolean,
+  completionParams?: CompletionParams
 ) {
   if (!region) return [];
   if (!region.accessScopes) return [];
   // Dont allow ` ` (Space) to trigger completions for view model,
   // otherwise it will trigger 800 JS completions too often which takes +1.5secs
-  const isSpace = triggerCharacter === TemplateAttributeTriggers.SPACE;
-  if (isSpace) return [];
+  const shouldReturnOnSpace = getShouldReturnOnSpace(
+    completionParams,
+    triggerCharacter
+  );
+  if (shouldReturnOnSpace) return [];
 
   const COMPLETIONS_ID = '//AUVSCCOMPL95';
 
@@ -175,6 +185,16 @@ function getVirtualContentFromRegion(
   const isInterpolationRegion = AbstractRegion.isInterpolationRegion(region);
   if (isInterpolationRegion) {
     viewInput = region.regionValue;
+  } else if (RepeatForRegion.is(region)) {
+    const { iterableStartOffset, iterableEndOffset } = region.data;
+    const isIterableRegion = OffsetUtils.isIncluded(
+      iterableStartOffset,
+      iterableEndOffset,
+      offset
+    );
+    if (isIterableRegion) {
+      viewInput = region.data.iterableName;
+    }
   } else {
     viewInput = region.attributeValue;
   }
@@ -209,10 +229,15 @@ function getVirtualContentFromRegion(
   });
 
   // 2.1.2 Defalut to any class member
-  if (virtualContent === undefined) {
+  const isEmptyInterpolation = getIsEmptyInterpolation(virtualContent);
+  const shouldDefault =
+    virtualContent === undefined ||
+    virtualContent.trim() === '' ||
+    isEmptyInterpolation;
+  if (shouldDefault) {
     virtualContent = 'this.';
   }
-  // virtualContent; /* ? */
+  virtualContent; /* ? */
 
   // 2.1.3 Return if no `this.` included, because we don't want (do we?) support any Javascript completion
   if (!virtualContent.includes('this.')) return '';
@@ -326,4 +351,22 @@ function checkAlreadyHasThis(
   const has = checkHasThisRegex.exec(virtualContent ?? '');
 
   return Boolean(has);
+}
+
+function getIsEmptyInterpolation(virtualContent: string) {
+  const withoutSpace = virtualContent.replace(/\s/g, '');
+  const isSimplestInterpolation = withoutSpace === '${}';
+  return isSimplestInterpolation;
+}
+
+function getShouldReturnOnSpace(
+  completionParams: CompletionParams | undefined,
+  triggerCharacter: string | undefined
+) {
+  const isSpace = triggerCharacter === TemplateAttributeTriggers.SPACE;
+  const shouldReturn =
+    isSpace &&
+    completionParams?.context?.triggerKind !== CompletionTriggerKind.Invoked;
+
+  return shouldReturn;
 }

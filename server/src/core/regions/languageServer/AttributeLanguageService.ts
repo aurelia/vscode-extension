@@ -1,4 +1,4 @@
-import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
+import { CompletionParams, Position, TextDocumentPositionParams } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { aureliaVirtualComplete_vNext } from '../../../feature/completions/virtualCompletion2';
@@ -17,14 +17,18 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
     document: TextDocument,
     triggerCharacter?: string,
     region?: AbstractRegion,
-    offset?: number
+    offset?: number,
+    insertTriggerCharacter?: boolean,
+    completionParams?: CompletionParams
   ) {
     const completions = aureliaVirtualComplete_vNext(
       aureliaProgram,
       document,
       region,
       triggerCharacter,
-      offset
+      offset,
+      insertTriggerCharacter,
+      completionParams
     );
     return completions;
   }
