@@ -27,7 +27,7 @@ export const cliGenerateSteps: StepDefinitions = ({ given, then }) => {
   given(/^I open VSCode with no active files$/, async () => {
     // const mockTextDocuments = myMockServer.textDocuments.mock().getAll();
     const { AureliaProjects } = myMockServer.getContainerDirectly();
-    spyOn(AureliaProjects, 'hydrate');
+    jest.spyOn(AureliaProjects, 'hydrate');
 
     await myMockServer.getAureliaServer().onConnectionInitialized({
       aureliaProject: {

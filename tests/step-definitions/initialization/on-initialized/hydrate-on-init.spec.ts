@@ -30,7 +30,7 @@ export const hydrateSteps: StepDefinitions = ({ given, when, then, and }) => {
     async (fileName: string) => {
       /* prettier-ignore */ logger.log('^I open VSCode with the following file "(.*)"$',{env:'test'});
       // const { AureliaProjects } = myMockServer.getContainerDirectly();
-      // spyOn(AureliaProjects, 'hydrate');
+      // jest.spyOn(AureliaProjects, 'hydrate');
 
       myMockServer.setActiveFilePath(fileName);
       await givenIOpenVsCodeWithTheFollowingFiles([

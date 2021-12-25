@@ -298,6 +298,8 @@ describe('RegionParser.', () => {
               expect(parsedRegions.length).toBe(0);
             });
           }
+
+          it('empty', () => expect(true).toBeTruthy());
         });
       });
     });
