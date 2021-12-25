@@ -39,7 +39,7 @@ jobs:
       - *npm_install_update
       - run:
           name: install VS Code Extension Manager
-          command: yarn vsce
+          command: yarn add vsce
       - run:
           name: publish to marketplace
           command: npx vsce publish -p ${VSTOKEN}
