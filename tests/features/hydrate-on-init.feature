@@ -13,10 +13,10 @@ Feature: Hydrate on initialization
     Then the extension should only hydrate "package-aurelia"
 
     Examples:
-      | PROPERTY      |
-      | rootDirectory |
-      | include       |
-      | exclude       |
+      | PROPERTY           |
+      | rootDirectory      |
+      | packageJsonInclude |
+      | exclude            |
 
 
   @monorepo
