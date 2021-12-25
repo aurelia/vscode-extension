@@ -1,5 +1,42 @@
-## [2.0.7](https://github.com/aurelia/vscode-extension/compare/2.0.6...2.0.7) (2021-08-14)
+## [2.1.0](https://github.com/aurelia/vscode-extension/compare/2.0.7...2.1.0) (2021-12-25)
 
+Big new update. Visit the official repo https://github.com/aurelia/vscode-extension to find out more.
+For a feature list go to https://github.com/aurelia/vscode-extension/tree/develop/docs/user
+
+### Features
+- Improved Completions
+  - Added Javascript methods completions for Global objects (String, Number,...)
+    <details>
+      <summary>Completions example (expand)</summary>
+
+      *(Provide method completions for Javascript String)*
+      ![completions](images/completions.png "completions")
+    </details>
+
+- Improved Definitions
+  - Added capability to go find all references of a component
+    <details>
+      <summary>Defintions example (expand)</summary>
+
+      *(Show all places where `<custom-element>` component is used)*
+      ![defintions](images/definitions.png "defintions")
+    </details>
+- Improved Monorepo support
+- Added Code Action
+  - Turn `<a href="">` into `<import from="">` (convenience)
+    - Why: In the absence of extension like [Path intellisense](https://github.com/ChristianKohler/PathIntellisense) one could leverage the completions capabilities of the a tag, then turn it into an `<import>` tag
+- Added Editor Symbols
+- Added Workspace Symbols
+  <details>
+    <summary>Symbols example (expand)</summary>
+
+    *(Search for all Aurelia related information from your Views.)*
+    ![symbols](images/symbols.png "symbols")
+  </details>
+
+
+
+## [2.0.7](https://github.com/aurelia/vscode-extension/compare/2.0.6...2.0.7) (2021-08-14)
 
 ### Bug Fixes
 
