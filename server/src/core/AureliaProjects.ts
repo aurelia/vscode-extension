@@ -324,13 +324,13 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
   const cwd = UriUtils.toSysPath(workspaceRootUri);
   /* prettier-ignore */ logger.log(`Get package.json based on: ${cwd}`,{env:'test'});
 
-  const ignore = [];
+  const ignore: string[] = [];
   const exclude = aureliaProject?.exclude;
   if (exclude != null) {
     ignore.push(...exclude);
   }
   const packageJsonInclude = aureliaProject?.packageJsonInclude;
-  let globIncludePattern = [];
+  let globIncludePattern: string[] = [];
   if (packageJsonInclude != null && packageJsonInclude.length > 0) {
     /* prettier-ignore */ logger.log('Using setting `aureliaProject.packageJsonInclude`.', { logLevel: 'INFO' });
 
