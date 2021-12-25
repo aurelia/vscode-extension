@@ -1,3 +1,12 @@
+## [2.1.2](https://github.com/aurelia/vscode-extension/compare/2.1.1...2.1.2) (2021-12-25)
+
+
+### Bug Fixes
+
+* **core:** determine Aurelia boolean not used ([df5412f](https://github.com/aurelia/vscode-extension/commit/df5412f6999f749c03240d6dcc1b8dea6eb77e9a))
+
+
+
 ## [2.1.1](https://github.com/aurelia/vscode-extension/compare/2.1.0...2.1.1) (2021-12-25)
 
 ### Fix
