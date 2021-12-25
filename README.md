@@ -127,6 +127,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
 
 ### Typescript
 - Cli generate project works out of the box (`npx makes au`)
+- If you have a mixed JS and TS project, please add `allowJS: true` to your `tsconfig.json`
 
 ### Javascript
 - Cli generate project works out of the box (`au new`)
@@ -166,29 +167,28 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
 
 ## Features
 You can find a more detailed list of features [here](https://github.com/aurelia/vscode-extension/tree/develop/docs/developer).
-Furthermore, our tests are in a readable format and can provide much deeper insights into the extension behavior. You are encouraged to check those out:
+Furthermore, our [tests](https://github.com/aurelia/vscode-extension/tree/master/tests/features) are in a readable format and can provide much deeper insights into the extension behavior. You are encouraged to check those out:
 
   <details>
     <summary>Preview test format (expand)</summary>
     The format, that is used is named [Gherkin](https://cucumber.io/docs/gherkin/)
 
-  ```feature
-    Feature: Completions - Methods.
-      Background:
-        Given the project is named "cli-generated"
-        And I open VSCode with the following file "view-model-test.html"
+    ```feature
+      Feature: Completions - Methods.
+        Background:
+          Given the project is named "cli-generated"
+          And I open VSCode with the following file "view-model-test.html"
 
-      Scenario Outline: Empty brackets.
-        Given I'm replacing the file content with <CODE>
-        And I'm on the line <LINE> at character <CODE>
-        When I trigger Suggestions with ''
-        Then I should get the correct method <METHOD_NAME> with brackets
+        Scenario Outline: Empty brackets.
+          Given I'm replacing the file content with <CODE>
+          And I'm on the line <LINE> at character <CODE>
+          When I trigger Suggestions with ''
+          Then I should get the correct method <METHOD_NAME> with brackets
 
-        Examples:
-          | LINE | CODE                        | METHOD_NAME      |
-          | 0    | `<div if.bind="f\|"></div>` | functionVariable |
-  ```
-
+          Examples:
+            | LINE | CODE                        | METHOD_NAME      |
+            | 0    | `<div if.bind="f\|"></div>` | functionVariable |
+    ```
   </details>
 
 ### Features table
