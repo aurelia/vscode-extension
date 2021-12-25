@@ -41,7 +41,7 @@ export function activate(context: ExtensionContext) {
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
-    outputChannelName: 'Aurelia v2',
+    outputChannelName: 'Aurelia',
     documentSelector: [
       { scheme: 'file', language: 'html' },
       { scheme: 'file', language: 'typescript' },
@@ -56,7 +56,7 @@ export function activate(context: ExtensionContext) {
   // Create the language client and start the client.
   client = new LanguageClient(
     'languageServerExample',
-    'Aurelia v2',
+    'Aurelia',
     serverOptions,
     clientOptions
   );

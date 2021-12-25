@@ -31,6 +31,7 @@ Will go to definition in View model
     - .js and .html are named custom-element and
      ViewModel is named CustomElement (or CustomElementCustomElement)
     - Class has `@customElement` decorator
+    - [Official docs on convention](https://docs.aurelia.io/getting-to-know-aurelia/components/creating-components#convention-less-components)
 - ```html
   <import from="|./path/to/component"></import>
   ```

@@ -1,4 +1,4 @@
-## Code Action
+# Code Action
 
 ## General information
 https://code.visualstudio.com/docs/editor/refactoring
