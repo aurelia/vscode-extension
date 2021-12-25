@@ -231,14 +231,6 @@ Furthermore, our tests are in a readable format and can provide much deeper insi
 
 ## Troubleshooting
 
-### General issues
-- I don't get any completions (or other any feature).
-  -
-- The extension does not pick up my project
-- The extension causes my project to be slow
-- The extension does not work on Windows/Mac/Linux
-  - Windows: The extension was mainly developed on a Linux and a Mac machine. We tried to test on Windows as well, but are less confident on the stability. It would be great if you can help us improve the experience on Windows by
-
 ### Self diagnostics
 1. Logs
    1. Open the Output panel of VSCode ("Output: Focus on Output View")
@@ -247,6 +239,23 @@ Furthermore, our tests are in a readable format and can provide much deeper insi
    - "Aurelia: Reload Extension"
    - Should behave the same as a full VSCode reload/restart
 3. If nothing from above helps, [submit an issue](https://github.com/aurelia/vscode-extension/issues/new), and we kindly ask you to follow the steps in the issue template.
+
+### General issues
+- Completions
+  - I don't get any completions (or other any feature).
+    - There are cases where completions will not trigger. For a more detailed explanation visit [the Completions docs](docs/user/completions.readme.md#Limitations)
+  - Sometimes completitions don't appear
+    - Unfortunately a known issue. There are 2 sides
+      1. Javascript/Typescript completions: We depend on a [Typescript Program](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler), to enable rich completions for your Views. This could be still an issue on our side, but chances are, that if *some* completions work, and others don't, that there is no way to improve this (to our current knowledge).
+      2. Aurelia related completions. Likely a bug on our side.
+
+- Extension not working as expected
+  - The extension does not pick up my project
+    - If the other sections ([Setup](#setup), [Configuration](#configuration)) did not help please [open an issue](https://github.com/aurelia/vscode-extension/issues/new)
+  - The extension causes my project to be slow
+    - We tried reduce response time as much as possible. If the extension still causes too much slowness, you can turn off individual features in the settings under `aurelia.capabilities`. Else please [open an issue](https://github.com/aurelia/vscode-extension/issues/new)
+  - The extension does not work on Windows/Mac/Linux
+    - Windows: The extension was mainly developed on a Linux and a Mac machine. We tried to test on Windows as well, but are less confident on the stability. It would be great if you can help us improve the experience on Windows by [opening an issue](https://github.com/aurelia/vscode-extension/issues/new)
 
 ### Unstable warning
 Please note, that due to the low iteration count, all features may not be as stable as we like them to be. Before submitting and issue, check out the [General issues](#general-issues), [Troubleshooting](#troubleshooting) and [FAQ] section.
