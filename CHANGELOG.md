@@ -1,3 +1,9 @@
+## [2.1.1](https://github.com/aurelia/vscode-extension/compare/2.1.0...2.1.1) (2021-12-25)
+
+### Fix
+- Switch to npm back from yarn (fix "module not found")
+
+
 ## [2.1.0](https://github.com/aurelia/vscode-extension/compare/2.0.7...2.1.0) (2021-12-25)
 
 Big new update. Visit the official repo https://github.com/aurelia/vscode-extension to find out more.
