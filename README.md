@@ -244,6 +244,8 @@ Furthermore, our tests are in a readable format and can provide much deeper insi
 - Completions
   - I don't get any completions (or other any feature).
     - There are cases where completions will not trigger. For a more detailed explanation visit [the Completions docs](docs/user/completions.readme.md#Limitations)
+  - I get undesired completions
+    - Unfortunately a known issue. Regardless, please [open an issue](https://github.com/aurelia/vscode-extension/issues/new) to help improve the developer experience.
   - Sometimes completitions don't appear
     - Unfortunately a known issue. There are 2 sides
       1. Javascript/Typescript completions: We depend on a [Typescript Program](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler), to enable rich completions for your Views. This could be still an issue on our side, but chances are, that if *some* completions work, and others don't, that there is no way to improve this (to our current knowledge).

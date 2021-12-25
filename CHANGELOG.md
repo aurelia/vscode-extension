@@ -34,6 +34,10 @@ For a feature list go to https://github.com/aurelia/vscode-extension/tree/develo
     ![symbols](images/symbols.png "symbols")
   </details>
 
+### Unstable warning
+Please note, that due to the low iteration count, all features may not be as stable as we like them to be. Before submitting and issue, check out the [Troubleshooting](https://github.com/aurelia/vscode-extension#troubleshooting) section
+If you still haven't found a solution to your problem, you are more than welcome to [open an issue](https://github.com/aurelia/vscode-extension/issues/new).
+The extension is in active use by the authors, so you can expect a swift response, but do note, that an actual fix cannot be guaranteed. Regardless, we are thankful, that you took the time to troubleshoot with us!
 
 
 ## [2.0.7](https://github.com/aurelia/vscode-extension/compare/2.0.6...2.0.7) (2021-08-14)
