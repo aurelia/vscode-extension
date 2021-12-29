@@ -1,3 +1,9 @@
+## [2.1.3](https://github.com/aurelia/vscode-extension/compare/2.1.2...2.1.3) (2021-12-29)
+
+### Bug Fixes
+
+- attempt to fix Extension not activating on Windows/Mac
+
 ## [2.1.2](https://github.com/aurelia/vscode-extension/compare/2.1.1...2.1.2) (2021-12-25)
 
 
