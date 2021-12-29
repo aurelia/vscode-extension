@@ -32,9 +32,7 @@
     "vscode": "^1.51.1"
   },
   "activationEvents": [
-    "onLanguage:javascript",
-    "onLanguage:typescript",
-    "onLanguage:html"
+    "onStartupFinished"
   ],
   "main": "./client/out/extension",
   "contributes": {
