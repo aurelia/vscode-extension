@@ -1,3 +1,9 @@
+## [2.1.4](https://github.com/aurelia/vscode-extension/compare/2.1.3...2.1.4) (2021-12-29)
+
+### Chore
+- Don't ignore node_modules
+  - (extension did not get picked up)
+
 ## [2.1.3](https://github.com/aurelia/vscode-extension/compare/2.1.2...2.1.3) (2021-12-29)
 
 ### Bug Fixes
