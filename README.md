@@ -112,7 +112,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
   + --- root/
   |    + --- frontend/
   |        + --- aurelia/
-  |            + --- src/             // Default place where the Extension tries to search for
+  |            + --- src/             // Default place where the Extension tries to search
   |                                        for Aurelia files
   |            + --- tsconfig.json    // (Optional) Powers all the language features
   |                                        (through a Typescript Program)
@@ -153,7 +153,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
   |            + --- deeper-path/
   |                + --- src/         // aureliaProject.pathToAureliaFiles =
   |                                         absolute/path/root/.../deeper-path/src
-  |            + --- tsconfig.json    // aureliaProject.pathToAureliaFiles =
+  |            + --- tsconfig.json    // aureliaProject.pathToTsConfig =
   |                                         absolute/path/root/.../aurelia/tsconfig.json
   |        + --- package.json         // aureliaProject.packageJsonInclude =
   |                                         absolute/path/root/.../frontend/package.json
