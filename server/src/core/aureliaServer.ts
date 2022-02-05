@@ -8,8 +8,8 @@ import {
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { isViewModelDocument } from '../common/documens/TextDocumentUtils';
 
+import { isViewModelDocument } from '../common/documens/TextDocumentUtils';
 import { Logger } from '../common/logging/logger';
 import { onCodeAction } from '../feature/codeAction/onCodeAction';
 import { onCompletion } from '../feature/completions/onCompletions';
@@ -123,7 +123,7 @@ export class AureliaServer {
       );
 
       if (completions == null) {
-        /* prettier-ignore */ logger.log(`No Aurelia completions found.`,{logMs:true,msEnd:true});
+        /* prettier-ignore */ logger.log('No Aurelia completions found.',{logMs:true,msEnd:true});
         return;
       }
 
@@ -149,7 +149,7 @@ export class AureliaServer {
       const definitions = await onDefintion(document, position, this.container);
 
       if (definitions == null) {
-        /* prettier-ignore */ logger.log(`No Aurelia defintions found.`,{logMs:true,msEnd:true});
+        /* prettier-ignore */ logger.log('No Aurelia defintions found.',{logMs:true,msEnd:true});
         return;
       }
 
@@ -246,11 +246,10 @@ export class AureliaServer {
       );
 
       if (renames == null) {
-        /* prettier-ignore */ logger.log(`No Aurelia renames found.`,{logMs:true,msEnd:true});
+        /* prettier-ignore */ logger.log('No Aurelia renames found.',{logMs:true,msEnd:true});
         return;
       }
 
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       /* prettier-ignore */ logger.log(`Found ${Object.keys(renames?.changes ?? {}).length ?? '0'} file(s) to rename.`,{logMs:true,msEnd:true});
       return renames;
     } catch (_error) {
