@@ -134,8 +134,9 @@ export class AureliaProjects {
 
   public updateManyViewModel(documents: TextDocument[]) {
     documents.forEach((document) => {
+      const uriSysPath = UriUtils.toSysPath(document.uri);
       const targetProject = this.getAll().find((project) =>
-        document.uri.includes(project.tsConfigPath)
+        uriSysPath.includes(project.tsConfigPath)
       );
 
       const aureliaProgram = targetProject?.aureliaProgram;

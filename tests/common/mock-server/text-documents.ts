@@ -103,7 +103,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     return this;
   }
 
-  private find(documentPath: string): TextDocument | undefined {
+  public find(documentPath: string): TextDocument | undefined {
     const targetDocument = this.textDocuments.find((document) => {
       const sysPath = UriUtils.toSysPath(document.uri);
       return sysPath.includes(documentPath);
@@ -115,9 +115,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     documentPath: string,
     change: string = this.CHANGE
   ): MockTextDocuments {
-    const targetDocument = this.textDocuments.find((document) =>
-      document.uri.includes(documentPath)
-    );
+    const targetDocument = this.find(documentPath);
     this.change(targetDocument, change);
     return this;
   }
