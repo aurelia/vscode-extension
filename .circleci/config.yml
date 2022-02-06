@@ -43,6 +43,18 @@ jobs:
       - run:
           name: publish to marketplace
           command: npx vsce publish -p ${VSTOKEN}
+  prerelease:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - *npm_install_update
+      - run:
+          name: install VS Code Extension Manager
+          command: npm i vsce
+      - run:
+          name: pre-release to marketplace
+          command: npx vsce publish --pre-release -p ${VSTOKEN}
 
 workflows:
   version: 2
@@ -55,6 +67,15 @@ workflows:
       - test:
           requires:
             - build
+      - prerelease:
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d*[13579]\.\d+$/
       - publish:
           requires:
             - build
@@ -63,4 +84,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: /^\d+\.\d*[02468]\.\d+$/

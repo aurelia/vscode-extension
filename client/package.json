@@ -10,7 +10,7 @@
 		"url": "https://github.com/aurelia/vscode-extension"
 	},
 	"engines": {
-		"vscode": "^1.51.1"
+    "vscode": "^1.63.0"
 	},
 	"dependencies": {
 		"lodash": "^4.17.21",

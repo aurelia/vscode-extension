@@ -29,7 +29,7 @@
     "theme": "dark"
   },
   "engines": {
-    "vscode": "^1.51.1"
+    "vscode": "^1.63.0"
   },
   "activationEvents": [
     "onStartupFinished"
