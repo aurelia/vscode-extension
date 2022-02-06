@@ -333,7 +333,7 @@ export class AttributeInterpolationRegion extends AbstractRegion {
       // parsed.parts; /* ? */
 
       // Used to find interpolation(s) inside string
-      let stringTracker = attr.value;
+      const stringTracker = attr.value;
       // For each expression "group", create a region
       const finalRegions = parsed?.expressions.map(
         (expression, expressionIndex) => {
@@ -825,7 +825,7 @@ export class TextInterpolationRegion extends AbstractRegion {
     if (!textLocation) return;
 
     const startOffset = textLocation.startOffset;
-    let { expressions: accessScopes, parts } =
+    const { expressions: accessScopes, parts } =
       ParseExpressionUtil.getAllExpressionsOfKindV2(
         text.text,
         [ExpressionKind.AccessScope, ExpressionKind.CallScope],
@@ -878,7 +878,7 @@ export class TextInterpolationRegion extends AbstractRegion {
       // parsed.parts; /* ? */
 
       // Used to find interpolation(s) inside string
-      let stringTracker = text.text;
+      const stringTracker = text.text;
       // For each expression "group", create a region
       const finalRegions = parsed?.expressions.map(
         (expression, expressionIndex) => {
