@@ -1,10 +1,11 @@
 import { kebabCase } from '@aurelia/kernel';
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
+
 import { TextDocumentUtils } from '../../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../../common/view/uri-utils';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
-
 import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
+import { Container } from '../../container';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
@@ -52,6 +53,7 @@ export class BindableAttributeLanguageService
   }
 
   public async doRename(
+    container: Container,
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -59,6 +61,7 @@ export class BindableAttributeLanguageService
     region: AbstractRegion
   ) {
     const renames = aureliaRenameFromView(
+      container,
       aureliaProgram,
       document,
       position,

@@ -5,6 +5,7 @@ import { aureliaVirtualComplete_vNext } from '../../../feature/completions/virtu
 import { getAccessScopeViewModelDefinition } from '../../../feature/definition/accessScopeDefinition';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
+import { Container } from '../../container';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
@@ -41,6 +42,7 @@ export class RepeatForLanguageService implements AbstractRegionLanguageService {
   }
 
   public async doRename(
+    container: Container,
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -48,6 +50,7 @@ export class RepeatForLanguageService implements AbstractRegionLanguageService {
     region: AbstractRegion
   ) {
     const renames = aureliaRenameFromView(
+      container,
       aureliaProgram,
       document,
       position,

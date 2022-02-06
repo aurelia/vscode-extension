@@ -11,6 +11,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaCompletionItem } from '../../../feature/completions/virtualCompletion';
 import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { CustomHover } from '../../../feature/virtual/virtualSourceFile';
+import { Container } from '../../container';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 
@@ -56,6 +57,7 @@ export interface AbstractRegionLanguageService {
     region: AbstractRegion
   ) => Promise<CustomHover | undefined>;
   doRename?: (
+    container: Container,
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,

@@ -1,3 +1,4 @@
+import { Container } from 'aurelia-dependency-injection';
 import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -66,6 +67,7 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
   }
 
   public async doRename(
+    container: Container,
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -73,6 +75,7 @@ export class AttributeLanguageService implements AbstractRegionLanguageService {
     region: AbstractRegion
   ) {
     const renames = aureliaRenameFromView(
+      container,
       aureliaProgram,
       document,
       position,

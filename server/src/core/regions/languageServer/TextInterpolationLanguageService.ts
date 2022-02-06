@@ -7,6 +7,7 @@ import { DefinitionResult } from '../../../feature/definition/getDefinition';
 import { getAccessScopeHover } from '../../../feature/hover/accessScopeHover';
 import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
 import { VirtualLanguageService } from '../../../feature/virtual/virtualSourceFile';
+import { Container } from '../../container';
 import { AureliaProgram } from '../../viewModel/AureliaProgram';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
@@ -70,6 +71,7 @@ export class TextInterpolationLanguageService
   }
 
   public async doRename(
+    container: Container,
     aureliaProgram: AureliaProgram,
     document: TextDocument,
     position: Position,
@@ -77,6 +79,7 @@ export class TextInterpolationLanguageService
     region: AbstractRegion
   ) {
     const renames = aureliaRenameFromView(
+      container,
       aureliaProgram,
       document,
       position,
