@@ -41,11 +41,11 @@ testCasesMapFileBased['Access scopes'] = [
    [{}    , '<p repeat.for="p of people | foo:bar & qux:\'zed\'"></p>'  , {accSco:['people;bar']}                                                            , 'Many'                    , NaN   , ''] ,
 
    // //  , Html-only Custom Elements
-   [{}    , "<template bindable='foo'></template>"                      , {accSco:['foo'] ,nameLoc:['20;23'] }                                               , 'Attribute'               , NaN   , '' ] ,
+   [{}    , '<template bindable="foo"></template>'                      , {accSco:['foo'] ,nameLoc:['20;23'] }                                               , 'Attribute'               , NaN   , '' ] ,
 
    // //  , Nested
-   [{}    , "<p>a ${zzz} mid ${foo ? `(${foo.bar})` : ''} Max</p>"      , {accSco:['zzz','foo!foo'] ,nameLoc:['7;10','18;21!28;31'] }                        , 'Attribute'               , NaN   , '' ] ,
-   [{}    , "<p>foo ${bar}</p>"                                         , {accSco:['bar'] ,nameLoc:['9;12'] }                                                , 'Attribute'               , NaN   , '' ] ,
+   [{}    , '<p>a ${zzz} mid ${foo ? `(${foo.bar})` : ""} Max</p>'      , {accSco:['zzz','foo!foo'] ,nameLoc:['7;10','18;21!28;31'] }                        , 'Attribute'               , NaN   , '' ] ,
+   [{}    , '<p>foo ${bar}</p>'                                         , {accSco:['bar'] ,nameLoc:['9;12'] }                                                , 'Attribute'               , NaN   , '' ] ,
 
    [{}    , '<p>${foo}<</p>'                                            , {accSco:['foo'] ,nameLoc:['5;8'] }                                                 , 'TextInterpolation'       , NaN   , '' ] ,
    [{}    , '${foo.} ${bar}<p></p>'                                     , {accSco:['foo'] ,nameLoc:['2;5','9;12'] }                                          , 'TextInterpolation'       , NaN   , '' ] ,

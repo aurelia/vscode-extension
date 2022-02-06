@@ -72,7 +72,7 @@ export function whenIParseTheFile(fileName: string, shared: Shared) {
   // const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
   const parsedRegions = RegionParser.parse(
     textDocument,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
     [
       // @ts-ignore
       {

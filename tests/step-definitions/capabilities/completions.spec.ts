@@ -30,7 +30,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     async (triggerCharacter: string) => {
       /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
 
-      if (triggerCharacter === "' '") {
+      if (triggerCharacter === '\' \'') {
         triggerCharacter = ' ';
       }
 
@@ -56,7 +56,7 @@ export const completionSteps: StepDefinitions = ({ when, then }) => {
     async (triggerCharacter: string) => {
       /* prettier-ignore */ logger.log('I trigger Suggestions',{env:'test'});
 
-      if (triggerCharacter === "' '") {
+      if (triggerCharacter === '\' \'') {
         triggerCharacter = ' ';
       }
 
