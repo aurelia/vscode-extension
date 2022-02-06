@@ -208,7 +208,7 @@ export function getClassDecoratorInfos(
           // {>name:'my-name'<}
           if (ts.isPropertyAssignment(decoratorArgChild)) {
             if (decoratorArgChild.name.getText() === 'name') {
-              let value = decoratorArgChild.getLastToken()?.getText();
+              const value = decoratorArgChild.getLastToken()?.getText();
               if (value == null) return;
               result.decoratorArgument = value;
             }

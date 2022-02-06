@@ -126,7 +126,7 @@ export async function findRegionsByWord(
     }
 
     // 3. Expressions
-    let parseInput =
+    const parseInput =
       region.regionValue ?? region.attributeValue ?? region.textValue ?? '';
     if (parseInput === '') return false;
 

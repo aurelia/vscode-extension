@@ -82,7 +82,7 @@ export function aureliaVirtualComplete_vNext(
   // 2.1.1 Add `this.`
   // region; /* ? */
 
-  let virtualContent = getVirtualContentFromRegion(
+  const virtualContent = getVirtualContentFromRegion(
     region,
     offset,
     triggerCharacter,
@@ -210,7 +210,7 @@ function getVirtualContentFromRegion(
   // Cut off content after offset
   const cutOff = viewInput?.substring(0, normalizedOffset);
   // Readd `}`
-  let ending = AbstractRegion.isInterpolationRegion(region) ? '}' : '';
+  const ending = AbstractRegion.isInterpolationRegion(region) ? '}' : '';
   const removeWhitespaceAtEnd = `${cutOff}${ending}`;
 
   // viewInput; /* ? */

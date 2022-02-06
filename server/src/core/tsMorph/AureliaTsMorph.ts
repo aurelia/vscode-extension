@@ -1,12 +1,12 @@
-import { ModuleKind, ModuleResolutionKind, Project, ts } from 'ts-morph';
 import * as fastGlob from 'fast-glob';
+import { ModuleKind, ModuleResolutionKind, Project, ts } from 'ts-morph';
 
+import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import {
   DocumentSettings,
   ExtensionSettings,
 } from '../../feature/configuration/DocumentSettings';
-import { Logger } from '../../common/logging/logger';
 
 const logger = new Logger('AureliaTsMorph');
 

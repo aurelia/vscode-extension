@@ -116,7 +116,7 @@ class TriggerCharacterFeature implements StaticFeature {
     capabilities.textDocument?.completion?.contextSupport = true;
   }
   initialize(
-    capabilities: ServerCapabilities<any>,
+    capabilities: ServerCapabilities,
     documentSelector: DocumentSelector | undefined
   ): void {}
 }

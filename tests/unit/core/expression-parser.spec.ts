@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+
 import {
   ExpressionKind,
   ExpressionType,
@@ -78,7 +80,6 @@ testCasesMapFileBased['ExpressionParser'] = [
   // , 'CODE                       , {PARAMETERS , 'Type , LINE
   [{} , '${foo ? `${bar}` : ""}'   , {accSco:['foo!bar'] ,nameLoc: ['2;5!11;14']} , 'TextInterpolation' , NaN , '' ] ,
 
-
   // Unsupported
   // [{} , '[foo, ...bar]'         , {accSco:['foo!bar'] ,nameLoc: ['1;4!9;12']} , 'Attribute' , NaN , '' ] ,
   // [{} , 'foo([...bar])'         , {accSco:['foo'] ,nameLoc: ['0;3!8;11']} , 'Attribute' , NaN , '' ] ,
@@ -122,7 +123,7 @@ describe('RegionParser.', () => {
                 const rawExpectedNameLocation = parameters.nameLoc;
                 // rawExpectedNameLocation; /*?*/
 
-                let startOffset = 0;
+                const startOffset = 0;
                 let expressionType = ExpressionType.None;
                 if (regionType === ViewRegionType.TextInterpolation) {
                   expressionType = ExpressionType.Interpolation;
