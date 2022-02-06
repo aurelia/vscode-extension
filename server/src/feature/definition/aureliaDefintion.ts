@@ -60,6 +60,9 @@ export async function aureliaDefinitionFromViewModel(
   const isIdentifier = getIsIdentifier(tsMorphProject, viewModelPath, offset);
   if (!isIdentifier) return;
 
+  // 1.1 Update TsMorphProject with editingFiles
+  updateTsMorphProjectWithEditingFiles(container, tsMorphProject);
+
   const regularDefintions =
     findRegularTypescriptDefinitions(tsMorphProject, viewModelPath, offset) ??
     [];
@@ -356,4 +359,25 @@ function isSameRange(rangeA: Range, rangeB: Range) {
   const same = sameStartChar && sameStartLine && sameEndChar && sameEndLine;
 
   return same;
+}
+
+export function updateTsMorphProjectWithEditingFiles(
+  container: Container,
+  tsMorphProject: Project
+) {
+  const aureliaProjects = container.get(AureliaProjects);
+  const editingDocuments = aureliaProjects.getEditingTracker();
+
+  editingDocuments.forEach((doc) => {
+    const osPath = UriUtils.toSysPath(doc.uri);
+    const sourceFile = tsMorphProject.getSourceFile(osPath);
+
+    try {
+      const realTimeEditingContent = doc.getText();
+      sourceFile?.replaceWithText(realTimeEditingContent);
+    } catch (_error) {
+      // const error = _error as Error;
+      // console.log('TCL: error.message', error.message);
+    }
+  });
 }

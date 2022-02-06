@@ -25,6 +25,7 @@ export interface IAureliaProject {
 
 export class AureliaProjects {
   private aureliaProjects: IAureliaProject[] = [];
+  private editingTracker: TextDocument[] = [];
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
@@ -162,6 +163,20 @@ export class AureliaProjects {
     });
   }
 
+  /** Tracker */
+
+  public getEditingTracker(): TextDocument[] {
+    return this.editingTracker;
+  }
+
+  public addDocumentToEditingTracker(document: TextDocument): void {
+    this.editingTracker.push(document);
+  }
+
+  public clearEditingTracker(): void {
+    this.editingTracker = [];
+  }
+
   private async initAndSet(packageJsonPaths: string[]) {
     this.resetAureliaProjects();
 
@@ -265,7 +280,7 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
     fs.readFileSync(packageJsonPath, 'utf-8')
   ) as Record<string, Record<string, string>>;
   const dep = packageJson['dependencies'];
-  let hasAuInDep = false;
+  const hasAuInDep = false;
   if (dep != null) {
     const isAuV1App = dep['aurelia-framework'] !== undefined;
     const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
@@ -355,7 +370,7 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
 
     return packageJsonPaths;
   } catch (error) {
-    /* prettier-ignore */ console.log('TCL: getPackageJsonPaths -> error', error)
+    /* prettier-ignore */ console.log('TCL: getPackageJsonPaths -> error', error);
     return [];
   }
 }
