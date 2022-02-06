@@ -42,6 +42,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
 - [Features](#features)
 - [Behavior](#behavior)
 - [Troubleshooting](#troubleshooting)
+- [Releasing](#releasing)
 
 ## Setup
 - Works out of the box, with zero configs, for any CLI generated project.
@@ -264,6 +265,25 @@ Furthermore, our [tests](https://github.com/aurelia/vscode-extension/tree/master
 Please note, that due to the low iteration count, all features may not be as stable as we like them to be. Before submitting and issue, check out the [General issues](#general-issues), [Troubleshooting](#troubleshooting) and [FAQ] section.
 If you still haven't found a solution to your problem, you are more than welcome to [open an issue](https://github.com/aurelia/vscode-extension/issues/new).
 The extension is in active use by the authors, so you can expect a swift response, but do note, that an actual fix cannot be guaranteed. Regardless, we are thankful, that you took the time to troubleshoot with us!
+
+## Releasing
+```
+# l.
+bumb version in package.json
+npm run changelog
+commit: chore(release): release v2.0.6
+
+# 2.
+git tag -a 2.0.6 -m "v2.0.6"
+git push --follow-tags
+```
+
+### Prerelease
+Use odd minor versions
+
+### "Real" Release
+Use even minor versions
+
 
 ## Acknowledgment
 

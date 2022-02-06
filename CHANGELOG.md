@@ -1,3 +1,31 @@
+# [2.3.0](https://github.com/aurelia/vscode-extension/compare/2.1.4...2.3.0) (2022-02-06)
+
+### Note on versioning
+We are trying out VSCode pre-release https://code.visualstudio.com/api/working-with-extensions/publishing-extension.
+In the hopes, that we can more freely push updates, and to monitor code changes, before an "official" release.
+
+Example:
+- 2.3.* for pre-release
+- 2.4.* for release
+
+### Bug Fixes
+
+* **core:** use correct file format for document finding ([98cf4ca](https://github.com/aurelia/vscode-extension/commit/98cf4ca84a2c66cd43508c97322a480057727a00))
+* **definitions:** add editing tracker ([56d1d1b](https://github.com/aurelia/vscode-extension/commit/56d1d1bee618be2aec13691171f2f0f5b7b83eb3))
+* **rename:** add editing tracker ([1c4a65d](https://github.com/aurelia/vscode-extension/commit/1c4a65d5a60169b8012415b6a232f3ab7a64954d))
+
+If you noticed, that normal Typescript Renaming and Definitions behaved off. Yes that was our mistake.
+Explanation:
+- To enrich your view model files with Aurelia specific features, we return (eg. View information) in the Defintions list as well
+- But, when we return new information, the old Typescript Defintions are overwritten.
+- So we used a library (TsMorph) to readd those missing Typescript Defintions.
+- When doing so, the normal Typescript Defintions sometimes got outdated
+  - Because we only accounted for *saved files* and not *files, that you are currently editing (eg. a dot instead of an x next the file name)*
+- --> Fix: Try to always use files, that have the correct "real time" content
+  - Detail: Introduce a `editingFilesTracker` array, that collects files while you are editing
+    - Clears the tracker on save.
+
+
 ## [2.1.4](https://github.com/aurelia/vscode-extension/compare/2.1.3...2.1.4) (2021-12-29)
 
 ### Chore
