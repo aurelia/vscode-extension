@@ -13,6 +13,9 @@ export async function onConnectionDidChangeContent(
 ) {
   const aureliaProjects = container.get(AureliaProjects);
 
+  // Keep track of changed map
+  aureliaProjects.addDocumentToEditingTracker(document);
+
   // Hydration
   if (!aureliaProjects.isHydrated()) {
     /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});

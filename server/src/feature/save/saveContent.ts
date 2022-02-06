@@ -12,6 +12,8 @@ export async function onDidSave(
   { document }: TextDocumentChangeEvent<TextDocument>
 ) {
   const aureliaProjects = container.get(AureliaProjects);
+  aureliaProjects.clearEditingTracker();
+
   if (aureliaProjects.preventHydration(document)) return;
 
   switch (document.languageId) {

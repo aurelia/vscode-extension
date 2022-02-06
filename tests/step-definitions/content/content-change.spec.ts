@@ -29,4 +29,21 @@ export const contentChangeSteps: StepDefinitions = ({ when }) => {
     const aureliaServer = myMockServer.getAureliaServer();
     await aureliaServer.onConnectionDidChangeContent({ document });
   });
+
+  when(/^I change the file "(.*)" by adding a new line$/, async (fileName: string) => {
+    const uri = myMockServer.getWorkspaceUri();
+    testError.verifyFileInProject(uri, fileName);
+
+    const textDocumentPaths = getPathsFromFileNames(uri, [fileName]);
+    const document = myMockServer.textDocuments
+      .find(textDocumentPaths[0]);
+
+    if (!document) return;
+
+    const withNewLineAtStart = `// change\n${document.getText()}`;
+      myMockServer.textDocuments.change(document, withNewLineAtStart);
+
+    const aureliaServer = myMockServer.getAureliaServer();
+    await aureliaServer.onConnectionDidChangeContent({ document });
+  });
 };
