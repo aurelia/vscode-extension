@@ -17,7 +17,6 @@ Feature: Definition in View Model.
       | Bindable       | 3    | `  @bindable \|bar;`                          | 5              | custom-element.html      |
       | Class Variable | 4    | `  \|qux;`                                    | 4              | custom-element.html      |
 
-  @focus
   Scenario Outline: Not triggering
     And I open VSCode with the following file "custom-element-user.ts"
     And I'm on the line <LINE> at character <CODE>
