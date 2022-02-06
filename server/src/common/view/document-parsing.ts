@@ -1,6 +1,7 @@
 import { Location } from 'parse5';
 import SaxStream, { StartTagToken, CommentToken } from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-html-languageservice';
+
 import { AureliaView } from '../constants';
 import { OffsetUtils } from '../documens/OffsetUtils';
 

@@ -9,6 +9,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
+import { Container } from '../../core/container';
 import {
   findAllBindableAttributeRegions,
   findRegionsByWord,
@@ -27,6 +28,7 @@ import {
 } from '../../core/regions/ViewRegions';
 import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
+import { updateTsMorphProjectWithEditingFiles } from '../definition/aureliaDefintion';
 
 const logger = new Logger('workspaceEdits');
 
@@ -94,10 +96,11 @@ export async function getAllChangesForOtherViews(
 }
 
 export function performViewModelChanges(
+  container: Container,
   aureliaProgram: AureliaProgram,
   viewModelPath: string,
   sourceWord: string,
-  newName: string
+  newName: string,
 ): WorkspaceEdit['changes'] {
   // 1. Prepare
   // 1.1 Naming convention
@@ -118,6 +121,10 @@ export function performViewModelChanges(
   if (!targetComponent) return;
 
   const tsMorphProject = aureliaProgram.tsMorphProject.get();
+
+  // 1.3 Update TsMorphProject with editingFiles
+  updateTsMorphProjectWithEditingFiles(container, tsMorphProject);
+
   const sourceFile = tsMorphProject.getSourceFile(viewModelPath);
   const viewModelUri = UriUtils.toVscodeUri(viewModelPath);
   result[viewModelUri] = [];

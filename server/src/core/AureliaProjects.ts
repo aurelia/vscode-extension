@@ -25,6 +25,7 @@ export interface IAureliaProject {
 
 export class AureliaProjects {
   private aureliaProjects: IAureliaProject[] = [];
+  private editingTracker: TextDocument[] = [];
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
@@ -134,8 +135,9 @@ export class AureliaProjects {
 
   public updateManyViewModel(documents: TextDocument[]) {
     documents.forEach((document) => {
+      const uriSysPath = UriUtils.toSysPath(document.uri);
       const targetProject = this.getAll().find((project) =>
-        document.uri.includes(project.tsConfigPath)
+        uriSysPath.includes(project.tsConfigPath)
       );
 
       const aureliaProgram = targetProject?.aureliaProgram;
@@ -159,6 +161,20 @@ export class AureliaProjects {
 
       aureliaProgram.aureliaComponents.updateOneView(document);
     });
+  }
+
+  /** Tracker */
+
+  public getEditingTracker(): TextDocument[] {
+    return this.editingTracker;
+  }
+
+  public addDocumentToEditingTracker(document: TextDocument): void {
+    this.editingTracker.push(document);
+  }
+
+  public clearEditingTracker(): void {
+    this.editingTracker = [];
   }
 
   private async initAndSet(packageJsonPaths: string[]) {
@@ -354,7 +370,7 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
 
     return packageJsonPaths;
   } catch (error) {
-    /* prettier-ignore */ console.log('TCL: getPackageJsonPaths -> error', error)
+    /* prettier-ignore */ console.log('TCL: getPackageJsonPaths -> error', error);
     return [];
   }
 }

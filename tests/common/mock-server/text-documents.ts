@@ -88,7 +88,8 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
 
     const startPosition: Position = { line: 0, character: 0 };
     const endChar = targetDocument.getText().length;
-    const endPosition: Position = { line: 0, character: endChar };
+    const endLine = targetDocument.lineCount;
+    const endPosition: Position = { line: endLine, character: endChar };
     const range = { start: startPosition, end: endPosition };
     TextDocument.update(
       targetDocument,
@@ -103,7 +104,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     return this;
   }
 
-  private find(documentPath: string): TextDocument | undefined {
+  public find(documentPath: string): TextDocument | undefined {
     const targetDocument = this.textDocuments.find((document) => {
       const sysPath = UriUtils.toSysPath(document.uri);
       return sysPath.includes(documentPath);
@@ -115,9 +116,7 @@ export class MockTextDocuments extends TextDocuments<TextDocument> {
     documentPath: string,
     change: string = this.CHANGE
   ): MockTextDocuments {
-    const targetDocument = this.textDocuments.find((document) =>
-      document.uri.includes(documentPath)
-    );
+    const targetDocument = this.find(documentPath);
     this.change(targetDocument, change);
     return this;
   }

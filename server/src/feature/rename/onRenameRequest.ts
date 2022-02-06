@@ -67,6 +67,7 @@ export async function onRenameRequest(
 
   if (doRename) {
     const renamed = await doRename(
+      container,
       aureliaProgram,
       document,
       position,

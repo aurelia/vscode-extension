@@ -12,7 +12,8 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "strictNullChecks": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["@types/jest"]
   },
   "include": ["common", "step-definitions", "unit", "testLauncher"],
   "exclude": ["node_modules", "out"]

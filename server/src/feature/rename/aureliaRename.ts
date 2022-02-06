@@ -25,6 +25,7 @@ import {
 } from './workspaceEdits';
 
 export async function aureliaRenameFromView(
+  container: Container,
   aureliaProgram: AureliaProgram,
   document: TextDocument,
   position: Position,
@@ -53,6 +54,7 @@ export async function aureliaRenameFromView(
   }
 
   const viewModelChanes = performViewModelChanges(
+    container,
     aureliaProgram,
     viewModelPath,
     camelCase(sourceWord), // vars can be kebab from eg. view rename
@@ -138,6 +140,7 @@ export async function aureliaRenameFromViewModel(
 
   // View Model
   const viewModelChanges = performViewModelChanges(
+    container,
     aureliaProgram,
     viewModelPath,
     sourceWord,
