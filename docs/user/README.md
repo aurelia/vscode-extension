@@ -41,11 +41,17 @@ Happy exploring!
 
 
 ## Screenshots
+*(Completions: Provide method completions for Javascript String)*
+![completions1](../../images/completions.png "completions1")
+*(Completions: Provide method completions for Javascript String, in a more complex setup)*
+*Limitation: You won't get completions if you type in the middle of the string, eg `some(pri.|) && pri`*. Check out the [Completions doc](../user/completions.readme.md) for an explanation (has to do with Expression parsing).
+![completions1-complex](../../images/completions-complex.png "completions1-complex")
+*(Completions: Object properties completions)*
+![completions2](../../images/completions.gif "completions2")
+
+
 *(Defintions: Show all places where `<custom-element>` component is used)*
 ![defintions](../../images/definitions.png "defintions")
-
-*(Completions: Provide method completions for Javascript String)*
-![completions](../../images/completions.png "completions")
 
 *(Symbols: Search for all Aurelia related information from your Views.)*
 ![symbols](../../images/symbols.png "symbols")

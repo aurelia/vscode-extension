@@ -5,6 +5,7 @@ import {
   Position,
   WorkspaceEdit,
   CodeAction,
+  CompletionParams,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -41,7 +42,8 @@ export interface AbstractRegionLanguageService {
      * for 1. No trigger character is passed
      * for 2. the trigger character is substring from offset - 1.
      */
-    insertTriggerCharacter?: boolean
+    insertTriggerCharacter?: boolean,
+    completionParams?: CompletionParams
   ) => Promise<CompletionList | AureliaCompletionItem[]>;
   doDefinition?: (
     aureliaProgram: AureliaProgram,

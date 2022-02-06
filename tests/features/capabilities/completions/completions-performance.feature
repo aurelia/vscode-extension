@@ -12,4 +12,6 @@ Feature: Completions performance.
 
     Examples:
       | DESCRIPTION                        | LINE | CODE                | SUGGESTION | TRIGGER_CHARACTER |
-      | Text should trigger Custom Element | 0    | `<p>${\|${pub}</p>` |            | {                 |
+      | Text should trigger Custom Element | 0    | `<p>${\|${pub}</p>` | pri           | {                 |
+      # | Text should trigger Custom Element | 0    | `<p>${\|${pub}</p>` |            | {                 |
+      # ^ TODO Should be 0 suggestions

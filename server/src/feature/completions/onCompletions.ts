@@ -80,8 +80,9 @@ export async function onCompletion(
     regions = RegionParser.parse(document, allComponents);
     // regions = existingRegions;
   } catch (error) {
-    /* prettier-ignore */ console.log('TCL: error', error);
-    /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
+    error /* ? */
+    // /* prettier-ignore */ console.log('TCL: error', error);
+    // /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }
   // regions; /* ? */
 
@@ -166,7 +167,8 @@ export async function onCompletion(
       triggerCharacter,
       region,
       offset,
-      isInsertTriggerCharacter
+      isInsertTriggerCharacter,
+      completionParams
     )) as unknown as CompletionItem[];
     // completions /* ? */
   } catch (error) {

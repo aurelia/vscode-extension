@@ -24,6 +24,7 @@ Feature: Completions.
       | Text Interplolation         | 0    | `${'foo'} ${\|}<p></p>`                        | minimalVar          |                   |
       | Text Interplolation         | 0    | `${minimalVar} ${\|}<p></p>`                   | minimalVar          |                   |
       | Text Interplolation         | 0    | `${'foo'} ${\|} bar<p></p>`                    | minimalVar          |                   |
+      | Text Interplolation         | 0    | `${'foo'} ${ \|} bar<p></p>`                   | minimalVar          |                   |
       | Text Interplolation         | 0    | `<div>${minimalI\|}</div>`                     | minimalInterfaceVar | .                 |
       | Text Inpol - Methods on var | 0    | `${minimalVar.\|}<p>${minimalVar}</p>`         | toLowerCase         | .                 |
       | Text Inpol - Methods on var | 0    | `<p>${minimalVar}</p>${minimalVar.\|}<p></p>`  | toLowerCase         | .                 |

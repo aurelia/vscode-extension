@@ -56,7 +56,8 @@ if `foo.|` is written, then you should type `.` (Dot) after `foo`.
   - Why: We are using the Typescript Language Server, which does not seem to handle that
     - https://github.com/Microsoft/TypeScript/issues/25677
     - "Lets you set a base directory to resolve non-absolute module names." https://www.typescriptlang.org/tsconfig#baseUrl
-- Typing in the middle of an Interpolation, eg. `${foo| && bar}` will not reliably trigger suggestions
+- Typing in the middle of an Interpolation, eg. `${foo.| && bar}` will not reliably trigger suggestions
+  - Because we actually parse the expression and the `.` (Dot) after `foo` will throw a parser Error
 - Custom Attributes not supported
 
 ## Development

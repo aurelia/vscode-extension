@@ -3,7 +3,7 @@
   "description": "A VSCode extension for Aurelia",
   "author": "AureliaEffect",
   "license": "MIT",
-  "version": "2.0.7",
+  "version": "2.1.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/aurelia/vscode-extension"
@@ -32,7 +32,7 @@
     "vscode": "^1.51.1"
   },
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./client/out/extension",
   "contributes": {
@@ -304,7 +304,7 @@
     "watch": "tsc -b -w",
     "watch:client": "tsc -w -p ./client/tsconfig.json",
     "watch:server": "tsc -w -p ./server/tsconfig.json",
-    "postinstall": "cd client && yarn && cd ../server && yarn && cd ..",
+    "postinstall": "cd client && npm i && cd ../server && npm i && cd ..",
     "test:ci": "yarn test:unit",
     "test:unit": "npm run test:unit:core && npm run test:unit:gherkin",
     "test:unit:core": "npx jest --testMatch=\"**/unit/core/**/*.spec.ts\"",

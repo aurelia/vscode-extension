@@ -112,7 +112,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
   + --- root/
   |    + --- frontend/
   |        + --- aurelia/
-  |            + --- src/             // Default place where the Extension tries to search for
+  |            + --- src/             // Default place where the Extension tries to search
   |                                        for Aurelia files
   |            + --- tsconfig.json    // (Optional) Powers all the language features
   |                                        (through a Typescript Program)
@@ -127,6 +127,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
 
 ### Typescript
 - Cli generate project works out of the box (`npx makes au`)
+- If you have a mixed JS and TS project, please add `allowJS: true` to your `tsconfig.json`
 
 ### Javascript
 - Cli generate project works out of the box (`au new`)
@@ -152,7 +153,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
   |            + --- deeper-path/
   |                + --- src/         // aureliaProject.pathToAureliaFiles =
   |                                         absolute/path/root/.../deeper-path/src
-  |            + --- tsconfig.json    // aureliaProject.pathToAureliaFiles =
+  |            + --- tsconfig.json    // aureliaProject.pathToTsConfig =
   |                                         absolute/path/root/.../aurelia/tsconfig.json
   |        + --- package.json         // aureliaProject.packageJsonInclude =
   |                                         absolute/path/root/.../frontend/package.json
@@ -166,33 +167,33 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
 
 ## Features
 You can find a more detailed list of features [here](https://github.com/aurelia/vscode-extension/tree/develop/docs/developer).
-Furthermore, our tests are in a readable format and can provide much deeper insights into the extension behavior. You are encouraged to check those out:
+Furthermore, our [tests](https://github.com/aurelia/vscode-extension/tree/master/tests/features) are in a readable format and can provide much deeper insights into the extension behavior. You are encouraged to check those out:
 
   <details>
     <summary>Preview test format (expand)</summary>
     The format, that is used is named [Gherkin](https://cucumber.io/docs/gherkin/)
 
-  ```feature
-    Feature: Completions - Methods.
-      Background:
-        Given the project is named "cli-generated"
-        And I open VSCode with the following file "view-model-test.html"
+    ```feature
+      Feature: Completions - Methods.
+        Background:
+          Given the project is named "cli-generated"
+          And I open VSCode with the following file "view-model-test.html"
 
-      Scenario Outline: Empty brackets.
-        Given I'm replacing the file content with <CODE>
-        And I'm on the line <LINE> at character <CODE>
-        When I trigger Suggestions with ''
-        Then I should get the correct method <METHOD_NAME> with brackets
+        Scenario Outline: Empty brackets.
+          Given I'm replacing the file content with <CODE>
+          And I'm on the line <LINE> at character <CODE>
+          When I trigger Suggestions with ''
+          Then I should get the correct method <METHOD_NAME> with brackets
 
-        Examples:
-          | LINE | CODE                        | METHOD_NAME      |
-          | 0    | `<div if.bind="f\|"></div>` | functionVariable |
-  ```
-
+          Examples:
+            | LINE | CODE                        | METHOD_NAME      |
+            | 0    | `<div if.bind="f\|"></div>` | functionVariable |
+    ```
   </details>
 
 ### Features table
 *(Legend below)*
+
 | Feature/Region     | A/AI/TI | BA  | BB  | CA  | CE  | HTML | I/R | RF  | Signal | VC  |
 | ------------------ | ------- | --- | --- | --- | --- | ---- | --- | --- | ------ | --- |
 | Code Action        | ➖       | ➖   | ➖   | ➖   | ➖   | ➕    | ➖   | ➖   | ➖      | ➖   |
@@ -231,14 +232,6 @@ Furthermore, our tests are in a readable format and can provide much deeper insi
 
 ## Troubleshooting
 
-### General issues
-- I don't get any completions (or other any feature).
-  -
-- The extension does not pick up my project
-- The extension causes my project to be slow
-- The extension does not work on Windows/Mac/Linux
-  - Windows: The extension was mainly developed on a Linux and a Mac machine. We tried to test on Windows as well, but are less confident on the stability. It would be great if you can help us improve the experience on Windows by
-
 ### Self diagnostics
 1. Logs
    1. Open the Output panel of VSCode ("Output: Focus on Output View")
@@ -247,6 +240,25 @@ Furthermore, our tests are in a readable format and can provide much deeper insi
    - "Aurelia: Reload Extension"
    - Should behave the same as a full VSCode reload/restart
 3. If nothing from above helps, [submit an issue](https://github.com/aurelia/vscode-extension/issues/new), and we kindly ask you to follow the steps in the issue template.
+
+### General issues
+- Completions
+  - I don't get any completions (or other any feature).
+    - There are cases where completions will not trigger. For a more detailed explanation visit [the Completions docs](docs/user/completions.readme.md#Limitations)
+  - I get undesired completions
+    - Unfortunately a known issue. Regardless, please [open an issue](https://github.com/aurelia/vscode-extension/issues/new) to help improve the developer experience.
+  - Sometimes completitions don't appear
+    - Unfortunately a known issue. There are 2 sides
+      1. Javascript/Typescript completions: We depend on a [Typescript Program](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler), to enable rich completions for your Views. This could be still an issue on our side, but chances are, that if *some* completions work, and others don't, that there is no way to improve this (to our current knowledge).
+      2. Aurelia related completions. Likely a bug on our side.
+
+- Extension not working as expected
+  - The extension does not pick up my project
+    - If the other sections ([Setup](#setup), [Configuration](#configuration)) did not help please [open an issue](https://github.com/aurelia/vscode-extension/issues/new)
+  - The extension causes my project to be slow
+    - We tried reduce response time as much as possible. If the extension still causes too much slowness, you can turn off individual features in the settings under `aurelia.capabilities`. Else please [open an issue](https://github.com/aurelia/vscode-extension/issues/new)
+  - The extension does not work on Windows/Mac/Linux
+    - Windows: The extension was mainly developed on a Linux and a Mac machine. We tried to test on Windows as well, but are less confident on the stability. It would be great if you can help us improve the experience on Windows by [opening an issue](https://github.com/aurelia/vscode-extension/issues/new)
 
 ### Unstable warning
 Please note, that due to the low iteration count, all features may not be as stable as we like them to be. Before submitting and issue, check out the [General issues](#general-issues), [Troubleshooting](#troubleshooting) and [FAQ] section.

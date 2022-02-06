@@ -25,6 +25,7 @@ Feature: When completions should trigger.
       | Bindable Attr - Empty ""   | 0    | `<empty-view foo="$\|"></empty-view>`     |              |                   |
       | Bindable Attr - .bind      | 0    | `<empty-view foo.bind="\|"></empty-view>` | readOnly     |                   |
       | Bindable Attr - Interpol   | 0    | `<empty-view foo="${\|}"></empty-view>`   | readOnly     |                   |
+      # TODO | Bindable Attr - Interpol   | 0    | `<custom-element foo="${} \|"></custom-element>` | readOnly     | ' '               |
       | Bindable Attr - Interpol   | 0    | `<empty-view foo="${r\|}"></empty-view>`  | readOnly     |                   |
       | Comment                    | 0    | `<!-- \|-->`                              |              |                   |
       | HTML Attributes            | 0    | `<p \|></p>`                              | aria-checked | ' '               |
