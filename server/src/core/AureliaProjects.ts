@@ -280,7 +280,7 @@ function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
     fs.readFileSync(packageJsonPath, 'utf-8')
   ) as Record<string, Record<string, string>>;
   const dep = packageJson['dependencies'];
-  const hasAuInDep = false;
+  let hasAuInDep = false;
   if (dep != null) {
     const isAuV1App = dep['aurelia-framework'] !== undefined;
     const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
