@@ -41,6 +41,7 @@ The extension works out of the box on Linux/Mac/Windows, but still allows you to
 - [Configuration](#configuration)
 - [Features](#features)
 - [Behavior](#behavior)
+- [Installation](#installation)
 - [Troubleshooting](#troubleshooting)
 - [Releasing](#releasing)
 
@@ -230,6 +231,14 @@ Furthermore, our [tests](https://github.com/aurelia/vscode-extension/tree/master
 - Aurelia components
   - Picks up Aurelia components via naming convention or `@customElement` decorator
     - [Official docs on convention](https://docs.aurelia.io/getting-to-know-aurelia/components/creating-components#convention-less-components)
+
+## Installation
+### vsix
+You can manually install the extension by downloading the .vsix file in the top right section under "Release".
+Once you downloaded it, install via
+```
+code --install-extension aurelia-2.x.y.vsix
+```
 
 ## Troubleshooting
 
