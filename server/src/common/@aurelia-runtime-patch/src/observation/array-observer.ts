@@ -383,13 +383,21 @@ export class ArrayObserver {
   }
 
   public getLengthObserver(): CollectionLengthObserver {
-    return this.lenObs ??= new CollectionLengthObserver(this);
+    if (this.lenObs === undefined || this.lenObs === null) {
+      this.lenObs = new CollectionLengthObserver(this);
+    }
+    return this.lenObs;
   }
 
   public getIndexObserver(index: number): IArrayIndexObserver {
-    // It's unnecessary to destroy/recreate index observer all the time,
-    // so just create once, and add/remove instead
-    return this.indexObservers[index] ??= new ArrayIndexObserver(this, index);
+    let payload = new ArrayIndexObserver(this, index);
+    if (this.lenObs === undefined || this.lenObs === null) {
+      payload = new ArrayIndexObserver(this, index);
+      // It's unnecessary to destroy/recreate index observer all the time,
+      // so just create once, and add/remove instead
+      this.indexObservers[index] = payload;
+    }
+    return payload;
   }
 }
 

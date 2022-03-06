@@ -150,7 +150,10 @@ export class SetObserver {
   }
 
   public getLengthObserver(): CollectionSizeObserver {
-    return this.lenObs ??= new CollectionSizeObserver(this);
+    if (this.lenObs === undefined || this.lenObs === null) {
+      this.lenObs = new CollectionSizeObserver(this);
+    }
+    return this.lenObs;
   }
 }
 
