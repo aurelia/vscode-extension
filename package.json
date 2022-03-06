@@ -305,7 +305,7 @@
     "watch:client": "tsc -w -p ./client/tsconfig.json",
     "watch:server": "tsc -w -p ./server/tsconfig.json",
     "postinstall": "cd client && npm i && cd ../server && npm i && cd ..",
-    "test:ci": "yarn test:unit",
+    "test:ci": "npm run test:unit",
     "test:unit": "npm run test:unit:core && npm run test:unit:gherkin",
     "test:unit:core": "npx jest --testMatch=\"**/unit/core/**/*.spec.ts\"",
     "test:unit:gherkin": "npm run test:unit:gherkin:core && npm run test:unit:gherkin:cli && npm run test:unit:gherkin:mono && npm run test:unit:gherkin:scoped",
