@@ -25,11 +25,11 @@ const testCasesMapFileBased: TestCasesMapFileBased = {};
 /* prettier-ignore */
 testCasesMapFileBased['Offsets'] = [
   //   , CODE                                          , PARAMETERS                        , Type                      , LINE  , FILE
-  [{}  , '<div id.bind="bar"></div>'                   , {regVal:'bar' ,off:'45;48'}       , 'Attribute'               , 2     , 'custom-element.html' ] ,
+  [{}  , '<div id.bind="barBaz"></div>'                , {regVal:'barBaz' ,off:'45;51'}    , 'Attribute'               , 2     , 'custom-element.html' ] ,
   [{}  , '<div id="${foo}"></div>'                     , {regVal:'foo' ,off:'18;21'}       , 'AttributeInterpolation'  , 1     , 'custom-element.html' ] ,
   [{}  , ''                                            , {}                                , 'CustomElement'           , NaN   , 'other-custom-element-user.html' ] ,
   [{}  , ''                                            , {}                                , 'Import'                  , NaN   , 'other-custom-element-user.html' ] ,
-  [{}  , '<div repeat.for="fooElement of foo"></div>'  , {regVal:'foo' ,off:'88;91'}       , 'RepeatFor'               , 3     , 'custom-element.html' ] ,
+  [{}  , '<div repeat.for="fooElement of foo"></div>'  , {regVal:'foo' ,off:'91;94'}       , 'RepeatFor'               , 3     , 'custom-element.html' ] ,
   [{}  , '${foo}'                                      , {regVal:'foo' ,off:'2;6' }        , 'TextInterpolation'       , 0     , 'custom-element.html' ] ,
 ];
 
@@ -67,9 +67,9 @@ testCasesMapFileBased['Access scopes'] = [
    // //  , File based
    // //  , CODE                                                        , PARAMETERS                                                                         , Type                      , LINE  , FILE
    [{}    , '<div id="${foo}"></div>'                                   , {accSco:['foo'] ,nameLoc: ['18;21']}                                               , 'AttributeInterpolation'  , 1     , 'custom-element.html'],
-   [{}    , '<div id.bind="bar"></div>'                                 , {accSco:['bar'] ,nameLoc: ['45;48']}                                               , 'Attribute'               , 2     , 'custom-element.html'],
-   [{}    , '<span id.bind="qux.attr">${qux.interpol}</span>'           , {accSco:['qux','qux'] ,nameLoc: ['115;118','127;130']}                             , 'Many'                    , 4     , 'custom-element.html'],
-   [{}    , '<p class="${useFoo(qux)}">${arr[qux] |hello}</p>'          , {accSco:['useFoo!qux','arr!qux'] ,nameLoc: ['160;166!167;170','176;179!180;183']}  , 'Many'                    , 5     , 'custom-element.html'],
+   [{}    , '<div id.bind="barBaz"></div>'                              , {accSco:['barBaz'] ,nameLoc: ['45;51']}                                               , 'Attribute'               , 2     , 'custom-element.html'],
+   [{}    , '<span id.bind="qux.attr">${qux.interpol}</span>'           , {accSco:['qux','qux'] ,nameLoc: ['118;121','130;133']}                             , 'Many'                    , 4     , 'custom-element.html'],
+   [{}    , '<p class="${useFoo(qux)}">${arr[qux] |hello}</p>'          , {accSco:['useFoo!qux','arr!qux'] ,nameLoc: ['163;169!170;173','179;182!183;186']}  , 'Many'                    , 5     , 'custom-element.html'],
 ];
 
 /* prettier-ignore */
@@ -135,7 +135,7 @@ describe('RegionParser.', () => {
               expect(startTagLocation.startOffset).toBe(142);
               expect(startTagLocation.endLine).toBe(10);
               expect(startTagLocation.endCol).toBe(3);
-              expect(startTagLocation.endOffset).toBe(238);
+              expect(startTagLocation.endOffset).toBe(242);
             });
 
             // Custom Element - Start Tag
@@ -173,10 +173,10 @@ describe('RegionParser.', () => {
               const { sourceCodeLocation } = closingCustomElementTag;
               expect(sourceCodeLocation.startCol).toBe(5);
               expect(sourceCodeLocation.startLine).toBe(10);
-              expect(sourceCodeLocation.startOffset).toBe(240);
+              expect(sourceCodeLocation.startOffset).toBe(244);
               expect(sourceCodeLocation.endCol).toBe(19);
               expect(sourceCodeLocation.endLine).toBe(10);
-              expect(sourceCodeLocation.endOffset).toBe(254);
+              expect(sourceCodeLocation.endOffset).toBe(258);
             });
           }
 

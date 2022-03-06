@@ -14,7 +14,7 @@ Feature: Definition in View Model.
       | DESCRIPTION    | LINE | CODE                                          | NUM_DEFINTIONS | TARGET_FILE_NAME         |
       | Bindable       | 1    | `export class \|CustomElementCustomElement {` | 9              | custom-element-user.html |
       | Bindable       | 2    | `  @bindable \|foo;`                          | 10             | custom-element.html      |
-      | Bindable       | 3    | `  @bindable \|bar;`                          | 5              | custom-element.html      |
+      | Bindable       | 3    | `  @bindable \|barBaz;`                       | 5              | custom-element.html      |
       | Class Variable | 4    | `  \|qux;`                                    | 4              | custom-element.html      |
 
   Scenario Outline: Not triggering

@@ -1,7 +1,7 @@
 @customElement({ name: 'custom-element', template })
 export class CustomElementCustomElement {
   @bindable foo: string = '';
-  @bindable bar;
+  @bindable barBaz;
   qux;
 
   useFoo() {
