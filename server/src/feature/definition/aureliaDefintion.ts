@@ -4,6 +4,7 @@ import { DocumentSpan, Project, SyntaxKind } from 'ts-morph';
 import { LocationLink, Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { AureliaUtils } from '../../common/AureliaUtils';
 import { getWordAtOffset } from '../../common/documens/find-source-word';
 import { PositionUtils } from '../../common/documens/PositionUtils';
 import { getRelatedFilePath } from '../../common/documens/related';
@@ -195,7 +196,7 @@ async function getAureliaClassMemberDefinitions_OtherViewBindables(
     (region, document) => {
       region.data?.forEach((subRegion) => {
         if (subRegion.type !== ViewRegionType.BindableAttribute) return;
-        if (subRegion.regionValue !== sourceWord) return;
+        if (!AureliaUtils.isSameVariableName(subRegion.regionValue, sourceWord)) return;
 
         const locationLink = createLocationLinkFromRegion(subRegion, document);
         if (!locationLink) return;
