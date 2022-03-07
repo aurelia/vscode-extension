@@ -4,6 +4,7 @@ import { pathToFileURL } from 'url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { ExpressionKind } from '../../common/@aurelia-runtime-patch/src';
+import { AureliaUtils } from '../../common/AureliaUtils';
 import {
   TypeToClass,
   ViewRegionUtils,
@@ -34,9 +35,7 @@ export async function findAllBindableAttributeRegions(
       const document = TextDocument.create(uri, 'html', 0, content);
       if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
-      // const regions = await parseDocumentRegions(document, componentList);
       const regions = RegionParser.parse(document, componentList);
-      // const customElementRegions = getRegionsOfType<ViewRegionInfoV2[]>(
       const customElementRegions = ViewRegionUtils.getRegionsOfType(
         regions,
         ViewRegionType.CustomElement
@@ -45,7 +44,7 @@ export async function findAllBindableAttributeRegions(
       const customElementRegionsWithTargetBindable =
         customElementRegions.forEach((region) => {
           const targetBindableAttribute = region.data?.find((attribute) => {
-            if (attribute.regionValue === bindableName) {
+            if (AureliaUtils.isSameVariableName(attribute.regionValue, bindableName)) {
               // 1.2.1 Init
               if (regionsLookUp[uri] === undefined) {
                 regionsLookUp[uri] = [];
