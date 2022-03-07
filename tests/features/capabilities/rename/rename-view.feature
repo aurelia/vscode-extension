@@ -35,5 +35,5 @@ Feature: Rename in View.
       | DESCRIPTION        | LINE | CODE                                           | NEW_WORD | NUM_OTHER_COMPONENTS |
       | Text Interploation | 0    | `${\|foo}`                                     | new-new  | 5                    |
       | View model         | 1    | `<div id="${\|foo}"></div>`                    | new-new  | 5                    |
-      | View model         | 2    | `<div id.bind="\|bar"></div>`                  | new-new  | 5                    |
+      | View model         | 2    | `<div id.bind="\|barBaz"></div>`               | new-new  | 5                    |
       | View model         | 3    | `<div repeat.for="fooElement of \|foo"></div>` | new-new  | 5                    |

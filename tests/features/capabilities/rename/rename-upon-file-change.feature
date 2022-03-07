@@ -7,7 +7,6 @@ Feature: Rename after file change
     And I'm on the line <LINE> at character <CODE>
     And I open VSCode with the following file "custom-element-user.ts"
 
-  @focus
   Scenario Outline: Rename after file change
     When I change the file "custom-element-user.ts" by adding a new line
     And I trigger Rename in the file "custom-element.ts" to "newNew"
