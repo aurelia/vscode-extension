@@ -68,6 +68,7 @@ testCasesMapFileBased['Access scopes'] = [
    // //  , CODE                                                        , PARAMETERS                                                                         , Type                      , LINE  , FILE
    [{}    , '<div id="${foo}"></div>'                                   , {accSco:['foo'] ,nameLoc: ['18;21']}                                               , 'AttributeInterpolation'  , 1     , 'custom-element.html'],
    [{}    , '<div id.bind="barBaz"></div>'                              , {accSco:['barBaz'] ,nameLoc: ['45;51']}                                               , 'Attribute'               , 2     , 'custom-element.html'],
+   [{focus:true}    , '<div repeat.for="fooElement of foo"></div>'      , {accSco:['foo'] ,nameLoc: ['91;94']}                                               , 'Attribute'               , 3     , 'custom-element.html'],
    [{}    , '<span id.bind="qux.attr">${qux.interpol}</span>'           , {accSco:['qux','qux'] ,nameLoc: ['118;121','130;133']}                             , 'Many'                    , 4     , 'custom-element.html'],
    [{}    , '<p class="${useFoo(qux)}">${arr[qux] |hello}</p>'          , {accSco:['useFoo!qux','arr!qux'] ,nameLoc: ['163;169!170;173','179;182!183;186']}  , 'Many'                    , 5     , 'custom-element.html'],
 ];
@@ -205,7 +206,6 @@ describe('RegionParser.', () => {
                 shared.parsedRegions,
                 String(shared.line)
               );
-              target; /* ? */
 
               expect(target).toBeDefined();
               if (!target) return;

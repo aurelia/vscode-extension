@@ -766,6 +766,8 @@ export class RepeatForRegion extends AbstractRegion {
         { startOffset, expressionType: ExpressionType.IsIterator }
       );
 
+    this.updateWithStartOffset(accessScopes, startOffset);
+
     const repeatForViewRegion = RepeatForRegion.create({
       accessScopes,
       attributeName: attr.name,
@@ -777,6 +779,17 @@ export class RepeatForRegion extends AbstractRegion {
     });
 
     return repeatForViewRegion;
+  }
+
+  /**
+   * Background: RepeatFor parsing only returned the repeat.for="attributeValue"
+   *   Thus, we need to add the startOffset of whole file.
+   */
+  private static updateWithStartOffset(accessScopes: (AccessScopeExpression | CallScopeExpression)[], startOffset: number) {
+    accessScopes.forEach(scope => {
+      scope.nameLocation.start += startOffset;
+      scope.nameLocation.end += startOffset;
+    });
   }
 
   public static is(region: AbstractRegion): region is RepeatForRegion {
