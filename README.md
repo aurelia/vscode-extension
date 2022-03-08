@@ -279,11 +279,12 @@ The extension is in active use by the authors, so you can expect a swift respons
 ```
 # l.
 bumb version in package.json
+"version": "2.3.1"
 npm run changelog
-commit: chore(release): release v2.0.6
+commit: chore(release): release v2.3.1
 
 # 2.
-git tag -a 2.0.6 -m "v2.0.6"
+git tag -a 2.3.1 -m "v2.3.1"
 git push --follow-tags
 ```
 

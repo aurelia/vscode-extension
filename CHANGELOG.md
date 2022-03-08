@@ -1,3 +1,14 @@
+## [2.3.1](https://github.com/aurelia/vscode-extension/compare/2.3.0...2.3.1) (2022-03-08)
+
+
+### Bug Fixes
+
+* **definition:** normalize variable names before checking eq ([638bef6](https://github.com/aurelia/vscode-extension/commit/638bef64933e1cf75406c0386c4c5b4bca20c112))
+* **regions:** repeat.for location parsing ([0fe3eb4](https://github.com/aurelia/vscode-extension/commit/0fe3eb4664fa5f22bde61af5780dd7d83b60f376)), closes [#186](https://github.com/aurelia/vscode-extension/issues/186)
+* **rename:** normalize variable names before checking eq ([b7ed03e](https://github.com/aurelia/vscode-extension/commit/b7ed03e9119f2020b69357a42dd30dcd11c72d90))
+
+
+
 # [2.3.0](https://github.com/aurelia/vscode-extension/compare/2.1.4...2.3.0) (2022-02-06)
 
 ### Note on versioning
