@@ -29,9 +29,15 @@ export class AureliaProjects {
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
-  public async initAndVerify(extensionSettings: ExtensionSettings) {
+  public async getAureliaProjectsOnly(extensionSettings: ExtensionSettings) {
     const packageJsonPaths = getPackageJsonPaths(extensionSettings);
     await this.initAndSet(packageJsonPaths);
+
+    const hasAureliaProject = this.getHasAureliaProject();
+    return hasAureliaProject;
+  }
+
+  private getHasAureliaProject() {
     const projects = this.getAll();
     const hasAureliaProject = projects.length > 0;
 
@@ -76,21 +82,12 @@ export class AureliaProjects {
     forceReinit: boolean = false
   ): Promise<boolean> {
     /* prettier-ignore */ logger.log('Parsing Aurelia related data...', { logLevel: 'INFO' });
-    const documentsPaths = documents.map((document) => {
-      const result = UriUtils.toSysPath(document.uri);
-      return result;
-    });
-    if (documentsPaths.length === 0) {
-      /* prettier-ignore */ logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
-      /* prettier-ignore */ logger.log('(!) Waiting until .html, .js, or .ts file focused.', { logLevel: 'INFO' });
-      /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
-      /* prettier-ignore */ logger.log('    (Execute command "Aurelia: Reload Extension", if nothing happens.)', { logLevel: 'INFO' });
-      return false;
-    }
+
+    const documentsPaths = getDocumentPaths();
+    if (!documentsPaths) return false;
 
     const settings = this.documentSettings.getSettings();
     const aureliaProjectSettings = settings?.aureliaProject;
-
     // 1. To each map assign a separate program
     await this.addAureliaProgramToEachProject(
       documentsPaths,
@@ -99,6 +96,26 @@ export class AureliaProjects {
     );
 
     return true;
+
+    function getDocumentPaths() {
+      const documentsPaths = documents.map((document) => {
+        const result = UriUtils.toSysPath(document.uri);
+        return result;
+      });
+      if (documentsPaths.length === 0) {
+        warnExtensionNotActivated();
+        return;
+      }
+
+      return documentsPaths;
+
+      function warnExtensionNotActivated() {
+        /* prettier-ignore */  logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
+        /* prettier-ignore */ logger.log('(!) Waiting until .html, .js, or .ts file focused.', { logLevel: 'INFO' });
+        /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
+        /* prettier-ignore */ logger.log('    (Execute command "Aurelia: Reload Extension", if nothing happens.)', { logLevel: 'INFO' });
+      }
+    }
   }
 
   /**
@@ -181,13 +198,8 @@ export class AureliaProjects {
     this.resetAureliaProjects();
 
     const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
-
     aureliaProjectPaths.forEach((aureliaProjectPath) => {
-      const alreadyHasProject = this.aureliaProjects.find(
-        (project) => project.tsConfigPath === aureliaProjectPath
-      );
-
-      if (alreadyHasProject) {
+      if (this.alreadyHasProject(aureliaProjectPath)) {
         return;
       }
 
@@ -196,6 +208,13 @@ export class AureliaProjects {
         aureliaProgram: null,
       });
     });
+  }
+
+  private alreadyHasProject(aureliaProjectPath: string) {
+    const alreadyHasProject = this.aureliaProjects.find(
+      (project) => project.tsConfigPath === aureliaProjectPath
+    );
+    return alreadyHasProject;
   }
 
   private async addAureliaProgramToEachProject(

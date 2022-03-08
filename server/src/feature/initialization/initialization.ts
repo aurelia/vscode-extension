@@ -21,10 +21,10 @@ export async function onConnectionInitialized(
   /* prettier-ignore */ logger.log('Initilization started.',{logMs:true,msStart:true});
 
   const aureliaProjects = container.get(AureliaProjects);
-  const verified = await aureliaProjects.initAndVerify(extensionSettings);
-  if (!verified) return;
-  const hydrated = await aureliaProjects.hydrate(activeDocuments, forceReinit);
+  const isAureliaProject = await aureliaProjects.getAureliaProjectsOnly(extensionSettings);
+  if (!isAureliaProject) return;
 
+  const hydrated = await aureliaProjects.hydrate(activeDocuments, forceReinit);
   if (hydrated) {
     /* prettier-ignore */ logger.log('Initilization done. Aurelia Extension is ready to use. 🚀',{logMs:true,msEnd:true});
   }
