@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as nodePath from 'path';
 
 import * as fastGlob from 'fast-glob';
-import { ts } from 'ts-morph';
+import { Project, ts } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../common/logging/logger';
@@ -19,6 +19,7 @@ const logger = new Logger('AureliaProject');
 const compilerObjectMap = new Map<string, ts.Program | undefined>();
 
 export interface IAureliaProject {
+  /** TODO rename: tsConfigPath -> projectPath (or sth else) */
   tsConfigPath: string;
   aureliaProgram: AureliaProgram | null;
 }
@@ -110,7 +111,7 @@ export class AureliaProjects {
       return documentsPaths;
 
       function warnExtensionNotActivated() {
-        /* prettier-ignore */  logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
+        /* prettier-ignore */ logger.log('(!) Extension not activated.', { logLevel: 'INFO' });
         /* prettier-ignore */ logger.log('(!) Waiting until .html, .js, or .ts file focused.', { logLevel: 'INFO' });
         /* prettier-ignore */ logger.log('    (For performance reasons)', { logLevel: 'INFO' });
         /* prettier-ignore */ logger.log('    (Execute command "Aurelia: Reload Extension", if nothing happens.)', { logLevel: 'INFO' });
@@ -224,51 +225,100 @@ export class AureliaProjects {
   ) {
     const aureliaProjects = this.getAll();
 
-    /** TODO rename: tsConfigPath -> projectPath (or sth else) */
-    aureliaProjects.every(async ({ tsConfigPath, aureliaProgram }) => {
-      const shouldActivate = getShouldActivate(documentsPaths, tsConfigPath);
-      if (!shouldActivate) return;
+    aureliaProjects.every(async (aureliaProject) => {
+      const { tsConfigPath } = aureliaProject;
+      if (!shouldActivate(documentsPaths, tsConfigPath)) return;
 
-      const shouldHydration = aureliaProgram === null || forceReinit;
-      if (shouldHydration) {
-        const extensionSettings =
-          this.documentSettings.getSettings().aureliaProject;
-        this.documentSettings.setSettings({
-          ...extensionSettings,
-          aureliaProject: {
-            projectDirectory: tsConfigPath,
-          },
-        });
-        aureliaProgram = new AureliaProgram(this.documentSettings);
-        const tsMorphProject = aureliaProgram.tsMorphProject.create();
+      let aureliaProgram = this.getADefinedAureliaProgram(
+        aureliaProject,
+        forceReinit
+      );
 
-        let compilerObject = compilerObjectMap.get(tsConfigPath);
-        if (compilerObject == null || forceReinit) {
-          const program = tsMorphProject.getProgram();
-          // [PERF]: 1.87967675s
-          compilerObject = program.compilerObject;
-          compilerObjectMap.set(tsConfigPath, compilerObject);
-        }
+      aureliaProgram = this.initAureliaComponents(
+        aureliaProgram,
+        tsConfigPath,
+        aureliaProjectSettings
+      );
 
-        if (compilerObject != null) {
-          aureliaProgram.setProgram(compilerObject);
-        }
-      }
+      setAureliaProgramToProject(aureliaProgram, tsConfigPath);
+    });
 
-      const projectOptions: IAureliaProjectSetting = {
-        ...aureliaProjectSettings,
-        rootDirectory: tsConfigPath,
-      };
-      // [PERF]: 0.67967675s
-      if (aureliaProgram == null) return;
-      aureliaProgram.initAureliaComponents(projectOptions);
-
+    function setAureliaProgramToProject(
+      aureliaProgram: AureliaProgram,
+      tsConfigPath: string
+    ) {
       const targetAureliaProject = aureliaProjects.find(
         (auP) => auP.tsConfigPath === tsConfigPath
       );
       if (!targetAureliaProject) return;
       targetAureliaProject.aureliaProgram = aureliaProgram;
+    }
+  }
+
+  private getADefinedAureliaProgram(
+    aureliaProject: IAureliaProject,
+    forceReinit: boolean
+  ) {
+    const { tsConfigPath } = aureliaProject;
+    let { aureliaProgram } = aureliaProject;
+    if (aureliaProgram === null || forceReinit) {
+      aureliaProgram = this.initAureliaProgram(tsConfigPath, forceReinit);
+    }
+    return aureliaProgram;
+  }
+
+  private initAureliaComponents(
+    aureliaProgram: AureliaProgram,
+    tsConfigPath: string,
+    aureliaProjectSettings?: IAureliaProjectSetting
+  ) {
+    const projectOptions: IAureliaProjectSetting = {
+      ...aureliaProjectSettings,
+      rootDirectory: tsConfigPath,
+    };
+    // [PERF]: 0.67967675s
+    aureliaProgram.initAureliaComponents(projectOptions);
+
+    return aureliaProgram;
+  }
+
+  private initAureliaProgram(tsConfigPath: string, forceReinit: boolean) {
+    const updatedSettings = this.updateDocumentSettings(tsConfigPath);
+    const aureliaProgram = new AureliaProgram(updatedSettings);
+    const tsMorphProject = aureliaProgram.tsMorphProject.create();
+    const compilerObject = memoizeCompilerObject(tsConfigPath, tsMorphProject);
+    if (compilerObject != null) {
+      aureliaProgram.setProgram(compilerObject);
+    }
+
+    return aureliaProgram;
+
+    function memoizeCompilerObject(
+      tsConfigPath: string,
+      tsMorphProject: Project
+    ) {
+      let compilerObject = compilerObjectMap.get(tsConfigPath);
+      if (compilerObject == null || forceReinit) {
+        const program = tsMorphProject.getProgram();
+        // [PERF]: 1.87967675s
+        compilerObject = program.compilerObject;
+        compilerObjectMap.set(tsConfigPath, compilerObject);
+      }
+      return compilerObject;
+    }
+  }
+
+  private updateDocumentSettings(tsConfigPath: string) {
+    const extensionSettings =
+      this.documentSettings.getSettings().aureliaProject;
+    this.documentSettings.setSettings({
+      ...extensionSettings,
+      aureliaProject: {
+        projectDirectory: tsConfigPath,
+      },
     });
+
+    return this.documentSettings;
   }
 
   /**
@@ -287,7 +337,7 @@ export class AureliaProjects {
   }
 }
 
-function getShouldActivate(documentsPaths: string[], tsConfigPath: string) {
+function shouldActivate(documentsPaths: string[], tsConfigPath: string) {
   return documentsPaths.some((docPath) => {
     const result = docPath.includes(tsConfigPath);
     return result;
