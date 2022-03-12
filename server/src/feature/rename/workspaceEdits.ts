@@ -23,11 +23,11 @@ import {
   ViewRegionSubType,
   ViewRegionType,
 } from '../../aot/parser/regions/ViewRegions';
+import { getClass, getClassMember } from '../../aot/tsMorph/tsMorphClass';
 import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { Container } from '../../core/container';
-import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { updateTsMorphProjectWithEditingFiles } from '../definition/aureliaDefintion';
 
 const logger = new Logger('workspaceEdits');

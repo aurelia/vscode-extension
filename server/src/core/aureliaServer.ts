@@ -3,7 +3,6 @@ import {
   CompletionParams,
   PublishDiagnosticsParams,
   TextDocumentChangeEvent,
-  TextDocumentPositionParams,
   TextDocuments,
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
@@ -109,7 +108,7 @@ export class AureliaServer {
     document: TextDocument,
     completionParams: CompletionParams
   ) {
-    const dontTrigger = await this.dontTriggerInViewModel(document);
+    const dontTrigger = this.dontTriggerInViewModel(document);
     if (dontTrigger) return;
 
     if (this.extensionSettings.capabilities?.completions === false) return;
@@ -168,7 +167,7 @@ export class AureliaServer {
   // onDocumentHighlight() {}
 
   public async onDocumentSymbol(documentUri: string) {
-    const dontTrigger = await this.dontTriggerInViewModel({
+    const dontTrigger = this.dontTriggerInViewModel({
       uri: documentUri,
     });
     if (dontTrigger) return;
@@ -198,7 +197,7 @@ export class AureliaServer {
   }
 
   public async onCodeAction(codeActionParams: CodeActionParams) {
-    const dontTrigger = await this.dontTriggerInViewModel(
+    const dontTrigger = this.dontTriggerInViewModel(
       codeActionParams.textDocument
     );
     if (dontTrigger) return;

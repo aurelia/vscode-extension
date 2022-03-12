@@ -3,13 +3,13 @@ import 'reflect-metadata';
 import { ts } from 'ts-morph';
 
 import { UriUtils } from '../common/view/uri-utils';
-import { TsMorphProject } from '../core/tsMorph/AureliaTsMorph';
 import {
   defaultProjectOptions,
   DocumentSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
 import { AureliaComponents } from './AureliaComponents';
+import { TsMorphProject } from './tsMorph/AureliaTsMorph';
 
 // const logger = new Logger('AureliaProgram');
 
