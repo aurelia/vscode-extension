@@ -11,8 +11,8 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Container } from '../../../../core/container';
 import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { AureliaCompletionItem } from '../../../../feature/completions/virtualCompletion';
-import { DefinitionResult } from '../../../../feature/definition/getDefinition';
 import { CustomHover } from '../../../../feature/virtual/virtualSourceFile';
+import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 
 export interface AbstractRegionLanguageService {

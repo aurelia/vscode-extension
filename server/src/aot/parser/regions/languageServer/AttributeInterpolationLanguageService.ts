@@ -8,10 +8,10 @@ import { Container } from '../../../../core/container';
 import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { aureliaVirtualComplete_vNext } from '../../../../feature/completions/virtualCompletion2';
 import { getAccessScopeDefinition } from '../../../../feature/definition/accessScopeDefinition';
-import { DefinitionResult } from '../../../../feature/definition/getDefinition';
 import { getAccessScopeHover } from '../../../../feature/hover/accessScopeHover';
 import { aureliaRenameFromView } from '../../../../feature/rename/aureliaRename';
 import { VirtualLanguageService } from '../../../../feature/virtual/virtualSourceFile';
+import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

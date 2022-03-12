@@ -8,7 +8,7 @@ import {
   AureliaCompletionItem,
   getVirtualViewModelCompletionSupplyContent,
 } from '../../../../feature/completions/virtualCompletion';
-import { DefinitionResult } from '../../../../feature/definition/getDefinition';
+import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion, ValueConverterRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

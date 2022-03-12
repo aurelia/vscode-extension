@@ -5,8 +5,8 @@ import { TextDocumentUtils } from '../../../../common/documens/TextDocumentUtils
 import { UriUtils } from '../../../../common/view/uri-utils';
 import { Container } from '../../../../core/container';
 import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
-import { DefinitionResult } from '../../../../feature/definition/getDefinition';
 import { aureliaRenameFromView } from '../../../../feature/rename/aureliaRename';
+import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

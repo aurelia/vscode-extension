@@ -5,7 +5,7 @@ import { findSourceWord } from '../../../../common/documens/find-source-word';
 import { UriUtils } from '../../../../common/view/uri-utils';
 import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { getBindablesCompletion } from '../../../../feature/completions/completions';
-import { DefinitionResult } from '../../../../feature/definition/getDefinition';
+import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

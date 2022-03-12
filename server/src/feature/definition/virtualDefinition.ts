@@ -1,10 +1,10 @@
+import { DefinitionResult } from '../../aot/parser/parser-types';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
   getVirtualLangagueService,
 } from '../virtual/virtualSourceFile';
-import { DefinitionResult } from './getDefinition';
 
 /**
  * 1. Create virtual file

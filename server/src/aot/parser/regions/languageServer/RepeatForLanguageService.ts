@@ -5,8 +5,8 @@ import { Container } from '../../../../core/container';
 import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { aureliaVirtualComplete_vNext } from '../../../../feature/completions/virtualCompletion2';
 import { getAccessScopeViewModelDefinition } from '../../../../feature/definition/accessScopeDefinition';
-import { DefinitionResult } from '../../../../feature/definition/getDefinition';
 import { aureliaRenameFromView } from '../../../../feature/rename/aureliaRename';
+import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

@@ -4,6 +4,7 @@
 
 import { Position, TextDocument } from 'vscode-languageserver';
 
+import { DefinitionResult } from '../../aot/parser/parser-types';
 import {
   AbstractRegion,
   RepeatForRegion,
@@ -14,7 +15,6 @@ import { getRelatedFilePath } from '../../common/documens/related';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
-import { DefinitionResult } from './getDefinition';
 
 /**
  * Priority
