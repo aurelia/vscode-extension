@@ -6,7 +6,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AureliaView, interpolationRegex } from '../../../common/constants';
 import { Logger } from '../../../common/logging/logger';
 import { getBindableNameFromAttritute } from '../../../common/template/aurelia-attributes';
-import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../../feature/configuration/DocumentSettings';
+import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../../configuration/DocumentSettings';
 import { IAureliaComponent } from '../../aotTypes';
 import {
   AbstractRegion,

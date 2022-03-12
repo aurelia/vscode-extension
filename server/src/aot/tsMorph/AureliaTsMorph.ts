@@ -6,7 +6,7 @@ import { UriUtils } from '../../common/view/uri-utils';
 import {
   DocumentSettings,
   ExtensionSettings,
-} from '../../feature/configuration/DocumentSettings';
+} from '../../configuration/DocumentSettings';
 
 const logger = new Logger('AureliaTsMorph');
 

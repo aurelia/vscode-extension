@@ -7,7 +7,7 @@ import {
   defaultProjectOptions,
   DocumentSettings,
   IAureliaProjectSetting,
-} from '../feature/configuration/DocumentSettings';
+} from '../configuration/DocumentSettings';
 import { AureliaComponents } from './AureliaComponents';
 import { TsMorphProject } from './tsMorph/AureliaTsMorph';
 

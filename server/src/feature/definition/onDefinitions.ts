@@ -8,9 +8,9 @@ import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { ParseHtml } from '../../common/view/document-parsing';
+import { DocumentSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaDefinitionFromViewModel } from './aureliaDefintion';
 
 export async function onDefintion(

@@ -10,9 +10,9 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { isViewModelDocument } from '../common/documens/TextDocumentUtils';
 import { Logger } from '../common/logging/logger';
+import { ExtensionSettings } from '../configuration/DocumentSettings';
 import { onCodeAction } from '../feature/codeAction/onCodeAction';
 import { onCompletion } from '../feature/completions/onCompletions';
-import { ExtensionSettings } from '../feature/configuration/DocumentSettings';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
 import { onDefintion } from '../feature/definition/onDefinitions';
 import { createDiagnostics } from '../feature/diagnostics/diagnostics';

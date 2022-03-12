@@ -12,7 +12,7 @@ import {
   DocumentSettings,
   ExtensionSettings,
   IAureliaProjectSetting,
-} from '../feature/configuration/DocumentSettings';
+} from '../configuration/DocumentSettings';
 
 const logger = new Logger('AureliaProject');
 

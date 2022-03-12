@@ -3,7 +3,7 @@ import { Container } from 'aurelia-dependency-injection';
 import {
   ExtensionSettings,
   DocumentSettings,
-} from '../feature/configuration/DocumentSettings';
+} from '../configuration/DocumentSettings';
 import { AureliaProjects } from './AureliaProjects';
 
 export function initDependencyInjection(

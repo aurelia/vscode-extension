@@ -11,8 +11,8 @@ import { CustomElementRegion } from '../../aot/parser/regions/ViewRegions';
 import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
+import { DocumentSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';
-import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaRenameFromViewModel } from './aureliaRename';
 
 export async function onRenameRequest(
@@ -54,7 +54,7 @@ export async function onRenameRequest(
       region,
       offset
     );
-    if (!isInCustomElementStartTag) {
+    if (isInCustomElementStartTag === false) {
       return normalRename(position, document, newName);
     }
   }

@@ -6,7 +6,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   DocumentSettings,
   ExtensionSettings,
-} from '../../feature/configuration/DocumentSettings';
+} from '../../configuration/DocumentSettings';
 import { UriUtils } from '../view/uri-utils';
 
 export class TextDocumentUtils {

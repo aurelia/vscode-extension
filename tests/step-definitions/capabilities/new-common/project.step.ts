@@ -1,7 +1,7 @@
 import { Logger } from '../../../../server/src/common/logging/logger';
 import { UriUtils } from '../../../../server/src/common/view/uri-utils';
+import { ExtensionSettings } from '../../../../server/src/configuration/DocumentSettings';
 import { Container } from '../../../../server/src/core/container';
-import { ExtensionSettings } from '../../../../server/src/feature/configuration/DocumentSettings';
 import { testError } from '../../../common/errors/TestErrors';
 import {
   FixtureNames,

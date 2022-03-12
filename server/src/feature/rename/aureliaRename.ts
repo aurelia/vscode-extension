@@ -14,9 +14,9 @@ import {
 import { getRelatedFilePath } from '../../common/documens/related';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
+import { DocumentSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { DocumentSettings } from '../configuration/DocumentSettings';
 import {
   getViewModelPathFromTagName,
   performViewModelChanges,

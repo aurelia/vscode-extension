@@ -27,13 +27,13 @@ import {
 import { Logger } from './common/logging/logger';
 import { MyLodash } from './common/MyLodash';
 import { UriUtils } from './common/view/uri-utils';
-import { AureliaProjects } from './core/AureliaProjects';
-import { AureliaServer } from './core/aureliaServer';
-import { globalContainer } from './core/container';
 import {
   ExtensionSettings,
   settingsName,
-} from './feature/configuration/DocumentSettings';
+} from './configuration/DocumentSettings';
+import { AureliaProjects } from './core/AureliaProjects';
+import { AureliaServer } from './core/aureliaServer';
+import { globalContainer } from './core/container';
 
 const logger = new Logger('Server');
 

@@ -6,7 +6,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocumentUtils } from '../common/documens/TextDocumentUtils';
 import { Logger } from '../common/logging/logger';
 import { UriUtils } from '../common/view/uri-utils';
-import { DocumentSettings } from '../feature/configuration/DocumentSettings';
+import { DocumentSettings } from '../configuration/DocumentSettings';
 import { IAureliaBindable, IAureliaComponent } from './aotTypes';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
 import { RegionParser } from './parser/regions/RegionParser';

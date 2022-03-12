@@ -52,7 +52,7 @@ export class ViewRegionUtils {
       const isSameLine = region.sourceCodeLocation.startLine === Number(line);
       if (isSameLine) {
         // Excluded TextInterpolation regions, because text regions start on "line before" in parse5
-        if (region.textValue?.startsWith('\n')) {
+        if ((region.textValue?.startsWith('\n')) === true) {
           return false;
         }
       }
@@ -147,8 +147,8 @@ export class ViewRegionUtils {
   public static isInCustomElementStartTag(
     region: AbstractRegion,
     offset: number
-  ) {
-    if (!CustomElementRegion.is(region)) return;
+  ): boolean {
+    if (!CustomElementRegion.is(region)) return false;
 
     const { startOffset, endOffset } = region.sourceCodeLocation;
     const afterStart = startOffset <= offset;

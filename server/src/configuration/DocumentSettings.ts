@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Connection } from 'vscode-languageserver';
 
-import { Logger } from '../../common/logging/logger';
+import { Logger } from '../common/logging/logger';
 
 const logger = new Logger('DocumentSettings');
 

@@ -2,8 +2,8 @@ import { Container } from 'aurelia-dependency-injection';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Logger } from '../../common/logging/logger';
+import { ExtensionSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';
-import { ExtensionSettings } from '../configuration/DocumentSettings';
 
 const logger = new Logger('initialization');
 
