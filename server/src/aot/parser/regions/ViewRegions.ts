@@ -836,7 +836,7 @@ export class TextInterpolationRegion extends AbstractRegion {
     if (!textLocation) return;
 
     const startOffset = textLocation.startOffset;
-    const { expressions: accessScopes, parts } =
+    const { expressions: accessScopes } =
       ParseExpressionUtil.getAllExpressionsOfKindV2(
         text.text,
         [ExpressionKind.AccessScope, ExpressionKind.CallScope],

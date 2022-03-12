@@ -131,7 +131,7 @@ export async function findRegionsByWord(
 
     try {
       // TODO: Gives parser error for parsing eg './custom-element'
-      if (region.type === ViewRegionType.Import) return;
+      if (region.type === ViewRegionType.Import) return false;
 
       const expressionsWithName = ParseExpressionUtil.getAllExpressionsByName(
         parseInput,
@@ -142,6 +142,7 @@ export async function findRegionsByWord(
       return hasSourceWordInScope;
     } catch (error) {
       console.log(error);
+      return false;
     }
   });
 
