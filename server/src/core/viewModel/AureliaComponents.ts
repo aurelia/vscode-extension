@@ -1,9 +1,9 @@
 import * as Path from 'path';
 
-import { ts } from '@ts-morph/common';
 import { Project } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { IAureliaBindable, IAureliaComponent } from '../../aot/aotTypes';
 import { getAureliaComponentInfoFromClassDeclaration } from '../../aot/getAureliaComponentList';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { Logger } from '../../common/logging/logger';
@@ -11,7 +11,6 @@ import { UriUtils } from '../../common/view/uri-utils';
 import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
 import { RegionParser } from '../regions/RegionParser';
 import { Optional } from '../regions/ViewRegions';
-import { IAureliaBindable, IAureliaComponent } from './AureliaProgram';
 
 const logger = new Logger('AureliaComponents');
 

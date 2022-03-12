@@ -9,13 +9,13 @@ import {
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
 
-import { AureliaClassTypes } from '../../common/constants';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
 import {
   IAureliaClassMember,
   IAureliaComponent,
-  AureliaProgram,
-} from '../../core/viewModel/AureliaProgram';
+} from '../../aot/aotTypes';
+import { AureliaClassTypes } from '../../common/constants';
+import { AbstractRegion } from '../../core/regions/ViewRegions';
+import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 
 export function createCompletionItem(
   classMember: IAureliaClassMember,

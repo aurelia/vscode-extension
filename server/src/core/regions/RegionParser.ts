@@ -3,11 +3,11 @@ import { kebabCase } from '@aurelia/kernel';
 import SaxStream, { TextToken } from 'parse5-sax-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { IAureliaComponent } from '../../aot/aotTypes';
 import { AureliaView, interpolationRegex } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
 import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../feature/configuration/DocumentSettings';
-import { IAureliaComponent } from '../viewModel/AureliaProgram';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,

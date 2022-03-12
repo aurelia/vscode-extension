@@ -30,7 +30,7 @@ import {
 } from '../common/constants';
 import { UriUtils } from '../common/view/uri-utils';
 import { Optional } from '../core/regions/ViewRegions';
-import { IAureliaClassMember, IAureliaComponent } from '../core/viewModel/AureliaProgram';
+import { IAureliaClassMember, IAureliaComponent } from './aotTypes';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,

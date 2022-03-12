@@ -4,6 +4,7 @@ import { DocumentSpan, Project, SyntaxKind } from 'ts-morph';
 import { LocationLink, Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { IAureliaComponent } from '../../aot/aotTypes';
 import { AureliaUtils } from '../../common/AureliaUtils';
 import { getWordAtOffset } from '../../common/documens/find-source-word';
 import { PositionUtils } from '../../common/documens/PositionUtils';
@@ -21,10 +22,7 @@ import {
   ViewRegionSubType,
   ViewRegionType,
 } from '../../core/regions/ViewRegions';
-import {
-  AureliaProgram,
-  IAureliaComponent,
-} from '../../core/viewModel/AureliaProgram';
+import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 
 /**
@@ -196,7 +194,8 @@ async function getAureliaClassMemberDefinitions_OtherViewBindables(
     (region, document) => {
       region.data?.forEach((subRegion) => {
         if (subRegion.type !== ViewRegionType.BindableAttribute) return;
-        if (!AureliaUtils.isSameVariableName(subRegion.regionValue, sourceWord)) return;
+        if (!AureliaUtils.isSameVariableName(subRegion.regionValue, sourceWord))
+          return;
 
         const locationLink = createLocationLinkFromRegion(subRegion, document);
         if (!locationLink) return;
