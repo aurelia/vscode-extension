@@ -33,9 +33,8 @@ export class AureliaProgram {
 
   public initAureliaComponents(projectOptions: IAureliaProjectSetting): void {
     this.determineFilePaths(projectOptions);
-    const filePaths = this.getFilePaths();
 
-    this.aureliaComponents.init(this.tsMorphProject.get(), filePaths);
+    this.aureliaComponents.init(this.tsMorphProject.get(), this.getFilePaths());
   }
 
   /**

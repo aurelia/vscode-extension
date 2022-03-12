@@ -11,6 +11,7 @@ import { IAureliaBindable, IAureliaComponent } from './aotTypes';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
 import { RegionParser } from './parser/regions/RegionParser';
 import { Optional } from './parser/regions/ViewRegions';
+import { ClassStaticAnalysis } from './staticAnalysis/ClassStaticAnalysis';
 
 const logger = new Logger('AureliaComponents');
 
@@ -28,9 +29,8 @@ export class AureliaComponents {
       return;
     }
 
-    const componentListWithoutRegions = initComponentList(project, filePaths);
     const enhancedComponents = this.enhanceWithViewRegions(
-      componentListWithoutRegions
+      initComponentList(project, filePaths)
     );
 
     this.set(enhancedComponents);
@@ -63,10 +63,11 @@ export class AureliaComponents {
             if (sourceFile === undefined) return;
 
             /* export class MyCustomElement */
-            const componentInfo = getAureliaComponentInfoFromClassDeclaration(
-              sourceFile,
-              checker
-            );
+            const componentInfo =
+              ClassStaticAnalysis.getAureliaComponentInfoFromClassDeclaration(
+                sourceFile,
+                checker
+              );
             if (!componentInfo) return;
             componentListWithoutRegions.push(componentInfo);
 
