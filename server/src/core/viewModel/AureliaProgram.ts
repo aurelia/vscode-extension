@@ -86,7 +86,6 @@ export class AureliaProgram {
   }
 
   public initAureliaComponents(projectOptions: IAureliaProjectSetting): void {
-    const program = this.getProgram();
     this.determineFilePaths(projectOptions);
     const filePaths = this.getFilePaths();
 

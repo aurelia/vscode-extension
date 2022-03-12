@@ -15,10 +15,11 @@ import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaCompone
 
 const logger = new Logger('AureliaComponents');
 
+type ComponentListWithoutRegions = Optional<IAureliaComponent, 'viewRegions'>;
+
 export class AureliaComponents {
   private components: IAureliaComponent[] = [];
   private bindables: IAureliaBindable[] = [];
-  private checker: ts.TypeChecker;
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
@@ -27,62 +28,62 @@ export class AureliaComponents {
       logger.log('Error: No Aurelia files found.');
       return;
     }
-    if (this.checker === undefined) {
-      this.checker = project.getTypeChecker().compilerObject;
-    }
 
-    const componentListWithoutRegions: Optional<
-      IAureliaComponent,
-      'viewRegions'
-    >[] = [];
+    const componentListWithoutRegions = initComponentList(project, filePaths);
+    const enhancedComponents = this.enhanceWithViewRegions(
+      componentListWithoutRegions
+    );
 
-    filePaths.forEach((path) => {
-      if (path == null) return;
+    this.set(enhancedComponents);
+    this.setBindables(enhancedComponents);
 
-      const isDTs = Path.basename(path).endsWith('.d.ts');
-      if (isDTs) return;
-      const isNodeModules = path.includes('node_modules');
-      if (isNodeModules) return;
+    logComponentList(enhancedComponents);
+    this.logInfoAboutComponents(enhancedComponents);
 
-      const ext = Path.extname(path);
-      switch (ext) {
-        case '.js':
-        case '.ts': {
-          const sourceFile = project.getSourceFile(path)?.compilerNode;
-          if (sourceFile === undefined) {
-            // logger.log(`Source file ignored by the extension: ${path}`, {
-            //   logLevel: 'DEBUG',
-            // });
-            return;
+    return;
+
+    function initComponentList(
+      project: Project,
+      filePaths: string[]
+    ): ComponentListWithoutRegions[] {
+      const checker = project.getTypeChecker().compilerObject;
+      const componentListWithoutRegions: ComponentListWithoutRegions[] = [];
+
+      filePaths.forEach((path) => {
+        if (path == null) return;
+        const isDTs = Path.basename(path).endsWith('.d.ts');
+        if (isDTs) return;
+        const isNodeModules = path.includes('node_modules');
+        if (isNodeModules) return;
+
+        const ext = Path.extname(path);
+        switch (ext) {
+          case '.js':
+          case '.ts': {
+            const sourceFile = project.getSourceFile(path)?.compilerNode;
+            if (sourceFile === undefined) return;
+
+            /* export class MyCustomElement */
+            const componentInfo = getAureliaComponentInfoFromClassDeclaration(
+              sourceFile,
+              checker
+            );
+            if (!componentInfo) return;
+            componentListWithoutRegions.push(componentInfo);
+
+            break;
           }
-
-          /* export class MyCustomElement */
-          const componentInfo = getAureliaComponentInfoFromClassDeclaration(
-            sourceFile,
-            this.checker
-          );
-          if (!componentInfo) return;
-          componentListWithoutRegions.push(componentInfo);
-
-          break;
+          case '.html': {
+            break;
+          }
+          default: {
+            logger.log(`Unsupported extension: ${ext}`);
+          }
         }
-        case '.html': {
-          break;
-        }
-        default: {
-          logger.log(`Unsupported extension: ${ext}`);
-        }
-      }
-    });
+      });
 
-    const enhanced = this.enhanceWithViewRegions(componentListWithoutRegions);
-
-    logComponentList(enhanced);
-
-    this.set(enhanced);
-    this.setBindables(enhanced);
-
-    this.logInfoAboutComponents(enhanced);
+      return componentListWithoutRegions;
+    }
   }
 
   public set(components: IAureliaComponent[]): void {

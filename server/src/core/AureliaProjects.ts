@@ -225,7 +225,7 @@ export class AureliaProjects {
   ) {
     const aureliaProjects = this.getAll();
 
-    aureliaProjects.every(async (aureliaProject) => {
+    aureliaProjects.forEach((aureliaProject) => {
       const { tsConfigPath } = aureliaProject;
       if (!shouldActivate(documentsPaths, tsConfigPath)) return;
 
@@ -242,6 +242,8 @@ export class AureliaProjects {
 
       setAureliaProgramToProject(aureliaProgram, tsConfigPath);
     });
+
+    return;
 
     function setAureliaProgramToProject(
       aureliaProgram: AureliaProgram,
