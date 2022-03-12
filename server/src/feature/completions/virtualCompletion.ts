@@ -36,10 +36,10 @@ import {
   TextDocumentPositionParams,
 } from 'vscode-languageserver';
 
+import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import { AsyncReturnType } from '../../common/global';
 import { UriUtils } from '../../common/view/uri-utils';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,

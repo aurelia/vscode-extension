@@ -29,8 +29,8 @@ import {
   AureliaViewModel,
 } from '../common/constants';
 import { UriUtils } from '../common/view/uri-utils';
-import { Optional } from '../core/regions/ViewRegions';
 import { IAureliaClassMember, IAureliaComponent } from './aotTypes';
+import { Optional } from './parser/regions/ViewRegions';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,

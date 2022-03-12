@@ -5,12 +5,12 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { IAureliaBindable, IAureliaComponent } from '../../aot/aotTypes';
 import { getAureliaComponentInfoFromClassDeclaration } from '../../aot/getAureliaComponentList';
+import { RegionParser } from '../../aot/parser/regions/RegionParser';
+import { Optional } from '../../aot/parser/regions/ViewRegions';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { Logger } from '../../common/logging/logger';
 import { UriUtils } from '../../common/view/uri-utils';
 import { DocumentSettings } from '../../feature/configuration/DocumentSettings';
-import { RegionParser } from '../regions/RegionParser';
-import { Optional } from '../regions/ViewRegions';
 
 const logger = new Logger('AureliaComponents');
 

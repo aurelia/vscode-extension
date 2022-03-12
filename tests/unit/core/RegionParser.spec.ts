@@ -1,14 +1,14 @@
 /* eslint-disable no-template-curly-in-string */
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { AureliaView } from '../../../server/src/common/constants';
-import { ViewRegionUtils } from '../../../server/src/common/documens/ViewRegionUtils';
-import { RegionParser } from '../../../server/src/core/regions/RegionParser';
+import { RegionParser } from '../../../server/src/aot/parser/regions/RegionParser';
 import {
   RepeatForRegion,
   ViewRegionSubType,
   ViewRegionType,
-} from '../../../server/src/core/regions/ViewRegions';
+} from '../../../server/src/aot/parser/regions/ViewRegions';
+import { AureliaView } from '../../../server/src/common/constants';
+import { ViewRegionUtils } from '../../../server/src/common/documens/ViewRegionUtils';
 import {
   TestCasesMapFileBased,
   getEmptyShared,

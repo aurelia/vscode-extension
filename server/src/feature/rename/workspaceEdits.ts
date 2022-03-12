@@ -6,26 +6,26 @@ import { camelCase, kebabCase } from 'lodash';
 import { WorkspaceEdit, TextEdit, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
-import { Logger } from '../../common/logging/logger';
-import { UriUtils } from '../../common/view/uri-utils';
-import { Container } from '../../core/container';
 import {
   findAllBindableAttributeRegions,
   findRegionsByWord,
   forEachRegionOfType,
-} from '../../core/regions/findSpecificRegion';
+} from '../../aot/parser/regions/findSpecificRegion';
 import {
   getRangesForAccessScopeFromRegionByName,
   getRangeFromDocumentOffsets,
   getRangeFromLocation,
   getRangeFromRegion,
   getStartTagNameRange,
-} from '../../core/regions/rangeFromRegion';
+} from '../../aot/parser/regions/rangeFromRegion';
 import {
   ViewRegionSubType,
   ViewRegionType,
-} from '../../core/regions/ViewRegions';
+} from '../../aot/parser/regions/ViewRegions';
+import { CUSTOM_ELEMENT_SUFFIX } from '../../common/constants';
+import { Logger } from '../../common/logging/logger';
+import { UriUtils } from '../../common/view/uri-utils';
+import { Container } from '../../core/container';
 import { getClass, getClassMember } from '../../core/tsMorph/tsMorphClass';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { updateTsMorphProjectWithEditingFiles } from '../definition/aureliaDefintion';

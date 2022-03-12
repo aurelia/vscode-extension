@@ -3,13 +3,13 @@ import { pathToFileURL } from 'url';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { LocationLink, Range } from 'vscode-languageserver';
 
+import { RegionParser } from '../../aot/parser/regions/RegionParser';
+import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { ParseHtml } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { RegionParser } from '../../core/regions/RegionParser';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import { aureliaDefinitionFromViewModel } from './aureliaDefintion';
 

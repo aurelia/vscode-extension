@@ -4,12 +4,12 @@ import { camelCase } from 'lodash';
 import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { findSourceWord } from '../../../common/documens/find-source-word';
-import { UriUtils } from '../../../common/view/uri-utils';
-import { getBindablesCompletion } from '../../../feature/completions/completions';
-import { DefinitionResult } from '../../../feature/definition/getDefinition';
-import { getVirtualDefinition } from '../../../feature/definition/virtualDefinition';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { findSourceWord } from '../../../../common/documens/find-source-word';
+import { UriUtils } from '../../../../common/view/uri-utils';
+import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
+import { getBindablesCompletion } from '../../../../feature/completions/completions';
+import { DefinitionResult } from '../../../../feature/definition/getDefinition';
+import { getVirtualDefinition } from '../../../../feature/definition/virtualDefinition';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

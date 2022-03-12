@@ -1,17 +1,17 @@
 import { DocumentSymbol, Range } from 'vscode-languageserver';
 import { Position, SymbolKind } from 'vscode-languageserver-types';
 
-import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
-import { UriUtils } from '../../common/view/uri-utils';
-import { AureliaProjects } from '../../core/AureliaProjects';
-import { Container } from '../../core/container';
-import { RegionParser } from '../../core/regions/RegionParser';
+import { RegionParser } from '../../aot/parser/regions/RegionParser';
 import {
   AbstractRegion,
   CustomElementRegion,
   ViewRegionSubType,
   ViewRegionType,
-} from '../../core/regions/ViewRegions';
+} from '../../aot/parser/regions/ViewRegions';
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
+import { UriUtils } from '../../common/view/uri-utils';
+import { AureliaProjects } from '../../core/AureliaProjects';
+import { Container } from '../../core/container';
 
 export async function onDocumentSymbol(
   container: Container,

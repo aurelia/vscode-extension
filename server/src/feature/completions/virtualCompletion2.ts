@@ -9,16 +9,16 @@ import {
 } from 'vscode-languageserver';
 
 import {
+  AbstractRegion,
+  RepeatForRegion,
+} from '../../aot/parser/regions/ViewRegions';
+import {
   AureliaLSP,
   interpolationRegex,
   TemplateAttributeTriggers,
 } from '../../common/constants';
 import { OffsetUtils } from '../../common/documens/OffsetUtils';
 import { StringUtils } from '../../common/string/StringUtils';
-import {
-  AbstractRegion,
-  RepeatForRegion,
-} from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { AureliaCompletionItem } from './virtualCompletion';
 

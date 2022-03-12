@@ -2,7 +2,7 @@ import { StepDefinitions } from 'jest-cucumber';
 
 import { IAureliaComponent } from '../../../server/src/aot/aotTypes';
 import { getAureliaComponentInfoFromClassDeclaration } from '../../../server/src/aot/getAureliaComponentList';
-import { Optional } from '../../../server/src/core/regions/ViewRegions';
+import { Optional } from '../../../server/src/aot/parser/regions/ViewRegions';
 import { myMockServer } from '../capabilities/new-common/project.step';
 
 export const IAureliaComponentSteps: StepDefinitions = ({ when, then }) => {

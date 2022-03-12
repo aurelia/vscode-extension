@@ -2,13 +2,13 @@ import { Container } from 'aurelia-dependency-injection';
 import { CompletionParams, Position, TextDocumentPositionParams } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { aureliaVirtualComplete_vNext } from '../../../feature/completions/virtualCompletion2';
-import { getAccessScopeDefinition } from '../../../feature/definition/accessScopeDefinition';
-import { DefinitionResult } from '../../../feature/definition/getDefinition';
-import { getAccessScopeHover } from '../../../feature/hover/accessScopeHover';
-import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
-import { VirtualLanguageService } from '../../../feature/virtual/virtualSourceFile';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
+import { aureliaVirtualComplete_vNext } from '../../../../feature/completions/virtualCompletion2';
+import { getAccessScopeDefinition } from '../../../../feature/definition/accessScopeDefinition';
+import { DefinitionResult } from '../../../../feature/definition/getDefinition';
+import { getAccessScopeHover } from '../../../../feature/hover/accessScopeHover';
+import { aureliaRenameFromView } from '../../../../feature/rename/aureliaRename';
+import { VirtualLanguageService } from '../../../../feature/virtual/virtualSourceFile';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

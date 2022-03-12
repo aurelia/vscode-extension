@@ -1,6 +1,6 @@
 import { TextDocument, Position } from 'vscode-languageserver';
 
-import { AbstractRegion } from '../../core/regions/ViewRegions';
+import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualLanguageService,

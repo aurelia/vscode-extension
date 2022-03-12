@@ -6,20 +6,20 @@ import {
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { AbstractRegionLanguageService } from '../../aot/parser/regions/languageServer/AbstractRegionLanguageService';
+import { AureliaHtmlLanguageService } from '../../aot/parser/regions/languageServer/AureliaHtmlLanguageService';
+import { RegionParser } from '../../aot/parser/regions/RegionParser';
+import {
+  AbstractRegion,
+  BindableAttributeRegion,
+  CustomElementRegion,
+} from '../../aot/parser/regions/ViewRegions';
 import { TemplateAttributeTriggers } from '../../common/constants';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { Logger } from '../../common/logging/logger';
 import { checkInsideTag, ParseHtml } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { AbstractRegionLanguageService } from '../../core/regions/languageServer/AbstractRegionLanguageService';
-import { AureliaHtmlLanguageService } from '../../core/regions/languageServer/AureliaHtmlLanguageService';
-import { RegionParser } from '../../core/regions/RegionParser';
-import {
-  AbstractRegion,
-  BindableAttributeRegion,
-  CustomElementRegion,
-} from '../../core/regions/ViewRegions';
 import {
   createAureliaTemplateAttributeKeywordCompletions,
   createAureliaTemplateAttributeCompletions,
@@ -80,7 +80,7 @@ export async function onCompletion(
     regions = RegionParser.parse(document, allComponents);
     // regions = existingRegions;
   } catch (error) {
-    error /* ? */
+    error; /* ? */
     // /* prettier-ignore */ console.log('TCL: error', error);
     // /* prettier-ignore */ console.log('TCL: (error as Error).stack', (error as Error).stack);
   }

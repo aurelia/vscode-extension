@@ -2,9 +2,9 @@ import { Container } from 'aurelia-dependency-injection';
 import { Range } from 'vscode-languageserver-protocol';
 import { Position, SymbolInformation } from 'vscode-languageserver-types';
 
+import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { convertToSymbolName } from './onDocumentSymbol';
 
 // export function onWorkspaceSymbol(container: Container, query: string) {

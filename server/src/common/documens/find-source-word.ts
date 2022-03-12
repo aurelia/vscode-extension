@@ -1,4 +1,4 @@
-import { AbstractRegion } from '../../core/regions/ViewRegions';
+import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { whiteSpaceRegex, WORD_SEPARATORS } from '../constants';
 
 interface WordInfo {

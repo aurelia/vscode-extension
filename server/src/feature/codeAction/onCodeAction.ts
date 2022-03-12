@@ -2,13 +2,13 @@ import { TextDocuments } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { AbstractRegionLanguageService } from '../../aot/parser/regions/languageServer/AbstractRegionLanguageService';
+import { AureliaHtmlLanguageService } from '../../aot/parser/regions/languageServer/AureliaHtmlLanguageService';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { AbstractRegionLanguageService } from '../../core/regions/languageServer/AbstractRegionLanguageService';
-import { AureliaHtmlLanguageService } from '../../core/regions/languageServer/AureliaHtmlLanguageService';
 
 export async function onCodeAction(
   container: Container,

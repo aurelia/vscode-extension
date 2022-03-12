@@ -3,14 +3,14 @@ import { pathToFileURL } from 'url';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { ExpressionKind } from '../../common/@aurelia-runtime-patch/src';
-import { AureliaUtils } from '../../common/AureliaUtils';
+import { ExpressionKind } from '../../../common/@aurelia-runtime-patch/src';
+import { AureliaUtils } from '../../../common/AureliaUtils';
 import {
   TypeToClass,
   ViewRegionUtils,
-} from '../../common/documens/ViewRegionUtils';
-import { ParseExpressionUtil } from '../../common/parseExpression/ParseExpressionUtil';
-import { AureliaProgram } from '../viewModel/AureliaProgram';
+} from '../../../common/documens/ViewRegionUtils';
+import { ParseExpressionUtil } from '../../../common/parseExpression/ParseExpressionUtil';
+import { AureliaProgram } from '../../../core/viewModel/AureliaProgram';
 import { RegionParser } from './RegionParser';
 import { AbstractRegion, RepeatForRegion, ViewRegionType } from './ViewRegions';
 

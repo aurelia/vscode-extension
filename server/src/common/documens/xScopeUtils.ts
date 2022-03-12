@@ -1,4 +1,4 @@
-import { ViewRegionInfoV2 } from '../../core/regions/ViewRegions';
+import { ViewRegionInfoV2 } from '../../aot/parser/regions/ViewRegions';
 
 export class XScopeUtils {
   public static getScopeByOffset(

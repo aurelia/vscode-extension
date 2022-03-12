@@ -5,6 +5,7 @@ import { camelCase, kebabCase } from 'lodash';
 import { Position } from 'vscode-html-languageservice';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { AbstractRegion, ViewRegionType } from '../../aot/parser/regions/ViewRegions';
 import {
   findSourceWord,
   getWordAtOffset,
@@ -14,7 +15,6 @@ import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { AbstractRegion, ViewRegionType } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 import {

@@ -3,9 +3,9 @@ import * as path from 'path';
 
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 
-import { UriUtils } from '../../../common/view/uri-utils';
-import { DefinitionResult } from '../../../feature/definition/getDefinition';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { UriUtils } from '../../../../common/view/uri-utils';
+import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
+import { DefinitionResult } from '../../../../feature/definition/getDefinition';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

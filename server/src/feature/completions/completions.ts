@@ -13,8 +13,8 @@ import {
   IAureliaClassMember,
   IAureliaComponent,
 } from '../../aot/aotTypes';
+import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { AureliaClassTypes } from '../../common/constants';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 
 export function createCompletionItem(

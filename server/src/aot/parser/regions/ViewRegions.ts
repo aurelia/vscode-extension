@@ -9,15 +9,15 @@ import {
   ExpressionType,
   Interpolation,
   parseExpression,
-} from '../../common/@aurelia-runtime-patch/src';
-import { SourceCodeLocation as ASTSourceCodeLocation } from '../../common/@aurelia-runtime-patch/src/binding/ast';
-import { AureliaView } from '../../common/constants';
-import { DiagnosticMessages } from '../../common/diagnosticMessages/DiagnosticMessages';
+} from '../../../common/@aurelia-runtime-patch/src';
+import { SourceCodeLocation as ASTSourceCodeLocation } from '../../../common/@aurelia-runtime-patch/src/binding/ast';
+import { AureliaView } from '../../../common/constants';
+import { DiagnosticMessages } from '../../../common/diagnosticMessages/DiagnosticMessages';
 import {
   findAllExpressionRecursive,
   ParseExpressionUtil,
-} from '../../common/parseExpression/ParseExpressionUtil';
-import { getBindableNameFromAttritute } from '../../common/template/aurelia-attributes';
+} from '../../../common/parseExpression/ParseExpressionUtil';
+import { getBindableNameFromAttritute } from '../../../common/template/aurelia-attributes';
 import { AbstractRegionLanguageService } from './languageServer/AbstractRegionLanguageService';
 import { AttributeInterpolationLanguageService } from './languageServer/AttributeInterpolationLanguageService';
 import { AttributeLanguageService } from './languageServer/AttributeLanguageService';

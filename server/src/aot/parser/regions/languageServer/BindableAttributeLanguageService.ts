@@ -1,12 +1,12 @@
 import { kebabCase } from '@aurelia/kernel';
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 
-import { TextDocumentUtils } from '../../../common/documens/TextDocumentUtils';
-import { UriUtils } from '../../../common/view/uri-utils';
-import { DefinitionResult } from '../../../feature/definition/getDefinition';
-import { aureliaRenameFromView } from '../../../feature/rename/aureliaRename';
-import { Container } from '../../container';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { TextDocumentUtils } from '../../../../common/documens/TextDocumentUtils';
+import { UriUtils } from '../../../../common/view/uri-utils';
+import { Container } from '../../../../core/container';
+import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
+import { DefinitionResult } from '../../../../feature/definition/getDefinition';
+import { aureliaRenameFromView } from '../../../../feature/rename/aureliaRename';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

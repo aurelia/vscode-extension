@@ -11,7 +11,7 @@ import {
   TextInterpolationRegion,
   ValueConverterRegion,
   ViewRegionType,
-} from '../../core/regions/ViewRegions';
+} from '../../aot/parser/regions/ViewRegions';
 import { OffsetUtils } from './OffsetUtils';
 import { PositionUtils } from './PositionUtils';
 

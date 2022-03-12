@@ -2,8 +2,8 @@ import { ts } from 'ts-morph';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
 
+import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { UriUtils } from '../../common/view/uri-utils';
-import { AbstractRegion } from '../../core/regions/ViewRegions';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 
 export const VIRTUAL_SOURCE_FILENAME = 'virtual.ts';

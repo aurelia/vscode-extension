@@ -1,7 +1,7 @@
 import { ts } from 'ts-morph';
 
 import { AureliaClassTypes } from '../common/constants';
-import { AbstractRegion } from '../core/regions/ViewRegions';
+import { AbstractRegion } from './parser/regions/ViewRegions';
 
 export interface IAureliaClassMember {
   name: string;

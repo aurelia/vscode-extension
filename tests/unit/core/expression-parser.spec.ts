@@ -1,11 +1,11 @@
 /* eslint-disable no-template-curly-in-string */
 
+import { ViewRegionType } from '../../../server/src/aot/parser/regions/ViewRegions';
 import {
   ExpressionKind,
   ExpressionType,
 } from '../../../server/src/common/@aurelia-runtime-patch/src';
 import { ParseExpressionUtil } from '../../../server/src/common/parseExpression/ParseExpressionUtil';
-import { ViewRegionType } from '../../../server/src/core/regions/ViewRegions';
 import {
   andImOnTheLine,
   COLLECTION_SPLIT,

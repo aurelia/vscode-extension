@@ -10,12 +10,12 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CompletionItem } from 'vscode-languageserver-types';
 
-import { AureliaClassTypes, CodeActionMap } from '../../../common/constants';
-import { PositionUtils } from '../../../common/documens/PositionUtils';
-import { ParseHtml } from '../../../common/view/document-parsing';
-import { AURELIA_KEY_WORD_COMPLETIONS } from '../../../feature/completions/aureliaKeyWordCompletions';
-import { createComponentCompletionList } from '../../../feature/completions/completions';
-import { AureliaProgram } from '../../viewModel/AureliaProgram';
+import { AureliaClassTypes, CodeActionMap } from '../../../../common/constants';
+import { PositionUtils } from '../../../../common/documens/PositionUtils';
+import { ParseHtml } from '../../../../common/view/document-parsing';
+import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
+import { AURELIA_KEY_WORD_COMPLETIONS } from '../../../../feature/completions/aureliaKeyWordCompletions';
+import { createComponentCompletionList } from '../../../../feature/completions/completions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
 export class AureliaHtmlLanguageService

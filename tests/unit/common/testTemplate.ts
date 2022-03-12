@@ -1,8 +1,8 @@
-import { RegionParser } from '../../../server/src/core/regions/RegionParser';
+import { RegionParser } from '../../../server/src/aot/parser/regions/RegionParser';
 import {
   ViewRegionType,
   AbstractRegion,
-} from '../../../server/src/core/regions/ViewRegions';
+} from '../../../server/src/aot/parser/regions/ViewRegions';
 import { getPathsFromFileNames } from '../../common/file-path-mocks';
 import {
   FixtureNames,

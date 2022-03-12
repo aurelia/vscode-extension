@@ -2,7 +2,7 @@ import { RenameLocation } from 'ts-morph';
 import { Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
+import { TextDocumentUtils } from '../../../common/documens/TextDocumentUtils';
 import { AbstractRegion, RepeatForRegion } from './ViewRegions';
 
 export function getRangesForAccessScopeFromRegionByName(

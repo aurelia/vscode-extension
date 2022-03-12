@@ -4,15 +4,15 @@
 
 import { Position, TextDocument } from 'vscode-languageserver';
 
-import { findSourceWord } from '../../common/documens/find-source-word';
-import { getRelatedFilePath } from '../../common/documens/related';
-import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
-import { UriUtils } from '../../common/view/uri-utils';
 import {
   AbstractRegion,
   RepeatForRegion,
   ViewRegionType,
-} from '../../core/regions/ViewRegions';
+} from '../../aot/parser/regions/ViewRegions';
+import { findSourceWord } from '../../common/documens/find-source-word';
+import { getRelatedFilePath } from '../../common/documens/related';
+import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
+import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DefinitionResult } from './getDefinition';
 
