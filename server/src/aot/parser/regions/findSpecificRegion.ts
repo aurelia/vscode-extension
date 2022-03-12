@@ -10,7 +10,7 @@ import {
   ViewRegionUtils,
 } from '../../../common/documens/ViewRegionUtils';
 import { ParseExpressionUtil } from '../../../common/parseExpression/ParseExpressionUtil';
-import { AureliaProgram } from '../../../core/viewModel/AureliaProgram';
+import { AureliaProgram } from '../../AureliaProgram';
 import { RegionParser } from './RegionParser';
 import { AbstractRegion, RepeatForRegion, ViewRegionType } from './ViewRegions';
 

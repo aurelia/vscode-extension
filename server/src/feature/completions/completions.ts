@@ -12,9 +12,9 @@ import {
   IAureliaClassMember,
   IAureliaComponent,
 } from '../../aot/aotTypes';
+import { AureliaProgram } from '../../aot/AureliaProgram';
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { AureliaClassTypes } from '../../common/constants';
-import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 
 export function createCompletionItem(
   classMember: IAureliaClassMember,

@@ -2,12 +2,12 @@ import { Position } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaClassTypes, AureliaViewModel } from '../../../../common/constants';
-import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { createValueConverterCompletion } from '../../../../feature/completions/completions';
 import {
   AureliaCompletionItem,
   getVirtualViewModelCompletionSupplyContent,
 } from '../../../../feature/completions/virtualCompletion';
+import { AureliaProgram } from '../../../AureliaProgram';
 import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion, ValueConverterRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';

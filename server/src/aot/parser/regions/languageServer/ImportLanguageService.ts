@@ -4,7 +4,7 @@ import * as path from 'path';
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 
 import { UriUtils } from '../../../../common/view/uri-utils';
-import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
+import { AureliaProgram } from '../../../AureliaProgram';
 import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';

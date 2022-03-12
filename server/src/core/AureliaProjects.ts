@@ -5,6 +5,7 @@ import * as fastGlob from 'fast-glob';
 import { Project, ts } from 'ts-morph';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { AureliaProgram } from '../aot/AureliaProgram';
 import { Logger } from '../common/logging/logger';
 import { UriUtils } from '../common/view/uri-utils';
 import {
@@ -12,7 +13,6 @@ import {
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
-import { AureliaProgram } from './viewModel/AureliaProgram';
 
 const logger = new Logger('AureliaProject');
 

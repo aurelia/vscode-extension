@@ -1,6 +1,6 @@
+import { AureliaProgram } from '../../aot/AureliaProgram';
 import { DefinitionResult } from '../../aot/parser/parser-types';
 import { UriUtils } from '../../common/view/uri-utils';
-import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
   getVirtualLangagueService,

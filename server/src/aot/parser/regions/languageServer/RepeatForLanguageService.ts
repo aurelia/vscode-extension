@@ -2,10 +2,10 @@ import { CompletionParams, Position } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Container } from '../../../../core/container';
-import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { aureliaVirtualComplete_vNext } from '../../../../feature/completions/virtualCompletion2';
 import { getAccessScopeViewModelDefinition } from '../../../../feature/definition/accessScopeDefinition';
 import { aureliaRenameFromView } from '../../../../feature/rename/aureliaRename';
+import { AureliaProgram } from '../../../AureliaProgram';
 import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';

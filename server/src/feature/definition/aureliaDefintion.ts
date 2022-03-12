@@ -5,6 +5,7 @@ import { LocationLink, Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { IAureliaComponent } from '../../aot/aotTypes';
+import { AureliaProgram } from '../../aot/AureliaProgram';
 import {
   findRegionsByWord,
   forEachRegionOfType,
@@ -22,7 +23,6 @@ import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
-import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { DocumentSettings } from '../configuration/DocumentSettings';
 
 /**

@@ -35,11 +35,11 @@ import {
   TextDocument,
 } from 'vscode-languageserver';
 
+import { AureliaProgram } from '../../aot/AureliaProgram';
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { AureliaLSP, VIRTUAL_SOURCE_FILENAME } from '../../common/constants';
 import { AsyncReturnType } from '../../common/global';
 import { UriUtils } from '../../common/view/uri-utils';
-import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import {
   createVirtualFileWithContent,
   createVirtualViewModelSourceFile,

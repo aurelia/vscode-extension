@@ -8,6 +8,7 @@ import {
   CompletionTriggerKind,
 } from 'vscode-languageserver';
 
+import { AureliaProgram } from '../../aot/AureliaProgram';
 import {
   AbstractRegion,
   RepeatForRegion,
@@ -19,7 +20,6 @@ import {
 } from '../../common/constants';
 import { OffsetUtils } from '../../common/documens/OffsetUtils';
 import { StringUtils } from '../../common/string/StringUtils';
-import { AureliaProgram } from '../../core/viewModel/AureliaProgram';
 import { AureliaCompletionItem } from './virtualCompletion';
 
 interface EntryDetailsMapData {

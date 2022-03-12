@@ -5,12 +5,12 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { Container } from '../../../../core/container';
-import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { aureliaVirtualComplete_vNext } from '../../../../feature/completions/virtualCompletion2';
 import { getAccessScopeDefinition } from '../../../../feature/definition/accessScopeDefinition';
 import { getAccessScopeHover } from '../../../../feature/hover/accessScopeHover';
 import { aureliaRenameFromView } from '../../../../feature/rename/aureliaRename';
 import { VirtualLanguageService } from '../../../../feature/virtual/virtualSourceFile';
+import { AureliaProgram } from '../../../AureliaProgram';
 import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
