@@ -1,8 +1,8 @@
 import { StepDefinitions } from 'jest-cucumber';
 
+import { getAureliaComponentInfoFromClassDeclaration } from '../../../server/src/aot/getAureliaComponentList';
 import { Optional } from '../../../server/src/core/regions/ViewRegions';
 import { IAureliaComponent } from '../../../server/src/core/viewModel/AureliaProgram';
-import { getAureliaComponentInfoFromClassDeclaration } from '../../../server/src/core/viewModel/getAureliaComponentList';
 import { myMockServer } from '../capabilities/new-common/project.step';
 
 export const IAureliaComponentSteps: StepDefinitions = ({ when, then }) => {

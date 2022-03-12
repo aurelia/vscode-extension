@@ -21,16 +21,16 @@ import * as Path from 'path';
 import { kebabCase } from 'lodash';
 import { SyntaxKind, ts } from 'ts-morph';
 
-import { getElementNameFromClassDeclaration } from '../../common/className';
+import { getElementNameFromClassDeclaration } from '../common/className';
 import {
   VALUE_CONVERTER_SUFFIX,
   AureliaClassTypes,
   AureliaDecorator,
   AureliaViewModel,
-} from '../../common/constants';
-import { UriUtils } from '../../common/view/uri-utils';
-import { Optional } from '../regions/ViewRegions';
-import { IAureliaClassMember, IAureliaComponent } from './AureliaProgram';
+} from '../common/constants';
+import { UriUtils } from '../common/view/uri-utils';
+import { Optional } from '../core/regions/ViewRegions';
+import { IAureliaClassMember, IAureliaComponent } from '../core/viewModel/AureliaProgram';
 
 export function getAureliaComponentInfoFromClassDeclaration(
   sourceFile: ts.SourceFile,
@@ -353,7 +353,7 @@ function classDeclarationHasUseViewOrNoView(
 /**
  * [refactor]: also get other decorators
  */
-export function getCustomElementDecorator(
+function getCustomElementDecorator(
   classDeclaration: ts.ClassDeclaration
 ) {
   const target = classDeclaration.decorators?.find((decorator) => {
