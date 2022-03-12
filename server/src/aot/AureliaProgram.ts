@@ -4,12 +4,12 @@ import { ts } from 'ts-morph';
 
 import { UriUtils } from '../common/view/uri-utils';
 import { TsMorphProject } from '../core/tsMorph/AureliaTsMorph';
-import { AureliaComponents } from '../core/viewModel/AureliaComponents';
 import {
   defaultProjectOptions,
   DocumentSettings,
   IAureliaProjectSetting,
 } from '../feature/configuration/DocumentSettings';
+import { AureliaComponents } from './AureliaComponents';
 
 // const logger = new Logger('AureliaProgram');
 
