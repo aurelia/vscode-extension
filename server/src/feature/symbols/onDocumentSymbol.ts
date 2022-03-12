@@ -1,7 +1,6 @@
 import { DocumentSymbol, Range } from 'vscode-languageserver';
 import { Position, SymbolKind } from 'vscode-languageserver-types';
 
-import { RegionParser } from '../../aot/parser/regions/RegionParser';
 import {
   AbstractRegion,
   CustomElementRegion,

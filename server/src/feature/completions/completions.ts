@@ -6,7 +6,6 @@ import {
   InsertTextFormat,
   MarkupKind,
   TextDocument,
-  TextDocumentPositionParams,
 } from 'vscode-languageserver';
 
 import {

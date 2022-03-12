@@ -7,8 +7,6 @@ import {
   CallScopeExpression,
   ExpressionKind,
   ExpressionType,
-  Interpolation,
-  parseExpression,
 } from '../../../common/@aurelia-runtime-patch/src';
 import { SourceCodeLocation as ASTSourceCodeLocation } from '../../../common/@aurelia-runtime-patch/src/binding/ast';
 import { AureliaView } from '../../../common/constants';

@@ -4,7 +4,6 @@ import {
   Command,
   Position,
   Range,
-  TextDocumentPositionParams,
   TextEdit,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';

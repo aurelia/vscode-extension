@@ -1,8 +1,7 @@
-import { Position, TextDocumentPositionParams } from 'vscode-languageserver';
+import { Position } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaClassTypes, AureliaViewModel } from '../../../../common/constants';
-import { ViewRegionUtils } from '../../../../common/documens/ViewRegionUtils';
 import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';
 import { createValueConverterCompletion } from '../../../../feature/completions/completions';
 import {
@@ -10,7 +9,6 @@ import {
   getVirtualViewModelCompletionSupplyContent,
 } from '../../../../feature/completions/virtualCompletion';
 import { DefinitionResult } from '../../../../feature/definition/getDefinition';
-import { RegionParser } from '../RegionParser';
 import { AbstractRegion, ValueConverterRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 

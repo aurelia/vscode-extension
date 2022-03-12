@@ -27,7 +27,6 @@ export class BindableAttributeLanguageService
     );
     if (!targetComponent) return;
 
-    const offset = document.offsetAt(position);
     const targetMember = targetComponent?.classMembers?.find((member) => {
       const correctNamingConvetion =
         kebabCase(member.name) === kebabCase(region.regionValue ?? '');

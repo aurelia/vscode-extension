@@ -33,7 +33,6 @@ import {
   InsertTextFormat,
   MarkupKind,
   TextDocument,
-  TextDocumentPositionParams,
 } from 'vscode-languageserver';
 
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';

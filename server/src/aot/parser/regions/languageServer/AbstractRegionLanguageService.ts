@@ -1,6 +1,5 @@
 import {
   Diagnostic,
-  TextDocumentPositionParams,
   CompletionList,
   Position,
   WorkspaceEdit,

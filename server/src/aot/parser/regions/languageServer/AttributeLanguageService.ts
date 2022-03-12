@@ -1,5 +1,5 @@
 import { Container } from 'aurelia-dependency-injection';
-import { CompletionParams, Position, TextDocumentPositionParams } from 'vscode-languageserver';
+import { CompletionParams, Position } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaProgram } from '../../../../core/viewModel/AureliaProgram';

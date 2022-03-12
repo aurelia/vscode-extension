@@ -1,7 +1,6 @@
 import {
   CompletionParams,
   Position,
-  TextDocumentPositionParams,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
