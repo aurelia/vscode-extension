@@ -18,12 +18,10 @@ interface DecoratorInfo {
 import * as fs from 'fs';
 import * as Path from 'path';
 
-import { kebabCase } from 'lodash';
 import { SyntaxKind, ts } from 'ts-morph';
 
 import { getElementNameFromClassDeclaration } from '../../common/className';
 import {
-  VALUE_CONVERTER_SUFFIX,
   AureliaClassTypes,
   AureliaDecorator,
   AureliaViewModel,
@@ -31,8 +29,10 @@ import {
 import { UriUtils } from '../../common/view/uri-utils';
 import { IAureliaClassMember, IAureliaComponent } from '../aotTypes';
 import { Optional } from '../parser/regions/ViewRegions';
+import { ConventionService } from './ConventionService';
+import { ValueConverterAnalyser } from './ValueConverterAnalyser';
 
-export class ClassStaticAnalysis {
+export class CustomElementAnalyser {
   public static getAureliaComponentInfoFromClassDeclaration(
     sourceFile: ts.SourceFile,
     checker: ts.TypeChecker
@@ -45,9 +45,7 @@ export class ClassStaticAnalysis {
       if (!isClassDeclaration) return;
 
       const fulfillsAureliaConventions =
-        classDeclarationHasUseViewOrNoView(node) ||
-        hasCustomElementNamingConvention(node) ||
-        hasValueConverterNamingConvention(node);
+        ConventionService.fulfillsAureliaConventions(node);
       const validForAurelia =
         isNodeExported(node) && fulfillsAureliaConventions;
 
@@ -67,23 +65,14 @@ export class ClassStaticAnalysis {
         }
 
         // Value Converter
-        const isValueConverterModel = checkValueConverter(
-          targetClassDeclaration
-        );
+        const isValueConverterModel =
+          ValueConverterAnalyser.checkValueConverter(targetClassDeclaration);
         if (isValueConverterModel) {
-          const valueConverterName = targetClassDeclaration.name
-            ?.getText()
-            .replace(VALUE_CONVERTER_SUFFIX, '')
-            .toLocaleLowerCase();
-          result = {
-            documentation,
-            className: targetClassDeclaration.name?.getText() ?? '',
-            valueConverterName,
-            baseViewModelFileName: Path.parse(sourceFile.fileName).name,
-            viewModelFilePath: UriUtils.toSysPath(sourceFile.fileName),
-            type: AureliaClassTypes.VALUE_CONVERTER,
+          result = ValueConverterAnalyser.getComponentInfo(
+            targetClassDeclaration,
             sourceFile,
-          };
+            documentation
+          );
           return;
         }
 
@@ -220,14 +209,6 @@ export class ClassStaticAnalysis {
   }
 }
 
-function checkValueConverter(targetClassDeclaration: ts.ClassDeclaration) {
-  const isValueConverterName = targetClassDeclaration.name
-    ?.getText()
-    .includes(VALUE_CONVERTER_SUFFIX);
-
-  return Boolean(isValueConverterName);
-}
-
 function isNodeExported(node: ts.ClassDeclaration): boolean {
   return (ts.getCombinedModifierFlags(node) & ts.ModifierFlags.Export) !== 0;
 }
@@ -336,26 +317,6 @@ function getConstructorHasModifier(constructorArgument: ts.Node) {
 }
 
 /**
- * classDeclarationHasUseViewOrNoView checks whether a classDeclaration has a useView or noView
- *
- * @param classDeclaration - ClassDeclaration to check
- */
-function classDeclarationHasUseViewOrNoView(
-  classDeclaration: ts.ClassDeclaration
-): boolean {
-  if (!classDeclaration.decorators) return false;
-
-  const hasViewDecorator = classDeclaration.decorators.some((decorator) => {
-    const result =
-      decorator.getText().includes('@useView') ||
-      decorator.getText().includes('@noView');
-    return result;
-  });
-
-  return hasViewDecorator;
-}
-
-/**
  * [refactor]: also get other decorators
  */
 function getCustomElementDecorator(classDeclaration: ts.ClassDeclaration) {
@@ -366,65 +327,6 @@ function getCustomElementDecorator(classDeclaration: ts.ClassDeclaration) {
     return result;
   });
   return target;
-}
-
-/**
- * MyClassCustomelement
- *
- * \@customElement(...)
- * MyClass
- */
-function hasCustomElementNamingConvention(
-  classDeclaration: ts.ClassDeclaration
-): boolean {
-  const hasCustomElementDecorator =
-    classDeclaration.decorators?.some((decorator) => {
-      const decoratorName = decorator.getText();
-      const result =
-        decoratorName.includes(AureliaDecorator.CUSTOM_ELEMENT) ||
-        decoratorName.includes('name');
-      return result;
-    }) ?? false;
-
-  const className = classDeclaration.name?.getText();
-  const hasCustomElementNamingConvention = Boolean(
-    className?.includes(AureliaClassTypes.CUSTOM_ELEMENT)
-  );
-
-  const { fileName } = classDeclaration.getSourceFile();
-  const baseName = Path.parse(fileName).name;
-  const isCorrectFileAndClassConvention =
-    kebabCase(baseName) === kebabCase(className);
-
-  return (
-    hasCustomElementDecorator ||
-    hasCustomElementNamingConvention ||
-    isCorrectFileAndClassConvention
-  );
-}
-
-/**
- * MyClassValueConverter
- *
- * \@valueConverter(...)
- * MyClass
- */
-function hasValueConverterNamingConvention(
-  classDeclaration: ts.ClassDeclaration
-): boolean {
-  const hasValueConverterDecorator =
-    classDeclaration.decorators?.some((decorator) => {
-      const result = decorator
-        .getText()
-        .includes(AureliaDecorator.VALUE_CONVERTER);
-      return result;
-    }) ?? false;
-
-  const hasValueConverterNamingConvention = Boolean(
-    classDeclaration.name?.getText().includes(AureliaClassTypes.VALUE_CONVERTER)
-  );
-
-  return hasValueConverterDecorator || hasValueConverterNamingConvention;
 }
 
 function getTemplateImportPathFromCustomElementDecorator(

@@ -11,7 +11,7 @@ import { IAureliaBindable, IAureliaComponent } from './aotTypes';
 import { getAureliaComponentInfoFromClassDeclaration } from './getAureliaComponentList';
 import { RegionParser } from './parser/regions/RegionParser';
 import { Optional } from './parser/regions/ViewRegions';
-import { ClassStaticAnalysis } from './staticAnalysis/ClassStaticAnalysis';
+import { CustomElementAnalyser } from './staticAnalysis/CustomElementAnalyser';
 
 const logger = new Logger('AureliaComponents');
 
@@ -64,7 +64,7 @@ export class AureliaComponents {
 
             /* export class MyCustomElement */
             const componentInfo =
-              ClassStaticAnalysis.getAureliaComponentInfoFromClassDeclaration(
+              CustomElementAnalyser.getAureliaComponentInfoFromClassDeclaration(
                 sourceFile,
                 checker
               );
