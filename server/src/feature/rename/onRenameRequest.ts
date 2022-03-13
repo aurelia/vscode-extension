@@ -10,7 +10,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CustomElementRegion } from '../../aot/parser/regions/ViewRegions';
 import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
-import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
+import { RegionService } from '../../common/services/RegionService';
 import { DocumentSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { aureliaRenameFromViewModel } from './aureliaRename';
@@ -48,9 +48,9 @@ export async function onRenameRequest(
   if (!regions) return;
 
   const offset = document.offsetAt(position);
-  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
+  const region = RegionService.findRegionAtOffset(regions, offset);
   if (CustomElementRegion.is(region)) {
-    const isInCustomElementStartTag = ViewRegionUtils.isInCustomElementStartTag(
+    const isInCustomElementStartTag = RegionService.isInCustomElementStartTag(
       region,
       offset
     );

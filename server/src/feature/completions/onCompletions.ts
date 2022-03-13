@@ -16,7 +16,7 @@ import {
 } from '../../aot/parser/regions/ViewRegions';
 import { TemplateAttributeTriggers } from '../../common/constants';
 import { Logger } from '../../common/logging/logger';
-import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
+import { RegionService } from '../../common/services/RegionService';
 import { checkInsideTag, ParseHtml } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
@@ -57,7 +57,7 @@ export async function onCompletion(
   const targetComponent =
     aureliaProgram.aureliaComponents.getOneByFromDocument(document);
   const existingRegions = targetComponent?.viewRegions ?? [];
-  const existingRegion = ViewRegionUtils.findRegionAtOffset(
+  const existingRegion = RegionService.findRegionAtOffset(
     existingRegions,
     offset
   );
@@ -87,7 +87,7 @@ export async function onCompletion(
   // regions; /* ? */
 
   // offset; /*?*/
-  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
+  const region = RegionService.findRegionAtOffset(regions, offset);
   //  region/*?*/
 
   let accumulateCompletions: CompletionItem[] = [];

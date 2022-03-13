@@ -8,8 +8,8 @@ import { AureliaUtils } from '../../../common/AureliaUtils';
 import { ParseExpressionUtil } from '../../../common/parseExpression/ParseExpressionUtil';
 import {
   TypeToClass,
-  ViewRegionUtils,
-} from '../../../common/services/ViewRegionUtils';
+  RegionService,
+} from '../../../common/services/RegionService';
 import { AureliaProgram } from '../../AureliaProgram';
 import { RegionParser } from './RegionParser';
 import { AbstractRegion, RepeatForRegion, ViewRegionType } from './ViewRegions';
@@ -36,7 +36,7 @@ export async function findAllBindableAttributeRegions(
       if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
       const regions = RegionParser.parse(document, componentList);
-      const customElementRegions = ViewRegionUtils.getRegionsOfType(
+      const customElementRegions = RegionService.getRegionsOfType(
         regions,
         ViewRegionType.CustomElement
       );
@@ -91,7 +91,7 @@ export async function forEachRegionOfType<RegionType extends ViewRegionType>(
       if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
       const regions = component.viewRegions;
-      const finalRegions = ViewRegionUtils.getRegionsOfType(
+      const finalRegions = RegionService.getRegionsOfType(
         regions,
         regionType
       );

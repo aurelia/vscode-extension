@@ -27,7 +27,7 @@ export type TypeToClass<TargetType extends ViewRegionType> =
                 TargetType extends ViewRegionType.ValueConverter ? ValueConverterRegion :
 never;
 
-export class ViewRegionUtils {
+export class RegionService {
   public static getRegionsOfType<
     TargetKind extends ViewRegionType,
     ReturnType extends TypeToClass<TargetKind>

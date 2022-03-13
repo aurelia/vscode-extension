@@ -6,7 +6,7 @@ import { LocationLink, Range } from 'vscode-languageserver';
 import { RegionParser } from '../../aot/parser/regions/RegionParser';
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
-import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
+import { RegionService } from '../../common/services/RegionService';
 import { ParseHtml } from '../../common/view/document-parsing';
 import { DocumentSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';
@@ -54,7 +54,7 @@ export async function onDefintion(
   if (regions.length === 0) return;
 
   const offset = document.offsetAt(position);
-  const region = ViewRegionUtils.findRegionAtOffset(regions, offset);
+  const region = RegionService.findRegionAtOffset(regions, offset);
   if (region === undefined) return;
   const doDefinition = region.languageService.doDefinition;
 

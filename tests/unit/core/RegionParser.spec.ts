@@ -8,7 +8,7 @@ import {
   ViewRegionType,
 } from '../../../server/src/aot/parser/regions/ViewRegions';
 import { AureliaView } from '../../../server/src/common/constants';
-import { ViewRegionUtils } from '../../../server/src/common/documens/ViewRegionUtils';
+import { RegionService } from '../../../server/src/common/services/RegionService';
 import {
   TestCasesMapFileBased,
   getEmptyShared,
@@ -109,7 +109,7 @@ describe('RegionParser.', () => {
           if (regionType === ViewRegionType.CustomElement) {
             // Custom Element - BindableAttribute
             it('the result should include Custom element bindable attributes', () => {
-              const target = ViewRegionUtils.getRegionsOfType(
+              const target = RegionService.getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -124,7 +124,7 @@ describe('RegionParser.', () => {
             // Custom Element - Whole Tag
             it('the result should include Custom element - whole tag', () => {
               // shared.parsedRegions /* ? */
-              const target = ViewRegionUtils.getRegionsOfType(
+              const target = RegionService.getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -141,7 +141,7 @@ describe('RegionParser.', () => {
 
             // Custom Element - Start Tag
             it('the result should include Custom element - opening tag', () => {
-              const target = ViewRegionUtils.getRegionsOfType(
+              const target = RegionService.getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -161,7 +161,7 @@ describe('RegionParser.', () => {
 
             // Custom Element - End Tag
             it('the result should include Custom element - closing tag', () => {
-              const target = ViewRegionUtils.getRegionsOfType(
+              const target = RegionService.getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -184,7 +184,7 @@ describe('RegionParser.', () => {
           // Import
           else if (regionType === ViewRegionType.Import) {
             it('the result should include import tags.', () => {
-              const target = ViewRegionUtils.getRegionsOfType(
+              const target = RegionService.getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType[regionType]
               );
@@ -202,7 +202,7 @@ describe('RegionParser.', () => {
           if (parameters.off != null) {
             // TODO: Do we need raw sourceCodeLocation at all? Now that we hav accessScopes?
             it.skip('Should have the correct offset for the region.', () => {
-              const target = ViewRegionUtils.getTargetRegionByLine(
+              const target = RegionService.getTargetRegionByLine(
                 shared.parsedRegions,
                 String(shared.line)
               );
@@ -245,7 +245,7 @@ describe('RegionParser.', () => {
                 targetRegions = RegionParser.parse(document, []);
               }
               if (!isNaN(shared.line)) {
-                targetRegions = ViewRegionUtils.getManyTargetsRegionByLine(
+                targetRegions = RegionService.getManyTargetsRegionByLine(
                   targetRegions,
                   String(shared.line)
                 );

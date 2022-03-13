@@ -5,7 +5,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AbstractRegionLanguageService } from '../../aot/parser/regions/languageServer/AbstractRegionLanguageService';
 import { AureliaHtmlLanguageService } from '../../aot/parser/regions/languageServer/AureliaHtmlLanguageService';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
-import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
+import { RegionService } from '../../common/services/RegionService';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
@@ -31,7 +31,7 @@ export async function onCodeAction(
   const regions = targetComponent?.viewRegions;
   if (!regions) return [];
 
-  const region = ViewRegionUtils.findRegionAtPosition(regions, range.start);
+  const region = RegionService.findRegionAtPosition(regions, range.start);
 
   let languageService: AbstractRegionLanguageService;
   if (region === undefined) {
