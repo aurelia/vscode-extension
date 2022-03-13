@@ -1,3 +1,10 @@
+## [2.3.2](https://github.com/aurelia/vscode-extension/compare/2.3.1...2.3.2) (2022-03-13)
+
+**Refactoring**
+* new /aot directory
+  * parsing
+  * AureliaProgram (analyses components etc.)
+
 ## [2.3.1](https://github.com/aurelia/vscode-extension/compare/2.3.0...2.3.1) (2022-03-08)
 
 

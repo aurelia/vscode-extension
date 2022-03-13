@@ -3,7 +3,7 @@
 	"description": "A VSCode extension for Aurelia",
 	"author": "AureliaEffect",
 	"license": "MIT",
-	"version": "2.3.1",
+	"version": "2.3.2",
 	"publisher": "AureliaEffect",
 	"repository": {
 		"type": "git",
