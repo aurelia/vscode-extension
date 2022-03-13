@@ -609,8 +609,8 @@ export class CustomElementRegion extends AbstractRegion {
   // endregion public static
 
   // region public
-  public getBindableAttributes(): ViewRegionInfoV2[] {
-    const bindableAttributeRegions = this.data?.filter(
+  public static getBindableAttributes(region: CustomElementRegion): ViewRegionInfoV2[] {
+    const bindableAttributeRegions = region.data?.filter(
       (subRegion) => subRegion.type === ViewRegionType.BindableAttribute
     );
     if (bindableAttributeRegions === undefined) return [];

@@ -1,3 +1,5 @@
+import { Container } from 'aurelia-dependency-injection';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Position } from 'vscode-languageserver-types';
 
 import {
@@ -10,17 +12,21 @@ import {
   RepeatForRegion,
   TextInterpolationRegion,
   ValueConverterRegion,
+  ViewRegionSubType,
   ViewRegionType,
 } from '../../aot/parser/regions/ViewRegions';
 import { OffsetUtils } from '../documens/OffsetUtils';
 import { PositionUtils } from '../documens/PositionUtils';
+import { AnalyzerService } from './AnalyzerService';
 
 /* prettier-ignore */
-export type TypeToClass<TargetType extends ViewRegionType> =
+export type TypeToClass<TargetType extends ViewRegionType | ViewRegionSubType> =
   TargetType extends ViewRegionType.Attribute ? AttributeRegion :
     TargetType extends ViewRegionType.AttributeInterpolation ? AttributeInterpolationRegion :
       TargetType extends ViewRegionType.BindableAttribute ? BindableAttributeRegion :
         TargetType extends ViewRegionType.CustomElement ? CustomElementRegion :
+        TargetType extends ViewRegionSubType.StartTag ? CustomElementRegion :
+        TargetType extends ViewRegionSubType.EndTag ? CustomElementRegion :
           TargetType extends ViewRegionType.Import ? ImportRegion :
             TargetType extends ViewRegionType.RepeatFor ? RepeatForRegion :
               TargetType extends ViewRegionType.TextInterpolation ? TextInterpolationRegion :
@@ -29,7 +35,7 @@ never;
 
 export class RegionService {
   public static getRegionsOfType<
-    TargetKind extends ViewRegionType,
+    TargetKind extends ViewRegionType | ViewRegionSubType,
     ReturnType extends TypeToClass<TargetKind>
   >(regions: AbstractRegion[], regionType: TargetKind): ReturnType[] {
     const targetRegions = regions.filter(
@@ -52,7 +58,7 @@ export class RegionService {
       const isSameLine = region.sourceCodeLocation.startLine === Number(line);
       if (isSameLine) {
         // Excluded TextInterpolation regions, because text regions start on "line before" in parse5
-        if ((region.textValue?.startsWith('\n')) === true) {
+        if (region.textValue?.startsWith('\n') === true) {
           return false;
         }
       }
@@ -156,6 +162,46 @@ export class RegionService {
     const is = afterStart && beforeEnd;
 
     return is;
+  }
+
+  public static getRegionsInDocument(
+    container: Container,
+    document: TextDocument
+  ): AbstractRegion[] {
+    const targetComponent = AnalyzerService.getComponentByDocumennt(
+      container,
+      document
+    );
+    if (!targetComponent) return [];
+    const regions = targetComponent.viewRegions;
+
+    return regions;
+  }
+
+  public static getRegionsOfTypeInDocument<
+    TargetKind extends ViewRegionType | ViewRegionSubType,
+    ReturnType extends TypeToClass<TargetKind>
+  >(
+    container: Container,
+    document: TextDocument,
+    options: {
+      regionType: TargetKind;
+      subRegionType?: ViewRegionSubType;
+    }
+  ): ReturnType[] {
+    const regions = this.getRegionsInDocument(container, document);
+    let regionsOfType = this.getRegionsOfType<TargetKind, ReturnType>(
+      regions,
+      options.regionType
+    );
+
+    if (options.subRegionType) {
+      regionsOfType = regionsOfType.filter(
+        (customElement) => customElement.subType === options.subRegionType
+      );
+    }
+
+    return regionsOfType;
   }
 }
 
