@@ -10,7 +10,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CustomElementRegion } from '../../aot/parser/regions/ViewRegions';
 import { getWordInfoAtOffset } from '../../common/documens/find-source-word';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
-import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
+import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
 import { DocumentSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { aureliaRenameFromViewModel } from './aureliaRename';

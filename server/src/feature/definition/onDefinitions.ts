@@ -6,7 +6,7 @@ import { LocationLink, Range } from 'vscode-languageserver';
 import { RegionParser } from '../../aot/parser/regions/RegionParser';
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { isViewModelDocument } from '../../common/documens/TextDocumentUtils';
-import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
+import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
 import { ParseHtml } from '../../common/view/document-parsing';
 import { DocumentSettings } from '../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../core/AureliaProjects';

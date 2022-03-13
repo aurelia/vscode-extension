@@ -12,8 +12,8 @@ import {
   ValueConverterRegion,
   ViewRegionType,
 } from '../../aot/parser/regions/ViewRegions';
-import { OffsetUtils } from './OffsetUtils';
-import { PositionUtils } from './PositionUtils';
+import { OffsetUtils } from '../documens/OffsetUtils';
+import { PositionUtils } from '../documens/PositionUtils';
 
 /* prettier-ignore */
 export type TypeToClass<TargetType extends ViewRegionType> =

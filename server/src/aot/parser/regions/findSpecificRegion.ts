@@ -5,11 +5,11 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { ExpressionKind } from '../../../common/@aurelia-runtime-patch/src';
 import { AureliaUtils } from '../../../common/AureliaUtils';
+import { ParseExpressionUtil } from '../../../common/parseExpression/ParseExpressionUtil';
 import {
   TypeToClass,
   ViewRegionUtils,
-} from '../../../common/documens/ViewRegionUtils';
-import { ParseExpressionUtil } from '../../../common/parseExpression/ParseExpressionUtil';
+} from '../../../common/services/ViewRegionUtils';
 import { AureliaProgram } from '../../AureliaProgram';
 import { RegionParser } from './RegionParser';
 import { AbstractRegion, RepeatForRegion, ViewRegionType } from './ViewRegions';

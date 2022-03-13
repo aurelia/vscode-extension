@@ -15,8 +15,8 @@ import {
   CustomElementRegion,
 } from '../../aot/parser/regions/ViewRegions';
 import { TemplateAttributeTriggers } from '../../common/constants';
-import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
 import { Logger } from '../../common/logging/logger';
+import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
 import { checkInsideTag, ParseHtml } from '../../common/view/document-parsing';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';

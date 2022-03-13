@@ -5,7 +5,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { AbstractRegionLanguageService } from '../../aot/parser/regions/languageServer/AbstractRegionLanguageService';
 import { AureliaHtmlLanguageService } from '../../aot/parser/regions/languageServer/AureliaHtmlLanguageService';
 import { TextDocumentUtils } from '../../common/documens/TextDocumentUtils';
-import { ViewRegionUtils } from '../../common/documens/ViewRegionUtils';
+import { ViewRegionUtils } from '../../common/services/ViewRegionUtils';
 import { UriUtils } from '../../common/view/uri-utils';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { Container } from '../../core/container';
