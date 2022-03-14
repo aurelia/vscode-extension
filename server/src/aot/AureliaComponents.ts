@@ -19,7 +19,7 @@ type ComponentListWithoutRegions = Optional<IAureliaComponent, 'viewRegions'>;
 
 export class AureliaComponents {
   private components: IAureliaComponent[] = [];
-  private bindables: IAureliaBindable[] = [];
+  public bindables: IAureliaBindable[] = [];
 
   constructor(public readonly documentSettings: DocumentSettings) {}
 
@@ -33,8 +33,8 @@ export class AureliaComponents {
       initComponentList(project, filePaths)
     );
 
-    this.set(enhancedComponents);
-    this.setBindables(enhancedComponents);
+    const componentsWithBindables = this.enrichWithBindables(enhancedComponents);
+    this.set(componentsWithBindables);
 
     logComponentList(enhancedComponents);
     this.logInfoAboutComponents(enhancedComponents);
@@ -213,9 +213,11 @@ export class AureliaComponents {
     targetComponent.viewRegions = regions;
   }
 
-  public setBindables(components: IAureliaComponent[]): void {
+  public enrichWithBindables(components: IAureliaComponent[]) {
+    let componentBindableList: IAureliaBindable[] = [];
     const bindableList: IAureliaBindable[] = [];
     components.forEach((component) => {
+      componentBindableList = [];
       component.classMembers?.forEach((classMember) => {
         if (classMember.isBindable) {
           if (component.componentName === undefined) return;
@@ -224,11 +226,15 @@ export class AureliaComponents {
             componentName: component.componentName,
             classMember,
           };
+          componentBindableList.push(targetBindable);
           bindableList.push(targetBindable);
         }
       });
+      component.bindables = componentBindableList;
     });
     this.bindables = bindableList;
+
+    return components;
   }
 
   public getBindables(): IAureliaBindable[] {

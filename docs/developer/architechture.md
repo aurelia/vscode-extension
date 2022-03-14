@@ -48,6 +48,7 @@ Quick Navigation:
 - [Parsing](#parsing)
 - [Fluent API](#fluent-api)
   - [Against](#against)
+- [Questions](#questions)
 
 </p>
 </details>
@@ -164,3 +165,6 @@ Hard to debug. Consider the following example:
 
 
 Parsing mainly happens in [2. Extension Input (EI)](#2-extension-input-ei)
+
+# Questions
+- Why do can add attribute to both `AttributeRegion` and `BindableAttributeRegion`?

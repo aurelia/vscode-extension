@@ -22,6 +22,7 @@ import 'reflect-metadata';
 import {
   AURELIA_COMMANDS,
   AURELIA_COMMANDS_KEYS,
+  CLIENT_COMMANDS_KEYS,
   CodeActionMap,
 } from './common/constants';
 import { Logger } from './common/logging/logger';
@@ -35,6 +36,10 @@ import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/aureliaServer';
 import { globalContainer } from './core/container';
 
+type ClientUri = {
+  external: string;
+};
+
 const logger = new Logger('Server');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
@@ -47,7 +52,7 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
-// let hasDiagnosticRelatedInformationCapability: boolean = false;
+let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 let hasServerInitialized = false;
 let aureliaServer: AureliaServer;
@@ -63,9 +68,9 @@ connection.onInitialize(async (params: InitializeParams) => {
   hasWorkspaceFolderCapability = !!(
     capabilities.workspace && Boolean(capabilities.workspace.workspaceFolders)
   );
-  // hasDiagnosticRelatedInformationCapability = Boolean(
-  //   capabilities.textDocument?.publishDiagnostics?.relatedInformation
-  // );
+  hasDiagnosticRelatedInformationCapability = Boolean(
+    capabilities.textDocument?.publishDiagnostics?.relatedInformation
+  );
 
   const result: InitializeResult = {
     capabilities: {
@@ -186,10 +191,15 @@ documents.onDidChangeContent(
   MyLodash.debouncePromise(
     async (change: TextDocumentChangeEvent<TextDocument>) => {
       if (!hasServerInitialized) return;
-      // const diagnosticsParams = await aureliaServer.sendDiagnostics(
-      //   change.document
-      // );
-      // connection.sendDiagnostics(diagnosticsParams);
+
+      if (hasDiagnosticRelatedInformationCapability) {
+        const diagnosticsParams = await aureliaServer.sendDiagnostics(
+          change.document
+        );
+        /* prettier-ignore */ console.log('TCL ~ file: server.ts ~ line 194 ~ diagnosticsParams', diagnosticsParams);
+        connection.sendDiagnostics(diagnosticsParams);
+      }
+
       await aureliaServer.onConnectionDidChangeContent(change);
     },
     400
@@ -260,6 +270,20 @@ connection.onExecuteCommand(
         logger.log(
           `Command executed: "${CodeActionMap['refactor.aTag'].title}"`
         );
+        break;
+      }
+      case 'extension.au.runDiagnosticsForCurrentFile': {
+        const clientCommand: CLIENT_COMMANDS_KEYS = 'client.get.active.file';
+        /* prettier-ignore */ console.log('TCL ~ file: server.ts ~ line 273 ~ clientCommand', clientCommand);
+        const activeFile: ClientUri = await connection.sendRequest(
+          clientCommand
+        );
+        const activeFileUri = activeFile.external;
+        const activeDocument = documents.get(activeFileUri);
+        if (!activeDocument) return;
+        const diagnostics = await aureliaServer.sendDiagnostics(activeDocument);
+        connection.sendDiagnostics(diagnostics);
+
         break;
       }
       default: {

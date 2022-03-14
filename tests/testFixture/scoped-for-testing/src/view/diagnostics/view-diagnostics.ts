@@ -1,2 +1,4 @@
 @customElement({ name: 'view-diagnostics', template })
-export class ViewDiagnostics {}
+export class ViewDiagnostics {
+  @bindable fooBar
+}

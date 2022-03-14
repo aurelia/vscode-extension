@@ -41,6 +41,7 @@ export interface IAureliaComponent {
   classMembers?: IAureliaClassMember[];
   /** View */
   viewRegions: AbstractRegion[];
+  bindables?: IAureliaBindable[];
 }
 
 export interface IAureliaBindable {

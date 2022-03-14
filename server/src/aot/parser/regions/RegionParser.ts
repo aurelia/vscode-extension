@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { kebabCase } from '@aurelia/kernel';
 import SaxStream, { TextToken } from 'parse5-sax-parser';
+import { Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaView, interpolationRegex } from '../../../common/constants';
@@ -8,6 +9,7 @@ import { Logger } from '../../../common/logging/logger';
 import { getBindableNameFromAttritute } from '../../../common/template/aurelia-attributes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../../configuration/DocumentSettings';
 import { IAureliaComponent } from '../../aotTypes';
+import { LintVisitor } from '../linting/LintVisitor';
 import {
   AbstractRegion,
   AttributeInterpolationRegion,
@@ -39,6 +41,9 @@ export class RegionParser {
     document: TextDocument,
     componentList: Optional<IAureliaComponent, 'viewRegions'>[]
   ): AbstractRegion[] {
+    // if (document.uri.includes('view-diagnostics')) {
+    //   document.uri; /* ? */
+    // }
     const saxStream = new SaxStream({ sourceCodeLocationInfo: true });
 
     /* prettier-ignore */ logger.culogger.debug(['Start document parsing'], { logLevel: 'INFO' });
@@ -63,6 +68,10 @@ export class RegionParser {
     saxStream.on('startTag', (startTag) => {
       // 0. Prep
       const tagName = startTag.tagName;
+
+      if (document.uri.includes('view-diagnostics')) {
+        // tagName; /* ? */
+      }
 
       // 1. Template Tag
       const isTemplateTag = tagName === AureliaView.TEMPLATE_TAG_NAME;
@@ -157,18 +166,29 @@ export class RegionParser {
       );
 
       startTag.attrs.forEach((attr) => {
-        const onlyBindableName = getBindableNameFromAttritute(attr.name);
-        const isBindableAttribute = targetComponent?.classMembers?.find(
-          (member) => {
-            const correctNamingConvetion =
-              kebabCase(member.name) === kebabCase(onlyBindableName);
-            const is = correctNamingConvetion && member.isBindable;
-            return is;
-          }
-        );
-        if (isBindableAttribute == null) return;
+        if (document.uri.includes('view-diagnostics')) {
+          // attr.name; /* ? */
+          // attr.value; /* ? */
+        }
+        // const onlyBindableName = getBindableNameFromAttritute(attr.name);
+        // if (document.uri.includes('view-diagnostics')) {
+        //   onlyBindableName; /* ? */
+        // }
+        // const isBindableAttribute = targetComponent?.classMembers?.find(
+        //   (member) => {
+        //     const correctNamingConvetion =
+        //       kebabCase(member.name) === kebabCase(onlyBindableName);
+        //     const is = correctNamingConvetion && member.isBindable;
+        //     return is;
+        //   }
+        // );
+        // if (startTag.tagName === 'view-diagnostics') {
+        //   isBindableAttribute.name; /* ? */
+        // }
 
-        const bindableAttributeRegion = BindableAttributeRegion.parse5Start(
+        // if (isBindableAttribute == null) return;
+
+        const bindableAttributeRegion = BindableAttributeRegion.parse5(
           startTag,
           attr
         );
@@ -208,6 +228,32 @@ export class RegionParser {
     saxStream.write(document.getText());
 
     return viewRegions;
+  }
+
+  public static lint(
+    regions: AbstractRegion[],
+    components: IAureliaComponent[]
+  ) {
+    const lintResults: Diagnostic[] = [];
+
+    const lintVisitor = new LintVisitor(components);
+    regions.forEach((region) => {
+      if (CustomElementRegion.is(region)) {
+        lintVisitor.visitCustomElement(region);
+
+        region.data.forEach((subRegion) => {
+          if (BindableAttributeRegion.is(subRegion)) {
+            const result = lintVisitor.visitBindableAttribute(
+              subRegion,
+              region.tagName
+            );
+            lintResults.push(...result);
+          }
+        });
+      }
+    });
+
+    return lintResults;
   }
 
   public static pretty<

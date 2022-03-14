@@ -198,8 +198,14 @@ export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
   'extension.au.refactor.aTag',
   'extension.au.reloadExtension',
+  'extension.au.runDiagnosticsForCurrentFile',
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
+
+export const CLIENT_COMMANDS = [
+  'client.get.active.file'
+] as const;
+export type CLIENT_COMMANDS_KEYS = typeof CLIENT_COMMANDS[number];
 
 export const CodeActionMap = {
   'refactor.aTag': {

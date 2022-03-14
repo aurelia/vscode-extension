@@ -472,11 +472,11 @@ export class BindableAttributeRegion extends AbstractRegion {
     return new BindableAttributeRegion(finalInfo);
   }
 
-  public static is(region: AbstractRegion): region is CustomElementRegion {
+  public static is(region: AbstractRegion): region is BindableAttributeRegion {
     return region.type === ViewRegionType.BindableAttribute;
   }
 
-  public static parse5Start(
+  public static parse5(
     startTag: SaxStream.StartTagToken,
     attr: parse5.Attribute
   ) {
@@ -486,6 +486,11 @@ export class BindableAttributeRegion extends AbstractRegion {
     const startOffset = attrLocation.startOffset;
     /** Eg. >click.delegate="<increaseCounter()" */
     const onlyBindableName = getBindableNameFromAttritute(attr.name);
+
+    if (startTag.tagName === 'view-diagnostics') {
+      attr.name;/* ? */
+    }
+
     const endOffset = startOffset + onlyBindableName.length;
     const updatedLocation = {
       ...attrLocation,

@@ -41,7 +41,7 @@ const DEFAULT_LOG_OPTIONS: ILogOptions = {
   // log: false,
   log: shouldLog,
   // focusedLogging: true,
-  // ignoreFirstXLogs: 5,
+  ignoreFirstXLogs: 16,
   // ignoreAfterXLogs: 1,
 
   // measurePerf: true,

@@ -66,6 +66,11 @@
       {
         "command": "extension.auOpenRelatedView",
         "title": "[Au] Open Related Aurelia File: View"
+      },
+      {
+        "command": "extension.au.runDiagnosticsForCurrentFile",
+        "title": "Run diagnostics for current file",
+        "category": "Aurelia"
       }
     ],
     "configuration": {

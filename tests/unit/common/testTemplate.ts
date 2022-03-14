@@ -70,27 +70,61 @@ export function whenIParseTheFile(fileName: string, shared: Shared) {
     .getActive();
 
   // const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
+  const parsedRegions = RegionParser.parse(textDocument, [
+    // @ts-ignore
+    {
+      componentName: 'custom-element',
+      viewFilePath: 'custom-element.html',
+      classMembers: [
+        // @ts-ignore
+        { name: 'foo', isBindable: true },
+        // @ts-ignore
+        { name: 'bar', isBindable: true },
+        // @ts-ignore
+        { name: 'qux' },
+        // @ts-ignore
+        { name: 'useFoo' },
+      ],
+    },
+  ]);
+
+  shared.parsedRegions = parsedRegions;
+}
+
+export function whenILintTheFile(fileName: string, shared: Shared) {
+  const textDocumentPaths = getPathsFromFileNames(shared.workspaceRootUri, [
+    fileName,
+  ]);
+  const textDocuments = new MockTextDocuments(shared.workspaceRootUri);
+  const textDocument = textDocuments
+    .mock(textDocumentPaths)
+    .setActive(textDocumentPaths)
+    .getActive();
+
+  // const parsedRegions = await parseDocumentRegions<ViewRegionInfo[]>(
+  const componentList = [
+    {
+      componentName: 'view-diagnostics',
+      viewFilePath: 'view-diagnostics.html',
+      classMembers: [
+        // @ts-ignore
+        { name: 'fooBar', isBindable: true },
+      ],
+    },
+  ];
   const parsedRegions = RegionParser.parse(
     textDocument,
-
-    [
-      // @ts-ignore
-      {
-        componentName: 'custom-element',
-        viewFilePath: 'custom-element.html',
-        classMembers: [
-          // @ts-ignore
-          { name: 'foo', isBindable: true },
-          // @ts-ignore
-          { name: 'bar', isBindable: true },
-          // @ts-ignore
-          { name: 'qux' },
-          // @ts-ignore
-          { name: 'useFoo' },
-        ],
-      },
-    ]
+    // @ts-ignore
+    componentList
   );
+
+  const linted = RegionParser.lint(
+    parsedRegions,
+    // @ts-ignore
+    componentList
+  );
+
+  linted;/* ? */
 
   shared.parsedRegions = parsedRegions;
 }

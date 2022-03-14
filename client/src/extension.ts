@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import * as path from 'path';
 
-import { commands, workspace, ExtensionContext } from 'vscode';
+import { commands, workspace, ExtensionContext, window } from 'vscode';
 import {
   Disposable,
   LanguageClient,
@@ -18,7 +18,7 @@ import { RelatedFiles } from './feature/relatedFiles';
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
     path.join('server', 'out', 'server.js')
@@ -94,8 +94,13 @@ export function activate(context: ExtensionContext) {
   // Start the client. This will also launch the server
   client.start();
 
+  await client.onReady();
+
+  client.onRequest('client.get.active.file', () => {
+    return window.activeTextEditor?.document.uri;
+  });
+
   /** ISSUE-VaNcstW0 */
-  // await client.onReady();
   // User Information
   // client.onRequest('warning:no-tsconfig-found', () => {
   //   const message = '[Aurelia] No tsconfig.json found. Please visit the [Usage section](https://github.com/aurelia/vscode-extension#1-usage) for more information.';

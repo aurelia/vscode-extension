@@ -88,7 +88,7 @@ export class AureliaServer {
     await onDidSave(this.container, change);
   }
 
-  public sendDiagnostics(document: TextDocument) {
+  public async sendDiagnostics(document: TextDocument) {
     const diagnostics = createDiagnostics(this.container, document);
 
     const diagnosticsParams: PublishDiagnosticsParams = {

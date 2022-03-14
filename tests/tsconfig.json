@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "types": ["@types/jest"]
+    "types": ["jest"]
   },
   "include": ["common", "step-definitions", "unit", "testLauncher"],
   "exclude": ["node_modules", "out"]
