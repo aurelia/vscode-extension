@@ -1,3 +1,12 @@
+## [2.3.3](https://github.com/aurelia/vscode-extension/compare/2.3.2...2.3.3) (2022-03-15)
+
+
+### Bug Fixes
+
+* **core:** Update a file should now correctly update the extension internal logic.
+  * update uses correct paths to compare ([fab68cd](https://github.com/aurelia/vscode-extension/commit/fab68cd766aca4286f20c490c85f598597206196))
+
+
 ## [2.3.2](https://github.com/aurelia/vscode-extension/compare/2.3.1...2.3.2) (2022-03-13)
 
 **Refactoring**
