@@ -20,12 +20,12 @@ export async function onDidSave(
     case 'javascript':
     case 'typescript': {
       aureliaProjects.updateManyViewModel([document]);
-      logger.log('View model updated.');
+      logger.log('View model saved and updated.');
       break;
     }
     case 'html': {
       aureliaProjects.updateManyView([document]);
-      logger.log('View updated');
+      logger.log('View saved and updated');
     }
   }
 }
