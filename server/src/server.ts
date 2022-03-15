@@ -192,6 +192,8 @@ documents.onDidChangeContent(
     async (change: TextDocumentChangeEvent<TextDocument>) => {
       if (!hasServerInitialized) return;
 
+      await aureliaServer.onConnectionDidChangeContent(change);
+
       if (hasDiagnosticRelatedInformationCapability) {
         const diagnosticsParams = await aureliaServer.sendDiagnostics(
           change.document
@@ -199,8 +201,6 @@ documents.onDidChangeContent(
         /* prettier-ignore */ console.log('TCL ~ file: server.ts ~ line 194 ~ diagnosticsParams', diagnosticsParams);
         connection.sendDiagnostics(diagnosticsParams);
       }
-
-      await aureliaServer.onConnectionDidChangeContent(change);
     },
     400
   )
