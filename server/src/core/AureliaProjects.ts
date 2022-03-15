@@ -171,7 +171,7 @@ export class AureliaProjects {
   public updateManyView(documents: TextDocument[]) {
     documents.forEach((document) => {
       const targetProject = this.getAll().find((project) =>
-        document.uri.includes(project.tsConfigPath)
+        UriUtils.toSysPath(document.uri).includes(project.tsConfigPath)
       );
 
       const aureliaProgram = targetProject?.aureliaProgram;
