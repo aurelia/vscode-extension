@@ -45,7 +45,7 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
       if (!member.isBindable) return false;
 
       // HTML (parse5) only allows lowercase letters, so fooBar -> foobar
-      const isTargetBindable = member.name.toLocaleLowerCase() === bindableName;
+      const isTargetBindable = member.name.toLowerCase() === camelCase(bindableName).toLowerCase();
       // isTargetBindable; /* ? */
       return isTargetBindable;
     });
