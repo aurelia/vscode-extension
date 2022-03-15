@@ -1,7 +1,7 @@
 import { Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { RegionService } from '../../common/services/RegionServiceashtashtsaht';
+import { RegionService } from '../../common/services/RegionService';
 import { Container } from '../../core/container';
 
 export function createDiagnostics(
