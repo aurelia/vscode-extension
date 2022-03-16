@@ -198,6 +198,8 @@ documents.onDidChangeContent(
         const diagnosticsParams = await aureliaServer.sendDiagnostics(
           change.document
         );
+        if (!diagnosticsParams) return;
+
         /* prettier-ignore */ console.log('TCL ~ file: server.ts ~ line 194 ~ diagnosticsParams', diagnosticsParams);
         connection.sendDiagnostics(diagnosticsParams);
       }
@@ -282,6 +284,7 @@ connection.onExecuteCommand(
         const activeDocument = documents.get(activeFileUri);
         if (!activeDocument) return;
         const diagnostics = await aureliaServer.sendDiagnostics(activeDocument);
+        if (!diagnostics) return;
         connection.sendDiagnostics(diagnostics);
 
         break;

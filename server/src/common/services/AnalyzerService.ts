@@ -2,15 +2,14 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { IAureliaComponent } from '../../aot/aotTypes';
 import { AureliaProjects } from '../../core/AureliaProjects';
-import { Container } from '../../core/container';
+import { inject } from '../../core/container';
 
+@inject(AureliaProjects)
 export class AnalyzerService {
-  public static getAureliaProgramByDocument(
-    container: Container,
-    document: TextDocument
-  ) {
-    const aureliaProjects = container.get(AureliaProjects);
-    const targetProject = aureliaProjects.getFromUri(document.uri);
+  constructor(private readonly aureliaProjects: AureliaProjects) {}
+
+  public getAureliaProgramByDocument({ uri }: { uri: string }) {
+    const targetProject = this.aureliaProjects.getFromUri(uri);
 
     if (!targetProject) return;
     const aureliaProgram = targetProject?.aureliaProgram;
@@ -19,14 +18,10 @@ export class AnalyzerService {
     return aureliaProgram;
   }
 
-  public static getComponentByDocumennt(
-    container: Container,
+  public getComponentByDocumennt(
     document: TextDocument
   ): IAureliaComponent | undefined {
-    const aureliaProgram = this.getAureliaProgramByDocument(
-      container,
-      document
-    );
+    const aureliaProgram = this.getAureliaProgramByDocument(document);
     if (!aureliaProgram) return;
 
     const component =
@@ -36,21 +31,20 @@ export class AnalyzerService {
     return component;
   }
 
-  public static getOneComponentBy<
+  public getOneComponentBy<
     T extends keyof IAureliaComponent,
     Value extends IAureliaComponent[T]
   >(
-    container: Container,
     document: TextDocument,
     key: T,
     targetValue: Value
   ): IAureliaComponent | undefined {
-    const aureliaProgram = this.getAureliaProgramByDocument(
-      container,
-      document
-    );
+    const aureliaProgram = this.getAureliaProgramByDocument(document);
 
-    const targetComponent = aureliaProgram?.aureliaComponents.getOneBy(key, targetValue);
+    const targetComponent = aureliaProgram?.aureliaComponents.getOneBy(
+      key,
+      targetValue
+    );
     return targetComponent;
   }
 }

@@ -8,6 +8,8 @@ import { AureliaView, interpolationRegex } from '../../../common/constants';
 import { Logger } from '../../../common/logging/logger';
 import { getBindableNameFromAttritute } from '../../../common/template/aurelia-attributes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../../configuration/DocumentSettings';
+import { AureliaProjects } from '../../../core/AureliaProjects';
+import { inject } from '../../../core/container';
 import { IAureliaComponent } from '../../aotTypes';
 import { LintVisitor } from '../linting/LintVisitor';
 import {
@@ -36,7 +38,10 @@ interface PrettyOptions<
   maxColWidth?: number;
 }
 
+@inject(LintVisitor)
 export class RegionParser {
+  constructor(private readonly lintVisitor: LintVisitor) {}
+
   public static parse(
     document: TextDocument,
     componentList: Optional<IAureliaComponent, 'viewRegions'>[]
@@ -230,22 +235,22 @@ export class RegionParser {
     return viewRegions;
   }
 
-  public static lint(
+  public lint(
+    aureliaProject: AureliaProjects,
     regions: AbstractRegion[],
     components: IAureliaComponent[]
   ) {
     const lintResults: Diagnostic[] = [];
 
-    const lintVisitor = new LintVisitor(components);
     regions.forEach((region) => {
       if (CustomElementRegion.is(region)) {
-        lintVisitor.visitCustomElement(region);
+        this.lintVisitor.visitCustomElement(region);
 
         region.data.forEach((subRegion) => {
           if (BindableAttributeRegion.is(subRegion)) {
-            const result = lintVisitor.visitBindableAttribute(
-              subRegion,
-              region.tagName
+            const result = this.lintVisitor.visitBindableAttribute(
+              aureliaProject,
+              subRegion
             );
             lintResults.push(...result);
           }

@@ -10,5 +10,6 @@ Feature: Diagnostics.
     Then the following <DIAGNOSTIC> should show up
 
     Examples:
-      | LINE | CODE                  | DIAGNOSTIC |
-      | 3    | `\|<p id.bind=""></p` | hello      |
+      | LINE | CODE                                             | DIAGNOSTIC                               |
+      | 2    | `  fooxbar.from-view="privateService.forbidden"` | Not found. No such bindable: 'fooxbar'   |
+      | 3    | `  fooBar.from-view="privateService.forbidden"`  | Invalid casing. Did you mean: 'foo-bar'? |

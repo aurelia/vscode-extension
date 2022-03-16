@@ -15,7 +15,8 @@ import { onCodeAction } from '../feature/codeAction/onCodeAction';
 import { onCompletion } from '../feature/completions/onCompletions';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
 import { onDefintion } from '../feature/definition/onDefinitions';
-import { createDiagnostics } from '../feature/diagnostics/diagnostics';
+import { AureliaDiagnostics } from '../feature/diagnostics/diagnostics';
+// import { createDiagnostics } from '../feature/diagnostics/diagnostics';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
@@ -27,12 +28,14 @@ import { initDependencyInjection } from './depdencenyInjection';
 const logger = new Logger('AureliaServer');
 
 export class AureliaServer {
+
   constructor(
     private readonly container: Container,
     public readonly extensionSettings: ExtensionSettings,
-    public allDocuments: TextDocuments<TextDocument>
+    public allDocuments: TextDocuments<TextDocument>,
   ) {
     initDependencyInjection(container, extensionSettings);
+    // this.aureliaDiagnostics = container.get(AureliaDiagnostics);
   }
 
   public async onConnectionInitialized(
@@ -89,7 +92,8 @@ export class AureliaServer {
   }
 
   public async sendDiagnostics(document: TextDocument) {
-    const diagnostics = createDiagnostics(this.container, document);
+    const diagnostics = this.aureliaDiagnostics?.createDiagnostics(document);
+    if (!diagnostics) return;
 
     const diagnosticsParams: PublishDiagnosticsParams = {
       uri: document.uri,

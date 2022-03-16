@@ -9,6 +9,7 @@ import { ParseExpressionUtil } from '../../../common/parseExpression/ParseExpres
 import {
   TypeToClass,
   RegionService,
+  getRegionsOfType,
 } from '../../../common/services/RegionService';
 import { AureliaProgram } from '../../AureliaProgram';
 import { RegionParser } from './RegionParser';
@@ -36,7 +37,7 @@ export async function findAllBindableAttributeRegions(
       if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
       const regions = RegionParser.parse(document, componentList);
-      const customElementRegions = RegionService.getRegionsOfType(
+      const customElementRegions = getRegionsOfType(
         regions,
         ViewRegionType.CustomElement
       );
@@ -44,7 +45,12 @@ export async function findAllBindableAttributeRegions(
       const customElementRegionsWithTargetBindable =
         customElementRegions.forEach((region) => {
           const targetBindableAttribute = region.data?.find((attribute) => {
-            if (AureliaUtils.isSameVariableName(attribute.regionValue, bindableName)) {
+            if (
+              AureliaUtils.isSameVariableName(
+                attribute.regionValue,
+                bindableName
+              )
+            ) {
               // 1.2.1 Init
               if (regionsLookUp[uri] === undefined) {
                 regionsLookUp[uri] = [];
@@ -91,10 +97,7 @@ export async function forEachRegionOfType<RegionType extends ViewRegionType>(
       if (document === undefined) return;
       // 1.1 Parse document, and find all Custom Element regions
       const regions = component.viewRegions;
-      const finalRegions = RegionService.getRegionsOfType(
-        regions,
-        regionType
-      );
+      const finalRegions = getRegionsOfType(regions, regionType);
       finalRegions.forEach((region) => {
         forEachRegionsCallback(region, document);
       });
@@ -161,9 +164,9 @@ function isRepeatForIncludesWord(
   return isTargetIterable;
 }
 
-export function getRegionsOfType(
-  regions: AbstractRegion[],
-  regionType: ViewRegionType
-) {
-  return regions.filter((region) => region.type === regionType);
-}
+// export function getRegionsOfType(
+//   regions: AbstractRegion[],
+//   regionType: ViewRegionType
+// ) {
+//   return regions.filter((region) => region.type === regionType);
+// }

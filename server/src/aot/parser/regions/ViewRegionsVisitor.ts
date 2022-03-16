@@ -1,3 +1,4 @@
+import { AureliaProjects } from '../../../core/AureliaProjects';
 import {
   AttributeInterpolationRegion,
   AttributeRegion,
@@ -18,7 +19,10 @@ export interface IViewRegionsVisitor<T = unknown> {
   visitAttribute(region: AttributeRegion): T;
   visitAttributeInterpolation(region: AttributeInterpolationRegion): T;
   visitAureliaHtmlInterpolation(region: AureliaHtmlRegion): T;
-  visitBindableAttribute(region: BindableAttributeRegion, tagName?: string): T;
+  visitBindableAttribute(
+    aureliaProject: AureliaProjects,
+    region: BindableAttributeRegion
+  ): T;
   visitCustomElement(region: CustomElementRegion): T;
   visitImport(region: ImportRegion): T;
   visitRepeatFor(region: RepeatForRegion): T;

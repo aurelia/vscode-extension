@@ -2,6 +2,7 @@ import { ts } from 'ts-morph';
 import { Position, TextDocument } from 'vscode-html-languageservice';
 import { MarkupKind } from 'vscode-languageserver';
 
+import { IAureliaComponent } from '../../aot/aotTypes';
 import { AureliaProgram } from '../../aot/AureliaProgram';
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { UriUtils } from '../../common/view/uri-utils';
@@ -379,6 +380,68 @@ export function createVirtualFileWithContent(
   }
 
   const customElementClassName = componentList.find((component) => {
+    const result =
+      component.viewModelFilePath ===
+      UriUtils.toSysPath(targetSourceFile.fileName);
+    return result;
+  })?.className;
+
+  if (customElementClassName === undefined) return;
+
+  // 2. Create virtual source file
+  const virtualViewModelSourceFile = ts.createSourceFile(
+    VIRTUAL_SOURCE_FILENAME,
+    targetSourceFile?.getText(),
+    99
+  );
+
+  const { virtualCursorIndex, virtualSourcefile } =
+    createVirtualViewModelSourceFile(
+      virtualViewModelSourceFile,
+      content,
+      customElementClassName
+    );
+
+  return {
+    virtualCursorIndex,
+    virtualSourcefile,
+    viewModelFilePath: UriUtils.toSysPath(targetSourceFile.fileName),
+  };
+}
+
+export function createVirtualFileWithContentV2(
+  components: IAureliaComponent[],
+  documentUri: string,
+  content: string
+): VirtualSourceFileInfo | undefined {
+  // 1. Get original viewmodel file associated with view
+  const targetComponent = components.find((component) => {
+    if (component.viewFilePath === undefined) return false;
+
+    if (component.viewFilePath.length > 0) {
+      const targetView = documentUri.includes(component.viewFilePath);
+      if (targetView) {
+        return targetView;
+      }
+    }
+
+    if (component.viewModelFilePath.length > 0) {
+      const targetViewModel = documentUri.includes(component.viewModelFilePath);
+      if (targetViewModel) {
+        return targetViewModel;
+      }
+    }
+
+    return false;
+  });
+  const targetSourceFile = targetComponent?.sourceFile;
+
+  if (!targetSourceFile) {
+    console.log(`No source file found for current view: ${documentUri}`);
+    return;
+  }
+
+  const customElementClassName = components.find((component) => {
     const result =
       component.viewModelFilePath ===
       UriUtils.toSysPath(targetSourceFile.fileName);

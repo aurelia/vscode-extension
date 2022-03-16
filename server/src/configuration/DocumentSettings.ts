@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { Connection } from 'vscode-languageserver';
 
 import { Logger } from '../common/logging/logger';
+import { inject } from '../core/container';
 
 const logger = new Logger('DocumentSettings');
 
@@ -51,7 +52,7 @@ interface Capabilities {
 }
 
 // The example settings
-export interface ExtensionSettings {
+export class ExtensionSettings {
   aureliaProject?: IAureliaProjectSetting;
   capabilities?: Capabilities;
   featureToggles?: Features;
@@ -66,6 +67,7 @@ export interface ExtensionSettings {
   cacheComponents?: boolean;
 }
 
+@inject(ExtensionSettings)
 export class DocumentSettings {
   public defaultSettings: ExtensionSettings = {
     relatedFiles: {
@@ -106,13 +108,19 @@ export class DocumentSettings {
     } else {
       finalExcludes = exclude;
     }
-    logger.log('Exclude files based on globs (from setting: aureliaProject.exclude): ', { logLevel: 'INFO' });
+    logger.log(
+      'Exclude files based on globs (from setting: aureliaProject.exclude): ',
+      { logLevel: 'INFO' }
+    );
     logger.log(`  ${finalExcludes.join(', ')}`, { logLevel: 'INFO' });
 
     exclude = finalExcludes;
 
     const include = this.extensionSettings.aureliaProject?.include;
-    logger.log('Include files based on globs (from setting: aureliaProject.include): ', { logLevel: 'INFO' });
+    logger.log(
+      'Include files based on globs (from setting: aureliaProject.include): ',
+      { logLevel: 'INFO' }
+    );
     if (include !== undefined) {
       logger.log(`  ${include.join(', ')}`, { logLevel: 'INFO' });
     } else {

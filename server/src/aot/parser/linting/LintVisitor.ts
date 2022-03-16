@@ -1,11 +1,12 @@
 import { camelCase, kebabCase } from '@aurelia/kernel';
-import { Container } from 'aurelia-dependency-injection';
+import { inject } from 'aurelia-dependency-injection';
 import { Position, Range } from 'vscode-html-languageservice';
 import { Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { PositionUtils } from '../../../common/documens/PositionUtils';
 import { AnalyzerService } from '../../../common/services/AnalyzerService';
+import { AureliaProjects } from '../../../core/AureliaProjects';
 import { IAureliaComponent } from '../../aotTypes';
 import { AureliaComponents } from '../../AureliaComponents';
 import { getRangeFromRegion } from '../regions/rangeFromRegion';
@@ -21,23 +22,29 @@ import {
   ValueConverterRegion,
 } from '../regions/ViewRegions';
 import { IViewRegionsVisitor } from '../regions/ViewRegionsVisitor';
+import { BindableAttributeRules } from './rules/bindableAttributes';
 
+@inject(AnalyzerService)
 export class LintVisitor implements IViewRegionsVisitor<void> {
-  constructor(private readonly componentList: IAureliaComponent[]) {}
+  constructor(
+    private readonly analyzerService: AnalyzerService,
+    private readonly componentList: IAureliaComponent[]
+  ) {}
 
   public visitAttribute(region: AttributeRegion) {}
   public visitAttributeInterpolation(region: AttributeInterpolationRegion) {}
   public visitAureliaHtmlInterpolation(region: AureliaHtmlRegion) {}
 
   public visitBindableAttribute(
-    region: BindableAttributeRegion,
-    tagName: string
+    aureliaProject: AureliaProjects,
+    region: BindableAttributeRegion
   ): Diagnostic[] {
+    const finalDiagnostics: Diagnostic[] = [];
+
     const component = this.componentList.find(
-      (component) => component.componentName === tagName
+      (component) => component.componentName === region.tagName
     );
     if (!component) return [];
-    // component; /* ? */
     const bindableName = region.regionValue;
     if (!bindableName) return [];
 
@@ -45,27 +52,40 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
       if (!member.isBindable) return false;
 
       // HTML (parse5) only allows lowercase letters, so fooBar -> foobar
-      const isTargetBindable = member.name.toLowerCase() === camelCase(bindableName).toLowerCase();
+      const isTargetBindable =
+        member.name.toLowerCase() === camelCase(bindableName).toLowerCase();
       // isTargetBindable; /* ? */
       return isTargetBindable;
     });
     // targetBindable; /* ? */
 
-    let message = ''
+    const rules = [
+      BindableAttributeRules.bindableAttributeNamingConvention,
+      BindableAttributeRules.preventPrivateMethod,
+    ];
+    const targetProject = aureliaProject.getFromPath(
+      component.viewModelFilePath
+    );
+    component;
+    const aureliaProgram = this.analyzerService.getAureliaProgramByDocument({
+      uri: component.viewModelFilePath,
+    });
+    if (!aureliaProgram) return [];
 
-    if (kebabCase(bindableName) === kebabCase(targetBindable?.name ?? '')) {
-      return []
-    }  if (!targetBindable) {
-      message = `Not found. No such bindable: '${region.regionValue}'`
-    } else {
-      message = `Invalid casing. Did you mean: '${kebabCase(targetBindable.name)}'?`
-    }
+    rules.forEach((rule) => {
+      const ruleResult = rule(
+        region,
+        targetBindable,
+        bindableName,
+        aureliaProgram,
+        this.componentList
+      );
+      if (ruleResult) {
+        finalDiagnostics.push(ruleResult);
+      }
+    });
 
-    const range = getRangeFromRegion(region);
-    if (!range) return [];
-    const diag = Diagnostic.create(range, message);
-
-    return [diag];
+    return finalDiagnostics;
   }
 
   public visitCustomElement(region: CustomElementRegion) {}

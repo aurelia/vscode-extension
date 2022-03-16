@@ -14,6 +14,12 @@ Thus, have a (subject) measure of how complex the extension architecture is.
   - [initAureliaComponents]
     - AureliaComponents
 
+### private methods #188
+1. check if accessScope is imported
+2. then do virtual diagnostics
+
+### file imports (not present, wrong name) #187
+
 
 ## TODO
 - Static analysis is part of core

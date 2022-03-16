@@ -1,4 +1,3 @@
-import { Container } from 'aurelia-dependency-injection';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Position } from 'vscode-languageserver-types';
 
@@ -15,6 +14,8 @@ import {
   ViewRegionSubType,
   ViewRegionType,
 } from '../../aot/parser/regions/ViewRegions';
+import { AureliaProjects } from '../../core/AureliaProjects';
+import { inject } from '../../core/container';
 import { OffsetUtils } from '../documens/OffsetUtils';
 import { PositionUtils } from '../documens/PositionUtils';
 import { AnalyzerService } from './AnalyzerService';
@@ -33,15 +34,21 @@ export type TypeToClass<TargetType extends ViewRegionType | ViewRegionSubType> =
                 TargetType extends ViewRegionType.ValueConverter ? ValueConverterRegion :
 never;
 
+export function getRegionsOfType<
+  TargetKind extends ViewRegionType | ViewRegionSubType,
+  ReturnType extends TypeToClass<TargetKind>
+>(regions: AbstractRegion[], regionType: TargetKind): ReturnType[] {
+  const targetRegions = regions.filter((region) => region.type === regionType);
+  return targetRegions as ReturnType[];
+}
+
+@inject(AureliaProjects, AnalyzerService)
 export class RegionService {
-  public static getRegionsOfType<
-    TargetKind extends ViewRegionType | ViewRegionSubType,
-    ReturnType extends TypeToClass<TargetKind>
-  >(regions: AbstractRegion[], regionType: TargetKind): ReturnType[] {
-    const targetRegions = regions.filter(
-      (region) => region.type === regionType
-    );
-    return targetRegions as ReturnType[];
+  constructor(
+    private readonly aureliaProject: AureliaProjects,
+    private readonly analyzerService: AnalyzerService
+  ) {
+    /* prettier-ignore */ console.log('TCL ~ file: RegionService.ts ~ line 49 ~ RegionService ~ constructor');
   }
 
   public static getTargetRegionByLine(regions: AbstractRegion[], line: string) {
@@ -164,33 +171,27 @@ export class RegionService {
     return is;
   }
 
-  public static getRegionsInDocument(
-    container: Container,
-    document: TextDocument
-  ): AbstractRegion[] {
-    const targetComponent = AnalyzerService.getComponentByDocumennt(
-      container,
-      document
-    );
+  public getRegionsInDocument(document: TextDocument): AbstractRegion[] {
+    const targetComponent =
+      this.analyzerService.getComponentByDocumennt(document);
     if (!targetComponent) return [];
     const regions = targetComponent.viewRegions;
 
     return regions;
   }
 
-  public static getRegionsOfTypeInDocument<
+  public getRegionsOfTypeInDocument<
     TargetKind extends ViewRegionType | ViewRegionSubType,
     ReturnType extends TypeToClass<TargetKind>
   >(
-    container: Container,
     document: TextDocument,
     options: {
       regionType: TargetKind;
       subRegionType?: ViewRegionSubType;
     }
   ): ReturnType[] {
-    const regions = this.getRegionsInDocument(container, document);
-    let regionsOfType = this.getRegionsOfType<TargetKind, ReturnType>(
+    const regions = this.getRegionsInDocument(document);
+    let regionsOfType = getRegionsOfType<TargetKind, ReturnType>(
       regions,
       options.regionType
     );
