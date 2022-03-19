@@ -1,15 +1,11 @@
-import { camelCase, kebabCase } from '@aurelia/kernel';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { camelCase } from '@aurelia/kernel';
 import { inject } from 'aurelia-dependency-injection';
-import { Position, Range } from 'vscode-html-languageservice';
 import { Diagnostic } from 'vscode-languageserver-protocol';
-import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { PositionUtils } from '../../../common/documens/PositionUtils';
 import { AnalyzerService } from '../../../common/services/AnalyzerService';
 import { AureliaProjects } from '../../../core/AureliaProjects';
 import { IAureliaComponent } from '../../aotTypes';
-import { AureliaComponents } from '../../AureliaComponents';
-import { getRangeFromRegion } from '../regions/rangeFromRegion';
 import {
   AttributeRegion,
   AttributeInterpolationRegion,
@@ -24,21 +20,27 @@ import {
 import { IViewRegionsVisitor } from '../regions/ViewRegionsVisitor';
 import { BindableAttributeRules } from './rules/bindableAttributes';
 
-@inject(AnalyzerService)
+@inject(AnalyzerService, AureliaProjects)
 export class LintVisitor implements IViewRegionsVisitor<void> {
+  private componentList: IAureliaComponent[];
+
   constructor(
     private readonly analyzerService: AnalyzerService,
-    private readonly componentList: IAureliaComponent[]
-  ) {}
+    private readonly aureliaProject: AureliaProjects
+  ) {
 
-  public visitAttribute(region: AttributeRegion) {}
-  public visitAttributeInterpolation(region: AttributeInterpolationRegion) {}
-  public visitAureliaHtmlInterpolation(region: AureliaHtmlRegion) {}
+  }
 
-  public visitBindableAttribute(
-    aureliaProject: AureliaProjects,
-    region: BindableAttributeRegion
-  ): Diagnostic[] {
+  public visitAttribute(_region: AttributeRegion) {}
+  public visitAttributeInterpolation(_region: AttributeInterpolationRegion) {}
+  public visitAureliaHtmlInterpolation(_region: AureliaHtmlRegion) {}
+
+  public visitBindableAttribute(region: BindableAttributeRegion): Diagnostic[] {
+    const componentList = this.aureliaProject.getAll()[0].aureliaProgram?.aureliaComponents?.getAll();
+    if (componentList) {
+      this.componentList = componentList;
+    }
+
     const finalDiagnostics: Diagnostic[] = [];
 
     const component = this.componentList.find(
@@ -46,7 +48,7 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
     );
     if (!component) return [];
     const bindableName = region.regionValue;
-    if (!bindableName) return [];
+    if (bindableName === undefined) return [];
 
     const targetBindable = component.classMembers?.find((member) => {
       if (!member.isBindable) return false;
@@ -63,10 +65,9 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
       BindableAttributeRules.bindableAttributeNamingConvention,
       BindableAttributeRules.preventPrivateMethod,
     ];
-    const targetProject = aureliaProject.getFromPath(
+    const targetProject = this.aureliaProject.getFromPath(
       component.viewModelFilePath
     );
-    component;
     const aureliaProgram = this.analyzerService.getAureliaProgramByDocument({
       uri: component.viewModelFilePath,
     });
@@ -88,9 +89,9 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
     return finalDiagnostics;
   }
 
-  public visitCustomElement(region: CustomElementRegion) {}
-  public visitImport(region: ImportRegion) {}
-  public visitRepeatFor(region: RepeatForRegion) {}
-  public visitTextInterpolation(region: TextInterpolationRegion) {}
-  public visitValueConverter(region: ValueConverterRegion) {}
+  public visitCustomElement(_region: CustomElementRegion) {}
+  public visitImport(_region: ImportRegion) {}
+  public visitRepeatFor(_region: RepeatForRegion) {}
+  public visitTextInterpolation(_region: TextInterpolationRegion) {}
+  public visitValueConverter(_region: ValueConverterRegion) {}
 }

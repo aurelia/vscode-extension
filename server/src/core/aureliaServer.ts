@@ -28,14 +28,16 @@ import { initDependencyInjection } from './depdencenyInjection';
 const logger = new Logger('AureliaServer');
 
 export class AureliaServer {
+  private readonly aureliaDiagnostics: AureliaDiagnostics;
 
   constructor(
     private readonly container: Container,
     public readonly extensionSettings: ExtensionSettings,
-    public allDocuments: TextDocuments<TextDocument>,
+    public allDocuments: TextDocuments<TextDocument>
   ) {
     initDependencyInjection(container, extensionSettings);
-    // this.aureliaDiagnostics = container.get(AureliaDiagnostics);
+    this.aureliaDiagnostics = container.get(AureliaDiagnostics);
+
   }
 
   public async onConnectionInitialized(
@@ -92,12 +94,12 @@ export class AureliaServer {
   }
 
   public async sendDiagnostics(document: TextDocument) {
-    const diagnostics = this.aureliaDiagnostics?.createDiagnostics(document);
-    if (!diagnostics) return;
+    const diagnostics = this.aureliaDiagnostics.createDiagnostics(document);
+    if (diagnostics.length === 0) return;
 
     const diagnosticsParams: PublishDiagnosticsParams = {
       uri: document.uri,
-      diagnostics,
+      diagnostics: [],
     };
     return diagnosticsParams;
   }

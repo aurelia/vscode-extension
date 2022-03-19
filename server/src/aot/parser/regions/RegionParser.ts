@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { kebabCase } from '@aurelia/kernel';
 import SaxStream, { TextToken } from 'parse5-sax-parser';
 import { Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaView, interpolationRegex } from '../../../common/constants';
 import { Logger } from '../../../common/logging/logger';
-import { getBindableNameFromAttritute } from '../../../common/template/aurelia-attributes';
 import { AURELIA_ATTRIBUTES_KEYWORDS } from '../../../configuration/DocumentSettings';
 import { AureliaProjects } from '../../../core/AureliaProjects';
 import { inject } from '../../../core/container';
@@ -249,7 +247,6 @@ export class RegionParser {
         region.data.forEach((subRegion) => {
           if (BindableAttributeRegion.is(subRegion)) {
             const result = this.lintVisitor.visitBindableAttribute(
-              aureliaProject,
               subRegion
             );
             lintResults.push(...result);

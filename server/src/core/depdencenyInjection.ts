@@ -1,5 +1,6 @@
 import { Container } from 'aurelia-dependency-injection';
 
+import { LintVisitor } from '../aot/parser/linting/LintVisitor';
 import { RegionParser } from '../aot/parser/regions/RegionParser';
 import { AnalyzerService } from '../common/services/AnalyzerService';
 import { RegionService } from '../common/services/RegionService';
@@ -20,23 +21,35 @@ export function initDependencyInjection(
   );
   const settings = container.get(DocumentSettings);
   container.registerInstance(AureliaProjects, new AureliaProjects(settings));
+  const aureliaProjects = container.get(AureliaProjects);
 
-  // const aureliaProjects = container.get(AureliaProjects);
-  // container.autoRegister(AnalyzerService, AnalyzerService);
-  // container.autoRegister(RegionParser, RegionParser);
-  // container.autoRegister(RegionService, RegionService);
+  container.registerInstance(
+    AnalyzerService,
+    new AnalyzerService(aureliaProjects)
+  );
+  const analyzerService = container.get(AnalyzerService);
 
-  // const analyzerService = container.get(AnalyzerService);
-  // const regionParser = container.get(RegionParser);
+  container.registerInstance(
+    RegionService,
+    new RegionService(aureliaProjects, analyzerService)
+  );
+
+  container.registerInstance(
+    LintVisitor,
+    new LintVisitor(analyzerService, aureliaProjects)
+  );
+
   // const regionService = container.get(RegionService);
+  const regionParser = container.get(RegionParser);
+  const regionService = container.get(RegionService);
 
-  // container.registerInstance(
-  //   AureliaDiagnostics,
-  //   new AureliaDiagnostics(
-  //     aureliaProjects,
-  //     analyzerService,
-  //     regionParser,
-  //     regionService
-  //   )
-  // );
+  container.registerInstance(
+    AureliaDiagnostics,
+    new AureliaDiagnostics(
+      aureliaProjects,
+      analyzerService,
+      regionParser,
+      regionService
+    )
+  );
 }
