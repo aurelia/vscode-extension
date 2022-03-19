@@ -18,6 +18,7 @@ import {
   ValueConverterRegion,
 } from '../regions/ViewRegions';
 import { IViewRegionsVisitor } from '../regions/ViewRegionsVisitor';
+import { AttributeRules } from './rules/attributes';
 import { BindableAttributeRules } from './rules/bindableAttributes';
 
 @inject(AnalyzerService, AureliaProjects)
@@ -27,26 +28,78 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
   constructor(
     private readonly analyzerService: AnalyzerService,
     private readonly aureliaProject: AureliaProjects
-  ) {
+  ) {}
 
-  }
-
-  public visitAttribute(_region: AttributeRegion) {}
-  public visitAttributeInterpolation(_region: AttributeInterpolationRegion) {}
-  public visitAureliaHtmlInterpolation(_region: AureliaHtmlRegion) {}
-
-  public visitBindableAttribute(region: BindableAttributeRegion): Diagnostic[] {
-    const componentList = this.aureliaProject.getAll()[0].aureliaProgram?.aureliaComponents?.getAll();
+  public visitAttribute(region: AttributeRegion) {
+    const componentList = this.aureliaProject
+      .getAll()[0]
+      .aureliaProgram?.aureliaComponents?.getAll();
     if (componentList) {
       this.componentList = componentList;
     }
-
-    const finalDiagnostics: Diagnostic[] = [];
 
     const component = this.componentList.find(
       (component) => component.componentName === region.tagName
     );
     if (!component) return [];
+
+    const finalDiagnostics: Diagnostic[] = [];
+    const bindableName = region.regionValue;
+    if (bindableName === undefined) return [];
+
+    const targetBindable = component.classMembers?.find((member) => {
+      if (!member.isBindable) return false;
+
+      // HTML (parse5) only allows lowercase letters, so fooBar -> foobar
+      const isTargetBindable =
+        member.name.toLowerCase() === camelCase(bindableName).toLowerCase();
+      // isTargetBindable; /* ? */
+      return isTargetBindable;
+    });
+    // targetBindable; /* ? */
+
+    const rules = [AttributeRules.preventPrivateMethod];
+    const targetProject = this.aureliaProject.getFromPath(
+      component.viewModelFilePath
+    );
+    const aureliaProgram = this.analyzerService.getAureliaProgramByDocument({
+      uri: component.viewModelFilePath,
+    });
+    if (!aureliaProgram) return [];
+
+    rules.forEach((rule) => {
+      const ruleResult = rule(
+        region,
+        targetBindable,
+        bindableName,
+        aureliaProgram,
+        this.componentList
+      );
+      if (ruleResult) {
+        finalDiagnostics.push(ruleResult);
+      }
+    });
+
+    return finalDiagnostics;
+  }
+
+  public visitAttributeInterpolation(_region: AttributeInterpolationRegion) {}
+  public visitAureliaHtmlInterpolation(_region: AureliaHtmlRegion) {}
+
+  public visitBindableAttribute(region: BindableAttributeRegion): Diagnostic[] {
+    const componentList = this.aureliaProject
+      .getAll()[0]
+      .aureliaProgram?.aureliaComponents?.getAll();
+    if (componentList) {
+      this.componentList = componentList;
+    }
+
+    const component = this.componentList.find(
+      (component) => component.componentName === region.tagName
+    );
+    if (!component) return [];
+
+    const finalDiagnostics: Diagnostic[] = [];
     const bindableName = region.regionValue;
     if (bindableName === undefined) return [];
 
@@ -63,7 +116,6 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
 
     const rules = [
       BindableAttributeRules.bindableAttributeNamingConvention,
-      BindableAttributeRules.preventPrivateMethod,
     ];
     const targetProject = this.aureliaProject.getFromPath(
       component.viewModelFilePath

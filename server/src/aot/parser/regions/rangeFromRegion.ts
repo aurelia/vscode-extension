@@ -3,7 +3,11 @@ import { Position, Range } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { TextDocumentUtils } from '../../../common/documens/TextDocumentUtils';
-import { AbstractRegion, RepeatForRegion } from './ViewRegions';
+import {
+  AbstractRegion,
+  RepeatForRegion,
+  SourceCodeLocation,
+} from './ViewRegions';
 
 export function getRangesForAccessScopeFromRegionByName(
   document: TextDocument,
@@ -74,16 +78,7 @@ function getRangeFromRegionViaDocument(
 }
 
 function getRangeFromStandardRegion(region: AbstractRegion) {
-  if (region.sourceCodeLocation === undefined) return;
-  const { sourceCodeLocation } = region;
-  const { startCol } = sourceCodeLocation;
-  const { startLine } = sourceCodeLocation;
-  const { endCol } = sourceCodeLocation;
-  const { endLine } = sourceCodeLocation;
-
-  const startPosition = Position.create(startLine, startCol);
-  const endPosition = Position.create(endLine, endCol);
-  const range = Range.create(startPosition, endPosition);
+  const range = getRangeFromSourceCodeLocation(region.sourceCodeLocation);
 
   return range;
 }
@@ -136,6 +131,23 @@ export function getStartTagNameRange(
   const endOffset = startOffset + tagName.length + 1; // + 1, magic, because of all the offsetting we have to fix;
 
   const range = getRangeFromDocumentOffsets(document, startOffset, endOffset);
+
+  return range;
+}
+
+export function getRangeFromSourceCodeLocation(
+  sourceCodeLocation: SourceCodeLocation | undefined
+) {
+  if (sourceCodeLocation === undefined) return;
+
+  const { startCol } = sourceCodeLocation;
+  const { startLine } = sourceCodeLocation;
+  const { endCol } = sourceCodeLocation;
+  const { endLine } = sourceCodeLocation;
+
+  const startPosition = Position.create(startLine, startCol);
+  const endPosition = Position.create(endLine, endCol);
+  const range = Range.create(startPosition, endPosition);
 
   return range;
 }

@@ -246,12 +246,13 @@ export class RegionParser {
 
         region.data.forEach((subRegion) => {
           if (BindableAttributeRegion.is(subRegion)) {
-            const result = this.lintVisitor.visitBindableAttribute(
-              subRegion
-            );
+            const result = this.lintVisitor.visitBindableAttribute(subRegion);
             lintResults.push(...result);
           }
         });
+      } else if (AttributeRegion.is(region)) {
+        const result = this.lintVisitor.visitAttribute(region);
+        lintResults.push(...result);
       }
     });
 

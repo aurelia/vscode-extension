@@ -99,7 +99,7 @@ export interface ValueConverterRegionData {
   valueConverterText: string;
 }
 
-interface SourceCodeLocation {
+export interface SourceCodeLocation {
   startOffset: number;
   startCol: number;
   startLine: number;
@@ -224,7 +224,7 @@ export class AttributeRegion extends AbstractRegion {
     return new AttributeRegion(finalInfo);
   }
 
-  public static is(region: AbstractRegion): region is CustomElementRegion {
+  public static is(region: AbstractRegion): region is AttributeRegion {
     return region.type === ViewRegionType.Attribute;
   }
 
@@ -488,7 +488,7 @@ export class BindableAttributeRegion extends AbstractRegion {
     const onlyBindableName = getBindableNameFromAttritute(attr.name);
 
     if (startTag.tagName === 'view-diagnostics') {
-      attr.name; /* ? */
+      // attr.name;/* ? */
     }
 
     const endOffset = startOffset + onlyBindableName.length;
@@ -614,9 +614,7 @@ export class CustomElementRegion extends AbstractRegion {
   // endregion public static
 
   // region public
-  public static getBindableAttributes(
-    region: CustomElementRegion
-  ): ViewRegionInfoV2[] {
+  public static getBindableAttributes(region: CustomElementRegion): ViewRegionInfoV2[] {
     const bindableAttributeRegions = region.data?.filter(
       (subRegion) => subRegion.type === ViewRegionType.BindableAttribute
     );
@@ -790,11 +788,8 @@ export class RepeatForRegion extends AbstractRegion {
    * Background: RepeatFor parsing only returned the repeat.for="attributeValue"
    *   Thus, we need to add the startOffset of whole file.
    */
-  private static updateWithStartOffset(
-    accessScopes: (AccessScopeExpression | CallScopeExpression)[],
-    startOffset: number
-  ) {
-    accessScopes.forEach((scope) => {
+  private static updateWithStartOffset(accessScopes: (AccessScopeExpression | CallScopeExpression)[], startOffset: number) {
+    accessScopes.forEach(scope => {
       scope.nameLocation.start += startOffset;
       scope.nameLocation.end += startOffset;
     });

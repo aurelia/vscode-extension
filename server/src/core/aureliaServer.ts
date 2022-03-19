@@ -99,7 +99,7 @@ export class AureliaServer {
 
     const diagnosticsParams: PublishDiagnosticsParams = {
       uri: document.uri,
-      diagnostics: [],
+      diagnostics,
     };
     return diagnosticsParams;
   }

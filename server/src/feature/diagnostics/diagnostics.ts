@@ -3,9 +3,8 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { RegionParser } from '../../aot/parser/regions/RegionParser';
 import {
+  AttributeRegion,
   CustomElementRegion,
-  ViewRegionSubType,
-  ViewRegionType,
 } from '../../aot/parser/regions/ViewRegions';
 import { AnalyzerService } from '../../common/services/AnalyzerService';
 import { RegionService } from '../../common/services/RegionService';
@@ -23,19 +22,9 @@ export class AureliaDiagnostics {
 
   public createDiagnostics(document: TextDocument): Diagnostic[] {
     const lintResults: Diagnostic[] = [];
-    const startTagRegions = this.regionService.getRegionsOfTypeInDocument(
-      document,
-      {
-        regionType: ViewRegionType.CustomElement,
-        subRegionType: ViewRegionSubType.StartTag,
-      }
-    );
+    const regions = this.regionService.getRegionsInDocument(document);
 
-    startTagRegions.forEach((region) => {
-      region.tagName; /* ? */
-      const bindables = CustomElementRegion.getBindableAttributes(region);
-      // bindables; /* ? */
-
+    regions.forEach((region) => {
       const component = this.analyzerService.getOneComponentBy(
         document,
         'componentName',
@@ -43,13 +32,23 @@ export class AureliaDiagnostics {
       );
       if (!component) return [];
 
-      component.className; /* ? */
-      const lintResult = this.regionParser.lint(
-        this.aureliaProjects,
-        startTagRegions,
-        [component]
-      );
-      lintResults.push(...lintResult);
+      if (CustomElementRegion.is(region)) {
+        // const bindables = CustomElementRegion.getBindableAttributes(region);
+        // // bindables; /* ? */
+        // const lintResult = this.regionParser.lint(
+        //   this.aureliaProjects,
+        //   startTagRegions,
+        //   [component]
+        // );
+        // lintResults.push(...lintResult);
+      } else if (AttributeRegion.is(region)) {
+        const lintResult = this.regionParser.lint(
+          this.aureliaProjects,
+          regions,
+          [component]
+        );
+        lintResults.push(...lintResult);
+      }
     });
 
     // startTagRegions;

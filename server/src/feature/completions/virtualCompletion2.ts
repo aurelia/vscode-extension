@@ -341,7 +341,7 @@ function enhanceMethodArguments(methodArguments: string[]): string {
     .join(', ');
 }
 
-function checkAlreadyHasThis(
+export function checkAlreadyHasThis(
   virtualContent: string | undefined,
   accessScopeName: string
 ) {

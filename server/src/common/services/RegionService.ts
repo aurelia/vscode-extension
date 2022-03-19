@@ -9,6 +9,7 @@ import {
   CustomElementRegion,
   ImportRegion,
   RepeatForRegion,
+  SourceCodeLocation,
   TextInterpolationRegion,
   ValueConverterRegion,
   ViewRegionSubType,
@@ -47,9 +48,7 @@ export class RegionService {
   constructor(
     private readonly aureliaProject: AureliaProjects,
     private readonly analyzerService: AnalyzerService
-  ) {
-    /* prettier-ignore */ console.log('TCL ~ file: RegionService.ts ~ line 49 ~ RegionService ~ constructor');
-  }
+  ) {}
 
   public static getTargetRegionByLine(regions: AbstractRegion[], line: string) {
     const result = regions.find((region) => {
@@ -203,6 +202,30 @@ export class RegionService {
     }
 
     return regionsOfType;
+  }
+
+  public static getAttributeLocation(region: AbstractRegion) {
+    if (!AttributeRegion.is(region))
+      throw new Error('[Dev] Only Attribute supported');
+
+    if (region.attributeValue === undefined) return;
+
+    const endOffset = region.sourceCodeLocation.endOffset - 1
+    const startOffset =
+      endOffset - region.attributeValue.length; // - 1: '"'
+    const endCol = region.sourceCodeLocation.endCol - 1;
+    const startCol =
+      endCol - region.attributeValue.length; // - 1: '"'
+
+    const location: SourceCodeLocation = {
+      ...region.sourceCodeLocation,
+      endOffset,
+      endCol,
+      startOffset,
+      startCol,
+    };
+
+    return location;
   }
 }
 
