@@ -1,3 +1,4 @@
+import { camelCase } from '@aurelia/kernel';
 import { ts } from 'ts-morph';
 import { Diagnostic } from 'vscode-languageserver';
 
@@ -34,7 +35,37 @@ export class AttributeRules {
       (languageService, sourceFilePath) => {
         const diagnostics =
           languageService.getSemanticDiagnostics(sourceFilePath);
-        message = diagnostics[3].messageText;
+
+        // 1. Filter PrivateMethod Diagnostic methods
+        const tsPrivateMethodMessage =
+          'is private and only accessible within class';
+        const privateMethodDiagnostics = diagnostics.filter((diagnostic) =>
+          diagnostic.messageText.toString().includes(tsPrivateMethodMessage)
+        );
+
+        // 2. Find Target Diagnostic from Diagnostic message
+        const targetDiagnostic = privateMethodDiagnostics.find((diagnostic) => {
+          // 2.1 Get class name from Diagnostic message
+          const matchClassNameRegex = /class \'(.*)\'\.$/;
+          const matchedClassName = matchClassNameRegex.exec(
+            diagnostic.messageText.toString()
+          );
+          if (matchedClassName === null) return;
+
+          const normalizeCase = camelCase(matchedClassName[1]);
+
+          // 2.2. Find Access scope based on 2.1
+          const isTargetAccessScope = region.accessScopes?.find(
+            (accessScope) => {
+              return normalizeCase === accessScope.name;
+            }
+          );
+
+          return isTargetAccessScope;
+        });
+
+        // 3. Set diagnostic message
+        message = targetDiagnostic?.messageText?.toString() ?? '';
       }
     );
 
