@@ -233,30 +233,6 @@ export class RegionParser {
     return viewRegions;
   }
 
-  public lint(
-    regions: AbstractRegion[],
-  ) {
-    const lintResults: Diagnostic[] = [];
-
-    regions.forEach((region) => {
-      if (CustomElementRegion.is(region)) {
-        this.lintVisitor.visitCustomElement(region);
-
-        region.data.forEach((subRegion) => {
-          if (BindableAttributeRegion.is(subRegion)) {
-            const result = this.lintVisitor.visitBindableAttribute(subRegion);
-            lintResults.push(...result);
-          }
-        });
-      } else if (AttributeRegion.is(region)) {
-        const result = this.lintVisitor.visitAttribute(region);
-        lintResults.push(...result);
-      }
-    });
-
-    return lintResults;
-  }
-
   public static pretty<
     Regions extends AbstractRegion[],
     IgnoreKey extends keyof Regions[number]
