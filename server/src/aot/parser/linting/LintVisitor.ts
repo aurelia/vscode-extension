@@ -17,12 +17,12 @@ import {
   TextInterpolationRegion,
   ValueConverterRegion,
 } from '../regions/ViewRegions';
-import { IViewRegionsVisitor } from '../regions/ViewRegionsVisitor';
+import { IViewRegionsVisitorArray } from '../regions/ViewRegionsVisitor';
 import { AttributeRules } from './rules/attributes';
 import { BindableAttributeRules } from './rules/bindableAttributes';
 
 @inject(AnalyzerService, AureliaProjects)
-export class LintVisitor implements IViewRegionsVisitor<void> {
+export class LintVisitor implements IViewRegionsVisitorArray<Diagnostic> {
   private componentList: IAureliaComponent[];
 
   constructor(
@@ -83,8 +83,12 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
     return finalDiagnostics;
   }
 
-  public visitAttributeInterpolation(_region: AttributeInterpolationRegion) {}
-  public visitAureliaHtmlInterpolation(_region: AureliaHtmlRegion) {}
+  public visitAttributeInterpolation(_region: AttributeInterpolationRegion) {
+    return [];
+  }
+  public visitAureliaHtmlInterpolation(_region: AureliaHtmlRegion) {
+    return [];
+  }
 
   public visitBindableAttribute(region: BindableAttributeRegion): Diagnostic[] {
     const componentList = this.aureliaProject
@@ -114,9 +118,7 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
     });
     // targetBindable; /* ? */
 
-    const rules = [
-      BindableAttributeRules.bindableAttributeNamingConvention,
-    ];
+    const rules = [BindableAttributeRules.bindableAttributeNamingConvention];
     const targetProject = this.aureliaProject.getFromPath(
       component.viewModelFilePath
     );
@@ -141,9 +143,19 @@ export class LintVisitor implements IViewRegionsVisitor<void> {
     return finalDiagnostics;
   }
 
-  public visitCustomElement(_region: CustomElementRegion) {}
-  public visitImport(_region: ImportRegion) {}
-  public visitRepeatFor(_region: RepeatForRegion) {}
-  public visitTextInterpolation(_region: TextInterpolationRegion) {}
-  public visitValueConverter(_region: ValueConverterRegion) {}
+  public visitCustomElement(_region: CustomElementRegion) {
+    return [];
+  }
+  public visitImport(_region: ImportRegion) {
+    return [];
+  }
+  public visitRepeatFor(_region: RepeatForRegion) {
+    return [];
+  }
+  public visitTextInterpolation(_region: TextInterpolationRegion) {
+    return [];
+  }
+  public visitValueConverter(_region: ValueConverterRegion) {
+    return [];
+  }
 }

@@ -234,9 +234,7 @@ export class RegionParser {
   }
 
   public lint(
-    aureliaProject: AureliaProjects,
     regions: AbstractRegion[],
-    components: IAureliaComponent[]
   ) {
     const lintResults: Diagnostic[] = [];
 
