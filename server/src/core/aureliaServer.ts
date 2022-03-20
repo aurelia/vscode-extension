@@ -15,7 +15,7 @@ import { onCodeAction } from '../feature/codeAction/onCodeAction';
 import { onCompletion } from '../feature/completions/onCompletions';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
 import { onDefintion } from '../feature/definition/onDefinitions';
-import { AureliaDiagnostics } from '../feature/diagnostics/diagnostics';
+import { AureliaDiagnostics } from '../feature/diagnostics/AureliaDiagnostics';
 // import { createDiagnostics } from '../feature/diagnostics/diagnostics';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';

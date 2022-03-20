@@ -8,7 +8,7 @@ import {
   ExtensionSettings,
   DocumentSettings,
 } from '../configuration/DocumentSettings';
-import { AureliaDiagnostics } from '../feature/diagnostics/diagnostics';
+import { AureliaDiagnostics } from '../feature/diagnostics/AureliaDiagnostics';
 import { AureliaProjects } from './AureliaProjects';
 
 export function initDependencyInjection(
