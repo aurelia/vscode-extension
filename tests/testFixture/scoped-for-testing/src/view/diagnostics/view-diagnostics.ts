@@ -1,11 +1,8 @@
-import { PrivateService } from "./PrivateService";
+import { PrivateService } from './PrivateService';
 
 @customElement({ name: 'view-diagnostics', template })
-
 export class ViewDiagnostics {
-  @bindable fooBar
+  @bindable fooBar;
 
-  constructor(private privateService: PrivateService) {
-    this.privateService.forbidden
-  }
+  constructor(private privateService: PrivateService) {}
 }
