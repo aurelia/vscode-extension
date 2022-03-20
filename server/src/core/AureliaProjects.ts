@@ -187,6 +187,19 @@ export class AureliaProjects {
     return this.editingTracker;
   }
 
+  public getComponentByDocument(document: TextDocument, componentName: string) {
+    const componentList = this.getFromUri(
+      document.uri
+    )?.aureliaProgram?.aureliaComponents?.getAll();
+
+    const component = componentList?.find(
+      (component) => component.componentName === componentName
+    );
+    if (!component) return;
+
+    return component;
+  }
+
   public addDocumentToEditingTracker(document: TextDocument): void {
     this.editingTracker.push(document);
   }

@@ -2,6 +2,7 @@
 import { camelCase } from '@aurelia/kernel';
 import { inject } from 'aurelia-dependency-injection';
 import { Diagnostic } from 'vscode-languageserver-protocol';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AnalyzerService } from '../../../common/services/AnalyzerService';
 import { AureliaProjects } from '../../../core/AureliaProjects';
@@ -30,51 +31,26 @@ export class LintVisitor implements IViewRegionsVisitorArray<Diagnostic> {
     private readonly aureliaProject: AureliaProjects
   ) {}
 
-  public visitAttribute(region: AttributeRegion) {
-    const componentList = this.aureliaProject
-      .getAll()[0]
-      .aureliaProgram?.aureliaComponents?.getAll();
-    if (componentList) {
-      this.componentList = componentList;
-    }
+  public visitAttribute(region: AttributeRegion, document: TextDocument) {
+    const finalDiagnostics: Diagnostic[] = [];
 
-    const component = this.componentList.find(
-      (component) => component.componentName === region.tagName
+    const component = this.aureliaProject.getComponentByDocument(
+      document,
+      region.tagName
     );
     if (!component) return [];
 
-    const finalDiagnostics: Diagnostic[] = [];
-    const bindableName = region.regionValue;
-    if (bindableName === undefined) return [];
-
-    const targetBindable = component.classMembers?.find((member) => {
-      if (!member.isBindable) return false;
-
-      // HTML (parse5) only allows lowercase letters, so fooBar -> foobar
-      const isTargetBindable =
-        member.name.toLowerCase() === camelCase(bindableName).toLowerCase();
-      // isTargetBindable; /* ? */
-      return isTargetBindable;
-    });
-    // targetBindable; /* ? */
-
-    const rules = [AttributeRules.preventPrivateMethod];
-    const targetProject = this.aureliaProject.getFromPath(
-      component.viewModelFilePath
-    );
     const aureliaProgram = this.analyzerService.getAureliaProgramByDocument({
       uri: component.viewModelFilePath,
     });
     if (!aureliaProgram) return [];
 
+    const attributeRules = new AttributeRules(aureliaProgram);
+    const rules = [attributeRules.preventPrivateMethod];
+
     rules.forEach((rule) => {
-      const ruleResult = rule(
-        region,
-        targetBindable,
-        bindableName,
-        aureliaProgram,
-        this.componentList
-      );
+      /** .apply -> due to rules array loses context */
+      const ruleResult = rule.apply(attributeRules, [region]);
       if (ruleResult) {
         finalDiagnostics.push(ruleResult);
       }

@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
 import SaxStream from 'parse5-sax-parser';
-import { Position } from 'vscode-languageserver-textdocument';
+import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
   AccessScopeExpression,
@@ -26,7 +26,10 @@ import { ImportLanguageService } from './languageServer/ImportLanguageService';
 import { RepeatForLanguageService } from './languageServer/RepeatForLanguageService';
 import { TextInterpolationLanguageService } from './languageServer/TextInterpolationLanguageService';
 import { ValueConverterLanguageService } from './languageServer/ValueConverterLanguageService';
-import { IViewRegionsVisitor, IViewRegionsVisitorArray } from './ViewRegionsVisitor';
+import {
+  IViewRegionsVisitor,
+  IViewRegionsVisitorArray,
+} from './ViewRegionsVisitor';
 
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 export type RequiredBy<T, K extends keyof T> = Partial<T> & Pick<T, K>;
@@ -187,8 +190,10 @@ export abstract class AbstractRegion implements ViewRegionInfoV2 {
 
   // region public
   // public abstract acceptArray<T>(visitor: IViewRegionsVisitor<T[]>): T[];
-  public abstract acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[]
-
+  public abstract acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[];
 
   public getStartPosition(): Position {
     return {
@@ -268,8 +273,11 @@ export class AttributeRegion extends AbstractRegion {
     return viewRegion;
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
-    return visitor.visitAttribute(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
+    return visitor.visitAttribute(this, document);
   }
 }
 
@@ -419,8 +427,11 @@ export class AttributeInterpolationRegion extends AbstractRegion {
     }
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
-    return visitor.visitAttributeInterpolation(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
+    return visitor.visitAttributeInterpolation(this, document);
   }
 }
 
@@ -448,8 +459,11 @@ export class AureliaHtmlRegion extends AbstractRegion {
     return new AureliaHtmlRegion(finalInfo);
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
-    return visitor.visitAureliaHtmlInterpolation(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
+    return visitor.visitAureliaHtmlInterpolation(this, document);
   }
 }
 
@@ -508,8 +522,11 @@ export class BindableAttributeRegion extends AbstractRegion {
     return viewRegion;
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitor<T>) {
-    return visitor.visitBindableAttribute(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ) {
+    return visitor.visitBindableAttribute(this, document);
   }
 }
 
@@ -636,11 +653,17 @@ export class CustomElementRegion extends AbstractRegion {
     this.data.push(bindableAttribute);
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
     const finalResult: T[] = [];
     this.data.forEach((subRegion) => {
       if (BindableAttributeRegion.is(subRegion)) {
-        const bindableResults = visitor.visitBindableAttribute(subRegion);
+        const bindableResults = visitor.visitBindableAttribute(
+          subRegion,
+          document
+        );
 
         if (Array.isArray(bindableResults)) {
           finalResult.push(...bindableResults);
@@ -650,7 +673,7 @@ export class CustomElementRegion extends AbstractRegion {
       }
     });
 
-    const customElementResults = visitor.visitCustomElement(this);
+    const customElementResults = visitor.visitCustomElement(this, document);
     if (Array.isArray(customElementResults)) {
       finalResult.push(...customElementResults);
     } else {
@@ -712,8 +735,11 @@ export class ImportRegion extends AbstractRegion {
 
   // region public
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
-    return visitor.visitImport(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
+    return visitor.visitImport(this, document);
   }
   // endregion public
 }
@@ -823,8 +849,11 @@ export class RepeatForRegion extends AbstractRegion {
     return region.type === ViewRegionType.RepeatFor;
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
-    return visitor.visitRepeatFor(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
+    return visitor.visitRepeatFor(this, document);
   }
 }
 
@@ -1004,8 +1033,11 @@ export class TextInterpolationRegion extends AbstractRegion {
     }
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
-    return visitor.visitTextInterpolation(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
+    return visitor.visitTextInterpolation(this, document);
   }
 }
 
@@ -1103,8 +1135,11 @@ export class ValueConverterRegion extends AbstractRegion {
     return valueConverterRegions;
   }
 
-  public acceptArray<T>(visitor: IViewRegionsVisitorArray<T>): T[] {
-    return visitor.visitValueConverter(this);
+  public acceptArray<T>(
+    visitor: IViewRegionsVisitorArray<T>,
+    document: TextDocument
+  ): T[] {
+    return visitor.visitValueConverter(this, document);
   }
 }
 

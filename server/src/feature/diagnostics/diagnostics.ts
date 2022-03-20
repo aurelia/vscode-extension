@@ -17,7 +17,7 @@ export class AureliaDiagnostics {
     const regions = this.regionService.getRegionsInDocument(document);
 
     regions.forEach((region) => {
-      const lintResult = region.acceptArray<Diagnostic>(this.lintVisitor);
+      const lintResult = region.acceptArray<Diagnostic>(this.lintVisitor, document);
       lintResults.push(...lintResult);
     });
 

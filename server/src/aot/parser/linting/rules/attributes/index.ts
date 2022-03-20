@@ -3,62 +3,32 @@ import { Diagnostic } from 'vscode-languageserver';
 
 import { RegionService } from '../../../../../common/services/RegionService';
 import { checkAlreadyHasThis } from '../../../../../feature/completions/virtualCompletion2';
-import { IAureliaClassMember, IAureliaComponent } from '../../../../aotTypes';
+import { IAureliaComponent } from '../../../../aotTypes';
 import { AureliaProgram } from '../../../../AureliaProgram';
 import { getRangeFromSourceCodeLocation } from '../../../regions/rangeFromRegion';
-import { AttributeRegion } from '../../../regions/ViewRegions';
+import { AbstractRegion, AttributeRegion } from '../../../regions/ViewRegions';
 
 const COMPLETIONS_ID = '//AUVSCCOMPL96';
 const VIRTUAL_METHOD_NAME = '__vir';
 
 export class AttributeRules {
-  public static preventPrivateMethod(
-    region: AttributeRegion,
-    targetBindable: IAureliaClassMember | undefined,
-    bindableName: string,
-    aureliaProgram?: AureliaProgram,
-    components?: IAureliaComponent[]
-  ): Diagnostic | undefined {
-    // region.regionValue;
-    // // 1. check if accessScope value is imported
+  constructor(private aureliaProgram: AureliaProgram) {
+    this.aureliaProgram = aureliaProgram;
+  }
 
-    // region.attributeValue;
-    // // 2. then do virtual diagnostics
-    if (!components) return;
-
-    const targetComponent = components.find(
-      (component) => component.componentName === region.tagName
+  preventPrivateMethod(region: AttributeRegion): Diagnostic | undefined {
+    const targetComponent = this.aureliaProgram.aureliaComponents.getOneBy(
+      'componentName',
+      region.tagName
     );
-
-    if (!aureliaProgram) return;
     if (!targetComponent) return;
-    if (region.attributeValue === undefined || region.attributeValue === '')
-      return;
 
-    // RegionParser.pretty([region],{asTable: true});/* ? */
+    const virtualContent = addThisToAccessScope(region, region.attributeValue);
+    if (!virtualContent) return;
 
-    let virtualContent = region.attributeValue;
-    // region; /* ? */
-    region.accessScopes?.forEach((scope) => {
-      const accessScopeName = scope.name;
-      if (accessScopeName === '') return;
-
-      const replaceRegexp = new RegExp(`\\b${accessScopeName}\\b`, 'g');
-      const alreadyHasThis = checkAlreadyHasThis(
-        virtualContent,
-        accessScopeName
-      );
-      if (alreadyHasThis) return;
-
-      virtualContent = virtualContent?.replace(replaceRegexp, (match) => {
-        return `this.${match}`;
-      });
-    });
-
-    // virtualContent;/* ? */
     let message: string | ts.DiagnosticMessageChain = '';
     createVirtualSourceFile_vNext(
-      aureliaProgram,
+      this.aureliaProgram,
       targetComponent,
       virtualContent,
       (languageService, sourceFilePath) => {
@@ -77,6 +47,30 @@ export class AttributeRules {
   }
 }
 
+export function addThisToAccessScope(
+  region: AbstractRegion,
+  virtualContent: string | undefined
+): string | undefined {
+  if (region.attributeValue === undefined || region.attributeValue === '') {
+    return;
+  }
+
+  region.accessScopes?.forEach((scope) => {
+    const accessScopeName = scope.name;
+    if (accessScopeName === '') return;
+
+    const replaceRegexp = new RegExp(`\\b${accessScopeName}\\b`, 'g');
+    const alreadyHasThis = checkAlreadyHasThis(virtualContent, accessScopeName);
+    if (alreadyHasThis) return;
+
+    virtualContent = virtualContent?.replace(replaceRegexp, (match) => {
+      return `this.${match}`;
+    });
+  });
+
+  return virtualContent;
+}
+
 export function createVirtualSourceFile_vNext(
   aureliaProgram: AureliaProgram,
   component: IAureliaComponent,
@@ -87,8 +81,8 @@ export function createVirtualSourceFile_vNext(
     finalPos: number
   ) => unknown
 ): void {
-  const project = aureliaProgram.tsMorphProject.get();
-  const sourceFile = project.getSourceFile(component.viewModelFilePath);
+  const tsMorphProject = aureliaProgram.tsMorphProject.get();
+  const sourceFile = tsMorphProject.getSourceFile(component.viewModelFilePath);
   if (sourceFile == null) return;
 
   const sourceFilePath = sourceFile.getFilePath();
@@ -112,7 +106,7 @@ export function createVirtualSourceFile_vNext(
   const targetPos = finalTargetStatementText?.indexOf(COMPLETIONS_ID);
   const finalPos = targetStatement.getPos() + targetPos;
 
-  const languageService = project.getLanguageService().compilerObject;
+  const languageService = tsMorphProject.getLanguageService().compilerObject;
 
   if (typeof languageServiceMethod === 'function') {
     const patchedSourceFilePath = sourceFilePath.replace('file:///', 'file:/');
