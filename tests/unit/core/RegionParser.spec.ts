@@ -8,7 +8,10 @@ import {
   ViewRegionType,
 } from '../../../server/src/aot/parser/regions/ViewRegions';
 import { AureliaView } from '../../../server/src/common/constants';
-import { RegionService } from '../../../server/src/common/services/RegionService';
+import {
+  getRegionsOfType,
+  RegionService,
+} from '../../../server/src/common/services/RegionService';
 import {
   TestCasesMapFileBased,
   getEmptyShared,
@@ -109,7 +112,7 @@ describe('RegionParser#parse.', () => {
           if (regionType === ViewRegionType.CustomElement) {
             // Custom Element - BindableAttribute
             it('the result should include Custom element bindable attributes', () => {
-              const target = RegionService.getRegionsOfType(
+              const target = getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -124,7 +127,7 @@ describe('RegionParser#parse.', () => {
             // Custom Element - Whole Tag
             it('the result should include Custom element - whole tag', () => {
               // shared.parsedRegions /* ? */
-              const target = RegionService.getRegionsOfType(
+              const target = getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -141,7 +144,7 @@ describe('RegionParser#parse.', () => {
 
             // Custom Element - Start Tag
             it('the result should include Custom element - opening tag', () => {
-              const target = RegionService.getRegionsOfType(
+              const target = getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -161,7 +164,7 @@ describe('RegionParser#parse.', () => {
 
             // Custom Element - End Tag
             it('the result should include Custom element - closing tag', () => {
-              const target = RegionService.getRegionsOfType(
+              const target = getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType.CustomElement
               );
@@ -184,7 +187,7 @@ describe('RegionParser#parse.', () => {
           // Import
           else if (regionType === ViewRegionType.Import) {
             it('the result should include import tags.', () => {
-              const target = RegionService.getRegionsOfType(
+              const target = getRegionsOfType(
                 shared.parsedRegions,
                 ViewRegionType[regionType]
               );
