@@ -49,13 +49,18 @@ export class UriUtils {
 
   public static encodeWinPath(path: string): string {
     // C%3A/Users/hdn%20local/.vscode/extensions/wallabyjs.wallaby-vscode-1.0.318/projects/01d527eb4e87d260/instrumented/tests/testFixture/scoped-for-testing/src/view/custom-element/other-custom-element-user.html
-    let encodePath = path.replace(/\\\\?/g, () => '/');
+    let encodePath = this.convertToForwardSlash(path)
     // fix colon
     encodePath = encodePath.replace(':', '%3A');
     // fix whitespace
     encodePath = encodePath.replace(' ', '%20');
 
     return encodePath;
+  }
+
+  public static convertToForwardSlash(path: string): string {
+    const forwardSlashPath = path.replace(/\\\\?/g, () => '/');
+    return forwardSlashPath
   }
 
   private static decodeWinPath(path: string): string {

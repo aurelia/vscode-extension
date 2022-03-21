@@ -196,16 +196,25 @@ export const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
 
 export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
+  'extension.au.fix.add.missing.import',
   'extension.au.refactor.aTag',
   'extension.au.reloadExtension',
   'extension.au.runDiagnosticsForCurrentFile',
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 
-export const CLIENT_COMMANDS = [
-  'client.get.active.file'
-] as const;
+export const CLIENT_COMMANDS = ['client.get.active.file'] as const;
 export type CLIENT_COMMANDS_KEYS = typeof CLIENT_COMMANDS[number];
+
+interface CodeActionCommand {
+  command: string;
+  title: string;
+  newTagName?: string;
+  newText?: string;
+  newAttribute?: string;
+}
+
+type CodeActionMap = Record<string, CodeActionCommand>;
 
 export const CodeActionMap = {
   'refactor.aTag': {
@@ -214,4 +223,11 @@ export const CodeActionMap = {
     newText: 'import',
     newAttribute: 'from',
   },
-};
+  'fix.add.missing.import': {
+    command: 'extension.au.fix.add.missing.import',
+    title: 'Au: Add missing import 🟪',
+    newTagName: '',
+    newText: '',
+    newAttribute: '',
+  },
+} as const;
