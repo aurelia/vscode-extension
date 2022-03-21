@@ -34,13 +34,13 @@ export function initDependencyInjection(
     new RegionService(aureliaProjects, analyzerService)
   );
 
+  const regionService = container.get(RegionService);
   container.registerInstance(
     LintVisitor,
-    new LintVisitor(analyzerService, aureliaProjects)
+    new LintVisitor(analyzerService, aureliaProjects, regionService)
   );
 
   const lintVisitor = container.get(LintVisitor);
-  const regionService = container.get(RegionService);
 
   container.registerInstance(
     AureliaDiagnostics,

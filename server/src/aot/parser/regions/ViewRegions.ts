@@ -657,6 +657,8 @@ export class CustomElementRegion extends AbstractRegion {
     visitor: IViewRegionsVisitorArray<T>,
     document: TextDocument
   ): T[] {
+    if (this.subType === ViewRegionSubType.EndTag) return [];
+
     const finalResult: T[] = [];
     this.data.forEach((subRegion) => {
       if (BindableAttributeRegion.is(subRegion)) {

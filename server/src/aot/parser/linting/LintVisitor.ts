@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { camelCase } from '@aurelia/kernel';
 import { inject } from 'aurelia-dependency-injection';
 import { Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AnalyzerService } from '../../../common/services/AnalyzerService';
+import { RegionService } from '../../../common/services/RegionService';
 import { AureliaProjects } from '../../../core/AureliaProjects';
 import { IAureliaComponent } from '../../aotTypes';
 import {
@@ -17,18 +21,22 @@ import {
   RepeatForRegion,
   TextInterpolationRegion,
   ValueConverterRegion,
+  ViewRegionType,
 } from '../regions/ViewRegions';
 import { IViewRegionsVisitorArray } from '../regions/ViewRegionsVisitor';
 import { AttributeRules } from './rules/attributes';
 import { BindableAttributeRules } from './rules/bindableAttributes';
+import { CustomElementsRules } from './rules/customElements';
+import { ImportsRules } from './rules/imports';
 
-@inject(AnalyzerService, AureliaProjects)
+@inject(AnalyzerService, AureliaProjects, RegionService)
 export class LintVisitor implements IViewRegionsVisitorArray<Diagnostic> {
   private componentList: IAureliaComponent[];
 
   constructor(
     private readonly analyzerService: AnalyzerService,
-    private readonly aureliaProject: AureliaProjects
+    private readonly aureliaProject: AureliaProjects,
+    private readonly regionService: RegionService
   ) {}
 
   public visitAttribute(region: AttributeRegion, document: TextDocument) {
@@ -119,12 +127,50 @@ export class LintVisitor implements IViewRegionsVisitorArray<Diagnostic> {
     return finalDiagnostics;
   }
 
-  public visitCustomElement(_region: CustomElementRegion) {
-    return [];
+  public visitCustomElement(
+    region: CustomElementRegion,
+    document: TextDocument
+  ) {
+    if (region.tagName !== 'empty-view') return [];
+
+    const finalDiagnostics: Diagnostic[] = [];
+
+    const customElementsRules = new CustomElementsRules(
+      this.aureliaProject,
+      this.regionService
+    );
+    const rules = [customElementsRules.validImport];
+
+    rules.forEach((rule) => {
+      /** .apply -> due to rules array loses context */
+      const ruleResult = rule.apply(customElementsRules, [region, document]);
+      if (ruleResult) {
+        finalDiagnostics.push(ruleResult);
+      }
+    });
+
+    return finalDiagnostics;
   }
-  public visitImport(_region: ImportRegion) {
-    return [];
+
+  public visitImport(region: ImportRegion, document: TextDocument) {
+    // if (region.tagName !== 'empty-view') return [];
+
+    const finalDiagnostics: Diagnostic[] = [];
+
+    const customElementsRules = new ImportsRules();
+    const rules = [customElementsRules.validImportNaming];
+
+    rules.forEach((rule) => {
+      /** .apply -> due to rules array loses context */
+      const ruleResult = rule.apply(customElementsRules, [region, document]);
+      if (ruleResult) {
+        finalDiagnostics.push(ruleResult);
+      }
+    });
+
+    return finalDiagnostics;
   }
+
   public visitRepeatFor(_region: RepeatForRegion) {
     return [];
   }
