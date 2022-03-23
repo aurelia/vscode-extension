@@ -1,5 +1,6 @@
 import { kebabCase } from 'lodash';
 import { Diagnostic } from 'vscode-languageserver';
+import { AURELIA_BINDABLE_KEYWORDS } from '../../../../../common/constants';
 
 import { DiagnosticsService } from '../../../../../feature/diagnostics/DiagnosticsService';
 import { IAureliaClassMember, IAureliaComponent } from '../../../../aotTypes';
@@ -22,6 +23,8 @@ export class BindableAttributeRules {
       return;
     }
     if (!targetBindable) {
+      if (AURELIA_BINDABLE_KEYWORDS.includes(bindableName)) return;
+
       message = `Not found. No such bindable: '${
         region.regionValue ?? 'null'
       }'`;

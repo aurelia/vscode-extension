@@ -118,13 +118,13 @@ export function whenILintTheFile(fileName: string, shared: Shared) {
     componentList
   );
 
-  const linted = RegionParser.lint(
-    parsedRegions,
-    // @ts-ignore
-    componentList
-  );
+  // const linted = RegionParser.lint(
+  //   parsedRegions,
+  //   // @ts-ignore
+  //   componentList
+  // );
 
-  linted;/* ? */
+  // linted;/* ? */
 
   shared.parsedRegions = parsedRegions;
 }

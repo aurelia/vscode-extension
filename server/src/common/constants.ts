@@ -98,6 +98,14 @@ export const AURELIA_ATTRIBUTE_WITH_DELEGATE_KEYWORD = [
   'gotpointercapture',
   'lostpointercapture',
 ];
+export const AURELIA_BINDABLE_KEYWORDS = [
+  'if',
+  'promise',
+  'then',
+  'catch',
+  'show',
+  'switch',
+]
 export const AURELIA_WITH_SPECIAL_KEYWORD = [
   ['repeat.for', '="$1 of $0"'],
   ['element.ref', '="$0"'],
