@@ -5,6 +5,7 @@ import {
   AbstractRegion,
   AttributeInterpolationRegion,
   AttributeRegion,
+  AureliaHtmlRegion,
   BindableAttributeRegion,
   CustomElementRegion,
   ImportRegion,
@@ -93,9 +94,7 @@ export class RegionService {
       let possibleRegion = region;
       if (CustomElementRegion.is(region)) {
         const subTarget = this.findRegionAtPosition(region.data, position);
-        if (subTarget) {
-          possibleRegion = subTarget;
-        }
+        possibleRegion = subTarget;
       }
 
       const start = possibleRegion.getStartPosition();
@@ -108,7 +107,10 @@ export class RegionService {
 
       return isIncluded;
     });
-    if (!targetRegion) return;
+
+    if (!targetRegion) {
+      return AureliaHtmlRegion.create();
+    }
 
     return targetRegion;
   }
@@ -210,12 +212,10 @@ export class RegionService {
 
     if (region.attributeValue === undefined) return;
 
-    const endOffset = region.sourceCodeLocation.endOffset - 1
-    const startOffset =
-      endOffset - region.attributeValue.length; // - 1: '"'
+    const endOffset = region.sourceCodeLocation.endOffset - 1;
+    const startOffset = endOffset - region.attributeValue.length; // - 1: '"'
     const endCol = region.sourceCodeLocation.endCol - 1;
-    const startCol =
-      endCol - region.attributeValue.length; // - 1: '"'
+    const startCol = endCol - region.attributeValue.length; // - 1: '"'
 
     const location: SourceCodeLocation = {
       ...region.sourceCodeLocation,
