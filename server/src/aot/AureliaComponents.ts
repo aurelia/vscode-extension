@@ -33,7 +33,8 @@ export class AureliaComponents {
       initComponentList(project, filePaths)
     );
 
-    const componentsWithBindables = this.enrichWithBindables(enhancedComponents);
+    const componentsWithBindables =
+      this.enrichWithBindables(enhancedComponents);
     this.set(componentsWithBindables);
 
     logComponentList(enhancedComponents);
@@ -108,18 +109,17 @@ export class AureliaComponents {
     return target;
   }
 
-  public getOneByFromDocument(document: TextDocument) {
+  public getOneByFromDocument({ uri }: { uri: string }) {
     const target = this.getAll().find((component) => {
-      if (this.isViewDocument(document)) {
+      if (this.isViewDocument({ uri })) {
         if (component.viewFilePath === undefined) return false;
-        if (component.viewFilePath !== UriUtils.toSysPath(document.uri))
-          return false;
+        if (component.viewFilePath !== UriUtils.toSysPath(uri)) return false;
         return this.getOneBy(
           'viewFilePath',
           UriUtils.toSysPath(component.viewFilePath)
         );
-      } else if (this.isViewModelDocument(document)) {
-        if (component.viewModelFilePath !== UriUtils.toSysPath(document.uri))
+      } else if (this.isViewModelDocument({ uri })) {
+        if (component.viewModelFilePath !== UriUtils.toSysPath(uri))
           return false;
         return this.getOneBy(
           'viewModelFilePath',
@@ -133,24 +133,22 @@ export class AureliaComponents {
     return target;
   }
 
-  private isViewDocument(document: TextDocument) {
+  private isViewDocument({ uri }: { uri: string }) {
     const viewExtensions =
       this.documentSettings.getSettings().relatedFiles?.view;
     if (!viewExtensions) return;
 
-    const target = viewExtensions.find((extension) =>
-      document.uri.endsWith(extension)
-    );
+    const target = viewExtensions.find((extension) => uri.endsWith(extension));
     return target;
   }
 
-  private isViewModelDocument(document: TextDocument) {
+  private isViewModelDocument({ uri }: { uri: string }) {
     const viewModelExtensions =
       this.documentSettings.getSettings().relatedFiles?.script;
     if (!viewModelExtensions) return;
 
     const target = viewModelExtensions.find((extension) =>
-      document.uri.endsWith(extension)
+      uri.endsWith(extension)
     );
     return target;
   }

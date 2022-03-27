@@ -18,14 +18,17 @@ export class AnalyzerService {
     return aureliaProgram;
   }
 
-  public getComponentByDocumennt(
-    document: TextDocument
-  ): IAureliaComponent | undefined {
-    const aureliaProgram = this.getAureliaProgramByDocument(document);
+  public getComponentByDocumennt({
+    uri,
+  }: {
+    uri: string;
+  }): IAureliaComponent | undefined {
+    const aureliaProgram = this.getAureliaProgramByDocument({ uri });
     if (!aureliaProgram) return;
 
-    const component =
-      aureliaProgram.aureliaComponents.getOneByFromDocument(document);
+    const component = aureliaProgram.aureliaComponents.getOneByFromDocument({
+      uri,
+    });
     if (!component) return;
 
     return component;
@@ -35,11 +38,11 @@ export class AnalyzerService {
     T extends keyof IAureliaComponent,
     Value extends IAureliaComponent[T]
   >(
-    document: TextDocument,
+    { uri }: { uri: string },
     key: T,
     targetValue: Value
   ): IAureliaComponent | undefined {
-    const aureliaProgram = this.getAureliaProgramByDocument(document);
+    const aureliaProgram = this.getAureliaProgramByDocument({ uri });
 
     const targetComponent = aureliaProgram?.aureliaComponents.getOneBy(
       key,
