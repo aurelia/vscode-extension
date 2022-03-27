@@ -78,6 +78,19 @@ export class RegionService {
     regions: AbstractRegion[],
     position: Position
   ) {
+    const targetRegion = this.findRegionAtPositionRecursive(regions, position);
+
+    if (!targetRegion) {
+      return AureliaHtmlRegion.create();
+    }
+
+    return targetRegion;
+  }
+
+  public static findRegionAtPositionRecursive(
+    regions: AbstractRegion[],
+    position: Position
+  ) {
     // RegionParser.pretty(regions, {
     //   asTable: true,
     //   ignoreKeys: [
@@ -93,8 +106,10 @@ export class RegionService {
     regions.find((region) => {
       let possibleRegion = region;
       if (CustomElementRegion.is(region)) {
-        const subTarget = this.findRegionAtPosition(region.data, position);
-        possibleRegion = subTarget;
+        const subTarget = this.findRegionAtPositionRecursive(region.data, position);
+        if (subTarget) {
+          possibleRegion = subTarget;
+        }
       }
 
       const start = possibleRegion.getStartPosition();
@@ -108,9 +123,7 @@ export class RegionService {
       return isIncluded;
     });
 
-    if (!targetRegion) {
-      return AureliaHtmlRegion.create();
-    }
+    if (!targetRegion) return;
 
     return targetRegion;
   }
