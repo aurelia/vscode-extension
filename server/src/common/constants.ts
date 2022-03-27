@@ -105,7 +105,7 @@ export const AURELIA_BINDABLE_KEYWORDS = [
   'catch',
   'show',
   'switch',
-]
+];
 export const AURELIA_WITH_SPECIAL_KEYWORD = [
   ['repeat.for', '="$1 of $0"'],
   ['element.ref', '="$0"'],

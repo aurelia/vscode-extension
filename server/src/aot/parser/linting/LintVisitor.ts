@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -131,8 +131,6 @@ export class LintVisitor implements IViewRegionsVisitorArray<Diagnostic> {
     region: CustomElementRegion,
     document: TextDocument
   ) {
-    if (region.tagName !== 'empty-view') return [];
-
     const finalDiagnostics: Diagnostic[] = [];
 
     const customElementsRules = new CustomElementsRules(
