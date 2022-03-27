@@ -68,7 +68,7 @@ export class CustomElementLanguageService
     };
     const command = Command.create('Au: Command <<', kind, [edit]);
     const codeAcion = CodeAction.create(
-      CodeActionMap['refactor.aTag'].title,
+      CodeActionMap['fix.add.missing.import'].title,
       command,
       kind
     );

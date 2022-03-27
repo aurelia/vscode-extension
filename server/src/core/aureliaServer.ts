@@ -95,7 +95,6 @@ export class AureliaServer {
 
   public async sendDiagnostics(document: TextDocument) {
     const diagnostics = this.aureliaDiagnostics.createDiagnostics(document);
-    if (diagnostics.length === 0) return;
 
     const diagnosticsParams: PublishDiagnosticsParams = {
       uri: document.uri,
