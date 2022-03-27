@@ -25,7 +25,7 @@ export class TextDocumentUtils {
     return document;
   }
 
-  public static createHtmlFromUri(
+  public static getOrCreateHtmlFromUri(
     { uri }: { uri: string },
     allDocuments?: TextDocuments<TextDocument>
   ): TextDocument {

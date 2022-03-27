@@ -17,7 +17,7 @@ export function getRangesForAccessScopeFromRegionByName(
   const targetAccessScopes = region.accessScopes?.filter(
     (scope) => scope.name === targetName
   );
-  const viewDocument = TextDocumentUtils.createHtmlFromUri(document);
+  const viewDocument = TextDocumentUtils.getOrCreateHtmlFromUri(document);
   const resultRanges = targetAccessScopes?.map((scope) => {
     const { start, end } = scope.nameLocation;
     const startPosition = viewDocument.positionAt(start);

@@ -42,7 +42,7 @@ export async function onCodeAction(
   const doCodeAction = languageService.doCodeAction;
 
   if (doCodeAction) {
-    const document = TextDocumentUtils.createHtmlFromUri(
+    const document = TextDocumentUtils.getOrCreateHtmlFromUri(
       textDocument,
       allDocuments
     );
