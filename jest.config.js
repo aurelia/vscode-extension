@@ -4,7 +4,7 @@ module.exports = {
   moduleDirectories: ['node_modules', '<rootDir>/server/node_modules'],
   preset: 'ts-jest',
   verbose: true,
-  testRegex: '.(test|spec|steps)\\.ts$',
+  // testRegex: '.(test|spec|steps)\\.ts$',
   coverageDirectory: '.coverage',
   coverageReporters: ['text', 'text-summary'],
   coverageThreshold: {
