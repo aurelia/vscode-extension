@@ -1,22 +1,22 @@
 import * as path from 'path';
 
 import { Diagnostic } from 'vscode-languageserver';
-import { RegionService } from '../../../../../common/services/RegionService';
-import { inject } from '../../../../../core/container';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { RegionService } from '../../../../../common/services/RegionService';
+import { AureliaProjects } from '../../../../../core/AureliaProjects';
+import { inject } from '../../../../../core/container';
 import { DiagnosticsService } from '../../../../../feature/diagnostics/DiagnosticsService';
 import {
   CustomElementRegion,
   ViewRegionType,
 } from '../../../regions/ViewRegions';
-import { AureliaProjects } from '../../../../../core/AureliaProjects';
-import { TextDocument } from 'vscode-languageserver-textdocument';
 
 @inject(RegionService)
 export class CustomElementsRules {
   constructor(
-    private aureliaProjects: AureliaProjects,
-    private regionService: RegionService
+    private readonly aureliaProjects: AureliaProjects,
+    private readonly regionService: RegionService
   ) {}
 
   public validImport(
@@ -41,7 +41,9 @@ export class CustomElementsRules {
         component.viewModelFilePath,
         importRegion.regionValue ?? ''
       );
-      const ext = path.extname(component.viewModelFilePath);
+      if (component.viewFilePath === undefined) return false;
+
+      const ext = path.extname(component.viewFilePath);
       const withExt = `${resolvedPath}${ext}`;
 
       const isLocal = withExt === component.viewFilePath;
