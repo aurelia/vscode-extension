@@ -1,4 +1,5 @@
 import { ts } from 'ts-morph';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaClassTypes } from '../common/constants';
 import { AbstractRegion } from './parser/regions/ViewRegions';
@@ -55,3 +56,5 @@ export interface IAureliaBindable {
    */
   classMember: IAureliaClassMember;
 }
+
+export type DocumentLike = Pick<TextDocument, 'uri'>;

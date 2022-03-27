@@ -12,18 +12,22 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { CodeActionMap } from '../../../../common/constants';
 import { findSourceWord } from '../../../../common/documens/find-source-word';
+import { AnalyzerService } from '../../../../common/services/AnalyzerService';
 import { UriUtils } from '../../../../common/view/uri-utils';
+import { inject } from '../../../../core/container';
 import { getBindablesCompletion } from '../../../../feature/completions/completions';
 import { AureliaProgram } from '../../../AureliaProgram';
 import { DefinitionResult } from '../../parser-types';
 import { AbstractRegion } from '../ViewRegions';
 import { AbstractRegionLanguageService } from './AbstractRegionLanguageService';
 
+@inject(AnalyzerService)
 export class CustomElementLanguageService
   implements AbstractRegionLanguageService
 {
+  constructor(private readonly analyzerService?: AnalyzerService) {}
+
   public async doCodeAction(
-    aureliaProgram: AureliaProgram,
     document: TextDocument,
     startPosition: Position,
     region: AbstractRegion
@@ -33,7 +37,8 @@ export class CustomElementLanguageService
 
     // -- 2. Find (relative) import path
     const currentPath = path.parse(UriUtils.toSysPath(document.uri)).dir;
-    const targetComponent = aureliaProgram.aureliaComponents.getOneBy(
+    const targetComponent = this.analyzerService?.getOneComponentBy(
+      document,
       'componentName',
       targetTagName
     );

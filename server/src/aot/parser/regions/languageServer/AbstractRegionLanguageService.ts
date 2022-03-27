@@ -21,7 +21,6 @@ export interface AbstractRegionLanguageService {
     document: TextDocument
   ): Promise<Diagnostic[]>;
   doCodeAction?(
-    aureliaProgram: AureliaProgram,
     document: TextDocument,
     start: Position,
     region?: AbstractRegion

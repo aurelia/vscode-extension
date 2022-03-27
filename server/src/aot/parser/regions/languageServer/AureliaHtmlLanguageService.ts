@@ -46,7 +46,6 @@ export class AureliaHtmlLanguageService
   }
 
   public async doCodeAction(
-    aureliaProgram: AureliaProgram,
     document: TextDocument,
     startPosition: Position
   ) {
