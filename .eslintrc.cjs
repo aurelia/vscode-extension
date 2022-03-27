@@ -232,7 +232,7 @@ module.exports = {
     'no-return-await': 'error',
     'no-sequences': 'error',
     'no-setter-return': 'error',
-    'no-template-curly-in-string': 'error',
+    // 'no-template-curly-in-string': 'error',
     'no-throw-literal': 'error',
     'no-undef-init': 'error',
     'no-unused-expressions': 'off', // See @typescript-eslint/no-unused-expressions
