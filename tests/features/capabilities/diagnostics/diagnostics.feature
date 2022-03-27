@@ -4,7 +4,6 @@ Feature: Diagnostics.
     Given the project is named "scoped-for-testing"
     And I open VSCode with the following file "view-diagnostics.html"
 
-  @focus
   Scenario Outline: Diagnostics view.
     Given I'm on the line <LINE> at character <CODE>
     When I run Diagnostics for the active file

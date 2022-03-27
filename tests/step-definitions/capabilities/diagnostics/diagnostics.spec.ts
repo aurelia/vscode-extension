@@ -1,7 +1,7 @@
 import { StepDefinitions } from 'jest-cucumber';
 import { PublishDiagnosticsParams } from 'vscode-languageserver-protocol';
-import { position } from '../new-common/file.step';
 
+import { position } from '../new-common/file.step';
 // import { Logger } from '../../../../server/src/common/logging/logger';
 import { myMockServer } from '../new-common/project.step';
 
@@ -22,10 +22,10 @@ export const diagnosticsSteps: StepDefinitions = ({ when, then }) => {
     expect(diagnosticsParams).toBeDefined();
     if (diagnosticsParams === undefined) return;
 
-    diagnosticsParams.diagnostics.map(d => d.message)/*?*/
+    diagnosticsParams.diagnostics.map(d => d.message);/* ? */
     const targetDiagnostic = diagnosticsParams.diagnostics.find(
       (diagnostic) => {
-        const isInLine = diagnostic.range.start.line === position.line
+        const isInLine = diagnostic.range.start.line === position.line;
         const isSameMessage = diagnostic.message === diagnosticMessage;
         return isInLine && isSameMessage;
       }
@@ -36,7 +36,5 @@ export const diagnosticsSteps: StepDefinitions = ({ when, then }) => {
 
     expect(targetDiagnostic.message).toBe(diagnosticMessage);
     expect(targetDiagnostic.range.start.line).toBe(position.line);
-
-    expect(true).toBeFalsy();
   });
 };
