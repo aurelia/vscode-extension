@@ -3,6 +3,7 @@ import * as nodePath from 'path';
 
 import * as fastGlob from 'fast-glob';
 import { Project, ts } from 'ts-morph';
+import { Diagnostic } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { AureliaProgram } from '../aot/AureliaProgram';
@@ -25,6 +26,8 @@ export interface IAureliaProject {
 }
 
 export class AureliaProjects {
+  public readonly aureliaDiagnosticsMap: Map<TextDocument['uri'], Diagnostic[]> = new Map();
+
   private aureliaProjects: IAureliaProject[] = [];
   private editingTracker: TextDocument[] = [];
 

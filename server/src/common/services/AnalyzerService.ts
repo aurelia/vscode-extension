@@ -1,12 +1,10 @@
-import { TextDocument } from 'vscode-languageserver-textdocument';
-
 import { IAureliaComponent } from '../../aot/aotTypes';
 import { AureliaProjects } from '../../core/AureliaProjects';
 import { inject } from '../../core/container';
 
 @inject(AureliaProjects)
 export class AnalyzerService {
-  constructor(private readonly aureliaProjects: AureliaProjects) {}
+  constructor(public readonly aureliaProjects: AureliaProjects) {}
 
   public getAureliaProgramByDocument({ uri }: { uri: string }) {
     const targetProject = this.aureliaProjects.getFromUri(uri);

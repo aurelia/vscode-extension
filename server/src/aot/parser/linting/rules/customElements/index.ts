@@ -11,6 +11,7 @@ import {
   CustomElementRegion,
   ViewRegionType,
 } from '../../../regions/ViewRegions';
+import { LINT_MESSAGES } from '../../lintMessages';
 
 @inject(RegionService)
 export class CustomElementsRules {
@@ -65,7 +66,7 @@ export class CustomElementsRules {
     });
 
     if (locallyImported === undefined) {
-      message = 'No local import found.';
+      message = LINT_MESSAGES.customElement.missingImport.message;
     }
 
     const diag = DiagnosticsService.createDiagnosticsFromRegion(

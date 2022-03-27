@@ -21,6 +21,7 @@ export interface AbstractRegionLanguageService {
     document: TextDocument
   ): Promise<Diagnostic[]>;
   doCodeAction?(
+    container: Container,
     document: TextDocument,
     start: Position,
     region?: AbstractRegion

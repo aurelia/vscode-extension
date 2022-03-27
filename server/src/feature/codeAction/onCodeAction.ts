@@ -29,7 +29,12 @@ export async function onCodeAction(
       textDocument,
       allDocuments
     );
-    const codeAction = await doCodeAction(document, range.start, region);
+    const codeAction = await doCodeAction(
+      container,
+      document,
+      range.start,
+      region
+    );
     return codeAction;
   }
 }

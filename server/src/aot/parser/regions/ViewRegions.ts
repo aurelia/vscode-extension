@@ -26,10 +26,7 @@ import { ImportLanguageService } from './languageServer/ImportLanguageService';
 import { RepeatForLanguageService } from './languageServer/RepeatForLanguageService';
 import { TextInterpolationLanguageService } from './languageServer/TextInterpolationLanguageService';
 import { ValueConverterLanguageService } from './languageServer/ValueConverterLanguageService';
-import {
-  IViewRegionsVisitor,
-  IViewRegionsVisitorArray,
-} from './ViewRegionsVisitor';
+import { IViewRegionsVisitorArray } from './ViewRegionsVisitor';
 
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 export type RequiredBy<T, K extends keyof T> = Partial<T> & Pick<T, K>;

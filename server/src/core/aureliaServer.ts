@@ -22,6 +22,7 @@ import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
 import { onDocumentSymbol } from '../feature/symbols/onDocumentSymbol';
 import { onWorkspaceSymbol } from '../feature/symbols/onWorkspaceSymbol';
+import { AureliaProjects } from './AureliaProjects';
 import { Container } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
 
@@ -29,6 +30,7 @@ const logger = new Logger('AureliaServer');
 
 export class AureliaServer {
   private readonly aureliaDiagnostics: AureliaDiagnostics;
+  private readonly aureliaProjects: AureliaProjects;
 
   constructor(
     private readonly container: Container,
@@ -37,6 +39,7 @@ export class AureliaServer {
   ) {
     initDependencyInjection(container, extensionSettings);
     this.aureliaDiagnostics = container.get(AureliaDiagnostics);
+    this.aureliaProjects = container.get(AureliaProjects);
 
   }
 
@@ -100,6 +103,9 @@ export class AureliaServer {
       uri: document.uri,
       diagnostics,
     };
+
+    this.aureliaProjects.aureliaDiagnosticsMap.set(document.uri, diagnostics);
+
     return diagnosticsParams;
   }
 

@@ -1,6 +1,8 @@
 import { InsertTextFormat } from 'vscode-languageserver';
 import { CompletionItemKind, MarkupKind } from 'vscode-languageserver-types';
 
+import { LINT_MESSAGES } from '../aot/parser/linting/lintMessages';
+
 export const CUSTOM_ELEMENT_SUFFIX = 'CustomElement';
 export const VALUE_CONVERTER_SUFFIX = 'ValueConverter';
 
@@ -217,6 +219,7 @@ export type CLIENT_COMMANDS_KEYS = typeof CLIENT_COMMANDS[number];
 interface CodeActionCommand {
   command: string;
   title: string;
+  errorMessage: string;
   newTagName?: string;
   newText?: string;
   newAttribute?: string;
@@ -234,6 +237,7 @@ export const CodeActionMap = {
   'fix.add.missing.import': {
     command: 'extension.au.fix.add.missing.import',
     title: 'Au: Add missing import 🟪',
+    errorMessage: LINT_MESSAGES.customElement.missingImport.message,
     newTagName: '',
     newText: '',
     newAttribute: '',

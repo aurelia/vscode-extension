@@ -284,7 +284,6 @@ connection.onExecuteCommand(
         const activeDocument = documents.get(activeFileUri);
         if (!activeDocument) return;
         const diagnostics = await aureliaServer.sendDiagnostics(activeDocument);
-        if (!diagnostics) return;
         connection.sendDiagnostics(diagnostics);
 
         break;
