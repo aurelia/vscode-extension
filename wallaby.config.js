@@ -29,6 +29,7 @@ module.exports = function (wallaby) {
       type: 'node',
     },
     debug: true,
+    autoDetect: true,
     filesWithNoCoverageCalculated: [
       '**/node_modules/**',
       'client/**',
