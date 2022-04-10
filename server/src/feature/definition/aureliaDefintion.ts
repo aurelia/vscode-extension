@@ -167,6 +167,8 @@ async function getAureliaClassMemberDefinitions_SameView(
     viewExtensions
   );
   const viewDocument = TextDocumentUtils.createHtmlFromPath(viewPath);
+  if (!viewDocument) return [];
+
   const viewRegionDefinitions_ClassMembers: LocationLink[] = [];
   const regions = await findRegionsByWord(
     aureliaProgram,

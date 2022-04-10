@@ -244,6 +244,8 @@ export class AureliaComponents {
       const viewDocument = TextDocumentUtils.createHtmlFromPath(
         component.viewFilePath
       );
+      if (!viewDocument) return;
+
       const regions = RegionParser.parse(viewDocument, componentList);
       component.viewRegions = regions;
     });
