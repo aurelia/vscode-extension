@@ -1,3 +1,12 @@
+## [2.3.4](https://github.com/aurelia/vscode-extension/compare/2.3.3...2.3.4) (2022-04-10)
+
+
+### Bug Fixes
+
+* **documents:** Start up crash on certain projects.
+  * check if file exists before ([3b08349](https://github.com/aurelia/vscode-extension/commit/3b083499a8b64ef307da1e850527a43c07cd9a4b))
+
+
 ## [2.3.3](https://github.com/aurelia/vscode-extension/compare/2.3.2...2.3.3) (2022-03-15)
 
 
