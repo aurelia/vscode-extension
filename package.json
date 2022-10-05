@@ -140,7 +140,7 @@
             "completions": true,
             "codeActions": true,
             "defintions": true,
-            "renames": true,
+            "renames": false,
             "documentSymbols": true,
             "workspaceSymbols": true
           },
