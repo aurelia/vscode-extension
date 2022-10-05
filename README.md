@@ -279,19 +279,19 @@ The extension is in active use by the authors, so you can expect a swift respons
 ```
 # l.
 bumb version in package.json
-"version": "2.3.4"
+"version": "2.3.5"
 npm i && npm run changelog
-commit: chore(release): release v2.3.4
+commit: chore(release): release v2.3.5
 
 # 2.
-git tag -a 2.3.4 -m "v2.3.4"
+git tag -a 2.3.5 -m "v2.3.5"
 git push --follow-tags
 ```
 
 ### Deleting tag when release failed
 ```
-git tag -d 2.3.4
-git push --delete origin 2.3.4
+git tag -d 2.3.5
+git push --delete origin 2.3.5
 ```
 
 ### Prerelease

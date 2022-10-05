@@ -1,3 +1,12 @@
+## [2.3.5](https://github.com/aurelia/vscode-extension/compare/2.3.4...2.3.5) (2022-10-05)
+
+
+### Bug Fixes
+
+* **core:** add "aurelia-bootstrapper" to v1 detection ([d09dfc3](https://github.com/aurelia/vscode-extension/commit/d09dfc337af70dd59740c8344ec424129578e299)), closes [#199](https://github.com/aurelia/vscode-extension/issues/199)
+
+
+
 ## [2.3.4](https://github.com/aurelia/vscode-extension/compare/2.3.3...2.3.4) (2022-04-10)
 
 
