@@ -1,3 +1,25 @@
+## [2.3.6](https://github.com/aurelia/vscode-extension/compare/2.3.5...2.3.6) (2022-12-25)
+
+
+### Bug Fixes
+
+* **commands.extract:** don't user decorators .. ([109b953](https://github.com/aurelia/vscode-extension/commit/109b9534cae51af86c85b9a83f04d4e76981ad0e))
+
+
+### Features
+
+* **aot:** add types to class member ([41baccd](https://github.com/aurelia/vscode-extension/commit/41baccd1b293174e3c9d203553ecb7bab2aea703))
+* **aureliaVersion:** bindable package based on version ([db252f3](https://github.com/aurelia/vscode-extension/commit/db252f36484f961a9467f26fa840ed11c1fc49a9))
+* **aureliaVersion:** parse and store to project ([19e31eb](https://github.com/aurelia/vscode-extension/commit/19e31eb7eb2a2a5bbf1b05d2acab212ad0cc1eb8))
+* **commands.extract:** add types to viewModel bindables if present ([b5d2449](https://github.com/aurelia/vscode-extension/commit/b5d24498bb3cf118744c265d01b4c18080d4ca92))
+* **commands.extract:** create view, prepare view model ([2b8a2d6](https://github.com/aurelia/vscode-extension/commit/2b8a2d638078d55197477ef38da6d302e6a41dbc))
+* **commands.extract:** finish viewModel and replace with newly created tag ([333ee7b](https://github.com/aurelia/vscode-extension/commit/333ee7bf24d1772a998939652a3fbf5e303e0262))
+* **commands.extract:** init input and files in server ([f9827cf](https://github.com/aurelia/vscode-extension/commit/f9827cf8ad6b2540fb2dfe06ca8af861e3fbd7f5))
+* **commands.extract:** support user generated templates ([0ebf25a](https://github.com/aurelia/vscode-extension/commit/0ebf25a35c2681cf2c83bf8e583f7f7dc03a83fc))
+* **common:** add check for au version ([0589298](https://github.com/aurelia/vscode-extension/commit/0589298910e05bb6317648a0dd6307a6dbfa04e3))
+
+
+
 ## [2.3.5](https://github.com/aurelia/vscode-extension/compare/2.3.4...2.3.5) (2022-10-05)
 
 
