@@ -5,14 +5,14 @@ references:
     run:
       name: npm-update-and-install
       command: |
-        sudo npm install -g npm@latest
+        sudo npm install -g npm@8.5.0
         npm i
         npm run postinstall
 
 jobs:
   build:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:gallium
     steps:
       - checkout
       - *npm_install_update
@@ -21,7 +21,7 @@ jobs:
           command: npm run vscode:prepublish
   test:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:gallium
     steps:
       - checkout
       - *npm_install_update
@@ -33,7 +33,7 @@ jobs:
           command: npm run test:ci
   publish:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:gallium
     steps:
       - checkout
       - *npm_install_update
@@ -45,7 +45,7 @@ jobs:
           command: npx vsce publish -p ${VSTOKEN}
   prerelease:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:gallium
     steps:
       - checkout
       - *npm_install_update
