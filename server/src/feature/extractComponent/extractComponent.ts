@@ -25,7 +25,6 @@ import { IAureliaClassMember } from '../../aot/aotTypes';
 
 const workspaceUpdates = new WorkspaceUpdates();
 
-@inject(Container, ConnectionInjection, AllDocumentsInjection, AureliaProjects)
 export class ExtractComponent {
   constructor(
     private container: Container,

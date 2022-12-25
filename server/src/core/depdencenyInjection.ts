@@ -6,6 +6,7 @@ import {
   ExtensionSettings,
   DocumentSettings,
 } from '../configuration/DocumentSettings';
+import { ExtractComponent } from '../feature/extractComponent/extractComponent';
 import { AureliaProjects } from './AureliaProjects';
 
 export const ConnectionInjection = 'Connection';
@@ -27,4 +28,10 @@ export function initDependencyInjection(
   );
   const settings = container.get(DocumentSettings);
   container.registerInstance(AureliaProjects, new AureliaProjects(settings));
+  const aureliaProjects = container.get(AureliaProjects);
+
+  container.registerInstance(
+    ExtractComponent,
+    new ExtractComponent(container, connection, allDocuments, aureliaProjects)
+  );
 }
