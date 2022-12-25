@@ -20,6 +20,7 @@ import { RegionService } from '../../common/services/RegionService';
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument';
 import { kebabCase } from 'lodash';
+import { AureliaUtils } from '../../common/AureliaUtils';
 
 @inject(Container, ConnectionInjection, AllDocumentsInjection, AureliaProjects)
 export class ExtractComponent {
@@ -64,6 +65,7 @@ export class ExtractComponent {
 
     // 4. Replace selection with new component
     await this.replaceSelection(
+      targetProject,
       componentName,
       getEditorSelectionResponse,
       collectedScopeNames
@@ -71,6 +73,7 @@ export class ExtractComponent {
   }
 
   private async replaceSelection(
+    targetProject: IAureliaProject,
     componentName: string,
     getEditorSelectionResponse: GetEditorSelectionResponse,
     collectedScopeNames: string[]
@@ -79,6 +82,8 @@ export class ExtractComponent {
     const document = this.allDocuments.get(documentUri);
     if (!document) return;
     const workspaceUpdates = new WorkspaceUpdates();
+    const isAuV1 = AureliaUtils.isAuV1(targetProject.aureliaVersion);
+    const importTagName = isAuV1 ? 'require' : 'import';
 
     for (const selection of selections) {
       const attributes = collectedScopeNames
@@ -86,8 +91,8 @@ export class ExtractComponent {
         .join(' ');
       const toTagName = kebabCase(componentName);
       const withTags = `<${toTagName}\n  ${attributes}>\n</${toTagName}>`;
-      const importTag = `<require from=''></require>`
-      const withImports = `${importTag}\n${withTags}`
+      const importTag = `<${importTagName} from=''></${importTagName}>`;
+      const withImports = `${importTag}\n${withTags}`;
       workspaceUpdates.replaceText(
         documentUri,
         withImports,
@@ -112,7 +117,12 @@ export class ExtractComponent {
       fs.mkdirSync(creationPath);
     }
 
-    this.createViewModelFile(creationPath, componentName, collectedScopeNames);
+    this.createViewModelFile(
+      targetProject,
+      creationPath,
+      componentName,
+      collectedScopeNames
+    );
     this.createViewFile(
       creationPath,
       componentName,
@@ -123,6 +133,7 @@ export class ExtractComponent {
   }
 
   private createViewModelFile(
+    targetProject: IAureliaProject,
     creationPath: string,
     componentName: string,
     collectedScopeNames: string[]
@@ -135,7 +146,9 @@ export class ExtractComponent {
       .map((name) => `@bindable ${name};`)
       .join('\n  ');
 
-    const finalContent = `import { bindable } from 'aurelia-framework';
+    const isAuV1 = AureliaUtils.isAuV1(targetProject.aureliaVersion);
+    const bindableImportPackage = isAuV1 ? 'aurelia-framework' : 'aurelia';
+    const finalContent = `import { bindable } from '${bindableImportPackage}';
 
 export class ${className} {
   ${asBindablesCode}
@@ -153,10 +166,13 @@ export class ${className} {
   ) {
     const viewExt = '.html';
     const viewPath = `${creationPath}/${componentName}${viewExt}`;
+    const isAuV1 = AureliaUtils.isAuV1(targetProject.aureliaVersion);
 
     const content = selectedTexts.join('\n');
-    const finalContent = `<template>\n  ${content}\n</template>`;
-    fs.writeFileSync(viewPath, finalContent);
+    const surroundWithTemplate = isAuV1
+      ? `<template>\n  ${content}\n</template>`
+      : content;
+    fs.writeFileSync(viewPath, surroundWithTemplate);
   }
 
   private async getComponentName() {
