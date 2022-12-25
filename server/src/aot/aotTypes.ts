@@ -5,6 +5,7 @@ import { AbstractRegion } from './parser/regions/ViewRegions';
 
 export interface IAureliaClassMember {
   name: string;
+  memberType: string;
   documentation: string;
   isBindable: boolean;
   syntaxKind: ts.SyntaxKind;

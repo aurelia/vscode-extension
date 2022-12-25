@@ -16,4 +16,6 @@ Command: Quick Fix
 
 ### Backlog
 - Turn `<a href="xyz">` into `<require from="xyz">`
-- Select code in view -> refactor into own component
+- ~~Select code in view -> refactor into own component~~
+  - Available in the command palette: "[Au] Extract Component"
+  - Turn into Code Action eventually

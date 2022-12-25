@@ -1,0 +1,4 @@
+- create file in `<projectRoot>/.aurelia/extension/templates.js`
+  - has to be a js file
+- access variables from within extension
+-

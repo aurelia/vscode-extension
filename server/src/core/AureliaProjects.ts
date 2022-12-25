@@ -13,6 +13,7 @@ import {
   ExtensionSettings,
   IAureliaProjectSetting,
 } from '../configuration/DocumentSettings';
+import { AureliaVersion } from '../common/constants';
 
 const logger = new Logger('AureliaProject');
 
@@ -22,6 +23,7 @@ export interface IAureliaProject {
   /** TODO rename: tsConfigPath -> projectPath (or sth else) */
   tsConfigPath: string;
   aureliaProgram: AureliaProgram | null;
+  aureliaVersion: AureliaVersion;
 }
 
 export class AureliaProjects {
@@ -198,16 +200,13 @@ export class AureliaProjects {
   private async initAndSet(packageJsonPaths: string[]) {
     this.resetAureliaProjects();
 
-    const aureliaProjectPaths = getAureliaProjectPaths(packageJsonPaths);
-    aureliaProjectPaths.forEach((aureliaProjectPath) => {
-      if (this.alreadyHasProject(aureliaProjectPath)) {
+    const aureliaProjects = getAureliaProjects(packageJsonPaths);
+    aureliaProjects.forEach((aureliaProject) => {
+      if (this.alreadyHasProject(aureliaProject.tsConfigPath)) {
         return;
       }
 
-      this.aureliaProjects.push({
-        tsConfigPath: UriUtils.toSysPath(aureliaProjectPath),
-        aureliaProgram: null,
-      });
+      this.aureliaProjects.push(aureliaProject);
     });
   }
 
@@ -346,65 +345,97 @@ function shouldActivate(documentsPaths: string[], tsConfigPath: string) {
   });
 }
 
-function isAureliaProjectBasedOnPackageJson(packageJsonPath: string): boolean {
+function getAureliaVersionBasedOnPackageJson(
+  packageJsonPath: string
+): AureliaVersion | undefined {
   const packageJson = JSON.parse(
     fs.readFileSync(packageJsonPath, 'utf-8')
   ) as Record<string, Record<string, string>>;
-  const dep = packageJson['dependencies'];
-  let hasAuInDep = false;
-  if (dep != null) {
-    const isAuV1App = dep['aurelia-framework'] !== undefined;
-    const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
-    const isAuV1Cli = dep['aurelia-cli'] !== undefined;
-    const isAuV1Bootstrapper = dep['aurelia-bootstrapper'] !== undefined;
-    const isAuV2App = dep['aurelia'] !== undefined;
-    const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
+  let aureliaV1: AureliaVersion | undefined = undefined;
+  let aureliaV2: AureliaVersion | undefined = undefined;
 
-    const isAuApp = isAuV1App || isAuV1Cli || isAuV2App || isAuV1Bootstrapper;
-    const isAuPlugin = isAuV1Plugin || isAuV2Plugin;
-    hasAuInDep = isAuApp || isAuPlugin;
+  const dep = packageJson['dependencies'];
+  if (dep != null) {
+    const { isAuV1 } = isAu1App(dep);
+    const { isAuV2 } = isAu2App(dep);
+    if (isAuV1) {
+      aureliaV1 = AureliaVersion.V1;
+    }
+    if (isAuV2) {
+      aureliaV2 = AureliaVersion.V2;
+    }
   }
 
-  let hasAuInDevDep = false;
   const devDep = packageJson['devDependencies'];
   if (devDep != null) {
-    const isAuV1AppDev = devDep['aurelia-framework'] !== undefined;
-    const isAuV1PluginDev = devDep['aurelia-binding'] !== undefined;
-    const isAuV1CliDev = devDep['aurelia-cli'] !== undefined;
-    const isAuV1BootstrapperDev = devDep['aurelia-bootstrapper'] !== undefined;
-    const isAuV2AppDev = devDep['aurelia'] !== undefined;
-    const isAuV2PluginDev = devDep['@aurelia/runtime'] !== undefined;
-
-    const isAuApp = isAuV1AppDev || isAuV1CliDev || isAuV2AppDev || isAuV1BootstrapperDev;
-    const isAuPlugin = isAuV1PluginDev || isAuV2PluginDev;
-    hasAuInDevDep = isAuApp || isAuPlugin;
+    const { isAuV1 } = isAu1App(devDep);
+    const { isAuV2 } = isAu2App(devDep);
+    if (isAuV1) {
+      aureliaV1 = AureliaVersion.V1;
+    }
+    if (isAuV2) {
+      aureliaV2 = AureliaVersion.V2;
+    }
   }
 
-  const isAu = hasAuInDep || hasAuInDevDep;
+  const finalVersion = aureliaV2 ?? aureliaV1; // default to v2
 
-  return isAu;
+  return finalVersion;
+}
+
+function isAu2App(dep: Record<string, string>) {
+  const isAuV2App = dep['aurelia'] !== undefined;
+  const isAuV2Plugin = dep['@aurelia/runtime'] !== undefined;
+
+  const isAuV2 = isAuV2App || isAuV2Plugin;
+
+  return { isAuV2App, isAuV2Plugin, isAuV2 };
+}
+
+function isAu1App(dep: Record<string, string>) {
+  const isAuV1Framework = dep['aurelia-framework'] !== undefined;
+  const isAuV1Plugin = dep['aurelia-binding'] !== undefined;
+  const isAuV1Cli = dep['aurelia-cli'] !== undefined;
+  const isAuV1Bootstrapper = dep['aurelia-bootstrapper'] !== undefined;
+
+  const isAuV1App = isAuV1Framework || isAuV1Cli || isAuV1Bootstrapper;
+  const isAuV1 = isAuV1App || isAuV1Plugin;
+
+  return {
+    isAuV1Framework,
+    isAuV1Cli,
+    isAuV1Bootstrapper,
+    isAuV1Plugin,
+    isAuV1App,
+    isAuV1,
+  };
 }
 
 /**
  * @param packageJsonPaths - All paths, that have a package.json file
- * @param activeDocuments - Current active documents (eg. on open of Editor)
- * @returns All project paths, that are an Aurelia project
+ * @returns All projects, that are an Aurelia project
  *
  * 1. Save paths to Aurelia project only.
  * 1.1 Based on package.json
  * 1.2 Detect if is Aurelia project
+ * 2. Save Aurelia Version
  */
-function getAureliaProjectPaths(packageJsonPaths: string[]): string[] {
-  const aureliaProjectsRaw = packageJsonPaths.filter((packageJsonPath) => {
-    const isAu = isAureliaProjectBasedOnPackageJson(packageJsonPath);
-    return isAu;
-  });
-  const aureliaProjectPaths = aureliaProjectsRaw.map((aureliaProject) => {
-    const dirName = nodePath.dirname(UriUtils.toSysPath(aureliaProject));
-    return dirName;
+function getAureliaProjects(packageJsonPaths: string[]): IAureliaProject[] {
+  const aureliaProjects: IAureliaProject[] = [];
+  packageJsonPaths.forEach((packageJsonPath) => {
+    const dirName = nodePath.dirname(UriUtils.toSysPath(packageJsonPath));
+    const aureliaVersion = getAureliaVersionBasedOnPackageJson(packageJsonPath);
+    if (!aureliaVersion) return;
+
+    const aureliaProject: IAureliaProject = {
+      tsConfigPath: UriUtils.toSysPath(dirName),
+      aureliaProgram: null,
+      aureliaVersion,
+    };
+    aureliaProjects.push(aureliaProject);
   });
 
-  return aureliaProjectPaths;
+  return aureliaProjects;
 }
 
 function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
@@ -450,8 +481,9 @@ function getPackageJsonPaths(extensionSettings: ExtensionSettings) {
 
 function logFoundAureliaProjects(aureliaProjects: IAureliaProject[]) {
   /* prettier-ignore */ logger.log(`Found ${aureliaProjects.length} Aurelia project(s) in: `, { logLevel: 'INFO' });
-  aureliaProjects.forEach(({ tsConfigPath }) => {
+  aureliaProjects.forEach(({ tsConfigPath, aureliaVersion }) => {
     /* prettier-ignore */ logger.log(`  ${tsConfigPath}`, { logLevel: 'INFO' });
+    /* prettier-ignore */ logger.log(`  is version: ${aureliaVersion}`, { logLevel: 'INFO' });
   });
 }
 

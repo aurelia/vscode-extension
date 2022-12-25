@@ -250,9 +250,14 @@ function getAureliaViewModelClassMembers(
           const commentDoc = ts.displayPartsToString(
             symbol?.getDocumentationComment(checker)
           );
+          const memberType =
+            classMember.type?.getText() !== undefined
+              ? classMember.type?.getText()
+              : 'unknown';
 
           const result: IAureliaClassMember = {
             name,
+            memberType,
             documentation: commentDoc,
             isBindable: false,
             syntaxKind: argumentPart.kind,
@@ -301,6 +306,7 @@ function getAureliaViewModelClassMembers(
 
       const result: IAureliaClassMember = {
         name: classMemberName,
+        memberType,
         documentation,
         isBindable: Boolean(isBindable),
         syntaxKind: ts.isPropertyDeclaration(classMember)
@@ -353,9 +359,7 @@ function classDeclarationHasUseViewOrNoView(
 /**
  * [refactor]: also get other decorators
  */
-function getCustomElementDecorator(
-  classDeclaration: ts.ClassDeclaration
-) {
+function getCustomElementDecorator(classDeclaration: ts.ClassDeclaration) {
   const target = classDeclaration.decorators?.find((decorator) => {
     const result = decorator
       .getText()
