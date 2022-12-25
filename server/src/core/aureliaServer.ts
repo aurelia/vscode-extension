@@ -1,12 +1,15 @@
 import { Position } from 'vscode-html-languageservice';
 import {
   CompletionParams,
+  Connection,
+  ExecuteCommandParams,
   PublishDiagnosticsParams,
   TextDocumentChangeEvent,
   TextDocuments,
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { AURELIA_COMMANDS_KEYS } from '../common/constants';
 
 import { isViewModelDocument } from '../common/documens/TextDocumentUtils';
 import { Logger } from '../common/logging/logger';
@@ -16,12 +19,13 @@ import { onCompletion } from '../feature/completions/onCompletions';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
 import { onDefintion } from '../feature/definition/onDefinitions';
 import { createDiagnostics } from '../feature/diagnostics/diagnostics';
+import { ExtractComponent } from '../feature/extractComponent/extractComponent';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
 import { onDocumentSymbol } from '../feature/symbols/onDocumentSymbol';
 import { onWorkspaceSymbol } from '../feature/symbols/onWorkspaceSymbol';
-import { Container } from './container';
+import { Container, globalContainer } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
 
 const logger = new Logger('AureliaServer');
@@ -29,10 +33,16 @@ const logger = new Logger('AureliaServer');
 export class AureliaServer {
   constructor(
     private readonly container: Container,
+    private readonly connection: Connection,
     public readonly extensionSettings: ExtensionSettings,
     public allDocuments: TextDocuments<TextDocument>
   ) {
-    initDependencyInjection(container, extensionSettings);
+    initDependencyInjection(
+      container,
+      connection,
+      extensionSettings,
+      allDocuments
+    );
   }
 
   public async onConnectionInitialized(
@@ -266,9 +276,22 @@ export class AureliaServer {
   // onFoldingRanges() {}
   // onSelectionRanges() {}
 
-  // public async onExecuteCommand(executeCommandParams: ExecuteCommandParams) {
-  //   onExecuteCommand(this.container, executeCommandParams);
-  // }
+  public async onExecuteCommand(
+    executeCommandParams: ExecuteCommandParams,
+    connection: Connection
+  ) {
+    const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
+    switch (command) {
+      case 'extension.extractComponent': {
+        const extractComponent = globalContainer.get(ExtractComponent);
+        await extractComponent.initExtractComponent();
+
+        break;
+      }
+    }
+
+    // onExecuteCommand(this.container, executeCommandParams);
+  }
 
   // dispose() {}
 

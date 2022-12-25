@@ -367,19 +367,4 @@ export function updateTsMorphProjectWithEditingFiles(
   container: Container,
   tsMorphProject: Project
 ) {
-  const aureliaProjects = container.get(AureliaProjects);
-  const editingDocuments = aureliaProjects.getEditingTracker();
-
-  editingDocuments.forEach((doc) => {
-    const osPath = UriUtils.toSysPath(doc.uri);
-    const sourceFile = tsMorphProject.getSourceFile(osPath);
-
-    try {
-      const realTimeEditingContent = doc.getText();
-      sourceFile?.replaceWithText(realTimeEditingContent);
-    } catch (_error) {
-      // const error = _error as Error;
-      // console.log('TCL: error.message', error.message);
-    }
-  });
-}
+return}

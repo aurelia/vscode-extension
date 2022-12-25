@@ -104,10 +104,26 @@ export async function activate(context: ExtensionContext) {
   // })
 
   client.onRequest('get-component-name', () => {
-    getUserInputCommand(context)
+    getUserInputCommand(context);
+
+    var editor = window.activeTextEditor;
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extension.ts ~ line 115 ~ editor?.selections', editor?.selections)
+
     // const message = '[Aurelia] No tsconfig.json found. Please visit the [Usage section](https://github.com/aurelia/vscode-extension#1-usage) for more information.';
     // window.showWarningMessage(message, 'Close')
-  })
+  });
+
+  client.onRequest('get-editer-selections', () => {
+    var editor = window.activeTextEditor;
+    const documentText = editor?.document.getText();
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extension.ts ~ line 120 ~ documentText', documentText)
+    return {
+      documentText,
+      documentUri: editor?.document.uri.toString(),
+      documentPath: editor?.document.fileName,
+      selections: editor?.selections,
+    };
+  });
 }
 
 export function deactivate(): Thenable<void> | undefined {

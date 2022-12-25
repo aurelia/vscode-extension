@@ -1,4 +1,6 @@
 import { Container } from 'aurelia-dependency-injection';
+import { Connection, TextDocuments } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
   ExtensionSettings,
@@ -6,10 +8,19 @@ import {
 } from '../configuration/DocumentSettings';
 import { AureliaProjects } from './AureliaProjects';
 
+export const ConnectionInjection = 'Connection';
+export const AllDocumentsInjection = 'AllDocuments';
+
 export function initDependencyInjection(
   container: Container,
-  extensionSettings: ExtensionSettings
+  connection: Connection,
+  extensionSettings: ExtensionSettings,
+  allDocuments: TextDocuments<TextDocument>
 ) {
+  container.registerInstance(Container);
+  container.registerInstance(ConnectionInjection, connection);
+  container.registerInstance(AllDocumentsInjection, allDocuments);
+
   container.registerInstance(
     DocumentSettings,
     new DocumentSettings(extensionSettings)

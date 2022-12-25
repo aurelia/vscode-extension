@@ -12,6 +12,8 @@ import {
   DocumentSymbolParams,
   ExecuteCommandParams,
   CompletionParams,
+  Connection,
+  _,
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -34,14 +36,13 @@ import {
 import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/aureliaServer';
 import { globalContainer } from './core/container';
-import { initExtractComponent } from './feature/extractComponent/extractComponent';
+import { initDependencyInjection } from './core/depdencenyInjection';
 
 const logger = new Logger('Server');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 export const connection = createConnection(ProposedFeatures.all);
-export type ConnectionType = ReturnType<typeof createConnection>
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -250,16 +251,16 @@ connection.onWorkspaceSymbol(async () => {
 // );
 
 connection.onExecuteCommand(
-  async (executeCommandParams: ExecuteCommandParams) => {
+  async (executeCommandParams: ExecuteCommandParams, ...others) => {
     const command = executeCommandParams.command as AURELIA_COMMANDS_KEYS;
+
+    /**
+     * !! Should move everything into aurelia.onExecuteCommand ??
+     */
+
     switch (command) {
       case 'extension.au.reloadExtension': {
         await initAurelia(true);
-
-        break;
-      }
-      case 'extension.extractComponent': {
-        await initExtractComponent(connection)
 
         break;
       }
@@ -270,6 +271,7 @@ connection.onExecuteCommand(
         break;
       }
       default: {
+        aureliaServer.onExecuteCommand(executeCommandParams, connection);
         // console.log('no command');
       }
     }
@@ -338,7 +340,6 @@ async function initAurelia(forceReinit?: boolean) {
   const extensionSettings = (await connection.workspace.getConfiguration({
     section: settingsName,
   })) as ExtensionSettings;
-
   const rootDirectory = await getRootDirectory(extensionSettings);
 
   extensionSettings.aureliaProject = {
@@ -346,8 +347,11 @@ async function initAurelia(forceReinit?: boolean) {
     rootDirectory,
   };
 
+
+  initDependencyInjection(globalContainer, connection, extensionSettings, documents);
   aureliaServer = new AureliaServer(
     globalContainer,
+    connection,
     extensionSettings,
     documents
   );
