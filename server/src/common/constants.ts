@@ -198,6 +198,7 @@ export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
   'extension.au.refactor.aTag',
   'extension.au.reloadExtension',
+  'extension.extractComponent'
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 

@@ -66,6 +66,10 @@
       {
         "command": "extension.auOpenRelatedView",
         "title": "[Au] Open Related Aurelia File: View"
+      },
+      {
+        "command": "extension.extractComponent",
+        "title": "[Au] Extract component"
       }
     ],
     "configuration": {

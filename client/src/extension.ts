@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import * as path from 'path';
 
-import { commands, workspace, ExtensionContext } from 'vscode';
+import { commands, window, workspace, ExtensionContext } from 'vscode';
 import {
   Disposable,
   LanguageClient,
@@ -15,10 +15,11 @@ import {
 } from 'vscode-languageclient';
 
 import { RelatedFiles } from './feature/relatedFiles';
+import { getUserInputCommand } from './feature/userInput/userInput';
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
     path.join('server', 'out', 'server.js')
@@ -95,12 +96,18 @@ export function activate(context: ExtensionContext) {
   client.start();
 
   /** ISSUE-VaNcstW0 */
-  // await client.onReady();
+  await client.onReady();
   // User Information
   // client.onRequest('warning:no-tsconfig-found', () => {
   //   const message = '[Aurelia] No tsconfig.json found. Please visit the [Usage section](https://github.com/aurelia/vscode-extension#1-usage) for more information.';
   //   vscode.window.showWarningMessage(message, 'Close')
   // })
+
+  client.onRequest('get-component-name', () => {
+    getUserInputCommand(context)
+    // const message = '[Aurelia] No tsconfig.json found. Please visit the [Usage section](https://github.com/aurelia/vscode-extension#1-usage) for more information.';
+    // window.showWarningMessage(message, 'Close')
+  })
 }
 
 export function deactivate(): Thenable<void> | undefined {

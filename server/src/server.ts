@@ -34,12 +34,14 @@ import {
 import { AureliaProjects } from './core/AureliaProjects';
 import { AureliaServer } from './core/aureliaServer';
 import { globalContainer } from './core/container';
+import { initExtractComponent } from './feature/extractComponent/extractComponent';
 
 const logger = new Logger('Server');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 export const connection = createConnection(ProposedFeatures.all);
+export type ConnectionType = ReturnType<typeof createConnection>
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -253,6 +255,11 @@ connection.onExecuteCommand(
     switch (command) {
       case 'extension.au.reloadExtension': {
         await initAurelia(true);
+
+        break;
+      }
+      case 'extension.extractComponent': {
+        await initExtractComponent(connection)
 
         break;
       }
