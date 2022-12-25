@@ -18,9 +18,9 @@ import {
 } from '../../common/client/client';
 import { RegionService } from '../../common/services/RegionService';
 import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
-import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument';
 import { kebabCase } from 'lodash';
 import { AureliaUtils } from '../../common/AureliaUtils';
+import { IAureliaClassMember } from '../../aot/aotTypes';
 
 @inject(Container, ConnectionInjection, AllDocumentsInjection, AureliaProjects)
 export class ExtractComponent {
@@ -48,11 +48,11 @@ export class ExtractComponent {
     );
     if (!targetProject) return;
 
-    const collectedScopeNames = this.getAccessScopeNames(
+    const collectedClassMembers = this.getClassMembers(
       targetProject,
       getEditorSelectionResponse
     );
-    if (!collectedScopeNames) return;
+    if (!collectedClassMembers) return;
 
     // 3. create files
     this.createComponent(
@@ -60,7 +60,7 @@ export class ExtractComponent {
       getEditorSelectionResponse,
       componentName,
       selectedTexts,
-      collectedScopeNames
+      collectedClassMembers
     );
 
     // 4. Replace selection with new component
@@ -68,7 +68,7 @@ export class ExtractComponent {
       targetProject,
       componentName,
       getEditorSelectionResponse,
-      collectedScopeNames
+      collectedClassMembers
     );
   }
 
@@ -76,7 +76,7 @@ export class ExtractComponent {
     targetProject: IAureliaProject,
     componentName: string,
     getEditorSelectionResponse: GetEditorSelectionResponse,
-    collectedScopeNames: string[]
+    collectedClassMembers: IAureliaClassMember[]
   ) {
     const { documentUri, selections } = getEditorSelectionResponse;
     const document = this.allDocuments.get(documentUri);
@@ -86,8 +86,8 @@ export class ExtractComponent {
     const importTagName = isAuV1 ? 'require' : 'import';
 
     for (const selection of selections) {
-      const attributes = collectedScopeNames
-        .map((name) => `${name}.bind="${name}"`)
+      const attributes = collectedClassMembers
+        .map((member) => `${member.name}.bind="${member.name}"`)
         .join(' ');
       const toTagName = kebabCase(componentName);
       const withTags = `<${toTagName}\n  ${attributes}>\n</${toTagName}>`;
@@ -110,7 +110,7 @@ export class ExtractComponent {
     getEditorSelectionResponse: GetEditorSelectionResponse,
     componentName: string,
     selectedTexts: string[],
-    collectedScopeNames: string[]
+    collectedClassMembers: IAureliaClassMember[]
   ) {
     const creationPath = `${targetProject?.tsConfigPath}/src/${componentName}`;
     if (!fs.existsSync(creationPath)) {
@@ -121,7 +121,7 @@ export class ExtractComponent {
       targetProject,
       creationPath,
       componentName,
-      collectedScopeNames
+      collectedClassMembers
     );
     this.createViewFile(
       creationPath,
@@ -136,18 +136,20 @@ export class ExtractComponent {
     targetProject: IAureliaProject,
     creationPath: string,
     componentName: string,
-    collectedScopeNames: string[]
+    collectedClassMembers: IAureliaClassMember[]
   ) {
     const viewModelExt = '.ts';
     const viewModelPath = `${creationPath}/${componentName}${viewModelExt}`;
     const className = pascalCase(componentName);
-
-    const asBindablesCode = Array.from(collectedScopeNames)
-      .map((name) => `@bindable ${name};`)
+    const asBindablesCode = collectedClassMembers
+      .map((member) => {
+        const withTypes = member.memberType ? `: ${member.memberType}` : '';
+        return `@bindable ${member.name}${withTypes};`;
+      })
       .join('\n  ');
-
     const isAuV1 = AureliaUtils.isAuV1(targetProject.aureliaVersion);
     const bindableImportPackage = isAuV1 ? 'aurelia-framework' : 'aurelia';
+
     const finalContent = `import { bindable } from '${bindableImportPackage}';
 
 export class ${className} {
@@ -198,10 +200,10 @@ export class ${className} {
     return selectedTexts;
   }
 
-  private getAccessScopeNames(
+  private getClassMembers(
     targetProject: IAureliaProject,
     getEditorSelectionResponse: GetEditorSelectionResponse
-  ) {
+  ): IAureliaClassMember[] {
     const { documentPath, documentUri, selections } =
       getEditorSelectionResponse;
 
@@ -209,9 +211,9 @@ export class ${className} {
       'viewFilePath',
       documentPath
     );
-    if (!component) return;
+    if (!component) return [];
     const document = this.allDocuments.get(documentUri);
-    if (!document) return;
+    if (!document) return [];
 
     // Get Regions from range
     const regions = component.viewRegions;
@@ -234,6 +236,15 @@ export class ${className} {
       });
     });
 
-    return Array.from(collectedScopeNames);
+    const classMembers: IAureliaClassMember[] = [];
+    Array.from(collectedScopeNames).forEach((nameInView) => {
+      const classMember = component.classMembers?.find(
+        (member) => member.name === nameInView
+      );
+      if (!classMember) return;
+      classMembers.push(classMember);
+    });
+
+    return classMembers;
   }
 }
