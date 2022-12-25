@@ -1,6 +1,6 @@
 import { generateDependencyTree } from '../../../../server/src/common/logging/errorStackLogging';
 
-fdescribe('generateDependencyTree', () => {
+describe('generateDependencyTree', () => {
   describe('Same length input.', () => {
     describe('Same parent', () => {
       it('correct tree 1', () => {
