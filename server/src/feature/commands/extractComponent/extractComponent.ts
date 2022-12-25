@@ -7,21 +7,21 @@ import {
   AllDocuments,
   GetEditorSelectionResponse,
   UserSuppliedTemplatesFunctions,
-} from '../../common/types/types';
-import { AureliaProjects, IAureliaProject } from '../../core/AureliaProjects';
+} from '../../../common/types/types';
+import { AureliaProjects, IAureliaProject } from '../../../core/AureliaProjects';
 import {
   AllDocumentsInjection,
   ConnectionInjection,
-} from '../../core/depdencenyInjection';
+} from '../../../core/depdencenyInjection';
 import {
   getEditorSelection,
   WorkspaceUpdates,
-} from '../../common/client/client';
-import { RegionService } from '../../common/services/RegionService';
-import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
+} from '../../../common/client/client';
+import { RegionService } from '../../../common/services/RegionService';
+import { AbstractRegion } from '../../../aot/parser/regions/ViewRegions';
 import { kebabCase } from 'lodash';
-import { AureliaUtils } from '../../common/AureliaUtils';
-import { IAureliaClassMember } from '../../aot/aotTypes';
+import { AureliaUtils } from '../../../common/AureliaUtils';
+import { IAureliaClassMember } from '../../../aot/aotTypes';
 
 const workspaceUpdates = new WorkspaceUpdates();
 

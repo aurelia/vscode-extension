@@ -19,7 +19,7 @@ import { onCompletion } from '../feature/completions/onCompletions';
 import { onConnectionDidChangeContent } from '../feature/content/changeContent';
 import { onDefintion } from '../feature/definition/onDefinitions';
 import { createDiagnostics } from '../feature/diagnostics/diagnostics';
-import { ExtractComponent } from '../feature/extractComponent/extractComponent';
+import { ExtractComponent } from '../feature/commands/extractComponent/extractComponent';
 import { onConnectionInitialized } from '../feature/initialization/initialization';
 import { onRenameRequest } from '../feature/rename/onRenameRequest';
 import { onDidSave } from '../feature/save/saveContent';
