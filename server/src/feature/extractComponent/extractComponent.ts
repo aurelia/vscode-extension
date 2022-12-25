@@ -6,6 +6,7 @@ import fs from 'fs';
 import {
   AllDocuments,
   GetEditorSelectionResponse,
+  UserSuppliedTemplatesFunctions,
 } from '../../common/types/types';
 import { AureliaProjects, IAureliaProject } from '../../core/AureliaProjects';
 import {
@@ -21,6 +22,8 @@ import { AbstractRegion } from '../../aot/parser/regions/ViewRegions';
 import { kebabCase } from 'lodash';
 import { AureliaUtils } from '../../common/AureliaUtils';
 import { IAureliaClassMember } from '../../aot/aotTypes';
+
+const workspaceUpdates = new WorkspaceUpdates();
 
 @inject(Container, ConnectionInjection, AllDocumentsInjection, AureliaProjects)
 export class ExtractComponent {
@@ -55,7 +58,7 @@ export class ExtractComponent {
     if (!collectedClassMembers) return;
 
     // 3. create files
-    this.createComponent(
+    await this.createComponent(
       targetProject,
       getEditorSelectionResponse,
       componentName,
@@ -81,7 +84,6 @@ export class ExtractComponent {
     const { documentUri, selections } = getEditorSelectionResponse;
     const document = this.allDocuments.get(documentUri);
     if (!document) return;
-    const workspaceUpdates = new WorkspaceUpdates();
     const isAuV1 = AureliaUtils.isAuV1(targetProject.aureliaVersion);
     const importTagName = isAuV1 ? 'require' : 'import';
 
@@ -105,7 +107,7 @@ export class ExtractComponent {
     }
   }
 
-  private createComponent(
+  private async createComponent(
     targetProject: IAureliaProject,
     getEditorSelectionResponse: GetEditorSelectionResponse,
     componentName: string,
@@ -117,26 +119,32 @@ export class ExtractComponent {
       fs.mkdirSync(creationPath);
     }
 
-    this.createViewModelFile(
+    const userSuppliedCreateViewModelTemplates =
+      await this.getUserSuppliedCreateViewModelTemplate(targetProject);
+
+    await this.createViewModelFile(
       targetProject,
       creationPath,
       componentName,
-      collectedClassMembers
+      collectedClassMembers,
+      userSuppliedCreateViewModelTemplates?.createViewModelTemplate
     );
-    this.createViewFile(
+    await this.createViewFile(
       creationPath,
       componentName,
       targetProject,
       getEditorSelectionResponse,
-      selectedTexts
+      selectedTexts,
+      userSuppliedCreateViewModelTemplates?.createViewTemplate
     );
   }
 
-  private createViewModelFile(
+  private async createViewModelFile(
     targetProject: IAureliaProject,
     creationPath: string,
     componentName: string,
-    collectedClassMembers: IAureliaClassMember[]
+    collectedClassMembers: IAureliaClassMember[],
+    createViewModelTemplate: (() => string) | undefined
   ) {
     const viewModelExt = '.ts';
     const viewModelPath = `${creationPath}/${componentName}${viewModelExt}`;
@@ -150,13 +158,26 @@ export class ExtractComponent {
     const isAuV1 = AureliaUtils.isAuV1(targetProject.aureliaVersion);
     const bindableImportPackage = isAuV1 ? 'aurelia-framework' : 'aurelia';
 
-    const finalContent = `import { bindable } from '${bindableImportPackage}';
-
-export class ${className} {
-  ${asBindablesCode}
-}
-`;
+    const createFunction = createViewModelTemplate ?? createViewModel;
+    const finalContent = createFunction({
+      bindableImportPackage,
+      className,
+      asBindablesCode,
+      collectedClassMembers,
+    });
     fs.writeFileSync(viewModelPath, finalContent);
+  }
+
+  private async getUserSuppliedCreateViewModelTemplate(
+    targetProject: IAureliaProject
+  ) {
+    const templateFilePath = `${targetProject.tsConfigPath}/.aurelia/extension/templates.js`;
+    if (!fs.existsSync(templateFilePath)) {
+      return;
+    }
+
+    const templateFiles = await import(templateFilePath);
+    return templateFiles as UserSuppliedTemplatesFunctions;
   }
 
   private createViewFile(
@@ -164,16 +185,16 @@ export class ${className} {
     componentName: string,
     targetProject: IAureliaProject,
     getEditorSelectionResponse: GetEditorSelectionResponse,
-    selectedTexts: string[]
+    selectedTexts: string[],
+    createViewTemplate: (() => string) | undefined
   ) {
     const viewExt = '.html';
     const viewPath = `${creationPath}/${componentName}${viewExt}`;
     const isAuV1 = AureliaUtils.isAuV1(targetProject.aureliaVersion);
 
-    const content = selectedTexts.join('\n');
-    const surroundWithTemplate = isAuV1
-      ? `<template>\n  ${content}\n</template>`
-      : content;
+    const createFunction = createViewTemplate ?? createView;
+
+    const surroundWithTemplate = createFunction({ selectedTexts, isAuV1 });
     fs.writeFileSync(viewPath, surroundWithTemplate);
   }
 
@@ -247,4 +268,44 @@ export class ${className} {
 
     return classMembers;
   }
+}
+
+function createView({
+  selectedTexts,
+  isAuV1,
+}: {
+  selectedTexts: string[];
+  isAuV1: boolean;
+}) {
+  const content = selectedTexts.join('\n');
+  const surroundWithTemplate = isAuV1
+    ? `<template>\n  ${content}\n</template>`
+    : content;
+  return surroundWithTemplate;
+}
+
+function createViewModel({
+  bindableImportPackage,
+  className,
+  asBindablesCode,
+  collectedClassMembers,
+}: {
+  /** Package name from which the bindable decorator is imported from */
+  bindableImportPackage: string;
+  /** Class name as PascalCase */
+  className: string;
+  /** All the bindables in the from of: @bindable <name>: <type?> */
+  asBindablesCode: string;
+  /**
+   * Internal data about Class members for the bindable section.
+   * Includes eg. docs (if they are available), and other potential interesting information
+   */
+  collectedClassMembers?: IAureliaClassMember[];
+}) {
+  return `import { bindable } from '${bindableImportPackage}';
+
+export class ${className} {
+  ${asBindablesCode}
+}
+`;
 }

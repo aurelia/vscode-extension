@@ -32,3 +32,8 @@ export interface GetEditorSelectionResponse {
   documentPath: string;
   selections: ClientEditorSelection[];
 }
+
+export interface UserSuppliedTemplatesFunctions {
+  createViewModelTemplate: () => string
+  createViewTemplate: () => string
+}
