@@ -360,7 +360,8 @@ function getAureliaVersionBasedOnPackageJson(
     const { isAuV2 } = isAu2App(dep);
     if (isAuV1) {
       aureliaV1 = AureliaVersion.V1;
-    } else if (isAuV2) {
+    }
+    if (isAuV2) {
       aureliaV2 = AureliaVersion.V2;
     }
   }
@@ -371,7 +372,8 @@ function getAureliaVersionBasedOnPackageJson(
     const { isAuV2 } = isAu2App(devDep);
     if (isAuV1) {
       aureliaV1 = AureliaVersion.V1;
-    } else if (isAuV2) {
+    }
+    if (isAuV2) {
       aureliaV2 = AureliaVersion.V2;
     }
   }
