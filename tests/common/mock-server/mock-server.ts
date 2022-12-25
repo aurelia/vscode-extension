@@ -1,7 +1,11 @@
 import * as path from 'path';
 
 import { Container } from 'aurelia-dependency-injection';
-import { createConnection, ProposedFeatures, TextDocumentChangeEvent } from 'vscode-languageserver';
+import {
+  createConnection,
+  ProposedFeatures,
+  TextDocumentChangeEvent,
+} from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { createTsMorphProject } from '../../../server/src/aot/tsMorph/AureliaTsMorph';
@@ -40,12 +44,16 @@ export class MockServer {
     private readonly activeDocuments: TextDocument[] = []
   ) {
     this.textDocuments = new MockTextDocuments(this.workspaceRootUri);
-    const mockConnection = createConnection(ProposedFeatures.all);
+    const mockConnection = createConnection(
+      ProposedFeatures.all,
+      process.stdin,
+      process.stdout
+    );
     this.aureliaServer = new AureliaServer(
       this.container,
       mockConnection,
       this.extensionSettings,
-      this.textDocuments,
+      this.textDocuments
     );
 
     this.AureliaProjects = this.container.get(AureliaProjects);

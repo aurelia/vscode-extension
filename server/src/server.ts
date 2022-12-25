@@ -42,7 +42,7 @@ const logger = new Logger('Server');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
-export const connection = createConnection(ProposedFeatures.all);
+export const connection = createConnection(ProposedFeatures.all, process.stdin, process.stdout);
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
