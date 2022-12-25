@@ -114,7 +114,7 @@ export class ExtractComponent {
     selectedTexts: string[],
     collectedClassMembers: IAureliaClassMember[]
   ) {
-    const creationPath = `${targetProject?.tsConfigPath}/src/${componentName}`;
+    const creationPath = `${targetProject?.tsConfigPath}/${componentName}`;
     if (!fs.existsSync(creationPath)) {
       fs.mkdirSync(creationPath);
     }
