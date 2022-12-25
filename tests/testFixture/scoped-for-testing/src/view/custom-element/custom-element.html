@@ -3,6 +3,9 @@ ${foo}
 <div id.bind="barBaz"></div>
 <div repeat.for="fooElement of foo"></div>
 <span id.bind="qux.attr">${qux.interpol}</span>
-<p class="${useFoo(qux)}">${arr[qux] | hello}</p>
+<require from=''></require>
+<hello-world
+  useFoo.bind="useFoo" qux.bind="qux" arr.bind="arr">
+</hello-world>
 ${foo.qux}
 <a href="foo"></a>

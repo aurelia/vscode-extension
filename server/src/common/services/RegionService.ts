@@ -1,6 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Position } from 'vscode-languageserver-types';
+import { Range } from 'vscode-languageserver';
 
 import {
   AbstractRegion,
@@ -42,6 +43,32 @@ export class RegionService {
       (region) => region.type === regionType
     );
     return targetRegions as ReturnType[];
+  }
+
+  public static getManyRegionsInRange(
+    regions: AbstractRegion[],
+    document: TextDocument,
+    range: Range
+  ) {
+    const rangeStartOffset = document.offsetAt(range.start);
+    const rangeEndOffset = document.offsetAt(range.end);
+    const result = regions.filter((region) => {
+      const startIncluded = OffsetUtils.isIncluded(
+        rangeStartOffset,
+        rangeEndOffset,
+        region.sourceCodeLocation.startOffset
+      );
+      const endIncluded = OffsetUtils.isIncluded(
+        rangeStartOffset,
+        rangeEndOffset,
+        region.sourceCodeLocation.endOffset
+      );
+
+      const included = startIncluded && endIncluded;
+      return included;
+    });
+
+    return result;
   }
 
   public static getTargetRegionByLine(regions: AbstractRegion[], line: string) {
