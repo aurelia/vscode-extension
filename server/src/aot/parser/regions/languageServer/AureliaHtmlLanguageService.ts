@@ -13,8 +13,8 @@ import { CompletionItem } from 'vscode-languageserver-types';
 import { AureliaClassTypes, CodeActionMap } from '../../../../common/constants';
 import { PositionUtils } from '../../../../common/documens/PositionUtils';
 import { ParseHtml } from '../../../../common/view/document-parsing';
-import { globalContainer } from '../../../../core/container';
-import { ExtractComponent } from '../../../../feature/commands/extractComponent/extractComponent';
+// import { globalContainer } from '../../../../core/container';
+// import { ExtractComponent } from '../../../../feature/commands/extractComponent/extractComponent';
 import { AURELIA_KEY_WORD_COMPLETIONS } from '../../../../feature/completions/aureliaKeyWordCompletions';
 import { createComponentCompletionList } from '../../../../feature/completions/completions';
 import { AureliaProgram } from '../../../AureliaProgram';
@@ -64,32 +64,32 @@ export class AureliaHtmlLanguageService
   }
 }
 
-async function createCodeAction_ExtractComponent() {
-  const extractComponent = globalContainer.get(ExtractComponent);
-  const edits = await extractComponent.perfom();
-  if (!edits?.documentChanges) return;
-  const finalChanges: Record<string, TextEdit[]> = {};
-  edits.documentChanges.forEach((change) => {
-    if (!TextDocumentEdit.is(change)) return;
-    finalChanges[change.textDocument.uri] = change.edits;
-  });
+// async function createCodeAction_ExtractComponent() {
+//   const extractComponent = globalContainer.get(ExtractComponent);
+//   const edits = await extractComponent.perfom();
+//   if (!edits?.documentChanges) return;
+//   const finalChanges: Record<string, TextEdit[]> = {};
+//   edits.documentChanges.forEach((change) => {
+//     if (!TextDocumentEdit.is(change)) return;
+//     finalChanges[change.textDocument.uri] = change.edits;
+//   });
 
-  const edit = {
-    // changes: {},
-    changes: finalChanges,
-  };
+//   const edit = {
+//     // changes: {},
+//     changes: finalChanges,
+//   };
 
-  const kind = CodeActionMap['extract.component'].command;
-  const command = Command.create('Au: Command <<', kind, [edit]);
-  const codeAcion = CodeAction.create(
-    CodeActionMap['extract.component'].title,
-    command,
-    kind
-  );
-  codeAcion.edit = edit;
+//   const kind = CodeActionMap['extract.component'].command;
+//   const command = Command.create('Au: Command <<', kind, [edit]);
+//   const codeAcion = CodeAction.create(
+//     CodeActionMap['extract.component'].title,
+//     command,
+//     kind
+//   );
+//   codeAcion.edit = edit;
 
-  return codeAcion;
-}
+//   return codeAcion;
+// }
 
 function createCodeAction_RenameATag(
   document: TextDocument,

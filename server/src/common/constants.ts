@@ -197,7 +197,7 @@ export const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
 export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
   'extension.au.refactor.aTag',
-  'extension.au.extract.component',
+  // 'extension.au.extract.component',
   'extension.au.reloadExtension',
   'extension.extractComponent'
 ] as const;
