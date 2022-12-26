@@ -30,6 +30,10 @@ export class WorkspaceUpdates {
     this._wschanges = new WorkspaceChange();
   }
 
+  public getEdits() {
+    return this._wschanges.edit
+  }
+
   hasChanges(): boolean {
     return (
       this._wschanges.edit.changes != undefined ||

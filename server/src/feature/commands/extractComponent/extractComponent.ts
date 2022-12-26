@@ -39,7 +39,12 @@ export class ExtractComponent {
     private aureliaProjects: AureliaProjects
   ) {}
 
-  async initExtractComponent() {
+  public async executeExtractComponent() {
+    await this.perfom();
+    await this.workspaceUpdates.applyChanges();
+  }
+
+  public async perfom() {
     this.workspaceUpdates = new WorkspaceUpdates();
     const componentName = await this.getComponentName();
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extractComponent.ts ~ line 7 ~ componentName', componentName)
@@ -79,7 +84,8 @@ export class ExtractComponent {
       collectedClassMembers
     );
 
-    await this.workspaceUpdates.applyChanges();
+    const edits = this.workspaceUpdates.getEdits();
+    return edits;
   }
 
   private async replaceSelection(
