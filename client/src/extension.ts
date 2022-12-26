@@ -103,20 +103,14 @@ export async function activate(context: ExtensionContext) {
   //   vscode.window.showWarningMessage(message, 'Close')
   // })
 
-  client.onRequest('get-component-name', () => {
-    getUserInputCommand(context);
-
-    var editor = window.activeTextEditor;
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extension.ts ~ line 115 ~ editor?.selections', editor?.selections)
-
-    // const message = '[Aurelia] No tsconfig.json found. Please visit the [Usage section](https://github.com/aurelia/vscode-extension#1-usage) for more information.';
-    // window.showWarningMessage(message, 'Close')
+  client.onRequest('get-component-name', async () => {
+    const userInput = await getUserInputCommand(context);
+    return userInput;
   });
 
   client.onRequest('get-editer-selections', () => {
     var editor = window.activeTextEditor;
     const documentText = editor?.document.getText();
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extension.ts ~ line 120 ~ documentText', documentText)
     return {
       documentText,
       documentUri: editor?.document.uri.toString(),

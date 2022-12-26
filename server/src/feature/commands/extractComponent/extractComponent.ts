@@ -8,7 +8,10 @@ import {
   GetEditorSelectionResponse,
   UserSuppliedTemplatesFunctions,
 } from '../../../common/types/types';
-import { AureliaProjects, IAureliaProject } from '../../../core/AureliaProjects';
+import {
+  AureliaProjects,
+  IAureliaProject,
+} from '../../../core/AureliaProjects';
 import {
   AllDocumentsInjection,
   ConnectionInjection,
@@ -24,6 +27,7 @@ import { AureliaUtils } from '../../../common/AureliaUtils';
 import { IAureliaClassMember } from '../../../aot/aotTypes';
 
 const workspaceUpdates = new WorkspaceUpdates();
+const getComponentNameRequest = new RequestType('get-component-name');
 
 export class ExtractComponent {
   constructor(
@@ -34,8 +38,7 @@ export class ExtractComponent {
   ) {}
 
   async initExtractComponent() {
-    // const componentName = await getComponentName(connection);
-    const componentName = 'hello-world';
+    const componentName = await this.getComponentName();
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extractComponent.ts ~ line 7 ~ componentName', componentName)
 
     // 2. Get Selection
@@ -198,8 +201,8 @@ export class ExtractComponent {
   }
 
   private async getComponentName() {
-    const req = new RequestType('get-component-name');
-    this.connection.sendRequest(req);
+    const result = await this.connection.sendRequest(getComponentNameRequest);
+    return result as string;
   }
 
   private extractSelectedTexts(
