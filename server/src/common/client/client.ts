@@ -37,7 +37,7 @@ export class WorkspaceUpdates {
     );
   }
 
-  createFile(uri: DocumentUri, contents: string, overwrite: boolean) {
+  createFile(uri: DocumentUri, contents: string, overwrite = false) {
     this._wschanges.createFile(uri, { overwrite: overwrite });
     const edit = this._wschanges.edit;
     const change = this._wschanges.getTextEditChange(

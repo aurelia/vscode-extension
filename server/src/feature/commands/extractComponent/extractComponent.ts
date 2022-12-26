@@ -25,10 +25,13 @@ import { AbstractRegion } from '../../../aot/parser/regions/ViewRegions';
 import { kebabCase } from 'lodash';
 import { AureliaUtils } from '../../../common/AureliaUtils';
 import { IAureliaClassMember } from '../../../aot/aotTypes';
+import { UriUtils } from '../../../common/view/uri-utils';
 
 const getComponentNameRequest = new RequestType('get-component-name');
 
 export class ExtractComponent {
+  private workspaceUpdates: WorkspaceUpdates;
+
   constructor(
     private container: Container,
     private connection: Connection,
@@ -37,7 +40,7 @@ export class ExtractComponent {
   ) {}
 
   async initExtractComponent() {
-    const workspaceUpdates = new WorkspaceUpdates();
+    this.workspaceUpdates = new WorkspaceUpdates();
     const componentName = await this.getComponentName();
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extractComponent.ts ~ line 7 ~ componentName', componentName)
 
@@ -73,17 +76,17 @@ export class ExtractComponent {
       targetProject,
       componentName,
       getEditorSelectionResponse,
-      collectedClassMembers,
-      workspaceUpdates
+      collectedClassMembers
     );
+
+    await this.workspaceUpdates.applyChanges();
   }
 
   private async replaceSelection(
     targetProject: IAureliaProject,
     componentName: string,
     getEditorSelectionResponse: GetEditorSelectionResponse,
-    collectedClassMembers: IAureliaClassMember[],
-    workspaceUpdates: WorkspaceUpdates
+    collectedClassMembers: IAureliaClassMember[]
   ) {
     const { documentUri, selections } = getEditorSelectionResponse;
     const document = this.allDocuments.get(documentUri);
@@ -99,7 +102,7 @@ export class ExtractComponent {
       const withTags = `<${toTagName}\n  ${attributes}>\n</${toTagName}>`;
       const importTag = `<${importTagName} from=''></${importTagName}>`;
       const withImports = `${importTag}\n${withTags}`;
-      workspaceUpdates.replaceText(
+      this.workspaceUpdates.replaceText(
         documentUri,
         withImports,
         selection.start.line,
@@ -107,7 +110,6 @@ export class ExtractComponent {
         selection.end.line,
         selection.end.character
       );
-      await workspaceUpdates.applyChanges();
     }
   }
 
@@ -169,7 +171,9 @@ export class ExtractComponent {
       asBindablesCode,
       collectedClassMembers,
     });
-    fs.writeFileSync(viewModelPath, finalContent);
+
+    const uri = UriUtils.toVscodeUri(viewModelPath);
+    this.workspaceUpdates.createFile(uri, finalContent);
   }
 
   private async getUserSuppliedCreateViewModelTemplate(
@@ -199,7 +203,9 @@ export class ExtractComponent {
     const createFunction = createViewTemplate ?? createView;
 
     const surroundWithTemplate = createFunction({ selectedTexts, isAuV1 });
-    fs.writeFileSync(viewPath, surroundWithTemplate);
+
+    const uri = UriUtils.toVscodeUri(viewPath);
+    this.workspaceUpdates.createFile(uri, surroundWithTemplate);
   }
 
   private async getComponentName() {
