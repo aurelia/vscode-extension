@@ -298,6 +298,7 @@
     "publish:addTag": "",
     "vscode:prepublish": "npm run compile",
     "build": "tsc -p ./",
+    "create:vsix": "npx vsce package",
     "changelog": "node ./node_modules/conventional-changelog-cli/cli.js -p angular -i CHANGELOG.md -s",
     "compile": "npm run compile:client && npm run compile:server",
     "compile:client": "tsc -p ./client/tsconfig.json",
