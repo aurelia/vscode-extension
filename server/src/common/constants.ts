@@ -197,12 +197,17 @@ export const interpolationRegex = /\$(?:\s*)\{(?!\s*`)(.*?)\}/g;
 export const EXTENSION_COMMAND_PREFIX = 'extension.au';
 export const AURELIA_COMMANDS = [
   'extension.au.refactor.aTag',
+  'extension.au.extract.component',
   'extension.au.reloadExtension',
   'extension.extractComponent'
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 
 export const CodeActionMap = {
+  'extract.component': {
+    command: 'extension.au.extract.component',
+    title: 'Au: Extract Component 🟪',
+  },
   'refactor.aTag': {
     command: 'extension.au.refactor.aTag',
     title: 'Au: Convert to import tag 🟪',

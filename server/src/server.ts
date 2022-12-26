@@ -282,6 +282,12 @@ connection.onExecuteCommand(
         );
         break;
       }
+      case CodeActionMap['extract.component'].command: {
+        logger.log(
+          `Command executed: "${CodeActionMap['extract.component'].title}"`
+        );
+        break;
+      }
       default: {
         aureliaServer.onExecuteCommand(executeCommandParams, connection);
         // console.log('no command');
