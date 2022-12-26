@@ -336,7 +336,7 @@
     "eslint-plugin-jsdoc": "^37.4.0",
     "jest": "=27.4.5",
     "jest-cucumber": "^3.0.1",
-    "mocha": "^8.3.0",
+    "mocha": "^10.2.0",
     "prettier": "^2.5.1",
     "prettier-eslint": "^13.0.0",
     "sucrase": "^3.20.1",
