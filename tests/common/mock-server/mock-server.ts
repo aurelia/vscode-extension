@@ -28,6 +28,7 @@ const monorepoFixtureDir = path.resolve(
   'tests/testFixture/src/monorepo'
 );
 const rootDirectory = `file:/${monorepoFixtureDir}`;
+const isTest = process.env.NODE_ENV;
 
 export class MockServer {
   public textDocuments: MockTextDocuments;
@@ -44,10 +45,17 @@ export class MockServer {
     private readonly activeDocuments: TextDocument[] = []
   ) {
     this.textDocuments = new MockTextDocuments(this.workspaceRootUri);
+    let processStdIn;
+    let processStdOut;
+    if (isTest) {
+      processStdIn = process.stdin;
+      processStdOut = process.stdout;
+    }
     const mockConnection = createConnection(
       ProposedFeatures.all,
-      process.stdin,
-      process.stdout
+      // @ts-ignore
+      processStdIn,
+      processStdOut
     );
     this.aureliaServer = new AureliaServer(
       this.container,

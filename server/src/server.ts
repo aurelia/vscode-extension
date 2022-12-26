@@ -39,10 +39,22 @@ import { globalContainer } from './core/container';
 import { initDependencyInjection } from './core/depdencenyInjection';
 
 const logger = new Logger('Server');
+const isTest = process.env.NODE_ENV;
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
-export const connection = createConnection(ProposedFeatures.all, process.stdin, process.stdout);
+let processStdIn;
+let processStdOut;
+if (isTest) {
+  processStdIn = process.stdin;
+  processStdOut = process.stdout;
+}
+export const connection = createConnection(
+  ProposedFeatures.all,
+  // @ts-ignore
+  processStdIn,
+  processStdOut
+);
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -347,8 +359,12 @@ async function initAurelia(forceReinit?: boolean) {
     rootDirectory,
   };
 
-
-  initDependencyInjection(globalContainer, connection, extensionSettings, documents);
+  initDependencyInjection(
+    globalContainer,
+    connection,
+    extensionSettings,
+    documents
+  );
   aureliaServer = new AureliaServer(
     globalContainer,
     connection,
