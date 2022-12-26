@@ -4,6 +4,7 @@ import {
   Command,
   Position,
   Range,
+  TextDocumentEdit,
   TextEdit,
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -59,40 +60,33 @@ export class AureliaHtmlLanguageService
       allCodeActions.push(aTagCodeAction);
     }
 
-    // ---- extract.component ----
-    const extractComponentCodeAction = await createCodeAction_ExtractComponent(
-      document,
-      startPosition
-    );
-    if (extractComponentCodeAction) {
-      allCodeActions.push(extractComponentCodeAction);
-    }
-
     return allCodeActions;
   }
 }
 
-async function createCodeAction_ExtractComponent(
-  document: TextDocument,
-  position: Position
-) {
-  const htmlLanguageService = getLanguageService();
-  const htmlDocument = htmlLanguageService.parseHTMLDocument(document);
-  const offset = document.offsetAt(position);
-  const aTag = ParseHtml.findTagAtOffset(document.getText(), offset);
-  const HREF = 'href';
-
+async function createCodeAction_ExtractComponent() {
   const extractComponent = globalContainer.get(ExtractComponent);
-  // await extractComponent.initExtractComponent();
+  const edits = await extractComponent.perfom();
+  if (!edits?.documentChanges) return;
+  const finalChanges: Record<string, TextEdit[]> = {};
+  edits.documentChanges.forEach((change) => {
+    if (!TextDocumentEdit.is(change)) return;
+    finalChanges[change.textDocument.uri] = change.edits;
+  });
+
+  const edit = {
+    // changes: {},
+    changes: finalChanges,
+  };
 
   const kind = CodeActionMap['extract.component'].command;
-  const command = Command.create('Au: Command <<', kind, []);
+  const command = Command.create('Au: Command <<', kind, [edit]);
   const codeAcion = CodeAction.create(
     CodeActionMap['extract.component'].title,
     command,
     kind
   );
-  // codeAcion.edit = edit;
+  codeAcion.edit = edit;
 
   return codeAcion;
 }

@@ -284,7 +284,7 @@ export class AureliaServer {
     switch (command) {
       case 'extension.extractComponent': {
         const extractComponent = globalContainer.get(ExtractComponent);
-        await extractComponent.initExtractComponent();
+        await extractComponent.executeExtractComponent();
 
         break;
       }
