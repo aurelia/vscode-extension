@@ -26,7 +26,6 @@ import { kebabCase } from 'lodash';
 import { AureliaUtils } from '../../../common/AureliaUtils';
 import { IAureliaClassMember } from '../../../aot/aotTypes';
 
-const workspaceUpdates = new WorkspaceUpdates();
 const getComponentNameRequest = new RequestType('get-component-name');
 
 export class ExtractComponent {
@@ -38,6 +37,7 @@ export class ExtractComponent {
   ) {}
 
   async initExtractComponent() {
+    const workspaceUpdates = new WorkspaceUpdates();
     const componentName = await this.getComponentName();
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extractComponent.ts ~ line 7 ~ componentName', componentName)
 
@@ -73,7 +73,8 @@ export class ExtractComponent {
       targetProject,
       componentName,
       getEditorSelectionResponse,
-      collectedClassMembers
+      collectedClassMembers,
+      workspaceUpdates
     );
   }
 
@@ -81,7 +82,8 @@ export class ExtractComponent {
     targetProject: IAureliaProject,
     componentName: string,
     getEditorSelectionResponse: GetEditorSelectionResponse,
-    collectedClassMembers: IAureliaClassMember[]
+    collectedClassMembers: IAureliaClassMember[],
+    workspaceUpdates: WorkspaceUpdates
   ) {
     const { documentUri, selections } = getEditorSelectionResponse;
     const document = this.allDocuments.get(documentUri);
