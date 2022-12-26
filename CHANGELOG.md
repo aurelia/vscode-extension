@@ -1,3 +1,16 @@
+## [2.3.7](https://github.com/aurelia/vscode-extension/compare/2.3.6...2.3.7) (2022-12-26)
+
+
+### Features
+
+* **commands.extract:** let user choose name ([ecf01e8](https://github.com/aurelia/vscode-extension/commit/ecf01e867fd78164c8c9e748d0d82b6216a60a82))
+
+
+### Bug Fixes
+* **chore(server)**: fix connection when not testing
+  * Aurelia did not show up in output
+
+
 ## [2.3.6](https://github.com/aurelia/vscode-extension/compare/2.3.5...2.3.6) (2022-12-25)
 
 
