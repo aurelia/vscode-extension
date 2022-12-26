@@ -47,7 +47,7 @@ export class ExtractComponent {
   public async perfom() {
     this.workspaceUpdates = new WorkspaceUpdates();
     const componentName = await this.getComponentName();
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: extractComponent.ts ~ line 7 ~ componentName', componentName)
+    if (!componentName) return;
 
     // 2. Get Selection
     const getEditorSelectionResponse = await getEditorSelection(
