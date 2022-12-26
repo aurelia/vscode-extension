@@ -1,3 +1,20 @@
+## [2.3.8](https://github.com/aurelia/vscode-extension/compare/2.3.7...2.3.8) (2022-12-26)
+
+
+### Bug Fixes
+
+* **commands.extract:** handle cancelled user input ([d528730](https://github.com/aurelia/vscode-extension/commit/d528730c59644351273556ba79e3db42635600b8))
+* **commands.extract:** multiple edits in "one session" don't break ([5390b05](https://github.com/aurelia/vscode-extension/commit/5390b059a5cb8a7645f77c5b5c2a24a1abd87e67))
+
+
+### Features
+
+* **action.extract:** init ([bc0a3ad](https://github.com/aurelia/vscode-extension/commit/bc0a3ad967f765a44bfbe5eb20df77291a86479d))
+* **commands.extract:** open the newly created file in active view column ([adf266d](https://github.com/aurelia/vscode-extension/commit/adf266d88631ac7f3495f3bf4933c75eec0a326f))
+* **commands.extract:** validate user input ([5bd6c5b](https://github.com/aurelia/vscode-extension/commit/5bd6c5bc64aa0149fd0e5d53e430d1a31b2621b6))
+
+
+
 ## [2.3.7](https://github.com/aurelia/vscode-extension/compare/2.3.6...2.3.7) (2022-12-26)
 
 
