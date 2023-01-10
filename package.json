@@ -70,6 +70,10 @@
       {
         "command": "extension.extractComponent",
         "title": "[Au] Extract component"
+      },
+      {
+        "command": "extension.declareViewModelVariable",
+        "title": "[Au] Declare view model variable"
       }
     ],
     "configuration": {

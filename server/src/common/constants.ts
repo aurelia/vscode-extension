@@ -199,7 +199,8 @@ export const AURELIA_COMMANDS = [
   'extension.au.refactor.aTag',
   // 'extension.au.extract.component',
   'extension.au.reloadExtension',
-  'extension.extractComponent'
+  'extension.extractComponent',
+  'extension.declareViewModelVariable'
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 

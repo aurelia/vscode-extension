@@ -9,7 +9,7 @@ import {
 } from 'vscode-languageserver';
 import { CodeActionParams } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { AURELIA_COMMANDS_KEYS } from '../common/constants';
+import { AURELIA_COMMANDS, AURELIA_COMMANDS_KEYS } from '../common/constants';
 
 import { isViewModelDocument } from '../common/documens/TextDocumentUtils';
 import { Logger } from '../common/logging/logger';
@@ -27,6 +27,7 @@ import { onDocumentSymbol } from '../feature/symbols/onDocumentSymbol';
 import { onWorkspaceSymbol } from '../feature/symbols/onWorkspaceSymbol';
 import { Container, globalContainer } from './container';
 import { initDependencyInjection } from './depdencenyInjection';
+import { DeclareViewModelVariable } from '../feature/commands/declareViewModelVariable/declareViewModelVariable';
 
 const logger = new Logger('AureliaServer');
 
@@ -285,6 +286,12 @@ export class AureliaServer {
       case 'extension.extractComponent': {
         const extractComponent = globalContainer.get(ExtractComponent);
         await extractComponent.executeExtractComponent();
+
+        break;
+      }
+      case 'extension.declareViewModelVariable': {
+        const declareViewModelVariable = globalContainer.get(DeclareViewModelVariable);
+        await declareViewModelVariable.execute()
 
         break;
       }
