@@ -1,3 +1,16 @@
+## [2.3.9](https://github.com/aurelia/vscode-extension/compare/2.3.8...2.3.9) (2023-01-11)
+
+
+### Features
+
+* **client:** display warning messages ([63dda21](https://github.com/aurelia/vscode-extension/commit/63dda217002d8684b63ec2f59ad2417a970fd1af))
+* **declare:** add command and constants ([4a0bb59](https://github.com/aurelia/vscode-extension/commit/4a0bb599d8a04280cba0504f1c7ea79d971a929f))
+* **declare:** add text from selection ([890ddd3](https://github.com/aurelia/vscode-extension/commit/890ddd3d7ef330251636fbb22cb7ff00321aeb42))
+* **declare:** experiment with re-parsing view regions ([31725ac](https://github.com/aurelia/vscode-extension/commit/31725ac7be30f0becac7937334e42c653cd46452))
+* **declare:** show warning messages ([72de67c](https://github.com/aurelia/vscode-extension/commit/72de67c8b1f707783fdb8904cc32dd4ed13cb4a6))
+
+
+
 ## [2.3.8](https://github.com/aurelia/vscode-extension/compare/2.3.7...2.3.8) (2022-12-26)
 
 

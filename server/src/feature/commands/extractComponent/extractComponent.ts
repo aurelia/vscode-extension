@@ -26,6 +26,7 @@ import { kebabCase } from 'lodash';
 import { AureliaUtils } from '../../../common/AureliaUtils';
 import { IAureliaClassMember } from '../../../aot/aotTypes';
 import { UriUtils } from '../../../common/view/uri-utils';
+import { extractSelectedTexts } from '../../../common/documens/selections';
 
 const getComponentNameRequest = new RequestType('get-component-name');
 
@@ -53,9 +54,11 @@ export class ExtractComponent {
     const getEditorSelectionResponse = await getEditorSelection(
       this.connection
     );
-    const selectedTexts = await this.extractSelectedTexts(
-      getEditorSelectionResponse
+    const selectedTexts = await extractSelectedTexts(
+      getEditorSelectionResponse,
+      this.allDocuments
     );
+
     const targetProject = this.aureliaProjects.getFromUri(
       getEditorSelectionResponse.documentUri
     );
@@ -217,24 +220,6 @@ export class ExtractComponent {
   private async getComponentName() {
     const result = await this.connection.sendRequest(getComponentNameRequest);
     return result as string;
-  }
-
-  private extractSelectedTexts(
-    getEditorSelectionResponse: GetEditorSelectionResponse
-  ) {
-    const { documentUri, selections } = getEditorSelectionResponse;
-    const document = this.allDocuments.get(documentUri);
-
-    let rawTexts = selections.map((selection) => {
-      const range = Range.create(selection.start, selection.end);
-      const text = document?.getText(range);
-      return text;
-    });
-    const selectedTexts = rawTexts.filter(
-      (text) => text !== undefined
-    ) as string[];
-
-    return selectedTexts;
   }
 
   private getClassMembers(

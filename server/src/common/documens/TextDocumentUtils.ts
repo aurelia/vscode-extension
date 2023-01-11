@@ -25,6 +25,23 @@ export class TextDocumentUtils {
     return document;
   }
 
+  public static createViewModelFromPath(
+    path: string
+  ): TextDocument | undefined {
+    const pathStat = fs.statSync(path);
+    if (!pathStat.isFile()) return;
+
+    const content = fs.readFileSync(path, 'utf-8');
+    const document = TextDocument.create(
+      UriUtils.toVscodeUri(path),
+      'html',
+      0,
+      content
+    );
+
+    return document;
+  }
+
   public static createHtmlFromUri(
     { uri }: { uri: string },
     allDocuments?: TextDocuments<TextDocument>
@@ -40,8 +57,8 @@ export class TextDocumentUtils {
     return document;
   }
 
-  public static createHtmlFromPath(path: string): TextDocument | undefined{
-    const pathStat = fs.statSync(path)
+  public static createHtmlFromPath(path: string): TextDocument | undefined {
+    const pathStat = fs.statSync(path);
     if (!pathStat.isFile()) return;
 
     const content = fs.readFileSync(path, 'utf-8');

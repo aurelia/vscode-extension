@@ -1,5 +1,7 @@
-import { InsertTextFormat } from 'vscode-languageserver';
+import { InsertTextFormat, RequestType } from 'vscode-languageserver';
 import { CompletionItemKind, MarkupKind } from 'vscode-languageserver-types';
+
+export const WARNING_MESSAGE = new RequestType('warning-message');
 
 export const CUSTOM_ELEMENT_SUFFIX = 'CustomElement';
 export const VALUE_CONVERTER_SUFFIX = 'ValueConverter';
@@ -199,7 +201,8 @@ export const AURELIA_COMMANDS = [
   'extension.au.refactor.aTag',
   // 'extension.au.extract.component',
   'extension.au.reloadExtension',
-  'extension.extractComponent'
+  'extension.extractComponent',
+  'extension.declareViewModelVariable'
 ] as const;
 export type AURELIA_COMMANDS_KEYS = typeof AURELIA_COMMANDS[number];
 
