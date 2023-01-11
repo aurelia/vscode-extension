@@ -73,7 +73,7 @@
       },
       {
         "command": "extension.declareViewModelVariable",
-        "title": "[Au] Declare View Model Variable"
+        "title": "[Au] Declare View Model Variable from Selection"
       }
     ],
     "configuration": {
