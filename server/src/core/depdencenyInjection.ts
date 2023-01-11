@@ -6,6 +6,7 @@ import {
   ExtensionSettings,
   DocumentSettings,
 } from '../configuration/DocumentSettings';
+import { DeclareViewModelVariable } from '../feature/commands/declareViewModelVariable/declareViewModelVariable';
 import { ExtractComponent } from '../feature/commands/extractComponent/extractComponent';
 import { AureliaProjects } from './AureliaProjects';
 
@@ -33,5 +34,10 @@ export function initDependencyInjection(
   container.registerInstance(
     ExtractComponent,
     new ExtractComponent(container, connection, allDocuments, aureliaProjects)
+  );
+
+  container.registerInstance(
+    DeclareViewModelVariable,
+    new DeclareViewModelVariable(container, connection, allDocuments, aureliaProjects)
   );
 }
