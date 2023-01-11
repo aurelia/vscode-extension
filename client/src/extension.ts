@@ -103,6 +103,11 @@ export async function activate(context: ExtensionContext) {
   //   vscode.window.showWarningMessage(message, 'Close')
   // })
 
+  client.onRequest('warning-message', async (message: string) => {
+    const finalMessage = `[Au] Warning: ${message}`
+    window.showWarningMessage(finalMessage);
+  });
+
   client.onRequest('get-component-name', async () => {
     const userInput = await getUserInputCommand(context);
     return userInput;
