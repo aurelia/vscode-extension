@@ -2,11 +2,13 @@ import { Container } from 'aurelia-dependency-injection';
 import { Connection } from 'vscode-languageserver';
 import { IAureliaComponent } from '../../../aot/aotTypes';
 import { AureliaProgram } from '../../../aot/AureliaProgram';
+import { RegionParser } from '../../../aot/parser/regions/RegionParser';
 import { getClass } from '../../../aot/tsMorph/tsMorphClass';
 import {
   getEditorSelection,
   WorkspaceUpdates,
 } from '../../../common/client/client';
+import { WARNING_MESSAGE as WARNING_MESSAGE_REQUEST } from '../../../common/constants';
 import { extractSelectedTexts } from '../../../common/documens/selections';
 import { TextDocumentUtils } from '../../../common/documens/TextDocumentUtils';
 import {
@@ -34,6 +36,7 @@ export class DeclareViewModelVariable {
       this.connection
     );
     const selections = await this.getSelections(getEditorSelectionResponse);
+    if (!selections) return;
 
     try {
       await this.addToViewModel(getEditorSelectionResponse, selections);
@@ -68,9 +71,9 @@ export class DeclareViewModelVariable {
     if (!targetComponent) return;
 
     // 1. re-parse regions ((experimenting))
-    // const componentList = aureliaProgram.aureliaComponents.getAll();
-    // const regions = RegionParser.parse(document, componentList);
-    //  regions/*?*/
+    const componentList = aureliaProgram.aureliaComponents.getAll();
+    const regions = RegionParser.parse(document, componentList);
+    regions; /*?*/
     // TODO: improvement: add types and differentiate between property and method
 
     // 2. Find location where to add
@@ -114,7 +117,9 @@ export class DeclareViewModelVariable {
     if (!viewModelDocument) return;
     const firstMember = classNode.getMembers()[0];
     if (!firstMember) {
-      throw new Error('Unsupported: Class has to have at least one member.');
+      const message = 'Unsupported: Class has to have at least one member.';
+      this.connection.sendRequest(WARNING_MESSAGE_REQUEST, message);
+      throw new Error(message);
     }
 
     const firstMemberPosition = viewModelDocument.positionAt(
@@ -132,6 +137,22 @@ export class DeclareViewModelVariable {
       getEditorSelectionResponse,
       this.allDocuments
     );
+
+    if (selectedTexts.length > 1) {
+      this.connection.sendRequest(
+        WARNING_MESSAGE_REQUEST,
+        'Only one selection supported'
+      );
+      return;
+    }
+
+    if (selectedTexts[0] === '') {
+      this.connection.sendRequest(
+        WARNING_MESSAGE_REQUEST,
+        'Selection is empty'
+      );
+      return;
+    }
 
     return selectedTexts;
   }
