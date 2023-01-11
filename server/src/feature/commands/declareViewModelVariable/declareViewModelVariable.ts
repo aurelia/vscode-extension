@@ -1,5 +1,4 @@
 import { Container } from 'aurelia-dependency-injection';
-import { ClassDeclaration } from 'ts-morph';
 import { Connection } from 'vscode-languageserver';
 import { IAureliaComponent } from '../../../aot/aotTypes';
 import { AureliaProgram } from '../../../aot/AureliaProgram';
@@ -49,12 +48,12 @@ export class DeclareViewModelVariable {
     getEditorSelectionResponse: GetEditorSelectionResponse,
     selections: string[]
   ) {
+    // 0. Var setup
     const aureliaProjects = this.container.get(AureliaProjects);
     const { documentUri } = getEditorSelectionResponse;
     const document = this.allDocuments.get(documentUri);
     if (!document) return;
 
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: declareViewModelVariable.ts ~ line 18 ~ selections', selections)
     const targetProject = aureliaProjects.getFromUri(document.uri);
     if (!targetProject) return;
 
@@ -68,14 +67,20 @@ export class DeclareViewModelVariable {
     );
     if (!targetComponent) return;
 
-    // 1. Find location where to add
+    // 1. re-parse regions ((experimenting))
+    // const componentList = aureliaProgram.aureliaComponents.getAll();
+    // const regions = RegionParser.parse(document, componentList);
+    //  regions/*?*/
+    // TODO: improvement: add types and differentiate between property and method
+
+    // 2. Find location where to add
     const firstMemberPosition = this.getLocationToAdd(
       aureliaProgram,
       targetComponent
     );
     if (!firstMemberPosition) return;
 
-    // 2. Add to view model class
+    // 3. Add to view model class
     const whiteSpace = '  '; // Assumption: 2 spaces
     const endFormatting = `\n\n${whiteSpace}`;
     this.workspaceUpdates.replaceText(
@@ -86,7 +91,6 @@ export class DeclareViewModelVariable {
       firstMemberPosition.line,
       firstMemberPosition.character
     );
-
   }
 
   private getLocationToAdd(
