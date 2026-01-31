@@ -58,6 +58,7 @@ export class TextDocumentUtils {
   }
 
   public static createHtmlFromPath(path: string): TextDocument | undefined {
+    path = path.replace('?raw','');
     const pathStat = fs.statSync(path);
     if (!pathStat.isFile()) return;
 
